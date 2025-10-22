@@ -22,24 +22,24 @@ export default function Home() {
   
   // Vehicle fleet data
   const vehicles = [
-    { name: 'Bus', capacity: '30-50', type: 'self-drive, with-driver', image: '/vehicles/bus.jpg' },
-    { name: 'KDH', capacity: '6-8', type: 'self-drive, with-driver', image: '/vehicles/kdh.jpg' },
-    { name: 'Tour Van', capacity: '12-15', type: 'self-drive, with-driver', image: '/vehicles/tour-van.jpg' },
-    { name: 'WagonR', capacity: '4', type: 'self-drive, with-driver', image: '/vehicles/wagonr.jpg' },
-    { name: 'Shuttle', capacity: '10-12', type: 'self-drive, with-driver', image: '/vehicles/shuttle.jpg' },
-    { name: 'Every Buddy Van', capacity: '8-10', type: 'self-drive, with-driver', image: '/vehicles/every-buddy.jpg' },
-    { name: 'Aqua', capacity: '4', type: 'self-drive, with-driver', image: '/vehicles/aqua.jpg' },
-    { name: 'Prius', capacity: '4', type: 'self-drive, with-driver', image: '/vehicles/prius.jpg' }
+    { name: 'Bus', capacity: '30-50', type: 'self-drive, with-driver', image: '/vehicles/bus.svg' },
+    { name: 'KDH', capacity: '6-8', type: 'self-drive, with-driver', image: '/vehicles/kdh.svg' },
+    { name: 'Tour Van', capacity: '12-15', type: 'self-drive, with-driver', image: '/vehicles/tour-van.svg' },
+    { name: 'WagonR', capacity: '4', type: 'self-drive, with-driver', image: '/vehicles/wagonr.svg' },
+    { name: 'Shuttle', capacity: '10-12', type: 'self-drive, with-driver', image: '/vehicles/shuttle.svg' },
+    { name: 'Every Buddy Van', capacity: '8-10', type: 'self-drive, with-driver', image: '/vehicles/every-buddy.svg' },
+    { name: 'Aqua', capacity: '4', type: 'self-drive, with-driver', image: '/vehicles/aqua.svg' },
+    { name: 'Prius', capacity: '4', type: 'self-drive, with-driver', image: '/vehicles/prius.svg' }
   ];
   
   // Popular destinations
   const destinations = [
-    { name: 'Sigiriya', image: '/destinations/sigiriya.jpg', description: 'Ancient rock fortress' },
-    { name: 'Kandy', image: '/destinations/kandy.jpg', description: 'Cultural capital' },
-    { name: 'Galle', image: '/destinations/galle.jpg', description: 'Historic fort city' },
-    { name: 'Ella', image: '/destinations/ella.jpg', description: 'Mountain paradise' },
-    { name: 'Yala', image: '/destinations/yala.jpg', description: 'Wildlife sanctuary' },
-    { name: 'Nuwara Eliya', image: '/destinations/nuwara-eliya.jpg', description: 'Little England' }
+    { name: 'Sigiriya', image: '/destinations/sigiriya.svg', description: 'Ancient rock fortress' },
+    { name: 'Kandy', image: '/destinations/kandy.svg', description: 'Cultural capital' },
+    { name: 'Galle', image: '/destinations/galle.svg', description: 'Historic fort city' },
+    { name: 'Ella', image: '/destinations/ella.svg', description: 'Mountain paradise' },
+    { name: 'Yala', image: '/destinations/yala.svg', description: 'Wildlife sanctuary' },
+    { name: 'Nuwara Eliya', image: '/destinations/nuwara-eliya.svg', description: 'Little England' }
   ];
   
   // Tour packages
@@ -85,7 +85,7 @@ export default function Home() {
       <header className={`header ${isScrolled ? 'scrolled' : ''}`}>
         <div className="container">
           <div className="logo">
-            <Image src="/logo.png" alt="Zamzam Tours" width={150} height={60} />
+            <Image src="/logo.svg" alt="Zamzam Tours" width={150} height={60} />
           </div>
           
           <nav className={`nav ${isMenuOpen ? 'nav-open' : ''}`}>
@@ -125,11 +125,8 @@ export default function Home() {
       {/* Hero Section */}
       <section className="hero" ref={heroRef}>
         <div className="hero-background">
-          <video autoPlay muted loop className="hero-video">
-            <source src="/videos/hero-video.mp4" type="video/mp4" />
-            {/* Fallback image if video doesn't load */}
-            <div className="hero-fallback"></div>
-          </video>
+          {/* Using gradient fallback instead of video for now */}
+          <div className="hero-fallback"></div>
           <div className="hero-overlay"></div>
         </div>
         
@@ -453,7 +450,7 @@ export default function Home() {
           onClick={() => handleWhatsAppBooking('assistance')}
           aria-label="Contact via WhatsApp"
         >
-          <Image src="/whatsapp-icon.png" alt="WhatsApp" width={30} height={30} />
+          <Image src="/whatsapp-icon.svg" alt="WhatsApp" width={30} height={30} />
         </button>
       </div>
     </>

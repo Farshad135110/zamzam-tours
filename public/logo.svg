@@ -1,0 +1,5 @@
+<svg width="150" height="60" xmlns="http://www.w3.org/2000/svg">
+  <rect width="150" height="60" fill="#053b3c" rx="5"/>
+  <text x="75" y="25" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#f8b500" text-anchor="middle">ZamZam</text>
+  <text x="75" y="45" font-family="Arial, sans-serif" font-size="14" fill="white" text-anchor="middle">TOURS</text>
+</svg>

@@ -1,0 +1,5 @@
+<svg width="400" height="300" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="300" fill="#0a5c5e"/>
+  <text x="200" y="140" font-family="Arial" font-size="32" fill="white" text-anchor="middle" font-weight="bold">KDH</text>
+  <text x="200" y="180" font-family="Arial" font-size="18" fill="#f8b500" text-anchor="middle">ZamZam Tours Vehicle</text>
+</svg>
