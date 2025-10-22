@@ -99,15 +99,17 @@ body {
   top: 0;
   left: 0;
   width: 100%;
-  background-color: rgba(255, 255, 255, 0.95);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  background-color: transparent;
+  box-shadow: none;
   z-index: 1000;
   transition: all 0.3s ease;
+  padding: 20px 0;
 }
 
 .header.scrolled {
-  background-color: white;
+  background-color: rgba(255, 255, 255, 0.98);
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  padding: 10px 0;
 }
 
 .header .container {
@@ -124,22 +126,58 @@ body {
 .nav {
   display: flex;
   align-items: center;
-  gap: 2rem;
+  gap: 2.5rem;
 }
 
 .nav a {
   text-decoration: none;
-  color: var(--text-color);
-  font-weight: 500;
-  transition: color 0.3s ease;
+  color: #333;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.nav a::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: var(--secondary-color);
+  transition: width 0.3s ease;
 }
 
 .nav a:hover {
   color: var(--primary-color);
 }
 
+.nav a:hover::after {
+  width: 100%;
+}
+
 .language-selector {
   margin-left: 1rem;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.lang-btn {
+  padding: 6px 12px;
+  border: 2px solid var(--primary-color);
+  border-radius: 4px;
+  background-color: transparent;
+  color: var(--primary-color);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.lang-btn:hover,
+.lang-btn.active {
+  background-color: var(--primary-color);
+  color: white;
 }
 
 .language-dropdown {
