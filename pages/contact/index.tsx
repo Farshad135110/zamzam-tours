@@ -2,6 +2,8 @@
 import { useState, useRef, useEffect } from 'react';
 import Head from 'next/head';
 import Image from 'next/image';
+import Navbar from '../../components/Navbar';
+import Footer from '../../components/Footer';
 
 export default function Contact() {
   const [activeTab, setActiveTab] = useState('general');
@@ -147,7 +149,7 @@ export default function Contact() {
         break;
       case 'whatsapp':
         const whatsappMessage = `Hello Zamzam Tours! I would like to get more information about your services.`;
-        window.open(`https://wa.me/94771234567?text=${encodeURIComponent(whatsappMessage)}`, '_blank');
+        window.open(`https://wa.me/94766135110?text=${encodeURIComponent(whatsappMessage)}`, '_blank');
         break;
       case 'email':
         window.open(`mailto:${method.details}?subject=Inquiry from Zamzam Tours Website`);
@@ -188,7 +190,7 @@ Please respond promptly.
       `.trim();
 
       // Open WhatsApp with pre-filled message
-      window.open(`https://wa.me/94771234567?text=${encodeURIComponent(whatsappMessage)}`, '_blank');
+      window.open(`https://wa.me/94766135110?text=${encodeURIComponent(whatsappMessage)}`, '_blank');
       
       setSubmitStatus('success');
       setFormData({
@@ -220,8 +222,10 @@ Please respond promptly.
         <meta name="description" content="Get in touch with Zamzam Tours. Multiple contact methods including phone, WhatsApp, email, and office locations across Sri Lanka." />
       </Head>
 
+      <Navbar />
+
       {/* Hero Section */}
-      <section className="contact-hero">
+      <section className="contact-hero" style={{ marginTop: '80px' }}>
         <div className="hero-background">
           <Image 
             src="/contact/contact-hero.jpg" 
@@ -451,7 +455,7 @@ Please respond promptly.
                   className="btn-secondary"
                   onClick={() => {
                     const message = `Hello! I need assistance with: ${formData.subject || 'General inquiry'}`;
-                    window.open(`https://wa.me/94771234567?text=${encodeURIComponent(message)}`, '_blank');
+                    window.open(`https://wa.me/94766135110?text=${encodeURIComponent(message)}`, '_blank');
                   }}
                 >
                   Quick WhatsApp Chat
@@ -591,7 +595,7 @@ Please respond promptly.
             <div className="emergency-actions">
               <button 
                 className="btn-primary"
-                onClick={() => window.open('tel:+94771234567')}
+                onClick={() => window.open('tel:+94766135110')}
               >
                 Emergency Call
               </button>
@@ -599,7 +603,7 @@ Please respond promptly.
                 className="btn-secondary"
                 onClick={() => {
                   const message = 'EMERGENCY: I need immediate assistance with my booking.';
-                  window.open(`https://wa.me/94771234567?text=${encodeURIComponent(message)}`, '_blank');
+                  window.open(`https://wa.me/94766135110?text=${encodeURIComponent(message)}`, '_blank');
                 }}
               >
                 Emergency WhatsApp
@@ -638,7 +642,7 @@ Please respond promptly.
           left: 0;
           width: 100%;
           height: 100%;
-          background: linear-gradient(135deg, rgba(5, 59, 60, 0.9) 0%, rgba(5, 59, 60, 0.6) 100%);
+          background: linear-gradient(135deg, #053b3c 0%, #0a5c5e 100%);
         }
 
         .hero-content {
@@ -1135,7 +1139,7 @@ Please respond promptly.
         /* Emergency Banner */
         .emergency-banner {
           padding: 3rem 0;
-          background: linear-gradient(135deg, #e74c3c, #c0392b);
+          background: linear-gradient(135deg, #053b3c, #032626);
           color: white;
         }
 
@@ -1172,7 +1176,7 @@ Please respond promptly.
 
         .emergency-banner .btn-primary {
           background: white;
-          color: #e74c3c;
+          color: #053b3c;
         }
 
         .emergency-banner .btn-secondary {
@@ -1249,6 +1253,8 @@ Please respond promptly.
           }
         }
       `}</style>
+
+      <Footer />
     </>
   );
 }

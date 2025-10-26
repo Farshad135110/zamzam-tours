@@ -3,6 +3,8 @@ import { useState, useEffect, useRef } from 'react';
 import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
+import Navbar from '../../components/Navbar';
+import Footer from '../../components/Footer';
 
 export default function About() {
   const [activeTab, setActiveTab] = useState('story');
@@ -213,8 +215,10 @@ export default function About() {
         <meta name="description" content="Learn about Zamzam Tours' journey, team, values, and commitment to providing exceptional travel experiences in Sri Lanka since 2010." />
       </Head>
 
+      <Navbar />
+
       {/* Hero Section */}
-      <section className="about-hero">
+      <section className="about-hero" style={{ marginTop: '80px' }}>
         <div className="hero-background">
           <Image 
             src="/about/hero-about.jpg" 
@@ -573,7 +577,7 @@ export default function About() {
           left: 0;
           width: 100%;
           height: 100%;
-          background: linear-gradient(135deg, rgba(5, 59, 60, 0.9) 0%, rgba(5, 59, 60, 0.6) 100%);
+          background: linear-gradient(135deg, #053b3c 0%, #0a5c5e 100%);
         }
 
         .hero-content {
@@ -1216,6 +1220,8 @@ export default function About() {
           }
         }
       `}</style>
+
+      <Footer />
     </>
   );
 }

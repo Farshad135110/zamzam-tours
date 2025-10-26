@@ -3,6 +3,8 @@ import { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import Image from 'next/image';
+import Navbar from '../../components/Navbar';
+import Footer from '../../components/Footer';
 
 interface Tour {
   id: number;
@@ -285,45 +287,10 @@ export default function Tours() {
         <meta name="keywords" content="Sri Lanka tours, cultural tours, adventure tours, beach tours, wildlife safari, North East Sri Lanka, tour packages" />
       </Head>
 
-      {/* Header/Navbar */}
-      <header className={`header ${isScrolled ? 'scrolled' : ''}`}>
-        <div className="container">
-          <div className="logo">
-            <Link href="/">
-              <Image src="/logo.svg" alt="Zamzam Tours" width={150} height={60} />
-            </Link>
-          </div>
-          
-          <nav className={`nav ${isMenuOpen ? 'nav-open' : ''}`}>
-            <Link href="/">Home</Link>
-            <Link href="/tours">Tours</Link>
-            <Link href="/self-drive">Self Drive</Link>
-            <Link href="/airport-transfer">Airport Transfer</Link>
-            <Link href="/hotels">Hotels</Link>
-            <Link href="/gallery">Gallery</Link>
-            <Link href="/about">About</Link>
-            <Link href="/contact">Contact</Link>
-            
-            <div className="language-selector">
-              <button className="lang-btn">EN</button>
-              <button className="lang-btn">DE</button>
-            </div>
-          </nav>
-
-          <button 
-            className="menu-toggle"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            aria-label="Toggle menu"
-          >
-            <span></span>
-            <span></span>
-            <span></span>
-          </button>
-        </div>
-      </header>
+      <Navbar />
 
       {/* Hero Section */}
-      <section className="tours-hero">
+      <section className="tours-hero" style={{ marginTop: '80px' }}>
         <div className="tours-hero-background">
           <Image 
             src="/tours/hero-tours.jpg" 
@@ -731,7 +698,7 @@ export default function Tours() {
           left: 0;
           width: 100%;
           height: 100%;
-          background: linear-gradient(135deg, rgba(5, 59, 60, 0.8) 0%, rgba(5, 59, 60, 0.4) 100%);
+          background: linear-gradient(135deg, #053b3c 0%, #0a5c5e 100%);
         }
 
         .tours-hero-content {
@@ -1440,6 +1407,8 @@ export default function Tours() {
           }
         }
       `}</style>
+
+      <Footer />
     </>
   );
 }

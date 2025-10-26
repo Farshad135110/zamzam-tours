@@ -3,6 +3,8 @@ import { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import Image from 'next/image';
+import Navbar from '../../components/Navbar';
+import Footer from '../../components/Footer';
 
 interface PriceStructure {
   daily: number;
@@ -288,45 +290,10 @@ export default function SelfDrive() {
         <meta name="keywords" content="Sri Lanka car rental, self-drive, with driver, vehicle hire, tourist rental, local rental, Prius, Aqua, van rental, bus rental" />
       </Head>
 
-      {/* Header/Navbar */}
-      <header className={`header ${isScrolled ? 'scrolled' : ''}`}>
-        <div className="container">
-          <div className="logo">
-            <Link href="/">
-              <Image src="/logo.svg" alt="Zamzam Tours" width={150} height={60} />
-            </Link>
-          </div>
-          
-          <nav className={`nav ${isMenuOpen ? 'nav-open' : ''}`}>
-            <Link href="/">Home</Link>
-            <Link href="/tours">Tours</Link>
-            <Link href="/self-drive">Self Drive</Link>
-            <Link href="/airport-transfer">Airport Transfer</Link>
-            <Link href="/hotels">Hotels</Link>
-            <Link href="/gallery">Gallery</Link>
-            <Link href="/about">About</Link>
-            <Link href="/contact">Contact</Link>
-            
-            <div className="language-selector">
-              <button className="lang-btn">EN</button>
-              <button className="lang-btn">DE</button>
-            </div>
-          </nav>
-
-          <button 
-            className="menu-toggle"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            aria-label="Toggle menu"
-          >
-            <span></span>
-            <span></span>
-            <span></span>
-          </button>
-        </div>
-      </header>
+      <Navbar />
 
       {/* Hero Section */}
-      <section className="rent-hero">
+      <section className="rent-hero" style={{ marginTop: '80px' }}>
         <div className="rent-hero-overlay"></div>
         <div className="rent-hero-content">
           <h1>Premium Vehicle Rentals in Sri Lanka</h1>
@@ -681,7 +648,7 @@ Special Requests: ${formData.get('requests')}
           left: 0;
           width: 100%;
           height: 100%;
-          background: rgba(0, 0, 0, 0.2);
+          background: linear-gradient(135deg, #053b3c 0%, #0a5c5e 100%);
         }
 
         .rent-hero-content {
@@ -1132,6 +1099,9 @@ Special Requests: ${formData.get('requests')}
           }
         }
       `}</style>
+
+      <Footer />
     </>
   );
 }
+

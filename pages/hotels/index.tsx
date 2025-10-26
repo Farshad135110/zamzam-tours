@@ -3,6 +3,8 @@ import { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import Image from 'next/image';
+import Navbar from '../../components/Navbar';
+import Footer from '../../components/Footer';
 
 export default function Hotels() {
   const [searchParams, setSearchParams] = useState({
@@ -272,7 +274,7 @@ export default function Hotels() {
     message += `Please provide availability and complete booking details.`;
 
     const encodedMessage = encodeURIComponent(message);
-    window.open(`https://wa.me/94771234567?text=${encodedMessage}`, '_blank');
+    window.open(`https://wa.me/94766135110?text=${encodedMessage}`, '_blank');
   };
 
   // Open hotel details and booking
@@ -289,8 +291,10 @@ export default function Hotels() {
         <meta name="keywords" content="Sri Lanka hotels, accommodation booking, hotel packages, beach resorts, luxury hotels, Colombo hotels, Galle hotels" />
       </Head>
 
+      <Navbar />
+
       {/* Hero Section */}
-      <section className="hotels-hero">
+      <section className="hotels-hero" style={{ marginTop: '80px' }}>
         <div className="hotels-hero-background">
           <Image 
             src="/hotels/hotel-hero.jpg" 
@@ -490,7 +494,7 @@ export default function Hotels() {
                     onClick={() => {
                       const message = `Hello Zamzam Tours! I'm interested in the "${pkg.name}" package. Please send me more details and availability.`;
                       const encodedMessage = encodeURIComponent(message);
-                      window.open(`https://wa.me/94771234567?text=${encodedMessage}`, '_blank');
+                      window.open(`https://wa.me/94766135110?text=${encodedMessage}`, '_blank');
                     }}
                   >
                     Book This Package
@@ -646,7 +650,7 @@ export default function Hotels() {
                     onClick={() => {
                       const message = `Hello Zamzam Tours! I'm interested in ${service.name} service. Please provide more details.`;
                       const encodedMessage = encodeURIComponent(message);
-                      window.open(`https://wa.me/94771234567?text=${encodedMessage}`, '_blank');
+                      window.open(`https://wa.me/94766135110?text=${encodedMessage}`, '_blank');
                     }}
                   >
                     Learn More
@@ -705,7 +709,7 @@ export default function Hotels() {
                 onClick={() => {
                   const message = `Hello Zamzam Tours! I want to book a complete travel package including hotel, transfers, and tours. Please help me plan my trip.`;
                   const encodedMessage = encodeURIComponent(message);
-                  window.open(`https://wa.me/94771234567?text=${encodedMessage}`, '_blank');
+                  window.open(`https://wa.me/94766135110?text=${encodedMessage}`, '_blank');
                 }}
               >
                 💬 Plan My Complete Trip on WhatsApp
@@ -938,7 +942,7 @@ export default function Hotels() {
           left: 0;
           width: 100%;
           height: 100%;
-          background: linear-gradient(135deg, rgba(5, 59, 60, 0.8) 0%, rgba(5, 59, 60, 0.4) 100%);
+          background: linear-gradient(135deg, #053b3c 0%, #0a5c5e 100%);
         }
 
         .hotels-hero-content {
@@ -1166,7 +1170,7 @@ export default function Hotels() {
         }
 
         .price-save {
-          background: #e74c3c;
+          background: #053b3c;
           color: white;
           padding: 3px 8px;
           border-radius: 12px;
@@ -1673,6 +1677,8 @@ export default function Hotels() {
           }
         }
       `}</style>
+
+      <Footer />
     </>
   );
 }

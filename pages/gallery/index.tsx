@@ -2,6 +2,8 @@
 import { useState, useEffect, useRef } from 'react';
 import Head from 'next/head';
 import Image from 'next/image';
+import Navbar from '../../components/Navbar';
+import Footer from '../../components/Footer';
 
 export default function Gallery() {
   const [activeCategory, setActiveCategory] = useState('all');
@@ -278,6 +280,8 @@ export default function Gallery() {
         <meta name="description" content="Explore breathtaking photos of Sri Lanka destinations, tours, hotels, and experiences through Zamzam Tours' animated gallery." />
       </Head>
 
+      <Navbar />
+
       {/* Loading Animation */}
       {loading && (
         <div className="loading-screen">
@@ -297,7 +301,7 @@ export default function Gallery() {
       )}
 
       {/* Animated Hero Section */}
-      <section className="gallery-hero">
+      <section className="gallery-hero" style={{ marginTop: '80px' }}>
         <div 
           className="hero-background"
           style={{ transform: `translateY(${parallaxOffset * 0.3}px)` }}
@@ -734,9 +738,9 @@ export default function Gallery() {
           height: 100%;
           background: linear-gradient(
             135deg,
-            rgba(5, 59, 60, 0.8) 0%,
-            rgba(5, 59, 60, 0.4) 50%,
-            rgba(5, 59, 60, 0.8) 100%
+            #053b3c 0%,
+            #0a5c5e 50%,
+            #053b3c 100%
           );
         }
 
@@ -1471,6 +1475,8 @@ export default function Gallery() {
           }
         }
       `}</style>
+
+      <Footer />
     </>
   );
 }

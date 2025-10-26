@@ -3,6 +3,8 @@ import { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import Image from 'next/image';
+import Navbar from '../../components/Navbar';
+import Footer from '../../components/Footer';
 
 export default function AirportTransfer() {
   const [transferType, setTransferType] = useState('standard');
@@ -206,8 +208,10 @@ export default function AirportTransfer() {
         <meta name="keywords" content="Sri Lanka airport transfer, Colombo airport pickup, meet and greet, CMB airport, taxi service, airport taxi Sri Lanka" />
       </Head>
 
+      <Navbar />
+
       {/* Hero Section */}
-      <section className="transfer-hero">
+      <section className="transfer-hero" style={{ marginTop: '80px' }}>
         <div className="transfer-hero-background">
           <Image 
             src="/transfer/airport-hero.jpg" 
@@ -743,7 +747,7 @@ export default function AirportTransfer() {
           left: 0;
           width: 100%;
           height: 100%;
-          background: linear-gradient(135deg, rgba(5, 59, 60, 0.8) 0%, rgba(5, 59, 60, 0.4) 100%);
+          background: linear-gradient(135deg, #053b3c 0%, #0a5c5e 100%);
         }
 
         .transfer-hero-content {
@@ -1307,6 +1311,8 @@ export default function AirportTransfer() {
           }
         }
       `}</style>
+
+      <Footer />
     </>
   );
 }

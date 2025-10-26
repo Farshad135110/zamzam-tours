@@ -1,5 +1,7 @@
 import Head from 'next/head'
 import { useI18n } from '../../src/i18n/I18nContext'
+import Navbar from '../../components/Navbar'
+import Footer from '../../components/Footer'
 
 const vehicles = [
   'Bus', 'KDH', 'Tour Van', 'WagonR', 'Shuttle', 'Every Buddy Van', 'Aqua', 'Prius'
@@ -12,7 +14,8 @@ export default function Fleet() {
       <Head>
         <title>{t('fleet.title')} - ZamZam Tours</title>
       </Head>
-      <div className="max-w-6xl mx-auto px-6 py-12">
+      <Navbar />
+      <div className="max-w-6xl mx-auto px-6 py-12" style={{ marginTop: '80px' }}>
         <h1 className="text-3xl font-bold mb-6">{t('fleet.heading')}</h1>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {vehicles.map(v => (
@@ -25,6 +28,7 @@ export default function Fleet() {
           ))}
         </div>
       </div>
+      <Footer />
     </>
   )
 }
