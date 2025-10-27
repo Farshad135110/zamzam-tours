@@ -44,39 +44,7 @@ html {
 }
 
 /* Navbar Styles */
-.navbar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 1000;
-  background: rgba(5, 59, 60, 0.95);
-  backdrop-filter: blur(10px);
-  padding: 1rem 0;
-  transition: all 0.3s ease;
-}
-
-.navbar.scrolled {
-  background: rgba(5, 59, 60, 1);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-.navbar a,
-.navbar button,
-.navbar .nav-link {
-  color: #ffffff !important;
-  text-decoration: none;
-  transition: color 0.3s ease;
-}
-
-.navbar a:hover,
-.navbar .nav-link:hover {
-  color: #f8b500 !important;
-}
-
-.navbar .logo img {
-  filter: brightness(0) invert(1);
-}
+/* Navbar styles are now in Navbar.tsx component */
 
 /* Consistent Section Spacing */
 section {

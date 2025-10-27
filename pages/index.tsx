@@ -13,7 +13,7 @@ import { fadeInUp, staggerContainer, cardHover } from '../src/utils/animations';
 
 export default function Home() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState('self-drive');
+  const [activeTab, setActiveTab] = useState('vehicles');
   const [activeLanguage, setActiveLanguage] = useState('en');
   const [isScrolled, setIsScrolled] = useState(false);
   const heroRef = useRef(null);
@@ -319,10 +319,10 @@ export default function Home() {
           <AnimatedSection animation="fadeInUp" delay={0.2}>
             <div className="services-tabs">
               <button 
-                className={`tab ${activeTab === 'self-drive' ? 'active' : ''}`}
-                onClick={() => setActiveTab('self-drive')}
+                className={`tab ${activeTab === 'vehicles' ? 'active' : ''}`}
+                onClick={() => setActiveTab('vehicles')}
               >
-                Self-Drive Rentals
+                Vehicle Rentals
               </button>
               <button 
                 className={`tab ${activeTab === 'tours' ? 'active' : ''}`}
@@ -340,11 +340,11 @@ export default function Home() {
           </AnimatedSection>
           
           <div className="services-content">
-            {activeTab === 'self-drive' && (
+            {activeTab === 'vehicles' && (
               <div className="service-details">
                 <AnimatedSection animation="fadeInUp">
                   <h3>Flexible Vehicle Rentals</h3>
-                  <p>Choose from our extensive fleet for self-drive or with driver options. All vehicles are well-maintained and fully insured for your safety.</p>
+                  <p>Choose from our extensive fleet with both self-drive and with-driver options. All vehicles are well-maintained and fully insured for your safety and comfort.</p>
                 </AnimatedSection>
                 
                 <div className="vehicle-grid">
