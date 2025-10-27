@@ -3,7 +3,8 @@ import { useState, useEffect, useRef } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import Image from 'next/image';
-import { CldImage } from 'next-cloudinary';
+import { CldImage, CldVideoPlayer } from 'next-cloudinary';
+import 'next-cloudinary/dist/cld-video-player.css';
 import { motion } from 'framer-motion';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -16,6 +17,16 @@ export default function Home() {
   const [activeLanguage, setActiveLanguage] = useState('en');
   const [isScrolled, setIsScrolled] = useState(false);
   const heroRef = useRef(null);
+  const video1Ref = useRef<HTMLVideoElement>(null);
+  const video2Ref = useRef<HTMLVideoElement>(null);
+  const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
+  const [activePlayer, setActivePlayer] = useState<1 | 2>(1);
+  
+  // Array of videos from zamzam-tours/heroes/home folder
+  const heroVideos = [
+    'https://res.cloudinary.com/dhfqwxyb4/video/upload/v1761564719/191283-889685028_small_eyum5p.mp4',
+    'https://res.cloudinary.com/dhfqwxyb4/video/upload/v1761565698/180699-864967760_udzhyj.mp4',
+  ];
   
   // Language options
   const languages = [
@@ -66,6 +77,40 @@ export default function Home() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
   
+  // Handle video autoplay
+  useEffect(() => {
+    if (video1Ref.current) {
+      video1Ref.current.play().catch((error) => {
+        console.log('Video autoplay failed:', error);
+      });
+    }
+  }, []);
+  
+  // Handle video end - switch to other player
+  const handleVideo1End = () => {
+    const nextIndex = (currentVideoIndex + 1) % heroVideos.length;
+    
+    if (video2Ref.current) {
+      video2Ref.current.src = heroVideos[nextIndex];
+      video2Ref.current.load();
+      video2Ref.current.play();
+      setActivePlayer(2);
+      setCurrentVideoIndex(nextIndex);
+    }
+  };
+  
+  const handleVideo2End = () => {
+    const nextIndex = (currentVideoIndex + 1) % heroVideos.length;
+    
+    if (video1Ref.current) {
+      video1Ref.current.src = heroVideos[nextIndex];
+      video1Ref.current.load();
+      video1Ref.current.play();
+      setActivePlayer(1);
+      setCurrentVideoIndex(nextIndex);
+    }
+  };
+  
   // Handle WhatsApp booking
   const handleWhatsAppBooking = (service: string) => {
     const message = `Hello Zamzam Tours! I'm interested in booking ${service}. Please provide more details.`;
@@ -90,15 +135,56 @@ export default function Home() {
       <Navbar />
       
       {/* Hero Section */}
-      <section className="hero" ref={heroRef} style={{ marginTop: '0', position: 'relative', minHeight: '100vh' }}>
-        {/* Cloudinary Hero Background Image */}
-        <CldImage
-          src="zamzam-tours/heroes/home-hero"
-          fill
-          alt="Sri Lanka Tours and Travel"
-          priority
-          style={{ objectFit: 'cover' }}
-        />
+      <section className="hero" ref={heroRef} style={{ marginTop: '0', position: 'relative', minHeight: '100vh', overflow: 'hidden' }}>
+        {/* Cloudinary Hero Background Video - Dual Player for Seamless Loop */}
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          zIndex: 0,
+          overflow: 'hidden'
+        }}>
+          {/* Video Player 1 */}
+          <video
+            ref={video1Ref}
+            autoPlay
+            muted
+            playsInline
+            preload="auto"
+            onEnded={handleVideo1End}
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              opacity: activePlayer === 1 ? 1 : 0,
+              transition: 'opacity 0.5s ease-in-out'
+            }}
+            src={heroVideos[0]}
+          />
+          {/* Video Player 2 */}
+          <video
+            ref={video2Ref}
+            muted
+            playsInline
+            preload="auto"
+            onEnded={handleVideo2End}
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              opacity: activePlayer === 2 ? 1 : 0,
+              transition: 'opacity 0.5s ease-in-out'
+            }}
+          />
+        </div>
         
         <div className="hero-overlay" style={{
           position: 'absolute',
@@ -106,7 +192,7 @@ export default function Home() {
           left: 0,
           right: 0,
           bottom: 0,
-          background: 'linear-gradient(135deg, rgba(5, 59, 60, 0.85), rgba(10, 92, 94, 0.75))',
+          background: 'linear-gradient(135deg, rgba(5, 59, 60, 0.45), rgba(10, 92, 94, 0.35))',
           zIndex: 1
         }}></div>
         
@@ -121,8 +207,14 @@ export default function Home() {
               variants={fadeInUp}
               transition={{ delay: 0.2 }}
             >
-              <h1 className="hero-title">
-                Discover the Wonders of <span style={{ color: '#f8b500' }}>Sri Lanka</span>
+              <h1 className="hero-title" style={{ 
+                textShadow: '2px 2px 8px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 0, 0, 0.5)',
+                color: '#ffffff'
+              }}>
+                Discover the Wonders of <span style={{ 
+                  color: '#f8b500',
+                  textShadow: '2px 2px 8px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 0, 0, 0.5)'
+                }}>Sri Lanka</span>
               </h1>
             </motion.div>
             
@@ -130,7 +222,10 @@ export default function Home() {
               variants={fadeInUp}
               transition={{ delay: 0.4 }}
             >
-              <p className="hero-subtitle">
+              <p className="hero-subtitle" style={{ 
+                textShadow: '1px 1px 6px rgba(0, 0, 0, 0.9), 0 0 15px rgba(0, 0, 0, 0.6)',
+                color: '#ffffff'
+              }}>
                 Premium self-drive car rentals, guided tours, and airport transfers across the island
               </p>
             </motion.div>
@@ -143,14 +238,56 @@ export default function Home() {
                 <button 
                   className="btn btn-primary"
                   onClick={() => handleWhatsAppBooking('a tour package')}
-                  style={{ cursor: 'pointer' }}
+                  style={{ 
+                    cursor: 'pointer',
+                    backgroundColor: '#f8b500',
+                    color: '#000000',
+                    padding: '15px 40px',
+                    fontSize: '18px',
+                    fontWeight: 'bold',
+                    border: 'none',
+                    borderRadius: '50px',
+                    boxShadow: '0 6px 20px rgba(248, 181, 0, 0.4), 0 0 30px rgba(0, 0, 0, 0.5)',
+                    transition: 'all 0.3s ease',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'scale(1.05)';
+                    e.currentTarget.style.boxShadow = '0 8px 25px rgba(248, 181, 0, 0.6), 0 0 40px rgba(0, 0, 0, 0.7)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'scale(1)';
+                    e.currentTarget.style.boxShadow = '0 6px 20px rgba(248, 181, 0, 0.4), 0 0 30px rgba(0, 0, 0, 0.5)';
+                  }}
                 >
                   Book a Tour
                 </button>
                 <button 
                   className="btn btn-secondary"
                   onClick={() => handleWhatsAppBooking('a vehicle')}
-                  style={{ cursor: 'pointer' }}
+                  style={{ 
+                    cursor: 'pointer',
+                    backgroundColor: 'transparent',
+                    color: '#ffffff',
+                    padding: '15px 40px',
+                    fontSize: '18px',
+                    fontWeight: 'bold',
+                    border: '3px solid #ffffff',
+                    borderRadius: '50px',
+                    boxShadow: '0 6px 20px rgba(255, 255, 255, 0.3), 0 0 30px rgba(0, 0, 0, 0.5)',
+                    transition: 'all 0.3s ease',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = '#ffffff';
+                    e.currentTarget.style.color = '#053b3c';
+                    e.currentTarget.style.transform = 'scale(1.05)';
+                    e.currentTarget.style.boxShadow = '0 8px 25px rgba(255, 255, 255, 0.5), 0 0 40px rgba(0, 0, 0, 0.7)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                    e.currentTarget.style.color = '#ffffff';
+                    e.currentTarget.style.transform = 'scale(1)';
+                    e.currentTarget.style.boxShadow = '0 6px 20px rgba(255, 255, 255, 0.3), 0 0 30px rgba(0, 0, 0, 0.5)';
+                  }}
                 >
                   Rent a Vehicle
                 </button>
