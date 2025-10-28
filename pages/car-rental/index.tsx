@@ -94,6 +94,25 @@ export default function SelfDrive() {
     },
     {
       id: 2,
+      name: 'Toyota Vitz',
+      category: 'compact',
+      type: 'self-drive, with-driver',
+      image: '/vehicles/vitz.svg',
+      capacity: '4 passengers, 2 luggage',
+      transmission: 'Automatic',
+      fuel: 'Petrol',
+      features: ['AC', 'GPS', 'Power Steering', 'Airbags'],
+      touristPrices: {
+        'self-drive': { daily: 38, weekly: 228, monthly: 760 },
+        'with-driver': { daily: 58, weekly: 348, monthly: 1160 }
+      },
+      localPrices: {
+        'self-drive': { daily: 28, weekly: 168, monthly: 560 },
+        'with-driver': { daily: 48, weekly: 288, monthly: 960 }
+      }
+    },
+    {
+      id: 3,
       name: 'Toyota Aqua',
       category: 'compact',
       type: 'self-drive, with-driver',
@@ -112,7 +131,7 @@ export default function SelfDrive() {
       }
     },
     {
-      id: 3,
+      id: 4,
       name: 'Suzuki WagonR',
       category: 'hatchback',
       type: 'self-drive, with-driver',
@@ -131,7 +150,7 @@ export default function SelfDrive() {
       }
     },
     {
-      id: 4,
+      id: 5,
       name: 'Toyota KDH',
       category: 'van',
       type: 'self-drive, with-driver',
@@ -150,7 +169,7 @@ export default function SelfDrive() {
       }
     },
     {
-      id: 5,
+      id: 6,
       name: 'Tour Van',
       category: 'van',
       type: 'with-driver',
@@ -169,7 +188,7 @@ export default function SelfDrive() {
       }
     },
     {
-      id: 6,
+      id: 7,
       name: 'Every Buddy Van',
       category: 'van',
       type: 'self-drive, with-driver',
@@ -188,7 +207,7 @@ export default function SelfDrive() {
       }
     },
     {
-      id: 7,
+      id: 8,
       name: 'Shuttle Van',
       category: 'van',
       type: 'self-drive, with-driver',
@@ -207,7 +226,7 @@ export default function SelfDrive() {
       }
     },
     {
-      id: 8,
+      id: 9,
       name: 'Tourist Bus',
       category: 'bus',
       type: 'with-driver',
@@ -400,24 +419,6 @@ export default function SelfDrive() {
                 </button>
               </div>
             </div>
-
-            <div className="filter-group">
-              <label>Customer Type</label>
-              <div className="filter-buttons">
-                <button 
-                  className={`filter-btn ${customerType === 'tourist' ? 'active' : ''}`}
-                  onClick={() => setCustomerType('tourist')}
-                >
-                  Tourist
-                </button>
-                <button 
-                  className={`filter-btn ${customerType === 'local' ? 'active' : ''}`}
-                  onClick={() => setCustomerType('local')}
-                >
-                  Local
-                </button>
-              </div>
-            </div>
           </div>
             </motion.div>
           </div>
@@ -487,14 +488,6 @@ export default function SelfDrive() {
                         <span className="label">Capacity:</span>
                         <span>{vehicle.capacity}</span>
                       </div>
-                      <div className="spec">
-                        <span className="label">Transmission:</span>
-                        <span>{vehicle.transmission}</span>
-                      </div>
-                      <div className="spec">
-                        <span className="label">Fuel:</span>
-                        <span>{vehicle.fuel}</span>
-                      </div>
                     </div>
 
                     <div className="vehicle-features">
@@ -505,30 +498,18 @@ export default function SelfDrive() {
 
                     <div className="vehicle-pricing">
                       <div className="price-item">
-                        <span className="period">Daily</span>
+                        <span className="period">Daily Rate</span>
                         <span className="price">
                           ${customerType === 'tourist' ? 
                             vehicle.touristPrices[rentalType].daily : 
                             vehicle.localPrices[rentalType].daily}
                         </span>
                       </div>
-                      <div className="price-item">
-                        <span className="period">Weekly</span>
-                        <span className="price">
-                          ${customerType === 'tourist' ? 
-                            vehicle.touristPrices[rentalType].weekly : 
-                            vehicle.localPrices[rentalType].weekly}
-                        </span>
-                      </div>
-                      <div className="price-item">
-                        <span className="period">Monthly</span>
-                        <span className="price">
-                          ${customerType === 'tourist' ? 
-                            vehicle.touristPrices[rentalType].monthly : 
-                            vehicle.localPrices[rentalType].monthly}
-                        </span>
-                      </div>
                     </div>
+                    <p className="pricing-note">
+                      Weekly & monthly rates available via WhatsApp<br/>
+                      <span className="km-charge">+ Additional charge per km applies</span>
+                    </p>
 
                     <div className="vehicle-actions">
                       <button 
@@ -569,8 +550,8 @@ export default function SelfDrive() {
                   <ul>
                     <li>Professional, experienced drivers</li>
                     <li>English-speaking guides available</li>
-                    <li>Driver accommodation included</li>
                     <li>Flexible itinerary planning</li>
+                    <li>Local knowledge & expertise</li>
                   </ul>
                 </div>
                 <div className="term-item">
@@ -748,6 +729,14 @@ Special Requests: ${formData.get('requests')}
       )}
 
       <style jsx>{`
+        /* Container */
+        .container {
+          max-width: 1200px;
+          margin: 0 auto;
+          padding: 0 20px;
+        }
+
+        /* Hero Section */
         .rent-hero {
           position: relative;
           height: 60vh;
@@ -798,9 +787,10 @@ Special Requests: ${formData.get('requests')}
 
         .filter-group {
           background: rgba(255, 255, 255, 0.15);
-          padding: 1.5rem;
-          border-radius: 10px;
+          padding: 1.5rem 2rem;
+          border-radius: 15px;
           backdrop-filter: blur(10px);
+          min-width: 280px;
         }
 
         .filter-group label {
@@ -812,30 +802,40 @@ Special Requests: ${formData.get('requests')}
 
         .filter-buttons {
           display: flex;
-          gap: 0.5rem;
+          gap: 0.75rem;
         }
 
         .filter-btn {
-          padding: 10px 20px;
+          flex: 1;
+          padding: 12px 24px;
           border: 2px solid white;
           background: transparent;
           color: white;
           border-radius: 25px;
           cursor: pointer;
           font-weight: 600;
+          font-size: 0.95rem;
           transition: all 0.3s ease;
         }
 
-        .filter-btn.active,
-        .filter-btn:hover {
-          background: white;
-          color: var(--primary-color);
+        .filter-btn.active {
+          background: #f8b500;
+          border-color: #f8b500;
+          color: #053b3c;
         }
 
+        .filter-btn:hover:not(.active) {
+          background: rgba(255, 255, 255, 0.2);
+          border-color: white;
+        }
+
+        /* Main Content */
         .rent-main {
-          padding: 80px 0;
+          padding: 4rem 0;
+          background: #f9f9f9;
         }
 
+        /* Section Header */
         .section-header {
           text-align: center;
           margin-bottom: 3rem;
@@ -843,66 +843,81 @@ Special Requests: ${formData.get('requests')}
 
         .section-header h2 {
           font-size: 2.5rem;
-          color: var(--primary-color);
-          margin-bottom: 1rem;
+          color: #053b3c;
+          margin-bottom: 0.75rem;
+          font-weight: 700;
         }
 
         .section-header p {
           font-size: 1.1rem;
-          color: var(--text-light);
+          color: #666;
         }
 
+        /* Vehicles Grid */
         .vehicles-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+          grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
           gap: 2rem;
-          margin-bottom: 4rem;
+          margin-bottom: 3rem;
         }
 
+        /* Vehicle Card */
         .vehicle-card {
           background: white;
-          border-radius: 10px;
+          border-radius: 12px;
           overflow: hidden;
-          box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-          transition: transform 0.3s ease, box-shadow 0.3s ease;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+          transition: all 0.3s ease;
+          display: flex;
+          flex-direction: column;
         }
 
         .vehicle-card:hover {
-          transform: translateY(-5px);
-          box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+          transform: translateY(-8px);
+          box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
         }
 
         .vehicle-image {
           position: relative;
-          height: 250px;
-          background: var(--section-bg);
+          height: 220px;
+          background: #f0f0f0;
+          overflow: hidden;
         }
 
         .vehicle-badge {
           position: absolute;
           top: 15px;
           right: 15px;
-          background: var(--secondary-color);
-          color: var(--text-color);
-          padding: 5px 15px;
+          background: #f8b500;
+          color: #053b3c;
+          padding: 6px 16px;
           border-radius: 20px;
           font-size: 0.85rem;
-          font-weight: 600;
+          font-weight: 700;
           text-transform: capitalize;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
         }
 
+        /* Vehicle Content */
         .vehicle-content {
           padding: 1.5rem;
+          flex: 1;
+          display: flex;
+          flex-direction: column;
         }
 
         .vehicle-content h3 {
           font-size: 1.4rem;
-          color: var(--primary-color);
+          color: #053b3c;
           margin-bottom: 1rem;
+          font-weight: 700;
         }
 
+        /* Vehicle Specs */
         .vehicle-specs {
           margin-bottom: 1rem;
+          padding-bottom: 1rem;
+          border-bottom: 1px solid #e0e0e0;
         }
 
         .spec {
@@ -913,90 +928,150 @@ Special Requests: ${formData.get('requests')}
         }
 
         .spec .label {
-          color: var(--text-light);
+          color: #666;
           font-weight: 500;
         }
 
+        .spec span:last-child {
+          color: #053b3c;
+          font-weight: 600;
+        }
+
+        /* Vehicle Features */
         .vehicle-features {
           display: flex;
           flex-wrap: wrap;
           gap: 0.5rem;
-          margin-bottom: 1.5rem;
+          margin-bottom: 1.25rem;
         }
 
         .feature-tag {
-          background: var(--section-bg);
-          padding: 4px 10px;
+          background: #f0f7f7;
+          color: #053b3c;
+          padding: 5px 12px;
           border-radius: 15px;
           font-size: 0.8rem;
-          color: var(--text-color);
+          font-weight: 500;
         }
 
+        /* Vehicle Pricing */
         .vehicle-pricing {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 1rem;
-          margin-bottom: 1.5rem;
+          background: linear-gradient(135deg, #053b3c 0%, #0a5c5e 100%);
           padding: 1rem;
-          background: var(--section-bg);
           border-radius: 8px;
+          margin-bottom: 0.5rem;
+          text-align: center;
         }
 
         .price-item {
-          text-align: center;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
         }
 
         .price-item .period {
           display: block;
           font-size: 0.8rem;
-          color: var(--text-light);
+          color: rgba(255, 255, 255, 0.8);
           margin-bottom: 0.3rem;
+          font-weight: 500;
         }
 
         .price-item .price {
           display: block;
-          font-size: 1.2rem;
+          font-size: 1.6rem;
           font-weight: 700;
-          color: var(--primary-color);
+          color: #f8b500;
         }
 
+        .pricing-note {
+          text-align: center;
+          font-size: 0.7rem;
+          color: #999;
+          margin-bottom: 1rem;
+          line-height: 1.4;
+        }
+
+        .km-charge {
+          font-size: 0.65rem;
+          color: #666;
+          font-style: italic;
+        }
+
+        /* Vehicle Actions */
         .vehicle-actions {
-          display: flex;
-          gap: 0.5rem;
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 0.75rem;
+          margin-top: auto;
         }
 
-        .vehicle-actions .btn {
-          flex: 1;
+        /* Buttons */
+        .btn {
+          padding: 12px 24px;
+          border-radius: 8px;
+          font-weight: 600;
+          font-size: 0.95rem;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          border: none;
           text-align: center;
         }
 
+        .btn-primary {
+          background: #f8b500;
+          color: #053b3c;
+        }
+
+        .btn-primary:hover {
+          background: #e6a500;
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(248, 181, 0, 0.3);
+        }
+
+        .btn-secondary {
+          background: white;
+          color: #053b3c;
+          border: 2px solid #053b3c;
+        }
+
+        .btn-secondary:hover {
+          background: #053b3c;
+          color: white;
+          transform: translateY(-2px);
+        }
+
+        /* Terms Section */
         .terms-section {
-          margin-top: 4rem;
+          margin-top: 3rem;
         }
 
         .terms-card {
-          background: var(--section-bg);
+          background: white;
           padding: 3rem;
           border-radius: 15px;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
         }
 
         .terms-card h2 {
           text-align: center;
-          color: var(--primary-color);
-          margin-bottom: 2rem;
+          color: #053b3c;
+          margin-bottom: 2.5rem;
           font-size: 2rem;
+          font-weight: 700;
         }
 
         .terms-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+          grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
           gap: 2rem;
         }
 
         .term-item h3 {
-          color: var(--primary-color);
+          color: #053b3c;
           margin-bottom: 1rem;
           font-size: 1.1rem;
+          font-weight: 700;
         }
 
         .term-item ul {
@@ -1005,19 +1080,21 @@ Special Requests: ${formData.get('requests')}
         }
 
         .term-item li {
-          padding: 0.5rem 0;
-          color: var(--text-light);
-          font-size: 0.9rem;
-          padding-left: 1.5rem;
+          padding: 0.6rem 0;
+          padding-left: 1.75rem;
           position: relative;
+          font-size: 0.95rem;
+          color: #555;
+          line-height: 1.5;
         }
 
         .term-item li::before {
           content: '✓';
           position: absolute;
           left: 0;
-          color: var(--primary-color);
+          color: #f8b500;
           font-weight: bold;
+          font-size: 1.1rem;
         }
 
         .modal-overlay {
@@ -1170,18 +1247,14 @@ Special Requests: ${formData.get('requests')}
 
         @media (max-width: 768px) {
           .rent-hero-content h1 {
-            font-size: 2.2rem;
-          }
-
-          .rent-hero-content p {
-            font-size: 1.1rem;
-          }
-
           .hero-filters {
             flex-direction: column;
             gap: 1rem;
           }
 
+          .vehicles-grid {
+            grid-template-columns: 1fr;
+          }
           .vehicles-grid {
             grid-template-columns: 1fr;
           }

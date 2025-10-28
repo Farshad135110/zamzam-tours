@@ -7,6 +7,7 @@ import { motion } from 'framer-motion';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import AnimatedSection from '../../components/AnimatedSection';
+import { CldImage } from 'next-cloudinary';
 import { fadeInUp } from '../../src/utils/animations';
 
 interface Tour {
@@ -231,39 +232,143 @@ export default function Tours() {
   const popularDestinations = [
     {
       name: 'Sigiriya',
-      image: '/destinations/sigiriya.jpg',
-      description: 'Ancient rock fortress with stunning frescoes and water gardens',
-      tours: 15
-    },
-    {
-      name: 'Ella',
-      image: '/destinations/ella.jpg',
-      description: 'Mountain town with hiking trails and panoramic views',
-      tours: 12
-    },
-    {
-      name: 'Galle',
-      image: '/destinations/galle.jpg',
-      description: 'Historic Dutch fort with boutique shops and cafes',
-      tours: 18
+      image: 'zamzam-tours/destinations/sigiriya',
+      description: 'Ancient rock fortress - UNESCO World Heritage Site with stunning frescoes',
+      category: 'Cultural',
+      slug: 'sigiriya'
     },
     {
       name: 'Kandy',
-      image: '/destinations/kandy.jpg',
-      description: 'Cultural capital with the Temple of the Sacred Tooth',
-      tours: 20
+      image: 'zamzam-tours/destinations/kandy',
+      description: 'Sacred city with Temple of the Tooth Relic and cultural performances',
+      category: 'Cultural',
+      slug: 'kandy'
+    },
+    {
+      name: 'Ella',
+      image: 'zamzam-tours/destinations/ella',
+      description: 'Mountain paradise with tea plantations, Nine Arch Bridge, and hiking trails',
+      category: 'Nature',
+      slug: 'ella'
+    },
+    {
+      name: 'Galle',
+      image: 'zamzam-tours/destinations/galle',
+      description: 'Historic Dutch fort city by the ocean - UNESCO World Heritage Site',
+      category: 'Cultural',
+      slug: 'galle'
     },
     {
       name: 'Yala',
-      image: '/destinations/yala.jpg',
-      description: 'Famous national park for leopard and elephant spotting',
-      tours: 8
+      image: 'zamzam-tours/destinations/yala',
+      description: 'Premier wildlife sanctuary with highest leopard density in the world',
+      category: 'Wildlife',
+      slug: 'yala'
+    },
+    {
+      name: 'Nuwara Eliya',
+      image: 'zamzam-tours/destinations/nuwara-eliya',
+      description: 'Little England - Cool climate hill station with tea plantations',
+      category: 'Nature',
+      slug: 'nuwara-eliya'
+    },
+    {
+      name: 'Mirissa',
+      image: 'zamzam-tours/destinations/mirissa',
+      description: 'Whale watching capital with pristine beaches and tropical vibes',
+      category: 'Beach',
+      slug: 'mirissa'
+    },
+    {
+      name: 'Anuradhapura',
+      image: 'zamzam-tours/destinations/anuradhapura',
+      description: 'Ancient capital with sacred Buddhist sites and massive stupas',
+      category: 'Cultural',
+      slug: 'anuradhapura'
+    },
+    {
+      name: 'Polonnaruwa',
+      image: 'zamzam-tours/destinations/polonnaruwa',
+      description: 'Medieval capital with Gal Vihara rock sculptures',
+      category: 'Cultural',
+      slug: 'polonnaruwa'
+    },
+    {
+      name: 'Udawalawe',
+      image: 'zamzam-tours/destinations/udawalawe',
+      description: 'Elephant paradise with guaranteed sightings of wild elephant herds',
+      category: 'Wildlife',
+      slug: 'udawalawe'
+    },
+    {
+      name: 'Trincomalee',
+      image: 'zamzam-tours/destinations/trincomalee',
+      description: 'Pristine east coast beaches, diving spots, and historic temples',
+      category: 'Beach',
+      slug: 'trincomalee'
     },
     {
       name: 'Arugam Bay',
-      image: '/destinations/arugam-bay.jpg',
-      description: 'Surfing paradise on the East Coast',
-      tours: 6
+      image: 'zamzam-tours/destinations/arugam-bay',
+      description: 'World-famous surfing destination on the southeast coast',
+      category: 'Beach',
+      slug: 'arugam-bay'
+    },
+    {
+      name: 'Bentota',
+      image: 'zamzam-tours/destinations/bentota',
+      description: 'Golden beaches and water sports paradise on the southwest coast',
+      category: 'Beach',
+      slug: 'bentota'
+    },
+    {
+      name: 'Hikkaduwa',
+      image: 'zamzam-tours/destinations/hikkaduwa',
+      description: 'Coral reefs, sea turtles, and vibrant beach town atmosphere',
+      category: 'Beach',
+      slug: 'hikkaduwa'
+    },
+    {
+      name: 'Dambulla',
+      image: 'zamzam-tours/destinations/dambulla',
+      description: 'Golden Temple with cave shrines and 150+ Buddha statues',
+      category: 'Cultural',
+      slug: 'dambulla'
+    },
+    {
+      name: 'Horton Plains',
+      image: 'zamzam-tours/destinations/horton-plains',
+      description: 'World\'s End cliff with dramatic 880m drop and cloud forests',
+      category: 'Nature',
+      slug: 'horton-plains'
+    },
+    {
+      name: 'Unawatuna',
+      image: 'zamzam-tours/destinations/unawatuna',
+      description: 'Crescent bay paradise voted one of world\'s best beaches',
+      category: 'Beach',
+      slug: 'unawatuna'
+    },
+    {
+      name: 'Wilpattu',
+      image: 'zamzam-tours/destinations/wilpattu',
+      description: 'Largest national park with unique villus (lakes) and leopards',
+      category: 'Wildlife',
+      slug: 'wilpattu'
+    },
+    {
+      name: 'Jaffna',
+      image: 'zamzam-tours/destinations/jaffna',
+      description: 'Northern Tamil cultural capital with unique heritage and islands',
+      category: 'Cultural',
+      slug: 'jaffna'
+    },
+    {
+      name: 'Adam\'s Peak',
+      image: 'zamzam-tours/destinations/adams-peak',
+      description: 'Sacred mountain pilgrimage with spectacular sunrise views',
+      category: 'Nature',
+      slug: 'adams-peak'
     }
   ];
 
@@ -272,32 +377,162 @@ export default function Tours() {
     {
       name: 'Wildlife Safaris',
       icon: '🦁',
-      description: 'Elephant, leopard and bird watching in national parks'
+      description: 'Elephant, leopard and bird watching in national parks',
+      category: 'Wildlife',
+      slug: 'wildlife-safaris',
+      image: 'zamzam-tours/activities/wildlife-safari'
     },
     {
       name: 'Hiking & Trekking',
       icon: '🥾',
-      description: 'Mountain trails and nature walks'
+      description: 'Mountain trails and nature walks through stunning landscapes',
+      category: 'Adventure',
+      slug: 'hiking-trekking',
+      image: 'zamzam-tours/activities/hiking'
     },
     {
-      name: 'Cultural Sites',
+      name: 'Cultural Tours',
       icon: '🏛️',
-      description: 'Ancient temples, forts and historical monuments'
+      description: 'Ancient temples, forts and historical monuments',
+      category: 'Cultural',
+      slug: 'cultural-tours',
+      image: 'zamzam-tours/activities/cultural-tours'
     },
     {
       name: 'Beach Activities',
       icon: '🏖️',
-      description: 'Swimming, surfing, snorkeling and relaxation'
+      description: 'Swimming, surfing, snorkeling and beach relaxation',
+      category: 'Beach',
+      slug: 'beach-activities',
+      image: 'zamzam-tours/activities/beach'
     },
     {
-      name: 'Tea Experiences',
+      name: 'Tea Plantation Tours',
       icon: '🍵',
-      description: 'Tea plantation tours and tasting sessions'
+      description: 'Visit tea estates and experience Ceylon tea culture',
+      category: 'Cultural',
+      slug: 'tea-plantation-tours',
+      image: 'zamzam-tours/activities/tea-plantation'
     },
     {
-      name: 'Adventure Sports',
-      icon: '🚵',
-      description: 'White water rafting, cycling and more'
+      name: 'Whale Watching',
+      icon: '🐋',
+      description: 'Witness blue whales and dolphins in their natural habitat',
+      category: 'Wildlife',
+      slug: 'whale-watching',
+      image: 'zamzam-tours/activities/whale-watching'
+    },
+    {
+      name: 'Surfing',
+      icon: '�',
+      description: 'World-class surf breaks for all skill levels',
+      category: 'Adventure',
+      slug: 'surfing',
+      image: 'zamzam-tours/activities/surfing'
+    },
+    {
+      name: 'Scuba Diving',
+      icon: '🤿',
+      description: 'Explore vibrant coral reefs and underwater shipwrecks',
+      category: 'Adventure',
+      slug: 'scuba-diving',
+      image: 'zamzam-tours/activities/scuba-diving'
+    },
+    {
+      name: 'Train Journeys',
+      icon: '🚂',
+      description: 'Scenic train rides through tea country and hill stations',
+      category: 'Cultural',
+      slug: 'train-journeys',
+      image: 'zamzam-tours/activities/train-journey'
+    },
+    {
+      name: 'Bird Watching',
+      icon: '🦜',
+      description: 'Spot endemic and migratory bird species',
+      category: 'Wildlife',
+      slug: 'bird-watching',
+      image: 'zamzam-tours/activities/bird-watching'
+    },
+    {
+      name: 'White Water Rafting',
+      icon: '🚣',
+      description: 'Thrilling rapids on Kelani River and other waterways',
+      category: 'Adventure',
+      slug: 'white-water-rafting',
+      image: 'zamzam-tours/activities/rafting'
+    },
+    {
+      name: 'Ayurvedic Spa',
+      icon: '💆',
+      description: 'Traditional healing treatments and wellness therapies',
+      category: 'Wellness',
+      slug: 'ayurvedic-spa',
+      image: 'zamzam-tours/activities/ayurveda'
+    },
+    {
+      name: 'Cooking Classes',
+      icon: '�‍🍳',
+      description: 'Learn authentic Sri Lankan cuisine and spices',
+      category: 'Cultural',
+      slug: 'cooking-classes',
+      image: 'zamzam-tours/activities/cooking'
+    },
+    {
+      name: 'Photography Tours',
+      icon: '📸',
+      description: 'Capture stunning landscapes and wildlife',
+      category: 'Cultural',
+      slug: 'photography-tours',
+      image: 'zamzam-tours/activities/photography'
+    },
+    {
+      name: 'Cycling Tours',
+      icon: '🚴',
+      description: 'Bike through villages, rice paddies and coastal roads',
+      category: 'Adventure',
+      slug: 'cycling-tours',
+      image: 'zamzam-tours/activities/cycling'
+    },
+    {
+      name: 'Rock Climbing',
+      icon: '🧗',
+      description: 'Scale ancient rock formations and mountain cliffs',
+      category: 'Adventure',
+      slug: 'rock-climbing',
+      image: 'zamzam-tours/activities/rock-climbing'
+    },
+    {
+      name: 'Snorkeling',
+      icon: '🤿',
+      description: 'Discover colorful marine life in crystal clear waters',
+      category: 'Beach',
+      slug: 'snorkeling',
+      image: 'zamzam-tours/activities/snorkeling'
+    },
+    {
+      name: 'Temple Visits',
+      icon: '🛕',
+      description: 'Experience sacred Buddhist and Hindu temples',
+      category: 'Cultural',
+      slug: 'temple-visits',
+      image: 'zamzam-tours/activities/temples'
+    },
+    {
+      name: 'Camping',
+      icon: '⛺',
+      description: 'Overnight camping in national parks and wilderness',
+      category: 'Adventure',
+      slug: 'camping',
+      image: 'zamzam-tours/activities/camping'
+    },
+    {
+      name: 'Zip-lining',
+      icon: '🪂',
+      description: 'Soar through forest canopies and mountain valleys',
+      category: 'Adventure',
+      slug: 'zip-lining',
+      image: 'zamzam-tours/activities/ziplining'
     }
   ];
 
@@ -659,30 +894,28 @@ export default function Tours() {
           <section className="destinations-section">
             <div className="section-header">
               <h2>Popular Destinations in Sri Lanka</h2>
-              <p>Explore the most sought-after locations across the island</p>
+              <p>Explore 20 amazing destinations across the island</p>
             </div>
 
             <div className="destinations-grid">
               {popularDestinations.map((destination, index) => (
-                <div key={index} className="destination-card">
+                <Link key={index} href={`/destinations/${destination.slug}`} className="destination-card">
                   <div className="destination-image">
-                    <Image 
+                    <CldImage 
                       src={destination.image} 
                       alt={destination.name}
                       width={300}
                       height={200}
-                      objectFit="cover"
+                      style={{ objectFit: 'cover', width: '100%', height: '100%' }}
                     />
                     <div className="destination-overlay">
+                      <span className="destination-category">{destination.category}</span>
                       <h3>{destination.name}</h3>
                       <p>{destination.description}</p>
-                      <span className="tour-count">{destination.tours} tours available</span>
-                      <Link href={`/destinations/${destination.name.toLowerCase().replace(' ', '-')}`} className="btn-small">
-                        Explore
-                      </Link>
+                      <span className="btn-small">Learn More →</span>
                     </div>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           </section>
@@ -696,14 +929,18 @@ export default function Tours() {
 
             <div className="activities-grid">
               {activities.map((activity, index) => (
-                <div key={index} className="activity-card">
+                <Link 
+                  href={`/activities/${activity.slug}`} 
+                  key={index} 
+                  className="activity-card"
+                >
                   <div className="activity-icon">{activity.icon}</div>
                   <h3>{activity.name}</h3>
                   <p>{activity.description}</p>
-                  <Link href={`/activities/${activity.name.toLowerCase().replace(' ', '-')}`} className="link-arrow">
-                    Find Tours →
-                  </Link>
-                </div>
+                  <span className="link-arrow">
+                    Learn More →
+                  </span>
+                </Link>
               ))}
             </div>
           </section>

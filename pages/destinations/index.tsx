@@ -130,6 +130,78 @@ export default function Destinations() {
       category: 'beach',
       duration: '2-4 Days',
       slug: 'arugam-bay' 
+    },
+    { 
+      name: 'Bentota', 
+      image: 'zamzam-tours/destinations/bentota', 
+      description: 'Golden beaches and water sports paradise',
+      longDescription: 'Enjoy pristine beaches, water sports, and luxury resorts on the southwest coast.',
+      category: 'beach',
+      duration: '2-3 Days',
+      slug: 'bentota' 
+    },
+    { 
+      name: 'Hikkaduwa', 
+      image: 'zamzam-tours/destinations/hikkaduwa', 
+      description: 'Coral reefs and vibrant nightlife',
+      longDescription: 'Snorkel with sea turtles, explore coral reefs, and enjoy beachside cafes.',
+      category: 'beach',
+      duration: '2-3 Days',
+      slug: 'hikkaduwa' 
+    },
+    { 
+      name: 'Dambulla', 
+      image: 'zamzam-tours/destinations/dambulla', 
+      description: 'Golden Temple and cave monasteries',
+      longDescription: 'Discover the UNESCO World Heritage cave temple complex with stunning Buddha statues.',
+      category: 'cultural',
+      duration: 'Half Day',
+      slug: 'dambulla' 
+    },
+    { 
+      name: 'Horton Plains', 
+      image: 'zamzam-tours/destinations/horton-plains', 
+      description: 'World\'s End cliff and cloud forests',
+      longDescription: 'Trek through misty highlands to the dramatic World\'s End precipice.',
+      category: 'nature',
+      duration: '1 Day',
+      slug: 'horton-plains' 
+    },
+    { 
+      name: 'Unawatuna', 
+      image: 'zamzam-tours/destinations/unawatuna', 
+      description: 'Crescent bay with coral reefs',
+      longDescription: 'Swim in the protected bay, snorkel among colorful fish, and relax on golden sands.',
+      category: 'beach',
+      duration: '2-3 Days',
+      slug: 'unawatuna' 
+    },
+    { 
+      name: 'Wilpattu', 
+      image: 'zamzam-tours/destinations/wilpattu', 
+      description: 'Largest national park with leopards',
+      longDescription: 'Safari through ancient lakes and dense forests to spot leopards and sloth bears.',
+      category: 'wildlife',
+      duration: '1-2 Days',
+      slug: 'wilpattu' 
+    },
+    { 
+      name: 'Jaffna', 
+      image: 'zamzam-tours/destinations/jaffna', 
+      description: 'Northern peninsula with Tamil culture',
+      longDescription: 'Experience unique Tamil culture, visit historic temples, and explore remote islands.',
+      category: 'cultural',
+      duration: '2-3 Days',
+      slug: 'jaffna' 
+    },
+    { 
+      name: 'Adam\'s Peak', 
+      image: 'zamzam-tours/destinations/adams-peak', 
+      description: 'Sacred mountain pilgrimage',
+      longDescription: 'Climb the holy peak for sunrise views and visit the sacred footprint at the summit.',
+      category: 'nature',
+      duration: '1 Day',
+      slug: 'adams-peak' 
     }
   ];
 
