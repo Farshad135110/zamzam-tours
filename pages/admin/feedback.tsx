@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Link from 'next/link';
+import AdminSidebar from '../../components/AdminSidebar';
 
 interface Feedback {
   feedback_id: number;
@@ -8,6 +8,7 @@ interface Feedback {
   review: string;
   rating: number;
   date: string;
+  imageUrl?: string;
 }
 
 export default function AdminFeedback() {
@@ -64,7 +65,8 @@ export default function AdminFeedback() {
     country: '',
     review: '',
     rating: 5,
-    date: new Date().toISOString().split('T')[0]
+    date: new Date().toISOString().split('T')[0],
+    imageUrl: ''
   });
 
   const filteredFeedbacks = feedbacks.filter(feedback =>
@@ -113,7 +115,7 @@ export default function AdminFeedback() {
       setFeedbacks([...feedbacks, newFeedback]);
     }
     setShowModal(false);
-    setFormData({ name: '', country: '', review: '', rating: 5, date: new Date().toISOString().split('T')[0] });
+    setFormData({ name: '', country: '', review: '', rating: 5, date: new Date().toISOString().split('T')[0], imageUrl: '' });
     setEditingFeedback(null);
   };
 
@@ -123,7 +125,8 @@ export default function AdminFeedback() {
       country: feedback.country,
       review: feedback.review,
       rating: feedback.rating,
-      date: feedback.date
+      date: feedback.date,
+      imageUrl: feedback.imageUrl || ''
     });
     setEditingFeedback(feedback);
     setShowModal(true);
@@ -142,47 +145,7 @@ export default function AdminFeedback() {
 
   return (
     <div style={{ fontFamily: 'Poppins, sans-serif', backgroundColor: '#f8fafc', minHeight: '100vh', display: 'flex' }}>
-      {/* Sidebar */}
-      <div style={{ width: '280px', backgroundColor: '#053b3c', color: 'white', padding: '30px 20px', minHeight: '100vh' }}>
-        <div style={{ marginBottom: '40px' }}>
-          <h2 style={{ fontSize: '24px', fontWeight: '700', marginBottom: '5px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <span style={{ backgroundColor: '#0a4a4b', padding: '8px', borderRadius: '8px', fontSize: '18px' }}>⚡</span>
-            ZamZam<br/>Tours
-          </h2>
-          <p style={{ fontSize: '12px', color: '#81c8c9', margin: 0 }}>Admin Dashboard</p>
-        </div>
-
-        <nav>
-          {[
-            { id: 'overview', label: 'Overview', href: '/admin' },
-            { id: 'packages', label: 'Packages', href: '/admin/packages' },
-            { id: 'vehicles', label: 'Vehicles', href: '/admin/vehicles' },
-            { id: 'hotels', label: 'Hotels', href: '/admin/hotels' },
-            { id: 'feedback', label: 'Feedback', href: '/admin/feedback' },
-            { id: 'users', label: 'Users', href: '/admin/users' },
-            { id: 'settings', label: 'Settings', href: '/admin/settings' }
-          ].map(item => (
-            <Link key={item.id} href={item.href} legacyBehavior>
-              <a style={{
-                display: 'block',
-                width: '100%',
-                textAlign: 'left',
-                padding: '12px 16px',
-                marginBottom: '8px',
-                borderRadius: '8px',
-                textDecoration: 'none',
-                color: item.id === 'feedback' ? 'white' : 'rgba(255,255,255,0.9)',
-                backgroundColor: item.id === 'feedback' ? '#0a4a4b' : 'transparent',
-                fontSize: '14px',
-                fontWeight: 500,
-                transition: 'all 0.2s ease'
-              }}>
-                {item.label}
-              </a>
-            </Link>
-          ))}
-        </nav>
-      </div>
+      <AdminSidebar active="feedback" />
 
       {/* Main Content */}
       <div style={{ flex: 1, padding: '30px' }}>
@@ -210,12 +173,14 @@ export default function AdminFeedback() {
                   transition: 'all 0.2s ease'
                 }}
                 onFocus={(e) => {
-                  e.target.style.borderColor = '#053b3c';
-                  e.target.style.boxShadow = '0 0 0 3px rgba(5, 59, 60, 0.1)';
+                  const input = e.target as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement;
+                  input.style.borderColor = '#053b3c';
+                  input.style.boxShadow = '0 0 0 3px rgba(5, 59, 60, 0.1)';
                 }}
                 onBlur={(e) => {
-                  e.target.style.borderColor = '#e2e8f0';
-                  e.target.style.boxShadow = 'none';
+                  const input = e.target as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement;
+                  input.style.borderColor = '#e2e8f0';
+                  input.style.boxShadow = 'none';
                 }}
               />
               <span style={{
@@ -244,12 +209,14 @@ export default function AdminFeedback() {
                 transition: 'all 0.2s ease'
               }}
               onMouseEnter={(e) => {
-                e.target.style.backgroundColor = '#0a4a4b';
-                e.target.style.transform = 'translateY(-1px)';
+                const btn = e.target as HTMLButtonElement;
+                btn.style.backgroundColor = '#0a4a4b';
+                btn.style.transform = 'translateY(-1px)';
               }}
               onMouseLeave={(e) => {
-                e.target.style.backgroundColor = '#053b3c';
-                e.target.style.transform = 'translateY(0)';
+                const btn = e.target as HTMLButtonElement;
+                btn.style.backgroundColor = '#053b3c';
+                btn.style.transform = 'translateY(0)';
               }}
             >
               <span>+</span> Add New Feedback
@@ -452,12 +419,14 @@ export default function AdminFeedback() {
                     transition: 'all 0.2s ease'
                   }}
                   onMouseEnter={(e) => {
-                    e.target.style.backgroundColor = '#0ea5e9';
-                    e.target.style.color = 'white';
+                    const btn = e.target as HTMLButtonElement;
+                    btn.style.backgroundColor = '#0ea5e9';
+                    btn.style.color = 'white';
                   }}
                   onMouseLeave={(e) => {
-                    e.target.style.backgroundColor = 'transparent';
-                    e.target.style.color = '#0ea5e9';
+                    const btn = e.target as HTMLButtonElement;
+                    btn.style.backgroundColor = 'transparent';
+                    btn.style.color = '#0ea5e9';
                   }}
                 >
                   Edit
@@ -480,12 +449,14 @@ export default function AdminFeedback() {
                     transition: 'all 0.2s ease'
                   }}
                   onMouseEnter={(e) => {
-                    e.target.style.backgroundColor = '#ef4444';
-                    e.target.style.color = 'white';
+                    const btn = e.target as HTMLButtonElement;
+                    btn.style.backgroundColor = '#ef4444';
+                    btn.style.color = 'white';
                   }}
                   onMouseLeave={(e) => {
-                    e.target.style.backgroundColor = 'transparent';
-                    e.target.style.color = '#ef4444';
+                    const btn = e.target as HTMLButtonElement;
+                    btn.style.backgroundColor = 'transparent';
+                    btn.style.color = '#ef4444';
                   }}
                 >
                   Delete
@@ -582,12 +553,14 @@ export default function AdminFeedback() {
                     transition: 'all 0.2s ease'
                   }}
                   onFocus={(e) => {
-                    e.target.style.borderColor = '#053b3c';
-                    e.target.style.boxShadow = '0 0 0 3px rgba(5, 59, 60, 0.1)';
+                    const input = e.target as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement;
+                    input.style.borderColor = '#053b3c';
+                    input.style.boxShadow = '0 0 0 3px rgba(5, 59, 60, 0.1)';
                   }}
                   onBlur={(e) => {
-                    e.target.style.borderColor = '#d1d5db';
-                    e.target.style.boxShadow = 'none';
+                    const input = e.target as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement;
+                    input.style.borderColor = '#d1d5db';
+                    input.style.boxShadow = 'none';
                   }}
                 />
               </div>
@@ -667,7 +640,7 @@ export default function AdminFeedback() {
                 </label>
                 <textarea
                   required
-                  rows="4"
+                  rows={4}
                   value={formData.review}
                   onChange={(e) => setFormData({...formData, review: e.target.value})}
                   style={{
@@ -691,7 +664,7 @@ export default function AdminFeedback() {
                 />
               </div>
 
-              <div style={{ marginBottom: '30px' }}>
+              <div style={{ marginBottom: '20px' }}>
                 <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '6px' }}>
                   Date
                 </label>
@@ -718,6 +691,47 @@ export default function AdminFeedback() {
                     e.target.style.boxShadow = 'none';
                   }}
                 />
+              </div>
+
+              <div style={{ marginBottom: '30px' }}>
+                <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '6px' }}>
+                  Image URL
+                </label>
+                <input
+                  type="url"
+                  value={formData.imageUrl}
+                  onChange={(e) => setFormData({...formData, imageUrl: e.target.value})}
+                  placeholder="https://example.com/image.jpg"
+                  style={{
+                    width: '100%',
+                    padding: '10px 12px',
+                    border: '1px solid #d1d5db',
+                    borderRadius: '6px',
+                    fontSize: '14px',
+                    outline: 'none',
+                    transition: 'all 0.2s ease'
+                  }}
+                  onFocus={(e) => {
+                    e.target.style.borderColor = '#053b3c';
+                    e.target.style.boxShadow = '0 0 0 3px rgba(5, 59, 60, 0.1)';
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = '#d1d5db';
+                    e.target.style.boxShadow = 'none';
+                  }}
+                />
+                {formData.imageUrl && (
+                  <div style={{ marginTop: '8px', borderRadius: '6px', overflow: 'hidden', maxWidth: '200px' }}>
+                    <img 
+                      src={formData.imageUrl} 
+                      alt="Preview" 
+                      style={{ width: '100%', height: 'auto', display: 'block' }}
+                      onError={(e) => {
+                        e.currentTarget.style.display = 'none';
+                      }}
+                    />
+                  </div>
+                )}
               </div>
 
               <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
@@ -838,6 +852,32 @@ export default function AdminFeedback() {
             }}>
               ⭐ {selectedFeedback.rating}/5 Rating
             </div>
+
+            {selectedFeedback.imageUrl && (
+              <div style={{ marginBottom: '20px' }}>
+                <h4 style={{ fontSize: '16px', fontWeight: '600', color: '#053b3c', margin: '0 0 12px 0' }}>
+                  Image
+                </h4>
+                <div style={{ 
+                  borderRadius: '8px', 
+                  overflow: 'hidden',
+                  maxWidth: '100%',
+                  backgroundColor: '#f8fafc'
+                }}>
+                  <img 
+                    src={selectedFeedback.imageUrl} 
+                    alt="Feedback image"
+                    style={{ 
+                      width: '100%', 
+                      height: 'auto', 
+                      display: 'block',
+                      maxHeight: '300px',
+                      objectFit: 'cover'
+                    }}
+                  />
+                </div>
+              </div>
+            )}
 
             <div>
               <h4 style={{ fontSize: '16px', fontWeight: '600', color: '#053b3c', margin: '0 0 12px 0' }}>

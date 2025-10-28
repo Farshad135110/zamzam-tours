@@ -1,10 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState, FormEvent, MouseEvent } from 'react';
+import AdminSidebar from '../../components/AdminSidebar';
 import Link from 'next/link';
+
+interface Package {
+  package_id: number;
+  package_name: string;
+  description: string;
+  price: number;
+  image: string;
+  highlights: string[];
+  inclusions: string[];
+}
+
+interface FormData {
+  package_name: string;
+  description: string;
+  price: string;
+  image: string;
+  highlights: string[];
+  inclusions: string[];
+}
 
 export default function AdminPackages() {
   const [showModal, setShowModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [editingPackage, setEditingPackage] = useState(null);
+  const [editingPackage, setEditingPackage] = useState<Package | null>(null);
 
   const [packages, setPackages] = useState([
     {
@@ -12,28 +32,84 @@ export default function AdminPackages() {
       package_name: 'Makkah & Madinah Spiritual Journey',
       description: 'A comprehensive 10-day spiritual journey visiting the holy cities of Makkah and Madinah. Includes guided tours, accommodation, and transportation.',
       price: 2499,
-      image: '/api/placeholder/300/200'
+      image: '/api/placeholder/300/200',
+      highlights: [
+        '10-day spiritual journey',
+        'Visit to holy sites',
+        'Expert religious guidance',
+        'Daily spiritual lectures'
+      ],
+      inclusions: [
+        'Luxury hotel accommodation',
+        'Three meals daily',
+        'Airport transfers',
+        'Licensed tour guides',
+        'All transportation',
+        'Visa processing assistance'
+      ]
     },
     {
       package_id: 2,
       package_name: 'Umrah Premium Package',
       description: 'Luxury Umrah experience with 5-star hotels, private transportation, and expert spiritual guides. Perfect for families and groups.',
       price: 1899,
-      image: '/api/placeholder/300/200'
+      image: '/api/placeholder/300/200',
+      highlights: [
+        'Premium 5-star accommodation',
+        'Private transportation',
+        'VIP services',
+        'Flexible schedule'
+      ],
+      inclusions: [
+        '5-star hotel accommodation',
+        'Private luxury vehicles',
+        'Personal guide',
+        'VIP tawaf services',
+        'Premium meals',
+        'Priority visa processing'
+      ]
     },
     {
       package_id: 3,
       package_name: 'Family Hajj Package',
       description: 'Specialized package for families with children. Includes family-friendly accommodations, educational activities, and dedicated support.',
       price: 4299,
-      image: '/api/placeholder/300/200'
+      image: '/api/placeholder/300/200',
+      highlights: [
+        'Family-friendly accommodations',
+        'Educational programs',
+        'Child care services',
+        'Family bonding activities'
+      ],
+      inclusions: [
+        'Family suite accommodation',
+        'Child-friendly meals',
+        'Educational materials',
+        'Family transport service',
+        'Dedicated family guide',
+        'Emergency medical coverage'
+      ]
     },
     {
       package_id: 4,
       package_name: 'Budget Umrah Experience',
       description: 'Affordable Umrah package with comfortable 3-star hotels, group transportation, and essential services for a blessed journey.',
       price: 1299,
-      image: '/api/placeholder/300/200'
+      image: '/api/placeholder/300/200',
+      highlights: [
+        'Affordable pricing',
+        'Comfortable stays',
+        'Group activities',
+        'Essential services'
+      ],
+      inclusions: [
+        '3-star hotel accommodation',
+        'Shared transportation',
+        'Group guide service',
+        'Standard meals',
+        'Basic visa processing',
+        'Group tawaf'
+      ]
     }
   ]);
 
@@ -41,7 +117,9 @@ export default function AdminPackages() {
     package_name: '',
     description: '',
     price: '',
-    image: ''
+    image: '',
+    highlights: [''],
+    inclusions: ['']
   });
 
   const filteredPackages = packages.filter(pkg =>
@@ -49,40 +127,63 @@ export default function AdminPackages() {
     pkg.description.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (editingPackage) {
       // Update existing package
+      const updatedPackage: Package = {
+        package_id: editingPackage.package_id,
+        package_name: formData.package_name,
+        description: formData.description,
+        price: Number(formData.price),
+        image: formData.image,
+        highlights: formData.highlights,
+        inclusions: formData.inclusions
+      };
       setPackages(packages.map(pkg => 
         pkg.package_id === editingPackage.package_id 
-          ? { ...formData, package_id: editingPackage.package_id }
+          ? updatedPackage
           : pkg
       ));
     } else {
       // Add new package
-      const newPackage = {
-        ...formData,
-        package_id: Math.max(...packages.map(p => p.package_id)) + 1
+      const newPackage: Package = {
+        package_id: Math.max(...packages.map(p => p.package_id)) + 1,
+        package_name: formData.package_name,
+        description: formData.description,
+        price: Number(formData.price),
+        image: formData.image,
+        highlights: formData.highlights,
+        inclusions: formData.inclusions
       };
       setPackages([...packages, newPackage]);
     }
     setShowModal(false);
-    setFormData({ package_name: '', description: '', price: '', image: '' });
+    setFormData({
+      package_name: '',
+      description: '',
+      price: '',
+      image: '',
+      highlights: [''],
+      inclusions: ['']
+    });
     setEditingPackage(null);
   };
 
-  const handleEdit = (pkg) => {
+  const handleEdit = (pkg: Package) => {
     setFormData({
       package_name: pkg.package_name,
       description: pkg.description,
-      price: pkg.price,
-      image: pkg.image
+      price: String(pkg.price),
+      image: pkg.image,
+      highlights: pkg.highlights,
+      inclusions: pkg.inclusions
     });
     setEditingPackage(pkg);
     setShowModal(true);
   };
 
-  const handleDelete = (packageId) => {
+  const handleDelete = (packageId: number) => {
     if (confirm('Are you sure you want to delete this package?')) {
       setPackages(packages.filter(pkg => pkg.package_id !== packageId));
     }
@@ -90,47 +191,7 @@ export default function AdminPackages() {
 
   return (
     <div style={{ fontFamily: 'Poppins, sans-serif', backgroundColor: '#f8fafc', minHeight: '100vh', display: 'flex' }}>
-      {/* Sidebar */}
-      <div style={{ width: '280px', backgroundColor: '#053b3c', color: 'white', padding: '30px 20px', minHeight: '100vh' }}>
-        <div style={{ marginBottom: '40px' }}>
-          <h2 style={{ fontSize: '24px', fontWeight: '700', marginBottom: '5px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <span style={{ backgroundColor: '#0a4a4b', padding: '8px', borderRadius: '8px', fontSize: '18px' }}>⚡</span>
-            ZamZam<br/>Tours
-          </h2>
-          <p style={{ fontSize: '12px', color: '#81c8c9', margin: 0 }}>Admin Dashboard</p>
-        </div>
-
-        <nav>
-          {[
-            { id: 'overview', label: 'Overview', href: '/admin' },
-            { id: 'packages', label: 'Packages', href: '/admin/packages' },
-            { id: 'vehicles', label: 'Vehicles', href: '/admin/vehicles' },
-            { id: 'hotels', label: 'Hotels', href: '/admin/hotels' },
-            { id: 'feedback', label: 'Feedback', href: '/admin/feedback' },
-            { id: 'users', label: 'Users', href: '/admin/users' },
-            { id: 'settings', label: 'Settings', href: '/admin/settings' }
-          ].map(item => (
-            <Link key={item.id} href={item.href} legacyBehavior>
-              <a style={{
-                display: 'block',
-                width: '100%',
-                textAlign: 'left',
-                padding: '12px 16px',
-                marginBottom: '8px',
-                borderRadius: '8px',
-                textDecoration: 'none',
-                color: item.id === 'packages' ? 'white' : 'rgba(255,255,255,0.9)',
-                backgroundColor: item.id === 'packages' ? '#0a4a4b' : 'transparent',
-                fontSize: '14px',
-                fontWeight: 500,
-                transition: 'all 0.2s ease'
-              }}>
-                {item.label}
-              </a>
-            </Link>
-          ))}
-        </nav>
-      </div>
+      <AdminSidebar active="packages" />
 
       {/* Main Content */}
       <div style={{ flex: 1, padding: '30px' }}>
@@ -177,27 +238,11 @@ export default function AdminPackages() {
             
             <button 
               onClick={() => setShowModal(true)}
+              className="admin-button"
               style={{
-                padding: '12px 24px',
-                backgroundColor: '#053b3c',
-                color: 'white',
-                border: 'none',
-                borderRadius: '8px',
-                fontSize: '14px',
-                fontWeight: '600',
-                cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '8px',
-                transition: 'all 0.2s ease'
-              }}
-              onMouseEnter={(e) => {
-                e.target.style.backgroundColor = '#0a4a4b';
-                e.target.style.transform = 'translateY(-1px)';
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.backgroundColor = '#053b3c';
-                e.target.style.transform = 'translateY(0)';
+                gap: '8px'
               }}
             >
               <span>+</span> Add New Package
@@ -335,7 +380,7 @@ export default function AdminPackages() {
                   color: '#64748b',
                   fontSize: '14px',
                   lineHeight: '1.5',
-                  margin: '0 0 20px 0',
+                  margin: '0 0 16px 0',
                   display: '-webkit-box',
                   WebkitLineClamp: 2,
                   WebkitBoxOrient: 'vertical',
@@ -344,6 +389,82 @@ export default function AdminPackages() {
                   {pkg.description}
                 </p>
 
+                {/* Highlights Section */}
+                <div style={{ marginBottom: '16px' }}>
+                  <h4 style={{ 
+                    fontSize: '14px', 
+                    fontWeight: '600', 
+                    color: '#053b3c', 
+                    marginBottom: '8px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px'
+                  }}>
+                    <span style={{ fontSize: '16px' }}>✨</span> Highlights
+                  </h4>
+                  <div style={{ 
+                    display: 'flex', 
+                    flexWrap: 'wrap', 
+                    gap: '6px',
+                    marginBottom: '12px'
+                  }}>
+                    {pkg.highlights.map((highlight, index) => (
+                      <span
+                        key={index}
+                        style={{
+                          backgroundColor: 'rgba(5, 59, 60, 0.05)',
+                          color: '#053b3c',
+                          padding: '4px 10px',
+                          borderRadius: '16px',
+                          fontSize: '12px',
+                          fontWeight: '500'
+                        }}
+                      >
+                        {highlight}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Inclusions Section */}
+                <div style={{ marginBottom: '20px' }}>
+                  <h4 style={{ 
+                    fontSize: '14px', 
+                    fontWeight: '600', 
+                    color: '#053b3c', 
+                    marginBottom: '8px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px'
+                  }}>
+                    <span style={{ fontSize: '16px' }}>✓</span> Package Includes
+                  </h4>
+                  <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(2, 1fr)',
+                    gap: '6px',
+                    fontSize: '13px',
+                    color: '#64748b'
+                  }}>
+                    {pkg.inclusions.map((inclusion, index) => (
+                      <div
+                        key={index}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '4px'
+                        }}
+                      >
+                        <span style={{ 
+                          color: '#10b981', 
+                          fontSize: '12px' 
+                        }}>•</span>
+                        {inclusion}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
                 <div style={{
                   display: 'flex',
                   gap: '10px',
@@ -351,52 +472,16 @@ export default function AdminPackages() {
                 }}>
                   <button
                     onClick={() => handleEdit(pkg)}
-                    style={{
-                      flex: 1,
-                      padding: '10px 16px',
-                      backgroundColor: 'transparent',
-                      color: '#053b3c',
-                      border: '1px solid #053b3c',
-                      borderRadius: '6px',
-                      fontSize: '14px',
-                      fontWeight: '500',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s ease'
-                    }}
-                    onMouseEnter={(e) => {
-                      e.target.style.backgroundColor = '#053b3c';
-                      e.target.style.color = 'white';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.target.style.backgroundColor = 'transparent';
-                      e.target.style.color = '#053b3c';
-                    }}
+                    className="admin-button-outline primary"
+                    style={{ flex: 1 }}
                   >
                     Edit
                   </button>
                   
                   <button
                     onClick={() => handleDelete(pkg.package_id)}
-                    style={{
-                      flex: 1,
-                      padding: '10px 16px',
-                      backgroundColor: 'transparent',
-                      color: '#ef4444',
-                      border: '1px solid #ef4444',
-                      borderRadius: '6px',
-                      fontSize: '14px',
-                      fontWeight: '500',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s ease'
-                    }}
-                    onMouseEnter={(e) => {
-                      e.target.style.backgroundColor = '#ef4444';
-                      e.target.style.color = 'white';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.target.style.backgroundColor = 'transparent';
-                      e.target.style.color = '#ef4444';
-                    }}
+                    className="admin-button-outline danger"
+                    style={{ flex: 1 }}
                   >
                     Delete
                   </button>
@@ -508,7 +593,7 @@ export default function AdminPackages() {
                 </label>
                 <textarea
                   required
-                  rows="4"
+                  rows={4}
                   value={formData.description}
                   onChange={(e) => setFormData({...formData, description: e.target.value})}
                   style={{
@@ -562,7 +647,7 @@ export default function AdminPackages() {
                 />
               </div>
 
-              <div style={{ marginBottom: '30px' }}>
+              <div style={{ marginBottom: '20px' }}>
                 <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '6px' }}>
                   Image URL
                 </label>
@@ -579,6 +664,68 @@ export default function AdminPackages() {
                     outline: 'none',
                     transition: 'all 0.2s ease'
                   }}
+                  onFocus={(e) => {
+                    e.target.style.borderColor = '#053b3c';
+                    e.target.style.boxShadow = '0 0 0 3px rgba(5, 59, 60, 0.1)';
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = '#d1d5db';
+                    e.target.style.boxShadow = 'none';
+                  }}
+                />
+              </div>
+
+              <div style={{ marginBottom: '20px' }}>
+                <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '6px' }}>
+                  Highlights (one per line)
+                </label>
+                <textarea
+                  required
+                  value={formData.highlights.join('\n')}
+                  onChange={(e) => setFormData({...formData, highlights: e.target.value.split('\n').filter(h => h.trim())})}
+                  style={{
+                    width: '100%',
+                    padding: '10px 12px',
+                    border: '1px solid #d1d5db',
+                    borderRadius: '6px',
+                    fontSize: '14px',
+                    outline: 'none',
+                    resize: 'vertical',
+                    minHeight: '100px',
+                    transition: 'all 0.2s ease'
+                  }}
+                  placeholder="Enter each highlight on a new line"
+                  onFocus={(e) => {
+                    e.target.style.borderColor = '#053b3c';
+                    e.target.style.boxShadow = '0 0 0 3px rgba(5, 59, 60, 0.1)';
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = '#d1d5db';
+                    e.target.style.boxShadow = 'none';
+                  }}
+                />
+              </div>
+
+              <div style={{ marginBottom: '30px' }}>
+                <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '6px' }}>
+                  Inclusions (one per line)
+                </label>
+                <textarea
+                  required
+                  value={formData.inclusions.join('\n')}
+                  onChange={(e) => setFormData({...formData, inclusions: e.target.value.split('\n').filter(i => i.trim())})}
+                  style={{
+                    width: '100%',
+                    padding: '10px 12px',
+                    border: '1px solid #d1d5db',
+                    borderRadius: '6px',
+                    fontSize: '14px',
+                    outline: 'none',
+                    resize: 'vertical',
+                    minHeight: '100px',
+                    transition: 'all 0.2s ease'
+                  }}
+                  placeholder="Enter each inclusion on a new line"
                   onFocus={(e) => {
                     e.target.style.borderColor = '#053b3c';
                     e.target.style.boxShadow = '0 0 0 3px rgba(5, 59, 60, 0.1)';

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Link from 'next/link';
+import AdminSidebar from '../../components/AdminSidebar';
 
 interface Hotel {
   hotel_id: number;
@@ -7,6 +7,7 @@ interface Hotel {
   location: string;
   price_range: string;
   image: string;
+  facilities: string[];
 }
 
 export default function AdminHotels() {
@@ -20,35 +21,40 @@ export default function AdminHotels() {
       hotel_name: 'Makkah Royal Clock Tower',
       location: 'Makkah, Saudi Arabia',
       price_range: '$$$$',
-      image: '/api/placeholder/300/200'
+      image: '/api/placeholder/300/200',
+      facilities: ['Free WiFi', 'Prayer Room', 'Restaurant', 'Room Service', 'Fitness Center']
     },
     {
       hotel_id: 2,
       hotel_name: 'Madinah Hilton',
       location: 'Madinah, Saudi Arabia',
       price_range: '$$$',
-      image: '/api/placeholder/300/200'
+      image: '/api/placeholder/300/200',
+      facilities: ['Free WiFi', 'Prayer Room', 'Spa', 'Restaurant']
     },
     {
       hotel_id: 3,
       hotel_name: 'Swissotel Makkah',
       location: 'Makkah, Saudi Arabia',
       price_range: '$$$$',
-      image: '/api/placeholder/300/200'
+      image: '/api/placeholder/300/200',
+      facilities: ['Free WiFi', 'Prayer Room', 'Pool', 'Restaurant', 'Business Center']
     },
     {
       hotel_id: 4,
       hotel_name: 'Intercontinental Madinah',
       location: 'Madinah, Saudi Arabia',
       price_range: '$$$',
-      image: '/api/placeholder/300/200'
+      image: '/api/placeholder/300/200',
+      facilities: ['Free WiFi', 'Prayer Room', 'Spa', 'Restaurant', 'Room Service']
     },
     {
       hotel_id: 5,
       hotel_name: 'Raffles Makkah Palace',
       location: 'Makkah, Saudi Arabia',
       price_range: '$$$$$',
-      image: '/api/placeholder/300/200'
+      image: '/api/placeholder/300/200',
+      facilities: ['Free WiFi', 'Prayer Room', 'Spa', 'Pool', 'Restaurant', 'Butler Service']
     }
   ]);
 
@@ -56,7 +62,8 @@ export default function AdminHotels() {
     hotel_name: '',
     location: '',
     price_range: '$$',
-    image: ''
+    image: '',
+    facilities: [] as string[]
   });
 
   const filteredHotels = hotels.filter(hotel =>
@@ -104,7 +111,7 @@ export default function AdminHotels() {
       setHotels([...hotels, newHotel]);
     }
     setShowModal(false);
-    setFormData({ hotel_name: '', location: '', price_range: '$$', image: '' });
+    setFormData({ hotel_name: '', location: '', price_range: '$$', image: '', facilities: [] });
     setEditingHotel(null);
   };
 
@@ -113,7 +120,8 @@ export default function AdminHotels() {
       hotel_name: hotel.hotel_name,
       location: hotel.location,
       price_range: hotel.price_range,
-      image: hotel.image
+      image: hotel.image,
+      facilities: hotel.facilities
     });
     setEditingHotel(hotel);
     setShowModal(true);
@@ -133,49 +141,9 @@ export default function AdminHotels() {
     { value: '$$$$$', label: '$$$$$ - Ultra Luxury' }
   ];
 
-  return (
+    return (
     <div style={{ fontFamily: 'Poppins, sans-serif', backgroundColor: '#f8fafc', minHeight: '100vh', display: 'flex' }}>
-      {/* Sidebar */}
-      <div style={{ width: '280px', backgroundColor: '#053b3c', color: 'white', padding: '30px 20px', minHeight: '100vh' }}>
-        <div style={{ marginBottom: '40px' }}>
-          <h2 style={{ fontSize: '24px', fontWeight: '700', marginBottom: '5px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <span style={{ backgroundColor: '#0a4a4b', padding: '8px', borderRadius: '8px', fontSize: '18px' }}>⚡</span>
-            ZamZam<br/>Tours
-          </h2>
-          <p style={{ fontSize: '12px', color: '#81c8c9', margin: 0 }}>Admin Dashboard</p>
-        </div>
-
-        <nav>
-          {[
-            { id: 'overview', label: 'Overview', href: '/admin' },
-            { id: 'packages', label: 'Packages', href: '/admin/packages' },
-            { id: 'vehicles', label: 'Vehicles', href: '/admin/vehicles' },
-            { id: 'hotels', label: 'Hotels', href: '/admin/hotels' },
-            { id: 'feedback', label: 'Feedback', href: '/admin/feedback' },
-            { id: 'users', label: 'Users', href: '/admin/users' },
-            { id: 'settings', label: 'Settings', href: '/admin/settings' }
-          ].map(item => (
-            <Link key={item.id} href={item.href} legacyBehavior>
-              <a style={{
-                display: 'block',
-                width: '100%',
-                textAlign: 'left',
-                padding: '12px 16px',
-                marginBottom: '8px',
-                borderRadius: '8px',
-                textDecoration: 'none',
-                color: item.id === 'hotels' ? 'white' : 'rgba(255,255,255,0.9)',
-                backgroundColor: item.id === 'hotels' ? '#0a4a4b' : 'transparent',
-                fontSize: '14px',
-                fontWeight: 500,
-                transition: 'all 0.2s ease'
-              }}>
-                {item.label}
-              </a>
-            </Link>
-          ))}
-        </nav>
-      </div>
+      <AdminSidebar active="hotels" />
 
       {/* Main Content */}
       <div style={{ flex: 1, padding: '30px' }}>
@@ -237,12 +205,14 @@ export default function AdminHotels() {
                 transition: 'all 0.2s ease'
               }}
               onMouseEnter={(e) => {
-                e.target.style.backgroundColor = '#0a4a4b';
-                e.target.style.transform = 'translateY(-1px)';
+                const btn = e.target as HTMLButtonElement;
+                btn.style.backgroundColor = '#0a4a4b';
+                btn.style.transform = 'translateY(-1px)';
               }}
               onMouseLeave={(e) => {
-                e.target.style.backgroundColor = '#053b3c';
-                e.target.style.transform = 'translateY(0)';
+                const btn = e.target as HTMLButtonElement;
+                btn.style.backgroundColor = '#053b3c';
+                btn.style.transform = 'translateY(0)';
               }}
             >
               <span>+</span> Add New Hotel
@@ -386,6 +356,28 @@ export default function AdminHotels() {
                   </span>
                 </div>
 
+                <div style={{ 
+                  display: 'flex', 
+                  flexWrap: 'wrap', 
+                  gap: '6px',
+                  marginBottom: '16px'
+                }}>
+                  {hotel.facilities.map((facility, index) => (
+                    <span
+                      key={index}
+                      style={{
+                        backgroundColor: '#f1f5f9',
+                        padding: '2px 8px',
+                        borderRadius: '12px',
+                        fontSize: '12px',
+                        color: '#64748b'
+                      }}
+                    >
+                      {facility}
+                    </span>
+                  ))}
+                </div>
+
                 <div style={{
                   display: 'flex',
                   gap: '10px',
@@ -406,12 +398,14 @@ export default function AdminHotels() {
                       transition: 'all 0.2s ease'
                     }}
                     onMouseEnter={(e) => {
-                      e.target.style.backgroundColor = '#053b3c';
-                      e.target.style.color = 'white';
+                      const btn = e.target as HTMLButtonElement;
+                      btn.style.backgroundColor = '#053b3c';
+                      btn.style.color = 'white';
                     }}
                     onMouseLeave={(e) => {
-                      e.target.style.backgroundColor = 'transparent';
-                      e.target.style.color = '#053b3c';
+                      const btn = e.target as HTMLButtonElement;
+                      btn.style.backgroundColor = 'transparent';
+                      btn.style.color = '#053b3c';
                     }}
                   >
                     Edit
@@ -432,12 +426,14 @@ export default function AdminHotels() {
                       transition: 'all 0.2s ease'
                     }}
                     onMouseEnter={(e) => {
-                      e.target.style.backgroundColor = '#ef4444';
-                      e.target.style.color = 'white';
+                      const btn = e.target as HTMLButtonElement;
+                      btn.style.backgroundColor = '#ef4444';
+                      btn.style.color = 'white';
                     }}
                     onMouseLeave={(e) => {
-                      e.target.style.backgroundColor = 'transparent';
-                      e.target.style.color = '#ef4444';
+                      const btn = e.target as HTMLButtonElement;
+                      btn.style.backgroundColor = 'transparent';
+                      btn.style.color = '#ef4444';
                     }}
                   >
                     Delete
@@ -607,7 +603,7 @@ export default function AdminHotels() {
                 </select>
               </div>
 
-              <div style={{ marginBottom: '30px' }}>
+              <div style={{ marginBottom: '20px' }}>
                 <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '6px' }}>
                   Image URL
                 </label>
@@ -625,14 +621,111 @@ export default function AdminHotels() {
                     transition: 'all 0.2s ease'
                   }}
                   onFocus={(e) => {
-                    e.target.style.borderColor = '#053b3c';
-                    e.target.style.boxShadow = '0 0 0 3px rgba(5, 59, 60, 0.1)';
+                    const input = e.target as HTMLInputElement;
+                    input.style.borderColor = '#053b3c';
+                    input.style.boxShadow = '0 0 0 3px rgba(5, 59, 60, 0.1)';
                   }}
                   onBlur={(e) => {
-                    e.target.style.borderColor = '#d1d5db';
-                    e.target.style.boxShadow = 'none';
+                    const input = e.target as HTMLInputElement;
+                    input.style.borderColor = '#d1d5db';
+                    input.style.boxShadow = 'none';
                   }}
                 />
+                {formData.image && (
+                  <div style={{ marginTop: '8px', borderRadius: '6px', overflow: 'hidden', maxWidth: '200px' }}>
+                    <img 
+                      src={formData.image} 
+                      alt="Preview" 
+                      style={{ width: '100%', height: 'auto', display: 'block' }}
+                      onError={(e) => {
+                        const img = e.target as HTMLImageElement;
+                        img.style.display = 'none';
+                      }}
+                    />
+                  </div>
+                )}
+              </div>
+
+              <div style={{ marginBottom: '30px' }}>
+                <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '6px' }}>
+                  Facilities
+                </label>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '8px' }}>
+                  {formData.facilities.map((facility, index) => (
+                    <div
+                      key={index}
+                      style={{
+                        backgroundColor: '#f1f5f9',
+                        padding: '4px 10px',
+                        borderRadius: '16px',
+                        fontSize: '14px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '6px'
+                      }}
+                    >
+                      <span>{facility}</span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const newFacilities = [...formData.facilities];
+                          newFacilities.splice(index, 1);
+                          setFormData({...formData, facilities: newFacilities});
+                        }}
+                        style={{
+                          border: 'none',
+                          background: 'none',
+                          padding: '0',
+                          cursor: 'pointer',
+                          color: '#64748b',
+                          fontSize: '18px',
+                          lineHeight: '1'
+                        }}
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
+                </div>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <input
+                    type="text"
+                    placeholder="Add a facility (e.g., Free WiFi)"
+                    onKeyPress={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        const input = e.target as HTMLInputElement;
+                        const value = input.value.trim();
+                        if (value && !formData.facilities.includes(value)) {
+                          setFormData({
+                            ...formData,
+                            facilities: [...formData.facilities, value]
+                          });
+                          input.value = '';
+                        }
+                      }
+                    }}
+                    style={{
+                      flex: 1,
+                      padding: '10px 12px',
+                      border: '1px solid #d1d5db',
+                      borderRadius: '6px',
+                      fontSize: '14px',
+                      outline: 'none',
+                      transition: 'all 0.2s ease'
+                    }}
+                    onFocus={(e) => {
+                      const input = e.target as HTMLInputElement;
+                      input.style.borderColor = '#053b3c';
+                      input.style.boxShadow = '0 0 0 3px rgba(5, 59, 60, 0.1)';
+                    }}
+                    onBlur={(e) => {
+                      const input = e.target as HTMLInputElement;
+                      input.style.borderColor = '#d1d5db';
+                      input.style.boxShadow = 'none';
+                    }}
+                  />
+                </div>
               </div>
 
               <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>

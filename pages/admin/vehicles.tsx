@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Link from 'next/link';
+import AdminSidebar from '../../components/AdminSidebar';
 
 interface Vehicle {
   vehicle_id: number;
@@ -202,47 +202,7 @@ export default function AdminVehicles() {
 
   return (
     <div style={{ fontFamily: 'Poppins, sans-serif', backgroundColor: '#f8fafc', minHeight: '100vh', display: 'flex' }}>
-      {/* Sidebar */}
-      <div style={{ width: '280px', backgroundColor: '#053b3c', color: 'white', padding: '30px 20px', minHeight: '100vh' }}>
-        <div style={{ marginBottom: '40px' }}>
-          <h2 style={{ fontSize: '24px', fontWeight: '700', marginBottom: '5px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <span style={{ backgroundColor: '#0a4a4b', padding: '8px', borderRadius: '8px', fontSize: '18px' }}>⚡</span>
-            ZamZam<br/>Tours
-          </h2>
-          <p style={{ fontSize: '12px', color: '#81c8c9', margin: 0 }}>Admin Dashboard</p>
-        </div>
-
-        <nav>
-          {[
-            { id: 'overview', label: 'Overview', href: '/admin' },
-            { id: 'packages', label: 'Packages', href: '/admin/packages' },
-            { id: 'vehicles', label: 'Vehicles', href: '/admin/vehicles' },
-            { id: 'hotels', label: 'Hotels', href: '/admin/hotels' },
-            { id: 'feedback', label: 'Feedback', href: '/admin/feedback' },
-            { id: 'users', label: 'Users', href: '/admin/users' },
-            { id: 'settings', label: 'Settings', href: '/admin/settings' }
-          ].map(item => (
-            <Link key={item.id} href={item.href} legacyBehavior>
-              <a style={{
-                display: 'block',
-                width: '100%',
-                textAlign: 'left',
-                padding: '12px 16px',
-                marginBottom: '8px',
-                borderRadius: '8px',
-                textDecoration: 'none',
-                color: item.id === 'vehicles' ? 'white' : 'rgba(255,255,255,0.9)',
-                backgroundColor: item.id === 'vehicles' ? '#0a4a4b' : 'transparent',
-                fontSize: '14px',
-                fontWeight: 500,
-                transition: 'all 0.2s ease'
-              }}>
-                {item.label}
-              </a>
-            </Link>
-          ))}
-        </nav>
-      </div>
+      <AdminSidebar active="vehicles" />
 
       {/* Main Content */}
       <div style={{ flex: 1, padding: '30px' }}>
@@ -270,12 +230,14 @@ export default function AdminVehicles() {
                   transition: 'all 0.2s ease'
                 }}
                 onFocus={(e) => {
-                  e.target.style.borderColor = '#053b3c';
-                  e.target.style.boxShadow = '0 0 0 3px rgba(5, 59, 60, 0.1)';
+                  const input = e.target as HTMLInputElement;
+                  input.style.borderColor = '#053b3c';
+                  input.style.boxShadow = '0 0 0 3px rgba(5, 59, 60, 0.1)';
                 }}
                 onBlur={(e) => {
-                  e.target.style.borderColor = '#e2e8f0';
-                  e.target.style.boxShadow = 'none';
+                  const input = e.target as HTMLInputElement;
+                  input.style.borderColor = '#e2e8f0';
+                  input.style.boxShadow = 'none';
                 }}
               />
               <span style={{
@@ -304,12 +266,14 @@ export default function AdminVehicles() {
                 transition: 'all 0.2s ease'
               }}
               onMouseEnter={(e) => {
-                e.target.style.backgroundColor = '#0a4a4b';
-                e.target.style.transform = 'translateY(-1px)';
+                const btn = e.target as HTMLButtonElement;
+                btn.style.backgroundColor = '#0a4a4b';
+                btn.style.transform = 'translateY(-1px)';
               }}
               onMouseLeave={(e) => {
-                e.target.style.backgroundColor = '#053b3c';
-                e.target.style.transform = 'translateY(0)';
+                const btn = e.target as HTMLButtonElement;
+                btn.style.backgroundColor = '#053b3c';
+                btn.style.transform = 'translateY(0)';
               }}
             >
               <span>+</span> Add New Vehicle
@@ -565,12 +529,14 @@ export default function AdminVehicles() {
                       transition: 'all 0.2s ease'
                     }}
                     onMouseEnter={(e) => {
-                      e.target.style.backgroundColor = '#053b3c';
-                      e.target.style.color = 'white';
+                      const btn = e.target as HTMLButtonElement;
+                      btn.style.backgroundColor = '#053b3c';
+                      btn.style.color = 'white';
                     }}
                     onMouseLeave={(e) => {
-                      e.target.style.backgroundColor = 'transparent';
-                      e.target.style.color = '#053b3c';
+                      const btn = e.target as HTMLButtonElement;
+                      btn.style.backgroundColor = 'transparent';
+                      btn.style.color = '#053b3c';
                     }}
                   >
                     Edit
@@ -591,12 +557,14 @@ export default function AdminVehicles() {
                       transition: 'all 0.2s ease'
                     }}
                     onMouseEnter={(e) => {
-                      e.target.style.backgroundColor = '#ef4444';
-                      e.target.style.color = 'white';
+                      const btn = e.target as HTMLButtonElement;
+                      btn.style.backgroundColor = '#ef4444';
+                      btn.style.color = 'white';
                     }}
                     onMouseLeave={(e) => {
-                      e.target.style.backgroundColor = 'transparent';
-                      e.target.style.color = '#ef4444';
+                      const btn = e.target as HTMLButtonElement;
+                      btn.style.backgroundColor = 'transparent';
+                      btn.style.color = '#ef4444';
                     }}
                   >
                     Delete
