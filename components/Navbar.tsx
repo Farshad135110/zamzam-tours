@@ -28,7 +28,7 @@ export default function Navbar() {
   const navLinks = [
     { href: '/', label: 'Home' },
     { href: '/tours', label: 'Tours' },
-    { href: '/self-drive', label: 'Car Rental' },
+    { href: '/car-rental', label: 'Car Rental' },
     { href: '/airport-transfer', label: 'Airport Transfer' },
     { href: '/hotels', label: 'Hotels' },
     { href: '/gallery', label: 'Gallery' },
