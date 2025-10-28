@@ -1,10 +1,13 @@
 // pages/self-drive/index.tsx - Vehicle Rental Main Page
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import Image from 'next/image';
+import { motion } from 'framer-motion';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
+import AnimatedSection from '../../components/AnimatedSection';
+import { fadeInUp } from '../../src/utils/animations';
 
 interface PriceStructure {
   daily: number;
@@ -45,6 +48,10 @@ export default function SelfDrive() {
   const [calculatedPrice, setCalculatedPrice] = useState(0);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  
+  // Video hero refs
+  const heroRef = useRef(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   // Handle scroll
   useEffect(() => {
@@ -53,6 +60,15 @@ export default function SelfDrive() {
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+  
+  // Handle video autoplay
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.play().catch((error) => {
+        console.log('Video autoplay failed:', error);
+      });
+    }
   }, []);
 
   // Vehicle fleet data
@@ -293,11 +309,78 @@ export default function SelfDrive() {
       <Navbar />
 
       {/* Hero Section */}
-      <section className="rent-hero" style={{ marginTop: '80px' }}>
-        <div className="rent-hero-overlay"></div>
-        <div className="rent-hero-content">
-          <h1>Premium Vehicle Rentals in Sri Lanka</h1>
-          <p>Self-drive or with driver - Choose from our extensive fleet of well-maintained vehicles</p>
+      <section className="rent-hero" ref={heroRef} style={{ marginTop: '0', position: 'relative', minHeight: '100vh', overflow: 'hidden' }}>
+        {/* Cloudinary Hero Background Video */}
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          zIndex: 0,
+          overflow: 'hidden'
+        }}>
+          <video
+            ref={videoRef}
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="auto"
+            style={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover'
+            }}
+            src="https://res.cloudinary.com/dhfqwxyb4/video/upload/v1761578014/133696-757782416_small_umzqax.mp4"
+          />
+        </div>
+        
+        <div className="rent-hero-overlay" style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'linear-gradient(135deg, rgba(5, 59, 60, 0.45), rgba(10, 92, 94, 0.35))',
+          zIndex: 1
+        }}></div>
+        
+        <motion.div 
+          style={{ position: 'relative', zIndex: 2 }}
+          initial="hidden"
+          animate="visible"
+          variants={fadeInUp}
+        >
+          <div className="rent-hero-content">
+            <motion.div
+              variants={fadeInUp}
+              transition={{ delay: 0.2 }}
+            >
+              <h1 style={{ 
+                textShadow: '2px 2px 8px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 0, 0, 0.5)',
+                color: '#ffffff'
+              }}>
+                Premium <span style={{ color: '#f8b500' }}>Vehicle Rentals</span> in Sri Lanka
+              </h1>
+            </motion.div>
+            
+            <motion.div
+              variants={fadeInUp}
+              transition={{ delay: 0.4 }}
+            >
+              <p style={{ 
+                textShadow: '1px 1px 6px rgba(0, 0, 0, 0.9), 0 0 15px rgba(0, 0, 0, 0.6)',
+                color: '#ffffff'
+              }}>
+                Self-drive or with driver - Choose from our extensive fleet of well-maintained vehicles
+              </p>
+            </motion.div>
+            
+            <motion.div
+              variants={fadeInUp}
+              transition={{ delay: 0.6 }}
+            >
           
           <div className="hero-filters">
             <div className="filter-group">
@@ -336,7 +419,42 @@ export default function SelfDrive() {
               </div>
             </div>
           </div>
-        </div>
+            </motion.div>
+          </div>
+        </motion.div>
+        
+        <motion.div 
+          style={{ position: 'relative', zIndex: 2 }}
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1, duration: 0.8, repeat: Infinity, repeatType: 'reverse' }}
+        >
+          <div className="scroll-indicator" style={{
+            position: 'absolute',
+            bottom: '30px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            textAlign: 'center',
+            color: '#ffffff'
+          }}>
+            <span style={{ 
+              display: 'block',
+              marginBottom: '10px',
+              fontSize: '14px',
+              fontWeight: '500',
+              textShadow: '1px 1px 4px rgba(0, 0, 0, 0.8)'
+            }}>Scroll to explore</span>
+            <div className="arrow-down" style={{
+              width: '30px',
+              height: '30px',
+              margin: '0 auto',
+              borderLeft: '2px solid #ffffff',
+              borderBottom: '2px solid #ffffff',
+              transform: 'rotate(-45deg)',
+              filter: 'drop-shadow(0 0 4px rgba(0, 0, 0, 0.8))'
+            }}></div>
+          </div>
+        </motion.div>
       </section>
 
       {/* Main Content */}

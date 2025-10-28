@@ -1,10 +1,13 @@
 // pages/tours/index.js - Tours Main Page
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import Image from 'next/image';
+import { motion } from 'framer-motion';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
+import AnimatedSection from '../../components/AnimatedSection';
+import { fadeInUp } from '../../src/utils/animations';
 
 interface Tour {
   id: number;
@@ -30,6 +33,20 @@ export default function Tours() {
   const [selectedTour, setSelectedTour] = useState<Tour | null>(null);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  
+  // Video hero refs
+  const heroRef = useRef(null);
+  const video1Ref = useRef<HTMLVideoElement>(null);
+  const video2Ref = useRef<HTMLVideoElement>(null);
+  const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
+  const [activePlayer, setActivePlayer] = useState<1 | 2>(1);
+  
+  // Array of videos from zamzam-tours/heroes/tours folder
+  const heroVideos = [
+    'https://res.cloudinary.com/dhfqwxyb4/video/upload/v1761571416/218798_small_ov2k3s.mp4',
+    'https://res.cloudinary.com/dhfqwxyb4/video/upload/v1761571365/158112-816068529_small_jsqcds.mp4',
+    'https://res.cloudinary.com/dhfqwxyb4/video/upload/v1761571370/158220-816359501_small_dp2ik1.mp4',
+  ];
 
   // Handle scroll
   useEffect(() => {
@@ -39,6 +56,40 @@ export default function Tours() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+  
+  // Handle video autoplay
+  useEffect(() => {
+    if (video1Ref.current) {
+      video1Ref.current.play().catch((error) => {
+        console.log('Video autoplay failed:', error);
+      });
+    }
+  }, []);
+  
+  // Handle video end - switch to other player
+  const handleVideo1End = () => {
+    const nextIndex = (currentVideoIndex + 1) % heroVideos.length;
+    
+    if (video2Ref.current) {
+      video2Ref.current.src = heroVideos[nextIndex];
+      video2Ref.current.load();
+      video2Ref.current.play();
+      setActivePlayer(2);
+      setCurrentVideoIndex(nextIndex);
+    }
+  };
+  
+  const handleVideo2End = () => {
+    const nextIndex = (currentVideoIndex + 1) % heroVideos.length;
+    
+    if (video1Ref.current) {
+      video1Ref.current.src = heroVideos[nextIndex];
+      video1Ref.current.load();
+      video1Ref.current.play();
+      setActivePlayer(1);
+      setCurrentVideoIndex(nextIndex);
+    }
+  };
 
   // Tour categories
   const categories = [
@@ -290,35 +341,169 @@ export default function Tours() {
       <Navbar />
 
       {/* Hero Section */}
-      <section className="tours-hero" style={{ marginTop: '80px' }}>
-        <div className="tours-hero-background">
-          <Image 
-            src="/tours/hero-tours.jpg" 
-            alt="Sri Lanka Tours" 
-            layout="fill"
-            objectFit="cover"
-            priority
+      <section className="tours-hero" ref={heroRef} style={{ marginTop: '0', position: 'relative', minHeight: '100vh', overflow: 'hidden' }}>
+        {/* Cloudinary Hero Background Video - Dual Player for Seamless Loop */}
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          zIndex: 0,
+          overflow: 'hidden'
+        }}>
+          {/* Video Player 1 */}
+          <video
+            ref={video1Ref}
+            autoPlay
+            muted
+            playsInline
+            preload="auto"
+            onEnded={handleVideo1End}
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              opacity: activePlayer === 1 ? 1 : 0,
+              transition: 'opacity 0.5s ease-in-out'
+            }}
+            src={heroVideos[0]}
           />
-          <div className="tours-hero-overlay"></div>
+          {/* Video Player 2 */}
+          <video
+            ref={video2Ref}
+            muted
+            playsInline
+            preload="auto"
+            onEnded={handleVideo2End}
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              opacity: activePlayer === 2 ? 1 : 0,
+              transition: 'opacity 0.5s ease-in-out'
+            }}
+          />
         </div>
         
-        <div className="tours-hero-content">
-          <h1>Discover Sri Lanka with Expert Guides</h1>
-          <p>Curated tour packages showcasing the best of Sri Lankan culture, nature, and adventure</p>
-          
-          <div className="hero-search">
-            <input
-              type="text"
-              placeholder="Search tours by name, destination, or activity..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="search-input"
-            />
-            <button className="search-btn">
-              <span>🔍</span>
-            </button>
+        <div className="tours-hero-overlay" style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'linear-gradient(135deg, rgba(5, 59, 60, 0.45), rgba(10, 92, 94, 0.35))',
+          zIndex: 1
+        }}></div>
+        
+        <motion.div 
+          style={{ position: 'relative', zIndex: 2 }}
+          initial="hidden"
+          animate="visible"
+          variants={fadeInUp}
+        >
+          <div className="tours-hero-content">
+            <motion.div
+              variants={fadeInUp}
+              transition={{ delay: 0.2 }}
+            >
+              <h1 style={{ 
+                textShadow: '2px 2px 8px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 0, 0, 0.5)',
+                color: '#ffffff'
+              }}>
+                Discover <span style={{ color: '#f8b500' }}>Sri Lanka</span> with Expert Guides
+              </h1>
+            </motion.div>
+            
+            <motion.div
+              variants={fadeInUp}
+              transition={{ delay: 0.4 }}
+            >
+              <p style={{ 
+                textShadow: '1px 1px 6px rgba(0, 0, 0, 0.9), 0 0 15px rgba(0, 0, 0, 0.6)',
+                color: '#ffffff'
+              }}>
+                Curated tour packages showcasing the best of Sri Lankan culture, nature, and adventure
+              </p>
+            </motion.div>
+            
+            <motion.div
+              variants={fadeInUp}
+              transition={{ delay: 0.6 }}
+            >
+              <div className="hero-search">
+                <input
+                  type="text"
+                  placeholder="Search tours by name, destination, or activity..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="search-input"
+                  style={{
+                    padding: '15px 20px',
+                    fontSize: '16px',
+                    border: '2px solid rgba(255, 255, 255, 0.3)',
+                    borderRadius: '50px 0 0 50px',
+                    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                    color: '#053b3c',
+                    outline: 'none'
+                  }}
+                />
+                <button className="search-btn" style={{
+                  padding: '15px 30px',
+                  fontSize: '18px',
+                  backgroundColor: '#f8b500',
+                  color: '#000000',
+                  border: 'none',
+                  borderRadius: '0 50px 50px 0',
+                  cursor: 'pointer',
+                  fontWeight: 'bold',
+                  boxShadow: '0 4px 15px rgba(248, 181, 0, 0.4)'
+                }}>
+                  <span>🔍</span>
+                </button>
+              </div>
+            </motion.div>
           </div>
-        </div>
+        </motion.div>
+        
+        <motion.div 
+          style={{ position: 'relative', zIndex: 2 }}
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1, duration: 0.8, repeat: Infinity, repeatType: 'reverse' }}
+        >
+          <div className="scroll-indicator" style={{
+            position: 'absolute',
+            bottom: '30px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            textAlign: 'center',
+            color: '#ffffff'
+          }}>
+            <span style={{ 
+              display: 'block',
+              marginBottom: '10px',
+              fontSize: '14px',
+              fontWeight: '500',
+              textShadow: '1px 1px 4px rgba(0, 0, 0, 0.8)'
+            }}>Scroll to explore</span>
+            <div className="arrow-down" style={{
+              width: '30px',
+              height: '30px',
+              margin: '0 auto',
+              borderLeft: '2px solid #ffffff',
+              borderBottom: '2px solid #ffffff',
+              transform: 'rotate(-45deg)',
+              filter: 'drop-shadow(0 0 4px rgba(0, 0, 0, 0.8))'
+            }}></div>
+          </div>
+        </motion.div>
       </section>
 
       {/* Main Content */}

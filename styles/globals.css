@@ -43,6 +43,9 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Navbar Styles */
+/* Navbar styles are now in Navbar.tsx component */
+
 /* Consistent Section Spacing */
 section {
   padding: 4rem 0;

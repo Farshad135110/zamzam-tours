@@ -97,6 +97,7 @@ export default function Navbar() {
           left: 0;
           right: 0;
           background: transparent;
+          backdrop-filter: none;
           padding: 1rem 0;
           z-index: 1000;
           transition: all 0.3s ease;
@@ -104,7 +105,7 @@ export default function Navbar() {
 
         .navbar.scrolled {
           background: white;
-          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
 
         .container {
@@ -133,8 +134,15 @@ export default function Navbar() {
           border: none;
           font-size: 1.5rem;
           cursor: pointer;
-          color: #333;
+          color: white;
           padding: 0.5rem;
+          transition: color 0.3s ease;
+          text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .navbar.scrolled .mobile-menu-btn {
+          color: #333;
+          text-shadow: none;
         }
 
         .nav-links {
@@ -146,20 +154,34 @@ export default function Navbar() {
         }
 
         .nav-links a {
-          color: #333;
+          color: white;
           text-decoration: none;
           font-weight: 600;
           font-size: 0.95rem;
           transition: all 0.3s;
           position: relative;
           padding: 0.5rem 0;
+          text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .navbar.scrolled .nav-links a {
+          color: #333;
+          text-shadow: none;
         }
 
         .nav-links a.active {
+          color: #f8b500;
+        }
+
+        .navbar.scrolled .nav-links a.active {
           color: #053b3c;
         }
 
         .nav-links a:hover {
+          color: #f8b500;
+        }
+
+        .navbar.scrolled .nav-links a:hover {
           color: #053b3c;
         }
 
@@ -170,8 +192,12 @@ export default function Navbar() {
           left: 0;
           width: 0;
           height: 2px;
-          background: #053b3c;
+          background: #f8b500;
           transition: width 0.3s;
+        }
+
+        .navbar.scrolled .nav-links a::after {
+          background: #053b3c;
         }
 
         .nav-links a:hover::after,
@@ -187,11 +213,32 @@ export default function Navbar() {
 
         .language-select {
           padding: 0.5rem;
-          border: 1px solid #ddd;
+          border: 1px solid rgba(255, 255, 255, 0.5);
           border-radius: 5px;
-          background: white;
+          background: rgba(255, 255, 255, 0.15);
+          color: white;
           cursor: pointer;
           font-size: 0.9rem;
+          font-weight: 600;
+          transition: all 0.3s ease;
+          text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .navbar.scrolled .language-select {
+          border: 1px solid #ddd;
+          background: white;
+          color: #333;
+          text-shadow: none;
+        }
+
+        .language-select option {
+          background: #053b3c;
+          color: white;
+        }
+
+        .navbar.scrolled .language-select option {
+          background: white;
+          color: #333;
         }
 
         .whatsapp-btn {
