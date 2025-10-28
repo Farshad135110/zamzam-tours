@@ -1,0 +1,103 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model airport_pickup {
+  airportpickup_id String      @id @db.VarChar(10)
+  type             pickup_type
+  pickup_from      String      @db.VarChar(255)
+  airport          String      @db.VarChar(255)
+  drop_off         String      @db.VarChar(255)
+  no_of_passengers Int
+  pickup_time      DateTime    @db.Timestamp(6)
+  vehicle_id       String?     @db.VarChar(10)
+  note             String?
+  price            Decimal     @db.Decimal(10, 2)
+  vehicle          vehicle?    @relation(fields: [vehicle_id], references: [vehicle_id])
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model feedback {
+  feedback_id String  @id @default(dbgenerated("concat('F', lpad((nextval('feedback_seq'::regclass))::text, 3, '0'::text))")) @db.VarChar(10)
+  name        String  @db.VarChar(100)
+  country     String? @db.VarChar(100)
+  review      String
+  rating      Int?
+}
+
+model gallery {
+  gallery_id String @id @default(dbgenerated("concat('G', lpad((nextval('gallery_seq'::regclass))::text, 3, '0'::text))")) @db.VarChar(10)
+  caption    String @db.VarChar(255)
+  image_link String @db.VarChar(255)
+}
+
+model hotel {
+  hotel_id    String  @id @default(dbgenerated("concat('H', lpad((nextval('hotel_seq'::regclass))::text, 3, '0'::text))")) @db.VarChar(10)
+  hotel_name  String  @db.VarChar(100)
+  location    String  @db.VarChar(150)
+  price_range String? @db.VarChar(50)
+  image       String?
+}
+
+/// This model has been renamed to 'Renamedpackage' during introspection, because the original name 'package' is reserved.
+model Renamedpackage {
+  package_id   String         @id @default(dbgenerated("concat('P', lpad((nextval('package_seq'::regclass))::text, 3, '0'::text))")) @db.VarChar(10)
+  package_name String         @db.VarChar(100)
+  description  String
+  price        Decimal?       @db.Decimal(10, 2)
+  image        String?        @db.VarChar(255)
+  tour_booking tour_booking[]
+
+  @@map("package")
+}
+
+model tour_booking {
+  tour_booking_id      String         @id @db.VarChar(10)
+  package_id           String         @db.VarChar(10)
+  name                 String         @db.VarChar(100)
+  email                String         @db.VarChar(100)
+  phone_no             String         @db.VarChar(20)
+  no_of_travellers     Int
+  starting_date        DateTime       @db.Date
+  pickup_location      String         @db.VarChar(255)
+  special_requirements String?
+  Renamedpackage       Renamedpackage @relation(fields: [package_id], references: [package_id], onDelete: Cascade)
+}
+
+model vehicle {
+  vehicle_id          String           @id @default(dbgenerated("concat('V', lpad((nextval('vehicle_seq'::regclass))::text, 3, '0'::text))")) @db.VarChar(10)
+  vehicle_name        String           @db.VarChar(100)
+  vehicle_type        String           @db.VarChar(50)
+  description         String?
+  km_per_day          Int?
+  price_per_day       Decimal?         @db.Decimal(10, 2)
+  extra_charge_per_km Decimal?         @db.Decimal(10, 2)
+  image               String?
+  capacity            Int?
+  available_for       String?          @db.VarChar(100)
+  airport_pickup      airport_pickup[]
+}
+
+model vehicle_booking {
+  vehicle_booking_id String   @id @db.VarChar(10)
+  rental_type        String   @db.VarChar(50)
+  customer_type      String   @db.VarChar(50)
+  name               String   @db.VarChar(100)
+  email              String   @db.VarChar(100)
+  phone_no           String   @db.VarChar(20)
+  pickup_location    String   @db.VarChar(255)
+  pickup_date        DateTime @db.Date
+  return_date        DateTime @db.Date
+  no_of_dates        Int
+  special_request    String?
+}
+
+enum pickup_type {
+  way @map("1 way")
+  way @map("2 way")
+}
