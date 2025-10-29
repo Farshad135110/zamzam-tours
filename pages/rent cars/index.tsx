@@ -4,171 +4,118 @@ import Head from 'next/head';
 import Link from 'next/link';
 import Image from 'next/image';
 
+interface PriceStructure {
+  daily: number;
+  weekly: number;
+  monthly: number;
+}
+
+interface Vehicle {
+  id: number;
+  name: string;
+  category: string;
+  type: string;
+  image: string;
+  capacity: string;
+  transmission: string;
+  fuel: string;
+  features: string[];
+  touristPrices: {
+    'self-drive': PriceStructure;
+    'with-driver': PriceStructure;
+  };
+  localPrices: {
+    'self-drive': PriceStructure;
+    'with-driver': PriceStructure;
+  };
+}
+
 export default function Rent() {
-  const [rentalType, setRentalType] = useState('self-drive');
-  const [customerType, setCustomerType] = useState('tourist');
-  const [selectedVehicle, setSelectedVehicle] = useState(null);
+  const [rentalType, setRentalType] = useState<'self-drive' | 'with-driver'>('with-driver');
+  const [customerType, setCustomerType] = useState<'tourist' | 'local'>('tourist');
+  const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
   const [showBookingForm, setShowBookingForm] = useState(false);
   const [pickupDate, setPickupDate] = useState('');
   const [returnDate, setReturnDate] = useState('');
   const [pickupLocation, setPickupLocation] = useState('colombo');
   const [calculatedPrice, setCalculatedPrice] = useState(0);
+  const [vehicles, setVehicles] = useState<Vehicle[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // Vehicle fleet data
-  const vehicles = [
-    {
-      id: 1,
-      name: 'Toyota Prius',
-      category: 'economy',
-      type: 'self-drive, with-driver',
-      image: '/vehicles/prius.jpg',
-      capacity: '4 passengers, 2 luggage',
-      transmission: 'Automatic',
-      fuel: 'Hybrid',
-      features: ['AC', 'GPS', 'Bluetooth', 'Airbags'],
-      touristPrices: {
-        'self-drive': { daily: 45, weekly: 270, monthly: 900 },
-        'with-driver': { daily: 65, weekly: 390, monthly: 1300 }
-      },
-      localPrices: {
-        'self-drive': { daily: 35, weekly: 210, monthly: 700 },
-        'with-driver': { daily: 55, weekly: 330, monthly: 1100 }
+  // Fetch vehicles from database
+  useEffect(() => {
+    const fetchVehicles = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch('/api/vehicles');
+        if (!response.ok) throw new Error('Failed to fetch vehicles');
+        const vehiclesData = await response.json();
+        
+        console.log('Fetched vehicles from database:', vehiclesData);
+        
+        // Transform database vehicles to match UI format
+        const transformedVehicles = vehiclesData.map((vehicle: any) => {
+          // Parse price (handle both string and number from DB)
+          const basePrice = parseFloat(vehicle.price_per_day) || 0;
+
+          // Normalize available_for tokens to hyphenated form for filtering
+          const typesArr = (vehicle.available_for || '')
+            .toString()
+            .toLowerCase()
+            .split(',')
+            .map((s: string) => s.trim())
+            .filter(Boolean)
+            .map((t: string) => t.replace(/\s+/g, '-'));
+          const availableFor = typesArr.length ? typesArr.join(', ') : 'self-drive, with-driver';
+
+          return {
+            id: parseInt(vehicle.vehicle_id.replace('V', '')) || 0,
+            name: vehicle.vehicle_name,
+            category: vehicle.vehicle_type.toLowerCase(),
+            type: availableFor,
+            image: vehicle.image || '/vehicles/default.jpg',
+            capacity: `${vehicle.capacity || 4} passengers`,
+            transmission: 'Automatic', // Default value
+            fuel: 'Hybrid', // Default value
+            features: vehicle.description ? vehicle.description.split(',').map((f: string) => f.trim()).slice(0, 4) : ['AC', 'GPS', 'Bluetooth', 'Comfortable'],
+            touristPrices: {
+              'self-drive': { 
+                daily: basePrice,
+                weekly: basePrice * 6,
+                monthly: basePrice * 20
+              },
+              'with-driver': { 
+                daily: basePrice * 1.5,
+                weekly: basePrice * 9,
+                monthly: basePrice * 30
+              }
+            },
+            localPrices: {
+              'self-drive': { 
+                daily: basePrice * 0.8,
+                weekly: basePrice * 4.8,
+                monthly: basePrice * 16
+              },
+              'with-driver': { 
+                daily: basePrice * 1.2,
+                weekly: basePrice * 7.2,
+                monthly: basePrice * 24
+              }
+            }
+          };
+        });
+        
+        setVehicles(transformedVehicles);
+      } catch (error) {
+        console.error('Error fetching vehicles:', error);
+        alert('Failed to load vehicles from database');
+      } finally {
+        setLoading(false);
       }
-    },
-    {
-      id: 2,
-      name: 'Toyota Aqua',
-      category: 'compact',
-      type: 'self-drive, with-driver',
-      image: '/vehicles/aqua.jpg',
-      capacity: '4 passengers, 2 luggage',
-      transmission: 'Automatic',
-      fuel: 'Hybrid',
-      features: ['AC', 'GPS', 'Bluetooth', 'Airbags'],
-      touristPrices: {
-        'self-drive': { daily: 40, weekly: 240, monthly: 800 },
-        'with-driver': { daily: 60, weekly: 360, monthly: 1200 }
-      },
-      localPrices: {
-        'self-drive': { daily: 30, weekly: 180, monthly: 600 },
-        'with-driver': { daily: 50, weekly: 300, monthly: 1000 }
-      }
-    },
-    {
-      id: 3,
-      name: 'Suzuki WagonR',
-      category: 'hatchback',
-      type: 'self-drive, with-driver',
-      image: '/vehicles/wagonr.jpg',
-      capacity: '4 passengers, 2 luggage',
-      transmission: 'Automatic',
-      fuel: 'Petrol',
-      features: ['AC', 'Power Steering', 'Airbags'],
-      touristPrices: {
-        'self-drive': { daily: 35, weekly: 210, monthly: 700 },
-        'with-driver': { daily: 55, weekly: 330, monthly: 1100 }
-      },
-      localPrices: {
-        'self-drive': { daily: 25, weekly: 150, monthly: 500 },
-        'with-driver': { daily: 45, weekly: 270, monthly: 900 }
-      }
-    },
-    {
-      id: 4,
-      name: 'Toyota KDH',
-      category: 'van',
-      type: 'self-drive, with-driver',
-      image: '/vehicles/kdh.jpg',
-      capacity: '6-8 passengers, 4 luggage',
-      transmission: 'Manual',
-      fuel: 'Diesel',
-      features: ['AC', 'Spacious', 'Comfortable', 'Reliable'],
-      touristPrices: {
-        'self-drive': { daily: 60, weekly: 360, monthly: 1200 },
-        'with-driver': { daily: 80, weekly: 480, monthly: 1600 }
-      },
-      localPrices: {
-        'self-drive': { daily: 50, weekly: 300, monthly: 1000 },
-        'with-driver': { daily: 70, weekly: 420, monthly: 1400 }
-      }
-    },
-    {
-      id: 5,
-      name: 'Tour Van',
-      category: 'van',
-      type: 'with-driver',
-      image: '/vehicles/tour-van.jpg',
-      capacity: '12-15 passengers, 8 luggage',
-      transmission: 'Manual',
-      fuel: 'Diesel',
-      features: ['AC', 'Comfortable Seats', 'Luggage Space', 'Tour Guide Ready'],
-      touristPrices: {
-        'self-drive': { daily: 0, weekly: 0, monthly: 0 },
-        'with-driver': { daily: 120, weekly: 720, monthly: 2400 }
-      },
-      localPrices: {
-        'self-drive': { daily: 0, weekly: 0, monthly: 0 },
-        'with-driver': { daily: 100, weekly: 600, monthly: 2000 }
-      }
-    },
-    {
-      id: 6,
-      name: 'Every Buddy Van',
-      category: 'van',
-      type: 'self-drive, with-driver',
-      image: '/vehicles/every-buddy.jpg',
-      capacity: '8-10 passengers, 6 luggage',
-      transmission: 'Manual',
-      fuel: 'Diesel',
-      features: ['AC', 'Spacious', 'Family Friendly', 'Reliable'],
-      touristPrices: {
-        'self-drive': { daily: 70, weekly: 420, monthly: 1400 },
-        'with-driver': { daily: 90, weekly: 540, monthly: 1800 }
-      },
-      localPrices: {
-        'self-drive': { daily: 60, weekly: 360, monthly: 1200 },
-        'with-driver': { daily: 80, weekly: 480, monthly: 1600 }
-      }
-    },
-    {
-      id: 7,
-      name: 'Shuttle Van',
-      category: 'van',
-      type: 'self-drive, with-driver',
-      image: '/vehicles/shuttle.jpg',
-      capacity: '10-12 passengers, 6 luggage',
-      transmission: 'Manual',
-      fuel: 'Diesel',
-      features: ['AC', 'Comfortable', 'Airport Transfers', 'Group Travel'],
-      touristPrices: {
-        'self-drive': { daily: 80, weekly: 480, monthly: 1600 },
-        'with-driver': { daily: 100, weekly: 600, monthly: 2000 }
-      },
-      localPrices: {
-        'self-drive': { daily: 70, weekly: 420, monthly: 1400 },
-        'with-driver': { daily: 90, weekly: 540, monthly: 1800 }
-      }
-    },
-    {
-      id: 8,
-      name: 'Tourist Bus',
-      category: 'bus',
-      type: 'with-driver',
-      image: '/vehicles/bus.jpg',
-      capacity: '30-50 passengers, 20 luggage',
-      transmission: 'Manual',
-      fuel: 'Diesel',
-      features: ['AC', 'Comfortable Seats', 'Luggage Compartment', 'Tour Guide'],
-      touristPrices: {
-        'self-drive': { daily: 0, weekly: 0, monthly: 0 },
-        'with-driver': { daily: 200, weekly: 1200, monthly: 4000 }
-      },
-      localPrices: {
-        'self-drive': { daily: 0, weekly: 0, monthly: 0 },
-        'with-driver': { daily: 180, weekly: 1080, monthly: 3600 }
-      }
-    }
-  ];
+    };
+    
+    fetchVehicles();
+  }, []);
 
   // Pickup locations
   const locations = [
@@ -185,7 +132,7 @@ export default function Rent() {
     if (selectedVehicle && pickupDate && returnDate) {
       const start = new Date(pickupDate);
       const end = new Date(returnDate);
-      const days = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+      const days = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
       
       if (days > 0) {
         const prices = customerType === 'tourist' ? selectedVehicle.touristPrices : selectedVehicle.localPrices;
@@ -204,16 +151,15 @@ export default function Rent() {
     }
   }, [selectedVehicle, pickupDate, returnDate, rentalType, customerType]);
 
-  // Filter vehicles based on rental type
-  const filteredVehicles = vehicles.filter(vehicle => {
-    if (rentalType === 'self-drive') {
-      return vehicle.type.includes('self-drive');
-    }
-    return true; // Show all vehicles for with-driver
-  });
+  // Helper: availability match (treat 'tour' as with-driver)
+  const isAvailableFor = (v: Vehicle, type: 'self-drive' | 'with-driver') =>
+    v.type.includes(type) || (type === 'with-driver' && v.type.includes('tour'));
+
+  // Filter vehicles based on rental type (same logic for both types)
+  const filteredVehicles = vehicles.filter(vehicle => isAvailableFor(vehicle, rentalType));
 
   // Handle WhatsApp booking
-  const handleWhatsAppBooking = (vehicle, customMessage = '') => {
+  const handleWhatsAppBooking = (vehicle: Vehicle, customMessage = '') => {
     let message = customMessage;
     if (!customMessage) {
       message = `Hello Zamzam Tours! I'm interested in renting a ${vehicle.name} (${rentalType}) for ${customerType}. `;
@@ -227,7 +173,7 @@ export default function Rent() {
   };
 
   // Open booking form
-  const openBookingForm = (vehicle) => {
+  const openBookingForm = (vehicle: Vehicle) => {
     setSelectedVehicle(vehicle);
     setShowBookingForm(true);
   };
@@ -237,7 +183,7 @@ export default function Rent() {
     if (!pickupDate || !returnDate) return '';
     const start = new Date(pickupDate);
     const end = new Date(returnDate);
-    const days = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+    const days = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
     return days > 0 ? `${days} day${days > 1 ? 's' : ''}` : '';
   };
 
@@ -285,23 +231,7 @@ export default function Rent() {
               </div>
             </div>
 
-            <div className="option-group">
-              <h3>Rental Type:</h3>
-              <div className="option-buttons">
-                <button 
-                  className={`option-btn ${rentalType === 'self-drive' ? 'active' : ''}`}
-                  onClick={() => setRentalType('self-drive')}
-                >
-                  🚗 Self Drive
-                </button>
-                <button 
-                  className={`option-btn ${rentalType === 'with-driver' ? 'active' : ''}`}
-                  onClick={() => setRentalType('with-driver')}
-                >
-                  👨‍💼 With Driver
-                </button>
-              </div>
-            </div>
+            {/* Rental type is fixed to with-driver on this page */}
           </div>
         </div>
       </section>
@@ -374,8 +304,13 @@ export default function Rent() {
             </div>
           </div>
 
-          <div className="vehicles-grid">
-            {filteredVehicles.map(vehicle => (
+          {loading ? (
+            <div className="loading-message" style={{ textAlign: 'center', padding: '3rem', fontSize: '1.2rem', color: '#666' }}>
+              Loading vehicles...
+            </div>
+          ) : (
+            <div className="vehicles-grid">
+              {filteredVehicles.map(vehicle => (
               <div key={vehicle.id} className="vehicle-card">
                 <div className="vehicle-image">
                   <Image 
@@ -384,9 +319,10 @@ export default function Rent() {
                     width={400}
                     height={250}
                     objectFit="cover"
+                    unoptimized
                   />
                   <div className="vehicle-badge">{vehicle.category}</div>
-                  {!vehicle.type.includes(rentalType) && (
+                  {!isAvailableFor(vehicle, rentalType) && (
                     <div className="not-available-badge">Not available for {rentalType}</div>
                   )}
                 </div>
@@ -458,15 +394,16 @@ export default function Rent() {
                     <button 
                       className="btn-primary"
                       onClick={() => handleWhatsAppBooking(vehicle)}
-                      disabled={!vehicle.type.includes(rentalType)}
+                      disabled={!isAvailableFor(vehicle, rentalType)}
                     >
-                      {!vehicle.type.includes(rentalType) ? 'Not Available' : 'Book Now'}
+                      {!isAvailableFor(vehicle, rentalType) ? 'Not Available' : 'Book Now'}
                     </button>
                   </div>
                 </div>
               </div>
             ))}
           </div>
+          )}
         </div>
       </section>
 

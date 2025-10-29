@@ -17,6 +17,15 @@ export default function AirportTransfer() {
   const [dropoffLocation, setDropoffLocation] = useState('colombo-city');
   const [calculatedPrice, setCalculatedPrice] = useState(0);
   const [showBookingForm, setShowBookingForm] = useState(false);
+  
+  // Additional form state for database submission
+  const [pickupType, setPickupType] = useState<'one_way' | 'two_way'>('one_way');
+  const [fullName, setFullName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [nationality, setNationality] = useState('');
+  const [additionalNotes, setAdditionalNotes] = useState('');
+  const [submitting, setSubmitting] = useState(false);
 
   // Transfer services
   const transferServices = [
@@ -198,6 +207,75 @@ export default function AirportTransfer() {
     if (passengers <= 10) return vehicleOptions[2];
     if (passengers <= 12) return vehicleOptions[3];
     return vehicleOptions[4];
+  };
+
+  // Handle form submission to database
+  const handleFormSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!fullName || !email || !phone || !arrivalDate || !arrivalTime) {
+      alert('Please fill in all required fields');
+      return;
+    }
+
+    setSubmitting(true);
+
+    try {
+      const pickupFrom = airports.find(a => a.id === pickupLocation)?.name || pickupLocation;
+      const dropoff = popularDestinations.find(d => d.id === dropoffLocation)?.name || dropoffLocation;
+      const airportName = pickupLocation.includes('airport') ? 
+        airports.find(a => a.id === pickupLocation)?.name : '';
+      const recommendedVehicle = getRecommendedVehicle();
+      
+      // Combine date and time for pickup_time
+      const pickupDateTime = new Date(`${arrivalDate}T${arrivalTime}`).toISOString();
+
+      const payload = {
+        pickup_type: pickupType,
+        pickup_from: pickupFrom,
+        dropoff: dropoff,
+        airport: airportName,
+        passengers: passengers,
+        pickup_time: pickupDateTime,
+        vehicle: recommendedVehicle.name,
+        note: `Customer: ${fullName}\nEmail: ${email}\nPhone: ${phone}\nNationality: ${nationality}\nFlight: ${flightNumber || 'N/A'}\nService Type: ${transferServices.find(s => s.type === transferType)?.name}\n${additionalNotes}`,
+        price: calculatedPrice
+      };
+
+      const response = await fetch('/api/airport-pickups', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to submit booking');
+      }
+
+      const result = await response.json();
+      console.log('Booking created:', result);
+      
+      alert('Booking submitted successfully! We will contact you shortly via WhatsApp.');
+      
+      // Reset form
+      setShowBookingForm(false);
+      setFullName('');
+      setEmail('');
+      setPhone('');
+      setNationality('');
+      setAdditionalNotes('');
+      
+      // Send WhatsApp notification
+      handleWhatsAppBooking();
+    } catch (error: any) {
+      console.error('Booking submission error:', error);
+      alert('Failed to submit booking: ' + error.message);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -589,6 +667,25 @@ export default function AirportTransfer() {
             
             <div className="booking-summary">
               <div className="summary-item">
+                <span>Trip Type:</span>
+                <div className="trip-type-selector">
+                  <button 
+                    className={`trip-btn ${pickupType === 'one_way' ? 'active' : ''}`}
+                    onClick={() => setPickupType('one_way')}
+                    type="button"
+                  >
+                    One Way
+                  </button>
+                  <button 
+                    className={`trip-btn ${pickupType === 'two_way' ? 'active' : ''}`}
+                    onClick={() => setPickupType('two_way')}
+                    type="button"
+                  >
+                    Round Trip
+                  </button>
+                </div>
+              </div>
+              <div className="summary-item">
                 <span>Service Type:</span>
                 <span>{transferServices.find(s => s.type === transferType)?.name}</span>
               </div>
@@ -620,28 +717,49 @@ export default function AirportTransfer() {
               </div>
             </div>
 
-            <form className="booking-form">
+            <form className="booking-form" onSubmit={handleFormSubmit}>
               <div className="form-section">
                 <h3>Personal Information</h3>
                 <div className="form-row">
                   <div className="form-group">
                     <label>Full Name *</label>
-                    <input type="text" required />
+                    <input 
+                      type="text" 
+                      value={fullName}
+                      onChange={(e) => setFullName(e.target.value)}
+                      required 
+                    />
                   </div>
                   <div className="form-group">
                     <label>Email Address *</label>
-                    <input type="email" required />
+                    <input 
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required 
+                    />
                   </div>
                 </div>
 
                 <div className="form-row">
                   <div className="form-group">
                     <label>Phone Number *</label>
-                    <input type="tel" required />
+                    <input 
+                      type="tel"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      placeholder="+94 XXX XXX XXX"
+                      required 
+                    />
                   </div>
                   <div className="form-group">
                     <label>Nationality *</label>
-                    <input type="text" required />
+                    <input 
+                      type="text"
+                      value={nationality}
+                      onChange={(e) => setNationality(e.target.value)}
+                      required 
+                    />
                   </div>
                 </div>
               </div>
@@ -692,6 +810,8 @@ export default function AirportTransfer() {
                   <label>Additional Notes</label>
                   <textarea 
                     rows={3}
+                    value={additionalNotes}
+                    onChange={(e) => setAdditionalNotes(e.target.value)}
                     placeholder="Child seats needed, special assistance required, multiple stops, etc."
                   ></textarea>
                 </div>
@@ -702,15 +822,16 @@ export default function AirportTransfer() {
                   type="button"
                   className="btn-secondary"
                   onClick={() => setShowBookingForm(false)}
+                  disabled={submitting}
                 >
                   Cancel
                 </button>
                 <button 
-                  type="button"
+                  type="submit"
                   className="btn-primary"
-                  onClick={() => handleWhatsAppBooking()}
+                  disabled={submitting}
                 >
-                  Confirm & Book via WhatsApp
+                  {submitting ? 'Submitting...' : 'Confirm Booking'}
                 </button>
               </div>
             </form>
@@ -1195,6 +1316,32 @@ export default function AirportTransfer() {
           font-weight: 700;
           font-size: 1.1rem;
           color: var(--primary-color);
+        }
+
+        .trip-type-selector {
+          display: flex;
+          gap: 0.5rem;
+        }
+
+        .trip-btn {
+          flex: 1;
+          padding: 8px 16px;
+          border: 2px solid var(--border-color);
+          background: white;
+          border-radius: 5px;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          font-size: 0.9rem;
+        }
+
+        .trip-btn.active {
+          background: var(--primary-color);
+          color: white;
+          border-color: var(--primary-color);
+        }
+
+        .trip-btn:hover:not(.active) {
+          border-color: var(--primary-light);
         }
 
         .booking-form .form-section {

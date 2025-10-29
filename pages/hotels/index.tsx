@@ -6,6 +6,20 @@ import Image from 'next/image';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 
+interface Hotel {
+  id: string | number;
+  name: string;
+  location: string;
+  rating: number;
+  reviews: number;
+  price: number;
+  image: string;
+  amenities: string[];
+  description: string;
+  coordinates: { lat: number; lng: number };
+  popularPackages: string[];
+}
+
 export default function Hotels() {
   const [searchParams, setSearchParams] = useState({
     location: 'all',
@@ -15,10 +29,10 @@ export default function Hotels() {
     rooms: 1,
     priceRange: [0, 500],
     rating: 0,
-    amenities: []
+    amenities: [] as string[]
   });
   
-  const [selectedHotel, setSelectedHotel] = useState(null);
+  const [selectedHotel, setSelectedHotel] = useState<Hotel | null>(null);
   const [showBookingForm, setShowBookingForm] = useState(false);
   const [bookingType, setBookingType] = useState('hotel-only');
   const [selectedPackages, setSelectedPackages] = useState({
@@ -26,6 +40,12 @@ export default function Hotels() {
     dailyTours: false,
     rentalCar: false
   });
+  
+  // State for database hotels
+  const [hotels, setHotels] = useState<Hotel[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [packageDeals, setPackageDeals] = useState<any[]>([]);
+  const [packagesLoading, setPackagesLoading] = useState(true);
 
   // Hotel locations
   const locations = [
@@ -53,113 +73,97 @@ export default function Hotels() {
     { id: 'bar', name: 'Bar' }
   ];
 
-  // Sample hotels data
-  const hotels = [
-    {
-      id: 1,
-      name: 'Cinnamon Grand Colombo',
-      location: 'colombo',
-      rating: 4.8,
-      reviews: 1247,
-      price: 180,
-      image: '/hotels/cinnamon-grand.jpg',
-      amenities: ['pool', 'spa', 'gym', 'wifi', 'breakfast', 'restaurant', 'bar'],
-      description: 'Luxury 5-star hotel in the heart of Colombo with world-class amenities',
-      coordinates: { lat: 6.9271, lng: 79.8612 },
-      popularPackages: ['airport-transfer', 'city-tour']
-    },
-    {
-      id: 2,
-      name: 'Heritance Kandalama',
-      location: 'kandy',
-      rating: 4.9,
-      reviews: 892,
-      price: 220,
-      image: '/hotels/kandalama.jpg',
-      amenities: ['pool', 'spa', 'wifi', 'breakfast', 'restaurant', 'bar'],
-      description: 'Architectural masterpiece nestled between jungle and lake',
-      coordinates: { lat: 7.8731, lng: 80.7718 },
-      popularPackages: ['airport-transfer', 'cultural-tour']
-    },
-    {
-      id: 3,
-      name: 'Fortaleza Hotel Galle',
-      location: 'galle',
-      rating: 4.7,
-      reviews: 567,
-      price: 150,
-      image: '/hotels/fortaleza.jpg',
-      amenities: ['pool', 'wifi', 'breakfast', 'restaurant', 'bar'],
-      description: 'Boutique hotel within Galle Fort with colonial charm',
-      coordinates: { lat: 6.0320, lng: 80.2160 },
-      popularPackages: ['airport-transfer', 'beach-tour']
-    },
-    {
-      id: 4,
-      name: 'Jetwing Beach Negombo',
-      location: 'negombo',
-      rating: 4.6,
-      reviews: 734,
-      price: 120,
-      image: '/hotels/jetwing-beach.jpg',
-      amenities: ['pool', 'spa', 'wifi', 'breakfast', 'beach', 'restaurant', 'bar'],
-      description: 'Beachfront paradise perfect for relaxation and water sports',
-      coordinates: { lat: 7.2080, lng: 79.8450 },
-      popularPackages: ['airport-transfer', 'beach-tour']
-    },
-    {
-      id: 5,
-      name: 'Ceylon Tea Trails',
-      location: 'nuwara-eliya',
-      rating: 4.9,
-      reviews: 423,
-      price: 350,
-      image: '/hotels/tea-trails.jpg',
-      amenities: ['pool', 'spa', 'wifi', 'breakfast', 'restaurant', 'bar'],
-      description: 'Luxury bungalow experience in Sri Lankan tea country',
-      coordinates: { lat: 6.9497, lng: 80.7891 },
-      popularPackages: ['tea-tour', 'hill-country-tour']
-    },
-    {
-      id: 6,
-      name: 'Wild Coast Tented Lodge',
-      location: 'yala',
-      rating: 4.8,
-      reviews: 389,
-      price: 280,
-      image: '/hotels/wild-coast.jpg',
-      amenities: ['pool', 'wifi', 'breakfast', 'restaurant', 'bar'],
-      description: 'Luxury tented safari camp near Yala National Park',
-      coordinates: { lat: 6.3733, lng: 81.5011 },
-      popularPackages: ['safari-tour', 'wildlife-tour']
-    },
-    {
-      id: 7,
-      name: 'Uga Jungle Beach',
-      location: 'trincomalee',
-      rating: 4.5,
-      reviews: 298,
-      price: 190,
-      image: '/hotels/uga-jungle.jpg',
-      amenities: ['pool', 'spa', 'wifi', 'breakfast', 'beach', 'restaurant', 'bar'],
-      description: 'Secluded beach resort perfect for honeymooners',
-      coordinates: { lat: 8.5874, lng: 81.2154 },
-      popularPackages: ['beach-tour', 'whale-watching']
-    },
-    {
-      id: 8,
-      name: '98 Acres Resort Ella',
-      location: 'ella',
-      rating: 4.7,
-      reviews: 512,
-      price: 160,
-      image: '/hotels/98-acres.jpg',
-      amenities: ['pool', 'spa', 'wifi', 'breakfast', 'restaurant', 'bar'],
-      description: 'Eco-luxury resort with stunning views of Ella Gap',
-      coordinates: { lat: 6.8767, lng: 81.0583 },
-      popularPackages: ['hiking-tour', 'adventure-tour']
-    }
-  ];
+  // Fetch hotels from database
+  useEffect(() => {
+    const fetchHotels = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch('/api/hotels');
+        if (!response.ok) throw new Error('Failed to fetch hotels');
+        const hotelsData = await response.json();
+        
+        console.log('Fetched hotels from database:', hotelsData);
+        
+        // Transform database hotels to match UI format
+        const transformedHotels = hotelsData.map((hotel: any) => {
+          // Parse facilities as amenities
+          const amenities = hotel.facilities ? hotel.facilities.split(',').map((f: string) => f.trim().toLowerCase()) : [];
+          
+          // Parse price range to get base price
+          const priceMatch = hotel.price_range?.match(/\d+/);
+          const basePrice = priceMatch ? parseInt(priceMatch[0]) : 100;
+          
+          return {
+            id: hotel.hotel_id,
+            name: hotel.hotel_name,
+            location: hotel.location?.toLowerCase().replace(/\s+/g, '-') || 'all',
+            rating: 4.5, // Default rating
+            reviews: Math.floor(Math.random() * 500) + 200, // Random reviews
+            price: basePrice,
+            image: hotel.image || '/hotels/default.jpg',
+            amenities: amenities,
+            description: `Comfortable accommodation in ${hotel.location || 'Sri Lanka'}`,
+            coordinates: { lat: 6.9271, lng: 79.8612 }, // Default coordinates
+            popularPackages: ['airport-transfer', 'city-tour']
+          };
+        });
+        
+        setHotels(transformedHotels);
+      } catch (error) {
+        console.error('Error fetching hotels:', error);
+        alert('Failed to load hotels from database');
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchHotels();
+  }, []);
+
+  // Fetch packages from database
+  useEffect(() => {
+    const fetchPackages = async () => {
+      try {
+        setPackagesLoading(true);
+        const response = await fetch('/api/packages');
+        if (!response.ok) throw new Error('Failed to fetch packages');
+        const packagesData = await response.json();
+        
+        console.log('Fetched packages from database:', packagesData);
+        
+        // Transform database packages to match UI format
+        const transformedPackages = packagesData.map((pkg: any, index: number) => {
+          // Parse includings to array
+          const includes = pkg.includings ? 
+            pkg.includings.split(',').map((item: string) => item.trim()) : 
+            ['Package details', 'Contact for more info'];
+          
+          // Calculate discounted price (20% off from base price or use default)
+          const basePrice = pkg.price || 500;
+          const discountedPrice = Math.round(basePrice * 0.8);
+          
+          return {
+            id: pkg.package_id,
+            name: pkg.package_name,
+            description: pkg.description || 'Explore Sri Lanka with this amazing package',
+            originalPrice: basePrice,
+            discountedPrice: discountedPrice,
+            includes: includes,
+            image: pkg.image || '/packages/default.jpg'
+          };
+        });
+        
+        setPackageDeals(transformedPackages);
+      } catch (error) {
+        console.error('Error fetching packages:', error);
+        // Keep empty array on error, don't show alert
+      } finally {
+        setPackagesLoading(false);
+      }
+    };
+    
+    fetchPackages();
+  }, []);
 
   // Additional services
   const additionalServices = [
@@ -186,37 +190,6 @@ export default function Hotels() {
       price: 40,
       types: ['self-drive', 'with-driver'],
       image: '/services/car-rental.jpg'
-    }
-  ];
-
-  // Package deals
-  const packageDeals = [
-    {
-      id: 'beach-paradise',
-      name: 'Beach Paradise Package',
-      description: '7 nights beachfront accommodation + airport transfers + daily beach tours',
-      originalPrice: 1200,
-      discountedPrice: 999,
-      includes: ['7 nights hotel', 'Airport transfers', '3 beach tours', 'Breakfast included'],
-      image: '/packages/beach-paradise.jpg'
-    },
-    {
-      id: 'cultural-journey',
-      name: 'Cultural Journey Package',
-      description: '5 nights heritage hotels + cultural triangle tours + airport transfers',
-      originalPrice: 800,
-      discountedPrice: 650,
-      includes: ['5 nights hotel', 'All entrance fees', 'Expert guide', 'Breakfast & dinner'],
-      image: '/packages/cultural-journey.jpg'
-    },
-    {
-      id: 'adventure-combo',
-      name: 'Adventure Combo Package',
-      description: '6 nights adventure resorts + hiking + safari + transfers',
-      originalPrice: 1100,
-      discountedPrice: 899,
-      includes: ['6 nights hotel', 'Safari experience', 'Hiking tours', 'All transfers'],
-      image: '/packages/adventure-combo.jpg'
     }
   ];
 
@@ -278,7 +251,7 @@ export default function Hotels() {
   };
 
   // Open hotel details and booking
-  const openHotelBooking = (hotel) => {
+  const openHotelBooking = (hotel: Hotel) => {
     setSelectedHotel(hotel);
     setShowBookingForm(true);
   };
@@ -456,8 +429,13 @@ export default function Hotels() {
             <p>Complete vacation packages with hotels, transfers, and tours</p>
           </div>
 
-          <div className="packages-grid">
-            {packageDeals.map(pkg => (
+          {packagesLoading ? (
+            <div className="loading-message" style={{ textAlign: 'center', padding: '3rem', fontSize: '1.2rem', color: '#666' }}>
+              Loading packages...
+            </div>
+          ) : packageDeals.length > 0 ? (
+            <div className="packages-grid">
+              {packageDeals.map(pkg => (
               <div key={pkg.id} className="package-card">
                 <div className="package-image">
                   <Image 
@@ -466,6 +444,7 @@ export default function Hotels() {
                     width={400}
                     height={250}
                     objectFit="cover"
+                    unoptimized
                   />
                   <div className="package-badge">Popular Package</div>
                 </div>
@@ -477,7 +456,7 @@ export default function Hotels() {
                   <div className="package-includes">
                     <h4>Includes:</h4>
                     <ul>
-                      {pkg.includes.map((item, index) => (
+                      {pkg.includes.map((item: string, index: number) => (
                         <li key={index}>✓ {item}</li>
                       ))}
                     </ul>
@@ -503,6 +482,12 @@ export default function Hotels() {
               </div>
             ))}
           </div>
+          ) : (
+            <div className="no-results">
+              <h3>No packages available at the moment</h3>
+              <p>Check back soon for exciting travel packages</p>
+            </div>
+          )}
         </div>
       </section>
 
@@ -514,8 +499,13 @@ export default function Hotels() {
             <p>Curated selection of the best accommodations across Sri Lanka</p>
           </div>
 
-          <div className="hotels-grid">
-            {filteredHotels.map(hotel => (
+          {loading ? (
+            <div className="loading-message" style={{ textAlign: 'center', padding: '3rem', fontSize: '1.2rem', color: '#666' }}>
+              Loading hotels...
+            </div>
+          ) : (
+            <div className="hotels-grid">
+              {filteredHotels.map(hotel => (
               <div key={hotel.id} className="hotel-card">
                 <div className="hotel-image">
                   <Image 
@@ -524,6 +514,7 @@ export default function Hotels() {
                     width={400}
                     height={250}
                     objectFit="cover"
+                    unoptimized
                   />
                   <div className="hotel-rating">
                     <span>⭐ {hotel.rating}</span>
@@ -585,8 +576,9 @@ export default function Hotels() {
               </div>
             ))}
           </div>
+          )}
 
-          {filteredHotels.length === 0 && (
+          {!loading && filteredHotels.length === 0 && (
             <div className="no-results">
               <h3>No hotels found matching your criteria</h3>
               <p>Try adjusting your filters or search parameters</p>
@@ -833,14 +825,18 @@ export default function Hotels() {
                   <div className="form-section">
                     <h3>Additional Services</h3>
                     <div className="services-selection">
-                      {additionalServices.map(service => (
+                      {additionalServices.map(service => {
+                        const camelCaseKey: keyof typeof selectedPackages = 
+                          service.id === 'airport-transfer' ? 'airportTransfer' : 
+                          service.id === 'daily-tours' ? 'dailyTours' : 'rentalCar';
+                        return (
                         <label key={service.id} className="service-checkbox">
                           <input
                             type="checkbox"
-                            checked={selectedPackages[service.id]}
+                            checked={selectedPackages[camelCaseKey]}
                             onChange={(e) => setSelectedPackages({
                               ...selectedPackages,
-                              [service.id]: e.target.checked
+                              [camelCaseKey]: e.target.checked
                             })}
                           />
                           <div className="service-info">
@@ -849,7 +845,8 @@ export default function Hotels() {
                             <span className="service-price">+${service.price}</span>
                           </div>
                         </label>
-                      ))}
+                        );
+                      })}
                     </div>
                   </div>
                 )}
