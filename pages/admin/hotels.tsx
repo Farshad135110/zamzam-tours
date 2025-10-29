@@ -1,69 +1,28 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import AdminSidebar from '../../components/AdminSidebar';
 
 interface Hotel {
-  hotel_id: number;
+  hotel_id: string;
   hotel_name: string;
   location: string;
   price_range: string;
-  image: string;
-  facilities: string[];
+  image?: string;
+  facilities?: string;
 }
 
 export default function AdminHotels() {
   const [showModal, setShowModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [editingHotel, setEditingHotel] = useState<Hotel | null>(null);
-
-  const [hotels, setHotels] = useState<Hotel[]>([
-    {
-      hotel_id: 1,
-      hotel_name: 'Makkah Royal Clock Tower',
-      location: 'Makkah, Saudi Arabia',
-      price_range: '$$$$',
-      image: '/api/placeholder/300/200',
-      facilities: ['Free WiFi', 'Prayer Room', 'Restaurant', 'Room Service', 'Fitness Center']
-    },
-    {
-      hotel_id: 2,
-      hotel_name: 'Madinah Hilton',
-      location: 'Madinah, Saudi Arabia',
-      price_range: '$$$',
-      image: '/api/placeholder/300/200',
-      facilities: ['Free WiFi', 'Prayer Room', 'Spa', 'Restaurant']
-    },
-    {
-      hotel_id: 3,
-      hotel_name: 'Swissotel Makkah',
-      location: 'Makkah, Saudi Arabia',
-      price_range: '$$$$',
-      image: '/api/placeholder/300/200',
-      facilities: ['Free WiFi', 'Prayer Room', 'Pool', 'Restaurant', 'Business Center']
-    },
-    {
-      hotel_id: 4,
-      hotel_name: 'Intercontinental Madinah',
-      location: 'Madinah, Saudi Arabia',
-      price_range: '$$$',
-      image: '/api/placeholder/300/200',
-      facilities: ['Free WiFi', 'Prayer Room', 'Spa', 'Restaurant', 'Room Service']
-    },
-    {
-      hotel_id: 5,
-      hotel_name: 'Raffles Makkah Palace',
-      location: 'Makkah, Saudi Arabia',
-      price_range: '$$$$$',
-      image: '/api/placeholder/300/200',
-      facilities: ['Free WiFi', 'Prayer Room', 'Spa', 'Pool', 'Restaurant', 'Butler Service']
-    }
-  ]);
+  const [hotels, setHotels] = useState<Hotel[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
   const [formData, setFormData] = useState({
     hotel_name: '',
     location: '',
     price_range: '$$',
     image: '',
-    facilities: [] as string[]
+    facilities: ''
   });
 
   const filteredHotels = hotels.filter(hotel =>
@@ -95,24 +54,47 @@ export default function AdminHotels() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (editingHotel) {
-      // Update existing hotel
-      setHotels(hotels.map(hotel => 
-        hotel.hotel_id === editingHotel.hotel_id 
-          ? { ...formData, hotel_id: editingHotel.hotel_id }
-          : hotel
-      ));
-    } else {
-      // Add new hotel
-      const newHotel: Hotel = {
-        ...formData,
-        hotel_id: Math.max(...hotels.map(h => h.hotel_id)) + 1
-      };
-      setHotels([...hotels, newHotel]);
-    }
-    setShowModal(false);
-    setFormData({ hotel_name: '', location: '', price_range: '$$', image: '', facilities: [] });
-    setEditingHotel(null);
+    
+    (async () => {
+      try {
+        if (editingHotel) {
+          const res = await fetch(`/api/hotels/${editingHotel.hotel_id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(formData)
+          });
+          if (!res.ok) throw new Error('Failed to update');
+          const updated = await res.json();
+          setHotels(prev => prev.map(h => h.hotel_id === updated.hotel_id ? updated : h));
+        } else {
+          const res = await fetch('/api/hotels', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(formData)
+          });
+          if (!res.ok) throw new Error('Failed to create');
+          const created = await res.json();
+          setHotels(prev => [...prev, created]);
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Error saving hotel');
+      } finally {
+        setShowModal(false);
+        resetForm();
+        setEditingHotel(null);
+      }
+    })();
+  };
+
+  const resetForm = () => {
+    setFormData({
+      hotel_name: '',
+      location: '',
+      price_range: '$$',
+      image: '',
+      facilities: ''
+    });
   };
 
   const handleEdit = (hotel: Hotel) => {
@@ -120,17 +102,25 @@ export default function AdminHotels() {
       hotel_name: hotel.hotel_name,
       location: hotel.location,
       price_range: hotel.price_range,
-      image: hotel.image,
-      facilities: hotel.facilities
+      image: hotel.image || '',
+      facilities: hotel.facilities || ''
     });
     setEditingHotel(hotel);
     setShowModal(true);
   };
 
-  const handleDelete = (hotelId: number) => {
-    if (confirm('Are you sure you want to delete this hotel?')) {
-      setHotels(hotels.filter(hotel => hotel.hotel_id !== hotelId));
-    }
+  const handleDelete = (hotelId: string) => {
+    if (!confirm('Are you sure you want to delete this hotel?')) return;
+    (async () => {
+      try {
+        const res = await fetch(`/api/hotels/${hotelId}`, { method: 'DELETE' });
+        if (!res.ok) throw new Error('Failed to delete');
+        setHotels(prev => prev.filter(h => h.hotel_id !== hotelId));
+      } catch (err) {
+        console.error(err);
+        alert('Delete failed');
+      }
+    })();
   };
 
   const priceRanges = [
@@ -140,6 +130,31 @@ export default function AdminHotels() {
     { value: '$$$$', label: '$$$$ - Luxury' },
     { value: '$$$$$', label: '$$$$$ - Ultra Luxury' }
   ];
+
+  // Fetch hotels from backend on mount
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        setLoading(true);
+        const res = await fetch('/api/hotels');
+        if (!res.ok) throw new Error('Failed to fetch hotels');
+        const data = await res.json();
+        if (mounted) setHotels(data);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    })();
+    return () => { mounted = false };
+  }, []);
+
+  // Helper to parse facilities string to array
+  const getFacilitiesArray = (facilities?: string): string[] => {
+    if (!facilities) return [];
+    return facilities.split(',').map(f => f.trim()).filter(f => f.length > 0);
+  };
 
     return (
     <div style={{ fontFamily: 'Poppins, sans-serif', backgroundColor: '#f8fafc', minHeight: '100vh', display: 'flex' }}>
@@ -362,7 +377,7 @@ export default function AdminHotels() {
                   gap: '6px',
                   marginBottom: '16px'
                 }}>
-                  {hotel.facilities.map((facility, index) => (
+                  {getFacilitiesArray(hotel.facilities).map((facility, index) => (
                     <span
                       key={index}
                       style={{
@@ -648,84 +663,35 @@ export default function AdminHotels() {
 
               <div style={{ marginBottom: '30px' }}>
                 <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '6px' }}>
-                  Facilities
+                  Facilities (comma-separated)
                 </label>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '8px' }}>
-                  {formData.facilities.map((facility, index) => (
-                    <div
-                      key={index}
-                      style={{
-                        backgroundColor: '#f1f5f9',
-                        padding: '4px 10px',
-                        borderRadius: '16px',
-                        fontSize: '14px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '6px'
-                      }}
-                    >
-                      <span>{facility}</span>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          const newFacilities = [...formData.facilities];
-                          newFacilities.splice(index, 1);
-                          setFormData({...formData, facilities: newFacilities});
-                        }}
-                        style={{
-                          border: 'none',
-                          background: 'none',
-                          padding: '0',
-                          cursor: 'pointer',
-                          color: '#64748b',
-                          fontSize: '18px',
-                          lineHeight: '1'
-                        }}
-                      >
-                        ×
-                      </button>
-                    </div>
-                  ))}
-                </div>
-                <div style={{ display: 'flex', gap: '8px' }}>
-                  <input
-                    type="text"
-                    placeholder="Add a facility (e.g., Free WiFi)"
-                    onKeyPress={(e) => {
-                      if (e.key === 'Enter') {
-                        e.preventDefault();
-                        const input = e.target as HTMLInputElement;
-                        const value = input.value.trim();
-                        if (value && !formData.facilities.includes(value)) {
-                          setFormData({
-                            ...formData,
-                            facilities: [...formData.facilities, value]
-                          });
-                          input.value = '';
-                        }
-                      }
-                    }}
-                    style={{
-                      flex: 1,
-                      padding: '10px 12px',
-                      border: '1px solid #d1d5db',
-                      borderRadius: '6px',
-                      fontSize: '14px',
-                      outline: 'none',
-                      transition: 'all 0.2s ease'
-                    }}
-                    onFocus={(e) => {
-                      const input = e.target as HTMLInputElement;
-                      input.style.borderColor = '#053b3c';
-                      input.style.boxShadow = '0 0 0 3px rgba(5, 59, 60, 0.1)';
-                    }}
-                    onBlur={(e) => {
-                      const input = e.target as HTMLInputElement;
-                      input.style.borderColor = '#d1d5db';
-                      input.style.boxShadow = 'none';
-                    }}
-                  />
-                </div>
+                <textarea
+                  rows={3}
+                  value={formData.facilities}
+                  onChange={(e) => setFormData({...formData, facilities: e.target.value})}
+                  placeholder="Free WiFi, Prayer Room, Restaurant, Room Service"
+                  style={{
+                    width: '100%',
+                    padding: '10px 12px',
+                    border: '1px solid #d1d5db',
+                    borderRadius: '6px',
+                    fontSize: '14px',
+                    outline: 'none',
+                    resize: 'vertical',
+                    transition: 'all 0.2s ease'
+                  }}
+                  onFocus={(e) => {
+                    e.target.style.borderColor = '#053b3c';
+                    e.target.style.boxShadow = '0 0 0 3px rgba(5, 59, 60, 0.1)';
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = '#d1d5db';
+                    e.target.style.boxShadow = 'none';
+                  }}
+                />
+                <p style={{ fontSize: '12px', color: '#64748b', marginTop: '6px' }}>
+                  Enter facilities separated by commas
+                </p>
               </div>
 
               <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>

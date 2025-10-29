@@ -1,19 +1,22 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import AdminSidebar from '../../components/AdminSidebar';
 
 interface TourBooking {
-  booking_id: number;
-  package_id: number;
+  tour_booking_id: string;
+  package_id: string;
   name: string;
   email: string;
   phone_no: string;
   no_of_travellers: number;
-  starting_date: string;
-  special_requirements: string;
+  starting_date: string; // yyyy-mm-dd
   pickup_location: string;
-  status: 'pending' | 'confirmed' | 'in_progress' | 'completed' | 'cancelled';
-  total_price: number;
-  created_at: string;
+  special_requirements?: string;
+}
+
+interface PackageItem {
+  package_id: string;
+  package_name: string;
+  price: number | null;
 }
 
 export default function AdminTourBookings() {
@@ -21,152 +24,95 @@ export default function AdminTourBookings() {
   const [searchTerm, setSearchTerm] = useState('');
   const [editingBooking, setEditingBooking] = useState<TourBooking | null>(null);
 
-  const [bookings, setBookings] = useState<TourBooking[]>([
-    {
-      booking_id: 1,
-      package_id: 1,
-      name: 'Ahmed Hassan Family',
-      email: 'ahmed@example.com',
-      phone_no: '+966 50 123 4567',
-      no_of_travellers: 6,
-      starting_date: '2024-02-15',
-      special_requirements: 'Need vegetarian meals, elderly-friendly transportation',
-      pickup_location: 'Makkah Royal Clock Tower Hotel',
-      status: 'confirmed',
-      total_price: 4500,
-      created_at: '2024-01-10'
-    },
-    {
-      booking_id: 2,
-      package_id: 2,
-      name: 'Sarah Johnson',
-      email: 'sarah.johnson@example.com',
-      phone_no: '+966 55 987 6543',
-      no_of_travellers: 2,
-      starting_date: '2024-02-20',
-      special_requirements: 'Private guide for historical sites, photography assistance',
-      pickup_location: 'Madinah Hilton Hotel',
-      status: 'pending',
-      total_price: 1200,
-      created_at: '2024-01-12'
-    },
-    {
-      booking_id: 3,
-      package_id: 3,
-      name: 'Mohammed Ali Group',
-      email: 'mohammed.ali@example.com',
-      phone_no: '+966 54 555 8888',
-      no_of_travellers: 15,
-      starting_date: '2024-02-08',
-      special_requirements: 'Corporate group, need meeting facilities, English speaking guide',
-      pickup_location: 'Jeddah City Center',
-      status: 'in_progress',
-      total_price: 11250,
-      created_at: '2024-01-05'
-    },
-    {
-      booking_id: 4,
-      package_id: 4,
-      name: 'Fatima Rahman',
-      email: 'fatima@example.com',
-      phone_no: '+966 53 111 2222',
-      no_of_travellers: 4,
-      starting_date: '2024-02-25',
-      special_requirements: 'Family with young children, need child-friendly activities',
-      pickup_location: 'Riyadh Marriott Hotel',
-      status: 'completed',
-      total_price: 2000,
-      created_at: '2024-01-08'
-    }
-  ]);
-
-  const [packages] = useState([
-    { package_id: 1, name: 'Makkah & Madinah Spiritual Journey', duration: '10 Days', price_per_person: 750 },
-    { package_id: 2, name: 'Umrah Premium Package', duration: '7 Days', price_per_person: 600 },
-    { package_id: 3, name: 'Family Hajj Package', duration: '15 Days', price_per_person: 750 },
-    { package_id: 4, name: 'Budget Umrah Experience', duration: '5 Days', price_per_person: 500 },
-    { package_id: 5, name: 'Luxury Spiritual Retreat', duration: '12 Days', price_per_person: 1200 }
-  ]);
+  const [bookings, setBookings] = useState<TourBooking[]>([]);
+  const [packages, setPackages] = useState<PackageItem[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const [formData, setFormData] = useState({
-    package_id: 0,
+    package_id: '',
     name: '',
     email: '',
     phone_no: '',
     no_of_travellers: 1,
     starting_date: '',
     special_requirements: '',
-    pickup_location: '',
-    status: 'pending' as 'pending' | 'confirmed' | 'in_progress' | 'completed' | 'cancelled',
-    total_price: 0
+    pickup_location: ''
   });
 
-  const filteredBookings = bookings.filter(booking =>
-    booking.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    booking.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    packages.find(p => p.package_id === booking.package_id)?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    booking.status.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  useEffect(() => {
+    const load = async () => {
+      setLoading(true);
+      // Load bookings first; always show bookings even if packages fail
+      try {
+        const bRes = await fetch('/api/tour-bookings');
+        if (!bRes.ok) throw new Error('Failed to fetch bookings');
+        const bookingsData: TourBooking[] = await bRes.json();
+        setBookings(bookingsData);
+      } catch (err) {
+        console.error('Error loading tour bookings:', err);
+        alert('Failed to load tour bookings');
+      }
 
-  const getStatusColor = (status: string): string => {
-    switch (status) {
-      case 'pending': return '#f59e0b';
-      case 'confirmed': return '#0ea5e9';
-      case 'in_progress': return '#10b981';
-      case 'completed': return '#059669';
-      case 'cancelled': return '#ef4444';
-      default: return '#6b7280';
-    }
-  };
-
-  const getStatusText = (status: string): string => {
-    switch (status) {
-      case 'pending': return 'Pending';
-      case 'confirmed': return 'Confirmed';
-      case 'in_progress': return 'In Progress';
-      case 'completed': return 'Completed';
-      case 'cancelled': return 'Cancelled';
-      default: return status;
-    }
-  };
-
-  const calculatePrice = (packageId: number, travellers: number): number => {
-    const tourPackage = packages.find(p => p.package_id === packageId);
-    if (!tourPackage) return 0;
-
-    return tourPackage.price_per_person * travellers;
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    const price = calculatePrice(formData.package_id, formData.no_of_travellers);
-
-    const submissionData = {
-      ...formData,
-      total_price: price
+      // Load packages separately but don't block the page if it fails
+      try {
+        const pRes = await fetch('/api/packages');
+        if (pRes.ok) {
+          const packagesData: PackageItem[] = await pRes.json();
+          setPackages(packagesData);
+        } else {
+          console.warn('Failed to fetch packages for tour bookings view');
+        }
+      } catch (err) {
+        console.warn('Packages fetch failed, continuing without package list:', err);
+      } finally {
+        setLoading(false);
+      }
     };
+    load();
+  }, []);
 
-    if (editingBooking) {
-      // Update existing booking
-      setBookings(bookings.map(booking => 
-        booking.booking_id === editingBooking.booking_id 
-          ? { ...submissionData, booking_id: editingBooking.booking_id, created_at: editingBooking.created_at }
-          : booking
-      ));
-    } else {
-      // Add new booking
-      const newBooking: TourBooking = {
-        ...submissionData,
-        booking_id: Math.max(...bookings.map(b => b.booking_id)) + 1,
-        created_at: new Date().toISOString().split('T')[0]
-      };
-      setBookings([...bookings, newBooking]);
+  const filteredBookings = bookings.filter(booking => {
+    const pkg = packages.find(p => p.package_id === booking.package_id);
+    const pkgName = pkg?.package_name?.toLowerCase() || '';
+    const term = searchTerm.toLowerCase();
+    return (
+      booking.name.toLowerCase().includes(term) ||
+      booking.email.toLowerCase().includes(term) ||
+      pkgName.includes(term)
+    );
+  });
+  
+  const getPackageName = (package_id: string) => packages.find(p => p.package_id === package_id)?.package_name || package_id;
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      if (editingBooking) {
+        const res = await fetch(`/api/tour-bookings/${editingBooking.tour_booking_id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formData)
+        });
+        if (!res.ok) throw new Error('Failed to update booking');
+        const updated: TourBooking = await res.json();
+        setBookings(prev => prev.map(b => b.tour_booking_id === updated.tour_booking_id ? updated : b));
+      } else {
+        const res = await fetch('/api/tour-bookings', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formData)
+        });
+        if (!res.ok) throw new Error('Failed to create booking');
+        const created: TourBooking = await res.json();
+        setBookings(prev => [...prev, created]);
+      }
+      setShowModal(false);
+      resetForm();
+      setEditingBooking(null);
+    } catch (err) {
+      console.error('Error saving booking:', err);
+      alert('Failed to save booking');
     }
-    
-    setShowModal(false);
-    resetForm();
-    setEditingBooking(null);
   };
 
   const handleEdit = (booking: TourBooking) => {
@@ -177,67 +123,55 @@ export default function AdminTourBookings() {
       phone_no: booking.phone_no,
       no_of_travellers: booking.no_of_travellers,
       starting_date: booking.starting_date,
-      special_requirements: booking.special_requirements,
-      pickup_location: booking.pickup_location,
-      status: booking.status,
-      total_price: booking.total_price
+      special_requirements: booking.special_requirements || '',
+      pickup_location: booking.pickup_location
     });
     setEditingBooking(booking);
     setShowModal(true);
   };
 
-  const handleDelete = (bookingId: number) => {
-    if (confirm('Are you sure you want to delete this tour booking?')) {
-      setBookings(bookings.filter(booking => booking.booking_id !== bookingId));
+  const handleDelete = async (bookingId: string) => {
+    if (!confirm('Are you sure you want to delete this tour booking?')) return;
+    try {
+      const res = await fetch(`/api/tour-bookings/${bookingId}`, { method: 'DELETE' });
+      if (!res.ok && res.status !== 204) throw new Error('Failed to delete booking');
+      setBookings(prev => prev.filter(booking => booking.tour_booking_id !== bookingId));
+    } catch (err) {
+      console.error('Error deleting booking:', err);
+      alert('Failed to delete booking');
     }
   };
 
-  const updateStatus = (bookingId: number, newStatus: 'pending' | 'confirmed' | 'in_progress' | 'completed' | 'cancelled') => {
-    setBookings(bookings.map(booking => 
-      booking.booking_id === bookingId 
-        ? { ...booking, status: newStatus }
-        : booking
-    ));
-  };
+  // Status handling removed – not part of DB schema
 
   const resetForm = () => {
     setFormData({
-      package_id: 0,
+      package_id: '',
       name: '',
       email: '',
       phone_no: '',
       no_of_travellers: 1,
       starting_date: '',
       special_requirements: '',
-      pickup_location: '',
-      status: 'pending',
-      total_price: 0
+      pickup_location: ''
     });
   };
 
-  const handlePackageChange = (packageId: number) => {
+  const handlePackageChange = (packageId: string) => {
     setFormData(prev => ({
       ...prev,
-      package_id: packageId,
-      total_price: calculatePrice(packageId, prev.no_of_travellers)
+      package_id: packageId
     }));
   };
 
   const handleTravellersChange = (travellers: number) => {
     setFormData(prev => ({
       ...prev,
-      no_of_travellers: travellers,
-      total_price: calculatePrice(prev.package_id, travellers)
+      no_of_travellers: travellers
     }));
   };
 
-  const statusOptions = [
-    { value: 'pending', label: 'Pending' },
-    { value: 'confirmed', label: 'Confirmed' },
-    { value: 'in_progress', label: 'In Progress' },
-    { value: 'completed', label: 'Completed' },
-    { value: 'cancelled', label: 'Cancelled' }
-  ];
+  // Removed status options – not stored in DB
 
   const pickupLocations = [
     'Makkah Royal Clock Tower Hotel',
@@ -363,62 +297,6 @@ export default function AdminTourBookings() {
               </div>
             </div>
           </div>
-
-          <div style={{
-            backgroundColor: 'white',
-            padding: '20px',
-            borderRadius: '12px',
-            border: '1px solid #e2e8f0',
-            boxShadow: '0 1px 3px rgba(0,0,0,0.05)'
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '10px' }}>
-              <div style={{
-                width: '40px',
-                height: '40px',
-                borderRadius: '8px',
-                backgroundColor: '#f0fdf4',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: '#10b981',
-                fontSize: '18px'
-              }}>✅</div>
-              <div>
-                <h3 style={{ fontSize: '20px', fontWeight: '700', color: '#053b3c', margin: 0 }}>
-                  {bookings.filter(b => b.status === 'in_progress').length}
-                </h3>
-                <p style={{ fontSize: '12px', color: '#64748b', margin: 0 }}>In Progress</p>
-              </div>
-            </div>
-          </div>
-
-          <div style={{
-            backgroundColor: 'white',
-            padding: '20px',
-            borderRadius: '12px',
-            border: '1px solid #e2e8f0',
-            boxShadow: '0 1px 3px rgba(0,0,0,0.05)'
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '10px' }}>
-              <div style={{
-                width: '40px',
-                height: '40px',
-                borderRadius: '8px',
-                backgroundColor: '#fef3c7',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: '#d97706',
-                fontSize: '18px'
-              }}>⏳</div>
-              <div>
-                <h3 style={{ fontSize: '20px', fontWeight: '700', color: '#053b3c', margin: 0 }}>
-                  {bookings.filter(b => b.status === 'pending').length}
-                </h3>
-                <p style={{ fontSize: '12px', color: '#64748b', margin: 0 }}>Pending</p>
-              </div>
-            </div>
-          </div>
         </div>
 
         {/* Bookings Table */}
@@ -446,14 +324,14 @@ export default function AdminTourBookings() {
             <div>Travellers</div>
             <div>Start Date</div>
             <div>Pickup Location</div>
-            <div>Price</div>
+            <div>Package Price</div>
             <div>Actions</div>
           </div>
 
           {/* Table Rows */}
           {filteredBookings.map((booking, index) => (
             <div
-              key={booking.booking_id}
+              key={booking.tour_booking_id}
               style={{
                 display: 'grid',
                 gridTemplateColumns: '1fr 1fr 1fr 1fr 1fr 1fr 1fr',
@@ -486,11 +364,9 @@ export default function AdminTourBookings() {
               {/* Tour Package */}
               <div>
                 <div style={{ fontSize: '14px', fontWeight: '600', color: '#053b3c', marginBottom: '4px' }}>
-                  {packages.find(p => p.package_id === booking.package_id)?.name}
+                  {getPackageName(booking.package_id)}
                 </div>
-                <div style={{ fontSize: '12px', color: '#64748b' }}>
-                  {packages.find(p => p.package_id === booking.package_id)?.duration}
-                </div>
+                <div style={{ fontSize: '12px', color: '#64748b' }}>&nbsp;</div>
               </div>
 
               {/* Travellers */}
@@ -518,22 +394,13 @@ export default function AdminTourBookings() {
                 {booking.pickup_location}
               </div>
 
-              {/* Price */}
+              {/* Package Price */}
               <div>
                 <div style={{ fontSize: '16px', fontWeight: '600', color: '#059669' }}>
-                  ${booking.total_price}
-                </div>
-                <div style={{
-                  backgroundColor: getStatusColor(booking.status) + '15',
-                  color: getStatusColor(booking.status),
-                  padding: '4px 8px',
-                  borderRadius: '12px',
-                  fontSize: '11px',
-                  fontWeight: '600',
-                  display: 'inline-block',
-                  marginTop: '4px'
-                }}>
-                  {getStatusText(booking.status)}
+                  {(() => {
+                    const pkg = packages.find(p => p.package_id === booking.package_id);
+                    return pkg?.price ? `$${pkg.price}` : '—';
+                  })()}
                 </div>
               </div>
 
@@ -567,7 +434,7 @@ export default function AdminTourBookings() {
                 </button>
                 
                 <button
-                  onClick={() => handleDelete(booking.booking_id)}
+                  onClick={() => handleDelete(booking.tour_booking_id)}
                   style={{
                     padding: '6px 12px',
                     backgroundColor: 'transparent',
@@ -665,7 +532,7 @@ export default function AdminTourBookings() {
             </h2>
             
             <form onSubmit={handleSubmit}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '20px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '20px', marginBottom: '20px' }}>
                 <div>
                   <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '6px' }}>
                     Tour Package
@@ -673,7 +540,7 @@ export default function AdminTourBookings() {
                   <select
                     required
                     value={formData.package_id}
-                    onChange={(e) => handlePackageChange(parseInt(e.target.value))}
+                    onChange={(e) => handlePackageChange(e.target.value)}
                     style={{
                       width: '100%',
                       padding: '10px 12px',
@@ -684,36 +551,10 @@ export default function AdminTourBookings() {
                       transition: 'all 0.2s ease'
                     }}
                   >
-                    <option value={0}>Select tour package</option>
+                    <option value="">Select tour package</option>
                     {packages.map(pkg => (
                       <option key={pkg.package_id} value={pkg.package_id}>
-                        {pkg.name} ({pkg.duration}) - ${pkg.price_per_person}/person
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '6px' }}>
-                    Status
-                  </label>
-                  <select
-                    required
-                    value={formData.status}
-                    onChange={(e) => setFormData({...formData, status: e.target.value as any})}
-                    style={{
-                      width: '100%',
-                      padding: '10px 12px',
-                      border: '1px solid #d1d5db',
-                      borderRadius: '6px',
-                      fontSize: '14px',
-                      outline: 'none',
-                      transition: 'all 0.2s ease'
-                    }}
-                  >
-                    {statusOptions.map(status => (
-                      <option key={status.value} value={status.value}>
-                        {status.label}
+                        {pkg.package_name}
                       </option>
                     ))}
                   </select>
@@ -860,30 +701,7 @@ export default function AdminTourBookings() {
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '20px' }}>
-                <div>
-                  <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '6px' }}>
-                    Total Price ($)
-                  </label>
-                  <input
-                    type="number"
-                    required
-                    min="0"
-                    step="0.01"
-                    value={formData.total_price}
-                    onChange={(e) => setFormData({...formData, total_price: parseFloat(e.target.value)})}
-                    style={{
-                      width: '100%',
-                      padding: '10px 12px',
-                      border: '1px solid #d1d5db',
-                      borderRadius: '6px',
-                      fontSize: '14px',
-                      outline: 'none',
-                      transition: 'all 0.2s ease'
-                    }}
-                  />
-                </div>
-              </div>
+              {/* Price is not part of tour_booking schema; omitted in form */}
 
               <div style={{ marginBottom: '30px' }}>
                 <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '6px' }}>

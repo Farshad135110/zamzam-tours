@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import AdminSidebar from '../../components/AdminSidebar';
 
 interface AirportPickup {
-  pickup_id: number;
+  pickup_id: string; // Changed to string to match database
   pickup_type: 'one_way' | 'two_way';
   pickup_from: string;
   dropoff: string;
@@ -21,64 +21,8 @@ export default function AdminAirportPickup() {
   const [searchTerm, setSearchTerm] = useState('');
   const [editingPickup, setEditingPickup] = useState<AirportPickup | null>(null);
 
-  const [pickups, setPickups] = useState<AirportPickup[]>([
-    {
-      pickup_id: 1,
-      pickup_type: 'one_way',
-      pickup_from: 'King Abdulaziz International Airport',
-      dropoff: 'Makkah Royal Clock Tower Hotel',
-      airport: 'JED',
-      passengers: 3,
-      pickup_time: '2024-01-20T14:30',
-      vehicle: 'Toyota Hiace',
-      note: 'Flight number SV1234, delayed by 30 minutes',
-      price: 120,
-      status: 'confirmed',
-      created_at: '2024-01-15'
-    },
-    {
-      pickup_id: 2,
-      pickup_type: 'two_way',
-      pickup_from: 'Madinah Hotel',
-      dropoff: 'Prince Mohammad Bin Abdulaziz Airport',
-      airport: 'MED',
-      passengers: 2,
-      pickup_time: '2024-01-22T08:00',
-      vehicle: 'Hyundai Staria',
-      note: 'Return pickup needed on 2024-01-25 at 16:00',
-      price: 200,
-      status: 'pending',
-      created_at: '2024-01-16'
-    },
-    {
-      pickup_id: 3,
-      pickup_type: 'one_way',
-      pickup_from: 'King Khalid International Airport',
-      dropoff: 'Riyadh Marriott Hotel',
-      airport: 'RUH',
-      passengers: 1,
-      pickup_time: '2024-01-18T20:15',
-      vehicle: 'Toyota Camry',
-      note: 'Business class passenger with extra luggage',
-      price: 80,
-      status: 'completed',
-      created_at: '2024-01-10'
-    },
-    {
-      pickup_id: 4,
-      pickup_type: 'two_way',
-      pickup_from: 'Jeddah City Hotel',
-      dropoff: 'King Abdulaziz International Airport',
-      airport: 'JED',
-      passengers: 4,
-      pickup_time: '2024-01-25T10:00',
-      vehicle: 'Mercedes Sprinter',
-      note: 'Family with children, need child seats',
-      price: 180,
-      status: 'confirmed',
-      created_at: '2024-01-17'
-    }
-  ]);
+  const [pickups, setPickups] = useState<AirportPickup[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
   const [formData, setFormData] = useState({
     pickup_type: 'one_way' as 'one_way' | 'two_way',
@@ -182,27 +126,36 @@ export default function AdminAirportPickup() {
       ...formData,
       price: finalPrice
     };
-
-    if (editingPickup) {
-      // Update existing pickup
-      setPickups(pickups.map(pickup => 
-        pickup.pickup_id === editingPickup.pickup_id 
-          ? { ...submissionData, pickup_id: editingPickup.pickup_id, created_at: editingPickup.created_at }
-          : pickup
-      ));
-    } else {
-      // Add new pickup
-      const newPickup: AirportPickup = {
-        ...submissionData,
-        pickup_id: Math.max(...pickups.map(p => p.pickup_id)) + 1,
-        created_at: new Date().toISOString().split('T')[0]
-      };
-      setPickups([...pickups, newPickup]);
-    }
-    
-    setShowModal(false);
-    resetForm();
-    setEditingPickup(null);
+    (async () => {
+      try {
+        if (editingPickup) {
+          const res = await fetch(`/api/airport-pickups/${editingPickup.pickup_id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(submissionData)
+          });
+          if (!res.ok) throw new Error('Failed to update');
+          const updated = await res.json();
+          setPickups(prev => prev.map(p => p.pickup_id === updated.pickup_id ? updated : p));
+        } else {
+          const res = await fetch('/api/airport-pickups', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(submissionData)
+          });
+          if (!res.ok) throw new Error('Failed to create');
+          const created = await res.json();
+          setPickups(prev => [...prev, created]);
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Error saving pickup');
+      } finally {
+        setShowModal(false);
+        resetForm();
+        setEditingPickup(null);
+      }
+    })();
   };
 
   const handleEdit = (pickup: AirportPickup) => {
@@ -222,18 +175,36 @@ export default function AdminAirportPickup() {
     setShowModal(true);
   };
 
-  const handleDelete = (pickupId: number) => {
-    if (confirm('Are you sure you want to delete this airport pickup booking?')) {
-      setPickups(pickups.filter(pickup => pickup.pickup_id !== pickupId));
-    }
+  const handleDelete = (pickupId: string) => {
+    if (!confirm('Are you sure you want to delete this airport pickup booking?')) return;
+    (async () => {
+      try {
+        const res = await fetch(`/api/airport-pickups/${pickupId}`, { method: 'DELETE' });
+        if (!res.ok) throw new Error('Failed to delete');
+        setPickups(prev => prev.filter(p => p.pickup_id !== pickupId));
+      } catch (err) {
+        console.error(err);
+        alert('Delete failed');
+      }
+    })();
   };
 
-  const updateStatus = (pickupId: number, newStatus: 'pending' | 'confirmed' | 'completed' | 'cancelled') => {
-    setPickups(pickups.map(pickup => 
-      pickup.pickup_id === pickupId 
-        ? { ...pickup, status: newStatus }
-        : pickup
-    ));
+  const updateStatus = (pickupId: string, newStatus: 'pending' | 'confirmed' | 'completed' | 'cancelled') => {
+    (async () => {
+      try {
+        const res = await fetch(`/api/airport-pickups/${pickupId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status: newStatus })
+        });
+        if (!res.ok) throw new Error('Failed to update status');
+        const updated = await res.json();
+        setPickups(prev => prev.map(p => p.pickup_id === updated.pickup_id ? updated : p));
+      } catch (err) {
+        console.error(err);
+        alert('Status update failed');
+      }
+    })();
   };
 
   const resetForm = () => {
@@ -257,6 +228,25 @@ export default function AdminAirportPickup() {
     { value: 'completed', label: 'Completed' },
     { value: 'cancelled', label: 'Cancelled' }
   ];
+
+  // Fetch pickups from backend on mount
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        setLoading(true);
+        const res = await fetch('/api/airport-pickups');
+        if (!res.ok) throw new Error('Failed to fetch pickups');
+        const data = await res.json();
+        if (mounted) setPickups(data);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    })();
+    return () => { mounted = false };
+  }, []);
 
   return (
     <div style={{ fontFamily: 'Poppins, sans-serif', backgroundColor: '#f8fafc', minHeight: '100vh', display: 'flex' }}>

@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import AdminSidebar from '../../components/AdminSidebar';
 
-interface VehicleBooking {
-  booking_id: number;
-  rental_type: 'self_drive' | 'with_driver' | 'tour';
-  customer_type: 'individual' | 'corporate' | 'family';
+interface VehicleBookingRec {
+  vehicle_booking_id: string;
+  rental_type: string;
+  customer_type: string;
   name: string;
   email: string;
   phone_no: string;
@@ -12,96 +12,25 @@ interface VehicleBooking {
   pickup_date: string;
   return_date: string;
   no_of_days: number;
-  special_request: string;
-  vehicle_id: number;
-  status: 'pending' | 'confirmed' | 'active' | 'completed' | 'cancelled';
-  total_price: number;
-  created_at: string;
+  special_request?: string;
+  vehicle_id: string | null;
+}
+
+interface VehicleItem {
+  vehicle_id: string;
+  vehicle_name: string;
+  vehicle_type: string;
+  price_per_day: number;
 }
 
 export default function AdminVehicleBookings() {
   const [showModal, setShowModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [editingBooking, setEditingBooking] = useState<VehicleBooking | null>(null);
+  const [editingBooking, setEditingBooking] = useState<VehicleBookingRec | null>(null);
 
-  const [bookings, setBookings] = useState<VehicleBooking[]>([
-    {
-      booking_id: 1,
-      rental_type: 'self_drive',
-      customer_type: 'individual',
-      name: 'Ahmed Hassan',
-      email: 'ahmed@example.com',
-      phone_no: '+966 50 123 4567',
-      pickup_location: 'Makkah Royal Clock Tower Hotel',
-      pickup_date: '2024-02-01T10:00',
-      return_date: '2024-02-05T18:00',
-      no_of_days: 5,
-      special_request: 'Need child seat for 3 year old',
-      vehicle_id: 4,
-      status: 'confirmed',
-      total_price: 400,
-      created_at: '2024-01-15'
-    },
-    {
-      booking_id: 2,
-      rental_type: 'with_driver',
-      customer_type: 'corporate',
-      name: 'Sarah Johnson - ABC Corp',
-      email: 'sarah.johnson@abccorp.com',
-      phone_no: '+966 55 987 6543',
-      pickup_location: 'King Abdulaziz International Airport',
-      pickup_date: '2024-02-10T14:30',
-      return_date: '2024-02-12T16:00',
-      no_of_days: 3,
-      special_request: 'Executive transfer for business meeting',
-      vehicle_id: 5,
-      status: 'pending',
-      total_price: 360,
-      created_at: '2024-01-16'
-    },
-    {
-      booking_id: 3,
-      rental_type: 'tour',
-      customer_type: 'family',
-      name: 'Mohammed Ali Family',
-      email: 'mohammed.ali@example.com',
-      phone_no: '+966 54 555 8888',
-      pickup_location: 'Madinah Hilton Hotel',
-      pickup_date: '2024-02-08T08:00',
-      return_date: '2024-02-08T20:00',
-      no_of_days: 1,
-      special_request: 'Full day tour to historical sites, need English speaking guide',
-      vehicle_id: 2,
-      status: 'completed',
-      total_price: 250,
-      created_at: '2024-01-10'
-    },
-    {
-      booking_id: 4,
-      rental_type: 'self_drive',
-      customer_type: 'individual',
-      name: 'Fatima Rahman',
-      email: 'fatima@example.com',
-      phone_no: '+966 53 111 2222',
-      pickup_location: 'Riyadh Marriott Hotel',
-      pickup_date: '2024-02-15T09:00',
-      return_date: '2024-02-20T17:00',
-      no_of_days: 6,
-      special_request: 'Prefer automatic transmission',
-      vehicle_id: 1,
-      status: 'active',
-      total_price: 720,
-      created_at: '2024-01-18'
-    }
-  ]);
-
-  const [vehicles] = useState([
-    { vehicle_id: 1, name: 'Toyota Hiace', type: 'Van', price_per_day: 120 },
-    { vehicle_id: 2, name: 'Mercedes Sprinter', type: 'Mini Bus', price_per_day: 200 },
-    { vehicle_id: 3, name: 'Toyota Coaster', type: 'Bus', price_per_day: 300 },
-    { vehicle_id: 4, name: 'Hyundai Staria', type: 'MPV', price_per_day: 80 },
-    { vehicle_id: 5, name: 'Toyota Camry', type: 'Sedan', price_per_day: 60 }
-  ]);
+  const [bookings, setBookings] = useState<VehicleBookingRec[]>([]);
+  const [vehicles, setVehicles] = useState<VehicleItem[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const [formData, setFormData] = useState({
     rental_type: 'self_drive' as 'self_drive' | 'with_driver' | 'tour',
@@ -114,39 +43,40 @@ export default function AdminVehicleBookings() {
     return_date: '',
     no_of_days: 1,
     special_request: '',
-    vehicle_id: 0,
-    status: 'pending' as 'pending' | 'confirmed' | 'active' | 'completed' | 'cancelled',
-    total_price: 0
+    vehicle_id: ''
   });
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        setLoading(true);
+        const [bRes, vRes] = await Promise.all([
+          fetch('/api/vehicle-bookings'),
+          fetch('/api/vehicles')
+        ]);
+        if (!bRes.ok) throw new Error('Failed to fetch bookings');
+        if (!vRes.ok) throw new Error('Failed to fetch vehicles');
+        const bookingsData: VehicleBookingRec[] = await bRes.json();
+        const vehiclesData: VehicleItem[] = await vRes.json();
+        setBookings(bookingsData);
+        setVehicles(vehiclesData);
+      } catch (err) {
+        console.error('Error loading vehicle bookings:', err);
+        alert('Failed to load vehicle bookings');
+      } finally {
+        setLoading(false);
+      }
+    };
+    load();
+  }, []);
 
   const filteredBookings = bookings.filter(booking =>
     booking.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     booking.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    booking.rental_type.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    booking.status.toLowerCase().includes(searchTerm.toLowerCase())
+    booking.rental_type.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const getStatusColor = (status: string): string => {
-    switch (status) {
-      case 'pending': return '#f59e0b';
-      case 'confirmed': return '#0ea5e9';
-      case 'active': return '#10b981';
-      case 'completed': return '#059669';
-      case 'cancelled': return '#ef4444';
-      default: return '#6b7280';
-    }
-  };
-
-  const getStatusText = (status: string): string => {
-    switch (status) {
-      case 'pending': return 'Pending';
-      case 'confirmed': return 'Confirmed';
-      case 'active': return 'Active';
-      case 'completed': return 'Completed';
-      case 'cancelled': return 'Cancelled';
-      default: return status;
-    }
-  };
+  // Status removed – not in DB schema
 
   const getRentalTypeIcon = (type: string): string => {
     switch (type) {
@@ -183,57 +113,44 @@ export default function AdminVehicleBookings() {
     return Math.ceil(diffTime / (1000 * 60 * 60 * 24)) || 1;
   };
 
-  const calculatePrice = (vehicleId: number, days: number, rentalType: string): number => {
-    const vehicle = vehicles.find(v => v.vehicle_id === vehicleId);
-    if (!vehicle) return 0;
+  // Price calculation removed – not stored
 
-    let basePrice = vehicle.price_per_day * days;
-
-    // Adjust price based on rental type
-    if (rentalType === 'with_driver') basePrice *= 1.5; // 50% more for driver
-    if (rentalType === 'tour') basePrice *= 2; // Double for tours
-
-    return Math.round(basePrice);
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    const days = calculateDays(formData.pickup_date, formData.return_date);
-    const price = calculatePrice(formData.vehicle_id, days, formData.rental_type);
-
-    const submissionData = {
-      ...formData,
-      no_of_days: days,
-      total_price: price
-    };
-
-    if (editingBooking) {
-      // Update existing booking
-      setBookings(bookings.map(booking => 
-        booking.booking_id === editingBooking.booking_id 
-          ? { ...submissionData, booking_id: editingBooking.booking_id, created_at: editingBooking.created_at }
-          : booking
-      ));
-    } else {
-      // Add new booking
-      const newBooking: VehicleBooking = {
-        ...submissionData,
-        booking_id: Math.max(...bookings.map(b => b.booking_id)) + 1,
-        created_at: new Date().toISOString().split('T')[0]
-      };
-      setBookings([...bookings, newBooking]);
+    try {
+      const payload = { ...formData, no_of_days: calculateDays(formData.pickup_date, formData.return_date) };
+      if (editingBooking) {
+        const res = await fetch(`/api/vehicle-bookings/${editingBooking.vehicle_booking_id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        if (!res.ok) throw new Error('Failed to update booking');
+        const updated: VehicleBookingRec = await res.json();
+        setBookings(prev => prev.map(b => b.vehicle_booking_id === updated.vehicle_booking_id ? updated : b));
+      } else {
+        const res = await fetch('/api/vehicle-bookings', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        if (!res.ok) throw new Error('Failed to create booking');
+        const created: VehicleBookingRec = await res.json();
+        setBookings(prev => [...prev, created]);
+      }
+      setShowModal(false);
+      resetForm();
+      setEditingBooking(null);
+    } catch (err) {
+      console.error('Error saving booking:', err);
+      alert('Failed to save booking');
     }
-    
-    setShowModal(false);
-    resetForm();
-    setEditingBooking(null);
   };
 
-  const handleEdit = (booking: VehicleBooking) => {
+  const handleEdit = (booking: VehicleBookingRec) => {
     setFormData({
-      rental_type: booking.rental_type,
-      customer_type: booking.customer_type,
+      rental_type: booking.rental_type as 'self_drive' | 'with_driver' | 'tour',
+      customer_type: booking.customer_type as 'individual' | 'corporate' | 'family',
       name: booking.name,
       email: booking.email,
       phone_no: booking.phone_no,
@@ -241,28 +158,26 @@ export default function AdminVehicleBookings() {
       pickup_date: booking.pickup_date,
       return_date: booking.return_date,
       no_of_days: booking.no_of_days,
-      special_request: booking.special_request,
-      vehicle_id: booking.vehicle_id,
-      status: booking.status,
-      total_price: booking.total_price
+      special_request: booking.special_request || '',
+      vehicle_id: booking.vehicle_id || ''
     });
     setEditingBooking(booking);
     setShowModal(true);
   };
 
-  const handleDelete = (bookingId: number) => {
-    if (confirm('Are you sure you want to delete this vehicle booking?')) {
-      setBookings(bookings.filter(booking => booking.booking_id !== bookingId));
+  const handleDelete = async (bookingId: string) => {
+    if (!confirm('Are you sure you want to delete this vehicle booking?')) return;
+    try {
+      const res = await fetch(`/api/vehicle-bookings/${bookingId}`, { method: 'DELETE' });
+      if (!res.ok && res.status !== 204) throw new Error('Failed to delete booking');
+      setBookings(prev => prev.filter(booking => booking.vehicle_booking_id !== bookingId));
+    } catch (err) {
+      console.error('Error deleting booking:', err);
+      alert('Failed to delete booking');
     }
   };
 
-  const updateStatus = (bookingId: number, newStatus: 'pending' | 'confirmed' | 'active' | 'completed' | 'cancelled') => {
-    setBookings(bookings.map(booking => 
-      booking.booking_id === bookingId 
-        ? { ...booking, status: newStatus }
-        : booking
-    ));
-  };
+  // updateStatus removed – no status in DB
 
   const resetForm = () => {
     setFormData({
@@ -276,9 +191,7 @@ export default function AdminVehicleBookings() {
       return_date: '',
       no_of_days: 1,
       special_request: '',
-      vehicle_id: 0,
-      status: 'pending',
-      total_price: 0
+      vehicle_id: ''
     });
   };
 
@@ -289,22 +202,16 @@ export default function AdminVehicleBookings() {
       // Auto-calculate days when both dates are set
       if (newData.pickup_date && newData.return_date) {
         newData.no_of_days = calculateDays(newData.pickup_date, newData.return_date);
-        
-        // Auto-calculate price when vehicle is selected
-        if (newData.vehicle_id > 0) {
-          newData.total_price = calculatePrice(newData.vehicle_id, newData.no_of_days, newData.rental_type);
-        }
       }
       
       return newData;
     });
   };
 
-  const handleVehicleChange = (vehicleId: number) => {
+  const handleVehicleChange = (vehicleId: string) => {
     setFormData(prev => ({
       ...prev,
-      vehicle_id: vehicleId,
-      total_price: calculatePrice(vehicleId, prev.no_of_days, prev.rental_type)
+      vehicle_id: vehicleId
     }));
   };
 
@@ -320,13 +227,7 @@ export default function AdminVehicleBookings() {
     { value: 'family', label: 'Family' }
   ];
 
-  const statusOptions = [
-    { value: 'pending', label: 'Pending' },
-    { value: 'confirmed', label: 'Confirmed' },
-    { value: 'active', label: 'Active' },
-    { value: 'completed', label: 'Completed' },
-    { value: 'cancelled', label: 'Cancelled' }
-  ];
+  // statusOptions removed
 
   return (
     <div style={{ fontFamily: 'Poppins, sans-serif', backgroundColor: '#f8fafc', minHeight: '100vh', display: 'flex' }}>
@@ -442,61 +343,7 @@ export default function AdminVehicleBookings() {
             </div>
           </div>
 
-          <div style={{
-            backgroundColor: 'white',
-            padding: '20px',
-            borderRadius: '12px',
-            border: '1px solid #e2e8f0',
-            boxShadow: '0 1px 3px rgba(0,0,0,0.05)'
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '10px' }}>
-              <div style={{
-                width: '40px',
-                height: '40px',
-                borderRadius: '8px',
-                backgroundColor: '#f0fdf4',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: '#10b981',
-                fontSize: '18px'
-              }}>✅</div>
-              <div>
-                <h3 style={{ fontSize: '20px', fontWeight: '700', color: '#053b3c', margin: 0 }}>
-                  {bookings.filter(b => b.status === 'active').length}
-                </h3>
-                <p style={{ fontSize: '12px', color: '#64748b', margin: 0 }}>Active Now</p>
-              </div>
-            </div>
-          </div>
-
-          <div style={{
-            backgroundColor: 'white',
-            padding: '20px',
-            borderRadius: '12px',
-            border: '1px solid #e2e8f0',
-            boxShadow: '0 1px 3px rgba(0,0,0,0.05)'
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '10px' }}>
-              <div style={{
-                width: '40px',
-                height: '40px',
-                borderRadius: '8px',
-                backgroundColor: '#fef3c7',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: '#d97706',
-                fontSize: '18px'
-              }}>⏳</div>
-              <div>
-                <h3 style={{ fontSize: '20px', fontWeight: '700', color: '#053b3c', margin: 0 }}>
-                  {bookings.filter(b => b.status === 'pending').length}
-                </h3>
-                <p style={{ fontSize: '12px', color: '#64748b', margin: 0 }}>Pending</p>
-              </div>
-            </div>
-          </div>
+          {/* Removed cards dependent on status */}
         </div>
 
         {/* Bookings Table */}
@@ -524,14 +371,14 @@ export default function AdminVehicleBookings() {
             <div>Dates</div>
             <div>Vehicle</div>
             <div>Location</div>
-            <div>Price</div>
+            <div>Days</div>
             <div>Actions</div>
           </div>
 
           {/* Table Rows */}
           {filteredBookings.map((booking, index) => (
             <div
-              key={booking.booking_id}
+              key={booking.vehicle_booking_id}
               style={{
                 display: 'grid',
                 gridTemplateColumns: '1fr 1fr 1fr 1fr 1fr 1fr 1fr',
@@ -591,7 +438,7 @@ export default function AdminVehicleBookings() {
 
               {/* Vehicle */}
               <div style={{ fontSize: '14px', color: '#374151' }}>
-                {vehicles.find(v => v.vehicle_id === booking.vehicle_id)?.name || 'Unknown'}
+                {vehicles.find(v => v.vehicle_id === (booking.vehicle_id || ''))?.vehicle_name || 'Unknown'}
               </div>
 
               {/* Location */}
@@ -599,22 +446,10 @@ export default function AdminVehicleBookings() {
                 {booking.pickup_location}
               </div>
 
-              {/* Price */}
+              {/* Days */}
               <div>
                 <div style={{ fontSize: '16px', fontWeight: '600', color: '#059669' }}>
-                  ${booking.total_price}
-                </div>
-                <div style={{
-                  backgroundColor: getStatusColor(booking.status) + '15',
-                  color: getStatusColor(booking.status),
-                  padding: '4px 8px',
-                  borderRadius: '12px',
-                  fontSize: '11px',
-                  fontWeight: '600',
-                  display: 'inline-block',
-                  marginTop: '4px'
-                }}>
-                  {getStatusText(booking.status)}
+                  {booking.no_of_days}
                 </div>
               </div>
 
@@ -648,7 +483,7 @@ export default function AdminVehicleBookings() {
                 </button>
                 
                 <button
-                  onClick={() => handleDelete(booking.booking_id)}
+                  onClick={() => handleDelete(booking.vehicle_booking_id)}
                   style={{
                     padding: '6px 12px',
                     backgroundColor: 'transparent',
@@ -873,7 +708,7 @@ export default function AdminVehicleBookings() {
                   <select
                     required
                     value={formData.vehicle_id}
-                    onChange={(e) => handleVehicleChange(parseInt(e.target.value))}
+                    onChange={(e) => handleVehicleChange(e.target.value)}
                     style={{
                       width: '100%',
                       padding: '10px 12px',
@@ -884,10 +719,10 @@ export default function AdminVehicleBookings() {
                       transition: 'all 0.2s ease'
                     }}
                   >
-                    <option value={0}>Select vehicle</option>
+                    <option value="">Select vehicle</option>
                     {vehicles.map(vehicle => (
                       <option key={vehicle.vehicle_id} value={vehicle.vehicle_id}>
-                        {vehicle.name} ({vehicle.type}) - ${vehicle.price_per_day}/day
+                        {vehicle.vehicle_name} ({vehicle.vehicle_type})
                       </option>
                     ))}
                   </select>
@@ -960,7 +795,7 @@ export default function AdminVehicleBookings() {
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '20px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '20px', marginBottom: '20px' }}>
                 <div>
                   <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '6px' }}>
                     Number of Days
@@ -983,58 +818,9 @@ export default function AdminVehicleBookings() {
                     }}
                   />
                 </div>
-
-                <div>
-                  <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '6px' }}>
-                    Total Price ($)
-                  </label>
-                  <input
-                    type="number"
-                    required
-                    min="0"
-                    step="0.01"
-                    value={formData.total_price}
-                    onChange={(e) => setFormData({...formData, total_price: parseFloat(e.target.value)})}
-                    style={{
-                      width: '100%',
-                      padding: '10px 12px',
-                      border: '1px solid #d1d5db',
-                      borderRadius: '6px',
-                      fontSize: '14px',
-                      outline: 'none',
-                      transition: 'all 0.2s ease'
-                    }}
-                  />
-                </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '20px' }}>
-                <div>
-                  <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '6px' }}>
-                    Status
-                  </label>
-                  <select
-                    required
-                    value={formData.status}
-                    onChange={(e) => setFormData({...formData, status: e.target.value as any})}
-                    style={{
-                      width: '100%',
-                      padding: '10px 12px',
-                      border: '1px solid #d1d5db',
-                      borderRadius: '6px',
-                      fontSize: '14px',
-                      outline: 'none',
-                      transition: 'all 0.2s ease'
-                    }}
-                  >
-                    {statusOptions.map(status => (
-                      <option key={status.value} value={status.value}>
-                        {status.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
+              {/* Status field removed – not stored in DB */}
 
               <div style={{ marginBottom: '30px' }}>
                 <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '6px' }}>

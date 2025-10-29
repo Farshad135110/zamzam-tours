@@ -1,0 +1,58 @@
+[
+  {
+    "pickup_id": 1,
+    "pickup_type": "one_way",
+    "pickup_from": "King Abdulaziz International Airport",
+    "dropoff": "Makkah Royal Clock Tower Hotel",
+    "airport": "JED",
+    "passengers": 3,
+    "pickup_time": "2024-01-20T14:30:00",
+    "vehicle": "Toyota Hiace",
+    "note": "Flight number SV1234, delayed by 30 minutes",
+    "price": 120,
+    "status": "confirmed",
+    "created_at": "2024-01-15"
+  },
+  {
+    "pickup_id": 2,
+    "pickup_type": "two_way",
+    "pickup_from": "Madinah Hotel",
+    "dropoff": "Prince Mohammad Bin Abdulaziz Airport",
+    "airport": "MED",
+    "passengers": 2,
+    "pickup_time": "2024-01-22T08:00:00",
+    "vehicle": "Hyundai Staria",
+    "note": "Return pickup needed on 2024-01-25 at 16:00",
+    "price": 200,
+    "status": "pending",
+    "created_at": "2024-01-16"
+  },
+  {
+    "pickup_id": 3,
+    "pickup_type": "one_way",
+    "pickup_from": "King Khalid International Airport",
+    "dropoff": "Riyadh Marriott Hotel",
+    "airport": "RUH",
+    "passengers": 1,
+    "pickup_time": "2024-01-18T20:15:00",
+    "vehicle": "Toyota Camry",
+    "note": "Business class passenger with extra luggage",
+    "price": 80,
+    "status": "completed",
+    "created_at": "2024-01-10"
+  },
+  {
+    "pickup_id": 4,
+    "created_at": "2025-10-29",
+    "pickup_type": "one_way",
+    "pickup_from": "Bellanvila",
+    "dropoff": "Katunayaka",
+    "airport": "",
+    "passengers": 1,
+    "pickup_time": "2025-11-06T13:11",
+    "vehicle": "Toyota Coaster (30 seats)",
+    "note": "",
+    "price": 200,
+    "status": "pending"
+  }
+]

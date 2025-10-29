@@ -1,14 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import AdminSidebar from '../../components/AdminSidebar';
 
 interface Feedback {
-  feedback_id: number;
+  feedback_id: string;
   name: string;
   country: string;
   review: string;
   rating: number;
-  date: string;
-  imageUrl?: string;
+  image?: string;
 }
 
 export default function AdminFeedback() {
@@ -16,57 +15,15 @@ export default function AdminFeedback() {
   const [showModal, setShowModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [editingFeedback, setEditingFeedback] = useState<Feedback | null>(null);
-
-  const [feedbacks, setFeedbacks] = useState<Feedback[]>([
-    { 
-      feedback_id: 1, 
-      name: 'John Smith', 
-      country: 'United States', 
-      review: 'Great service! The tour was well organized and the guides were very knowledgeable. Would definitely recommend to others.', 
-      rating: 5,
-      date: '2024-01-15'
-    },
-    { 
-      feedback_id: 2, 
-      name: 'Anna Johnson', 
-      country: 'Canada', 
-      review: 'Nice trip with beautiful scenery. The hotels were comfortable and transportation was punctual.', 
-      rating: 4,
-      date: '2024-01-14'
-    },
-    { 
-      feedback_id: 3, 
-      name: 'Mohammed Ali', 
-      country: 'UAE', 
-      review: 'Excellent experience overall. The package was worth every penny. Will book again soon!', 
-      rating: 5,
-      date: '2024-01-13'
-    },
-    { 
-      feedback_id: 4, 
-      name: 'Sarah Chen', 
-      country: 'Australia', 
-      review: 'Good value for money but some activities felt rushed. Would prefer more free time.', 
-      rating: 3,
-      date: '2024-01-12'
-    },
-    { 
-      feedback_id: 5, 
-      name: 'Carlos Rodriguez', 
-      country: 'Spain', 
-      review: 'Amazing cultural experience. The local guides were fantastic and very friendly.', 
-      rating: 5,
-      date: '2024-01-11'
-    }
-  ]);
+  const [feedbacks, setFeedbacks] = useState<Feedback[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
   const [formData, setFormData] = useState({
     name: '',
     country: '',
     review: '',
     rating: 5,
-    date: new Date().toISOString().split('T')[0],
-    imageUrl: ''
+    image: ''
   });
 
   const filteredFeedbacks = feedbacks.filter(feedback =>
@@ -99,24 +56,47 @@ export default function AdminFeedback() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (editingFeedback) {
-      // Update existing feedback
-      setFeedbacks(feedbacks.map(fb => 
-        fb.feedback_id === editingFeedback.feedback_id 
-          ? { ...formData, feedback_id: editingFeedback.feedback_id }
-          : fb
-      ));
-    } else {
-      // Add new feedback
-      const newFeedback: Feedback = {
-        ...formData,
-        feedback_id: Math.max(...feedbacks.map(f => f.feedback_id)) + 1
-      };
-      setFeedbacks([...feedbacks, newFeedback]);
-    }
-    setShowModal(false);
-    setFormData({ name: '', country: '', review: '', rating: 5, date: new Date().toISOString().split('T')[0], imageUrl: '' });
-    setEditingFeedback(null);
+    
+    (async () => {
+      try {
+        if (editingFeedback) {
+          const res = await fetch(`/api/feedbacks/${editingFeedback.feedback_id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(formData)
+          });
+          if (!res.ok) throw new Error('Failed to update');
+          const updated = await res.json();
+          setFeedbacks(prev => prev.map(f => f.feedback_id === updated.feedback_id ? updated : f));
+        } else {
+          const res = await fetch('/api/feedbacks', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(formData)
+          });
+          if (!res.ok) throw new Error('Failed to create');
+          const created = await res.json();
+          setFeedbacks(prev => [...prev, created]);
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Error saving feedback');
+      } finally {
+        setShowModal(false);
+        resetForm();
+        setEditingFeedback(null);
+      }
+    })();
+  };
+
+  const resetForm = () => {
+    setFormData({
+      name: '',
+      country: '',
+      review: '',
+      rating: 5,
+      image: ''
+    });
   };
 
   const handleEdit = (feedback: Feedback) => {
@@ -125,23 +105,49 @@ export default function AdminFeedback() {
       country: feedback.country,
       review: feedback.review,
       rating: feedback.rating,
-      date: feedback.date,
-      imageUrl: feedback.imageUrl || ''
+      image: feedback.image || ''
     });
     setEditingFeedback(feedback);
     setShowModal(true);
   };
 
-  const handleDelete = (feedbackId: number) => {
-    if (confirm('Are you sure you want to delete this feedback?')) {
-      setFeedbacks(feedbacks.filter(fb => fb.feedback_id !== feedbackId));
-      if (selectedFeedback?.feedback_id === feedbackId) {
-        setSelectedFeedback(null);
+  const handleDelete = (feedbackId: string) => {
+    if (!confirm('Are you sure you want to delete this feedback?')) return;
+    (async () => {
+      try {
+        const res = await fetch(`/api/feedbacks/${feedbackId}`, { method: 'DELETE' });
+        if (!res.ok) throw new Error('Failed to delete');
+        setFeedbacks(prev => prev.filter(f => f.feedback_id !== feedbackId));
+        if (selectedFeedback?.feedback_id === feedbackId) {
+          setSelectedFeedback(null);
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Delete failed');
       }
-    }
+    })();
   };
 
   const countries = ['United States', 'Canada', 'UAE', 'Australia', 'Spain', 'United Kingdom', 'Germany', 'France', 'Japan', 'Singapore'];
+
+  // Fetch feedbacks from backend on mount
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        setLoading(true);
+        const res = await fetch('/api/feedbacks');
+        if (!res.ok) throw new Error('Failed to fetch feedbacks');
+        const data = await res.json();
+        if (mounted) setFeedbacks(data);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    })();
+    return () => { mounted = false };
+  }, []);
 
   return (
     <div style={{ fontFamily: 'Poppins, sans-serif', backgroundColor: '#f8fafc', minHeight: '100vh', display: 'flex' }}>
@@ -280,7 +286,10 @@ export default function AdminFeedback() {
               }}>⭐</div>
               <div>
                 <h3 style={{ fontSize: '20px', fontWeight: '700', color: '#053b3c', margin: 0 }}>
-                  {Math.round(feedbacks.reduce((acc, f) => acc + f.rating, 0) / feedbacks.length * 10) / 10}
+                  {feedbacks.length > 0 
+                    ? (Math.round(feedbacks.reduce((acc, f) => acc + f.rating, 0) / feedbacks.length * 10) / 10).toFixed(1)
+                    : '0.0'
+                  }
                 </h3>
                 <p style={{ fontSize: '12px', color: '#64748b', margin: 0 }}>Average Rating</p>
               </div>
@@ -359,7 +368,7 @@ export default function AdminFeedback() {
                     {feedback.name}
                   </div>
                   <div style={{ fontSize: '12px', color: '#64748b' }}>
-                    {feedback.date}
+                    {feedback.feedback_id}
                   </div>
                 </div>
               </div>
@@ -666,41 +675,12 @@ export default function AdminFeedback() {
 
               <div style={{ marginBottom: '20px' }}>
                 <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '6px' }}>
-                  Date
-                </label>
-                <input
-                  type="date"
-                  required
-                  value={formData.date}
-                  onChange={(e) => setFormData({...formData, date: e.target.value})}
-                  style={{
-                    width: '100%',
-                    padding: '10px 12px',
-                    border: '1px solid #d1d5db',
-                    borderRadius: '6px',
-                    fontSize: '14px',
-                    outline: 'none',
-                    transition: 'all 0.2s ease'
-                  }}
-                  onFocus={(e) => {
-                    e.target.style.borderColor = '#053b3c';
-                    e.target.style.boxShadow = '0 0 0 3px rgba(5, 59, 60, 0.1)';
-                  }}
-                  onBlur={(e) => {
-                    e.target.style.borderColor = '#d1d5db';
-                    e.target.style.boxShadow = 'none';
-                  }}
-                />
-              </div>
-
-              <div style={{ marginBottom: '30px' }}>
-                <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '6px' }}>
                   Image URL
                 </label>
                 <input
                   type="url"
-                  value={formData.imageUrl}
-                  onChange={(e) => setFormData({...formData, imageUrl: e.target.value})}
+                  value={formData.image}
+                  onChange={(e) => setFormData({...formData, image: e.target.value})}
                   placeholder="https://example.com/image.jpg"
                   style={{
                     width: '100%',
@@ -720,10 +700,10 @@ export default function AdminFeedback() {
                     e.target.style.boxShadow = 'none';
                   }}
                 />
-                {formData.imageUrl && (
+                {formData.image && (
                   <div style={{ marginTop: '8px', borderRadius: '6px', overflow: 'hidden', maxWidth: '200px' }}>
                     <img 
-                      src={formData.imageUrl} 
+                      src={formData.image} 
                       alt="Preview" 
                       style={{ width: '100%', height: 'auto', display: 'block' }}
                       onError={(e) => {
@@ -819,7 +799,7 @@ export default function AdminFeedback() {
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', color: '#64748b' }}>
                     <span>{getCountryFlag(selectedFeedback.country)} {selectedFeedback.country}</span>
                     <span>•</span>
-                    <span>{selectedFeedback.date}</span>
+                    <span>{selectedFeedback.feedback_id}</span>
                   </div>
                 </div>
               </div>
@@ -853,7 +833,7 @@ export default function AdminFeedback() {
               ⭐ {selectedFeedback.rating}/5 Rating
             </div>
 
-            {selectedFeedback.imageUrl && (
+            {selectedFeedback.image && (
               <div style={{ marginBottom: '20px' }}>
                 <h4 style={{ fontSize: '16px', fontWeight: '600', color: '#053b3c', margin: '0 0 12px 0' }}>
                   Image
@@ -865,7 +845,7 @@ export default function AdminFeedback() {
                   backgroundColor: '#f8fafc'
                 }}>
                   <img 
-                    src={selectedFeedback.imageUrl} 
+                    src={selectedFeedback.image} 
                     alt="Feedback image"
                     style={{ 
                       width: '100%', 

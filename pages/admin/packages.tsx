@@ -1,15 +1,15 @@
-import React, { useState, FormEvent, MouseEvent } from 'react';
+import React, { useState, useEffect, FormEvent, MouseEvent } from 'react';
 import AdminSidebar from '../../components/AdminSidebar';
 import Link from 'next/link';
 
 interface Package {
-  package_id: number;
+  package_id: string;
   package_name: string;
   description: string;
-  price: number;
+  price: number | null;
   image: string;
-  highlights: string[];
-  inclusions: string[];
+  highlights: string;
+  includings: string;
 }
 
 interface FormData {
@@ -17,177 +17,153 @@ interface FormData {
   description: string;
   price: string;
   image: string;
-  highlights: string[];
-  inclusions: string[];
+  highlights: string;
+  includings: string;
 }
 
 export default function AdminPackages() {
   const [showModal, setShowModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [editingPackage, setEditingPackage] = useState<Package | null>(null);
+  const [packages, setPackages] = useState<Package[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const [packages, setPackages] = useState([
-    {
-      package_id: 1,
-      package_name: 'Makkah & Madinah Spiritual Journey',
-      description: 'A comprehensive 10-day spiritual journey visiting the holy cities of Makkah and Madinah. Includes guided tours, accommodation, and transportation.',
-      price: 2499,
-      image: '/api/placeholder/300/200',
-      highlights: [
-        '10-day spiritual journey',
-        'Visit to holy sites',
-        'Expert religious guidance',
-        'Daily spiritual lectures'
-      ],
-      inclusions: [
-        'Luxury hotel accommodation',
-        'Three meals daily',
-        'Airport transfers',
-        'Licensed tour guides',
-        'All transportation',
-        'Visa processing assistance'
-      ]
-    },
-    {
-      package_id: 2,
-      package_name: 'Umrah Premium Package',
-      description: 'Luxury Umrah experience with 5-star hotels, private transportation, and expert spiritual guides. Perfect for families and groups.',
-      price: 1899,
-      image: '/api/placeholder/300/200',
-      highlights: [
-        'Premium 5-star accommodation',
-        'Private transportation',
-        'VIP services',
-        'Flexible schedule'
-      ],
-      inclusions: [
-        '5-star hotel accommodation',
-        'Private luxury vehicles',
-        'Personal guide',
-        'VIP tawaf services',
-        'Premium meals',
-        'Priority visa processing'
-      ]
-    },
-    {
-      package_id: 3,
-      package_name: 'Family Hajj Package',
-      description: 'Specialized package for families with children. Includes family-friendly accommodations, educational activities, and dedicated support.',
-      price: 4299,
-      image: '/api/placeholder/300/200',
-      highlights: [
-        'Family-friendly accommodations',
-        'Educational programs',
-        'Child care services',
-        'Family bonding activities'
-      ],
-      inclusions: [
-        'Family suite accommodation',
-        'Child-friendly meals',
-        'Educational materials',
-        'Family transport service',
-        'Dedicated family guide',
-        'Emergency medical coverage'
-      ]
-    },
-    {
-      package_id: 4,
-      package_name: 'Budget Umrah Experience',
-      description: 'Affordable Umrah package with comfortable 3-star hotels, group transportation, and essential services for a blessed journey.',
-      price: 1299,
-      image: '/api/placeholder/300/200',
-      highlights: [
-        'Affordable pricing',
-        'Comfortable stays',
-        'Group activities',
-        'Essential services'
-      ],
-      inclusions: [
-        '3-star hotel accommodation',
-        'Shared transportation',
-        'Group guide service',
-        'Standard meals',
-        'Basic visa processing',
-        'Group tawaf'
-      ]
-    }
-  ]);
-
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     package_name: '',
     description: '',
     price: '',
     image: '',
-    highlights: [''],
-    inclusions: ['']
+    highlights: '',
+    includings: ''
   });
+
+  // Fetch packages from backend on mount
+  useEffect(() => {
+    fetchPackages();
+  }, []);
+
+  const fetchPackages = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch('/api/packages');
+      if (!res.ok) throw new Error('Failed to fetch packages');
+      const data = await res.json();
+      setPackages(data);
+    } catch (err) {
+      console.error('Error fetching packages:', err);
+      alert('Failed to load packages');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Helper to parse highlights/includings string to array
+  const parseList = (str: string): string[] => {
+    if (!str) return [];
+    return str.split('\n').map(s => s.trim()).filter(Boolean);
+  };
+
+  // Helper to convert array to string for DB
+  const stringifyList = (arr: string[]): string => {
+    return arr.join('\n');
+  };
 
   const filteredPackages = packages.filter(pkg =>
     pkg.package_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     pkg.description.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (editingPackage) {
-      // Update existing package
-      const updatedPackage: Package = {
-        package_id: editingPackage.package_id,
+    
+    try {
+      const submitData = {
         package_name: formData.package_name,
         description: formData.description,
-        price: Number(formData.price),
+        price: formData.price ? parseFloat(formData.price) : null,
         image: formData.image,
         highlights: formData.highlights,
-        inclusions: formData.inclusions
+        includings: formData.includings
       };
-      setPackages(packages.map(pkg => 
-        pkg.package_id === editingPackage.package_id 
-          ? updatedPackage
-          : pkg
-      ));
-    } else {
-      // Add new package
-      const newPackage: Package = {
-        package_id: Math.max(...packages.map(p => p.package_id)) + 1,
-        package_name: formData.package_name,
-        description: formData.description,
-        price: Number(formData.price),
-        image: formData.image,
-        highlights: formData.highlights,
-        inclusions: formData.inclusions
-      };
-      setPackages([...packages, newPackage]);
+
+      if (editingPackage) {
+        // Update existing package
+        const res = await fetch(`/api/packages/${editingPackage.package_id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(submitData)
+        });
+        if (!res.ok) throw new Error('Failed to update package');
+        const updated = await res.json();
+        setPackages(packages.map(pkg => pkg.package_id === updated.package_id ? updated : pkg));
+      } else {
+        // Add new package
+        const res = await fetch('/api/packages', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(submitData)
+        });
+        if (!res.ok) throw new Error('Failed to create package');
+        const created = await res.json();
+        setPackages([...packages, created]);
+      }
+      
+      setShowModal(false);
+      resetForm();
+      setEditingPackage(null);
+    } catch (err) {
+      console.error('Error saving package:', err);
+      alert('Failed to save package');
     }
-    setShowModal(false);
+  };
+
+  const resetForm = () => {
     setFormData({
       package_name: '',
       description: '',
       price: '',
       image: '',
-      highlights: [''],
-      inclusions: ['']
+      highlights: '',
+      includings: ''
     });
-    setEditingPackage(null);
   };
 
   const handleEdit = (pkg: Package) => {
     setFormData({
       package_name: pkg.package_name,
       description: pkg.description,
-      price: String(pkg.price),
+      price: pkg.price ? String(pkg.price) : '',
       image: pkg.image,
       highlights: pkg.highlights,
-      inclusions: pkg.inclusions
+      includings: pkg.includings
     });
     setEditingPackage(pkg);
     setShowModal(true);
   };
 
-  const handleDelete = (packageId: number) => {
-    if (confirm('Are you sure you want to delete this package?')) {
+  const handleDelete = async (packageId: string) => {
+    if (!confirm('Are you sure you want to delete this package?')) return;
+    
+    try {
+      const res = await fetch(`/api/packages/${packageId}`, { method: 'DELETE' });
+      if (!res.ok) throw new Error('Failed to delete package');
       setPackages(packages.filter(pkg => pkg.package_id !== packageId));
+    } catch (err) {
+      console.error('Error deleting package:', err);
+      alert('Failed to delete package');
     }
   };
+
+  if (loading) {
+    return (
+      <div style={{ display: 'flex', minHeight: '100vh' }}>
+        <AdminSidebar />
+        <div style={{ flex: 1, padding: '40px', textAlign: 'center' }}>
+          <h2>Loading packages...</h2>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div style={{ fontFamily: 'Poppins, sans-serif', backgroundColor: '#f8fafc', minHeight: '100vh', display: 'flex' }}>
@@ -238,12 +214,30 @@ export default function AdminPackages() {
             
             <button 
               onClick={() => setShowModal(true)}
-              className="admin-button"
               style={{
+                  padding: '12px 24px',
+                  backgroundColor: '#053b3c',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '8px',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '8px'
+                  gap: '8px',
+                  transition: 'all 0.2s ease'
               }}
+                onMouseEnter={(e) => {
+                  const btn = e.target as HTMLButtonElement;
+                  btn.style.backgroundColor = '#0a4a4b';
+                  btn.style.transform = 'translateY(-1px)';
+                }}
+                onMouseLeave={(e) => {
+                  const btn = e.target as HTMLButtonElement;
+                  btn.style.backgroundColor = '#053b3c';
+                  btn.style.transform = 'translateY(0)';
+                }}
             >
               <span>+</span> Add New Package
             </button>
@@ -306,7 +300,7 @@ export default function AdminPackages() {
               }}>💰</div>
               <div>
                 <h3 style={{ fontSize: '20px', fontWeight: '700', color: '#053b3c', margin: 0 }}>
-                  ${Math.min(...packages.map(p => p.price))}
+                  {packages.length > 0 ? `$${Math.min(...packages.map(p => p.price || 0))}` : '$0'}
                 </h3>
                 <p style={{ fontSize: '12px', color: '#64748b', margin: 0 }}>Starting From</p>
               </div>
@@ -360,7 +354,7 @@ export default function AdminPackages() {
                   fontSize: '14px',
                   fontWeight: '600'
                 }}>
-                  ${pkg.price}
+                  {pkg.price ? `$${pkg.price}` : 'Price TBD'}
                 </div>
               </div>
 
@@ -408,7 +402,7 @@ export default function AdminPackages() {
                     gap: '6px',
                     marginBottom: '12px'
                   }}>
-                    {pkg.highlights.map((highlight, index) => (
+                    {parseList(pkg.highlights).map((highlight, index) => (
                       <span
                         key={index}
                         style={{
@@ -446,7 +440,7 @@ export default function AdminPackages() {
                     fontSize: '13px',
                     color: '#64748b'
                   }}>
-                    {pkg.inclusions.map((inclusion, index) => (
+                    {parseList(pkg.includings).map((inclusion, index) => (
                       <div
                         key={index}
                         style={{
@@ -681,8 +675,8 @@ export default function AdminPackages() {
                 </label>
                 <textarea
                   required
-                  value={formData.highlights.join('\n')}
-                  onChange={(e) => setFormData({...formData, highlights: e.target.value.split('\n').filter(h => h.trim())})}
+                  value={formData.highlights}
+                  onChange={(e) => setFormData({...formData, highlights: e.target.value})}
                   style={{
                     width: '100%',
                     padding: '10px 12px',
@@ -712,8 +706,8 @@ export default function AdminPackages() {
                 </label>
                 <textarea
                   required
-                  value={formData.inclusions.join('\n')}
-                  onChange={(e) => setFormData({...formData, inclusions: e.target.value.split('\n').filter(i => i.trim())})}
+                  value={formData.includings}
+                  onChange={(e) => setFormData({...formData, includings: e.target.value})}
                   style={{
                     width: '100%',
                     padding: '10px 12px',

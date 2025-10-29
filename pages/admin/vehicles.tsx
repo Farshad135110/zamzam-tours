@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import AdminSidebar from '../../components/AdminSidebar';
 
 interface Vehicle {
-  vehicle_id: number;
+  vehicle_id: string;
   vehicle_name: string;
   vehicle_type: string;
   description: string;
@@ -11,76 +11,15 @@ interface Vehicle {
   extra_charge_per_km: number;
   image: string;
   capacity: number;
-  available_for: string[];
+  available_for: string;
 }
 
 export default function AdminVehicles() {
   const [showModal, setShowModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [editingVehicle, setEditingVehicle] = useState<Vehicle | null>(null);
-
-  const [vehicles, setVehicles] = useState<Vehicle[]>([
-    {
-      vehicle_id: 1,
-      vehicle_name: 'Toyota Hiace',
-      vehicle_type: 'Van',
-      description: 'Comfortable 12-seater van perfect for group transfers and family trips. Features air conditioning and ample luggage space.',
-      km_per_day: 300,
-      price_per_day: 120,
-      extra_charge_per_km: 0.5,
-      image: '/api/placeholder/300/200',
-      capacity: 12,
-      available_for: ['with_driver', 'tour']
-    },
-    {
-      vehicle_id: 2,
-      vehicle_name: 'Mercedes Sprinter',
-      vehicle_type: 'Mini Bus',
-      description: 'Luxury mini bus with 20 comfortable seats, perfect for corporate transfers and large family groups.',
-      km_per_day: 250,
-      price_per_day: 200,
-      extra_charge_per_km: 0.8,
-      image: '/api/placeholder/300/200',
-      capacity: 20,
-      available_for: ['with_driver', 'tour']
-    },
-    {
-      vehicle_id: 3,
-      vehicle_name: 'Toyota Coaster',
-      vehicle_type: 'Bus',
-      description: 'Large capacity bus ideal for tour groups and pilgrim transport. Equipped with comfortable seating and storage.',
-      km_per_day: 200,
-      price_per_day: 300,
-      extra_charge_per_km: 1.0,
-      image: '/api/placeholder/300/200',
-      capacity: 30,
-      available_for: ['with_driver', 'tour']
-    },
-    {
-      vehicle_id: 4,
-      vehicle_name: 'Hyundai Staria',
-      vehicle_type: 'MPV',
-      description: 'Premium MPV with 7 luxury seats, perfect for family trips and executive transport.',
-      km_per_day: 350,
-      price_per_day: 80,
-      extra_charge_per_km: 0.3,
-      image: '/api/placeholder/300/200',
-      capacity: 7,
-      available_for: ['self_drive', 'with_driver', 'tour']
-    },
-    {
-      vehicle_id: 5,
-      vehicle_name: 'Toyota Camry',
-      vehicle_type: 'Sedan',
-      description: 'Comfortable sedan for city transfers and individual travel. Fuel efficient and reliable.',
-      km_per_day: 400,
-      price_per_day: 60,
-      extra_charge_per_km: 0.2,
-      image: '/api/placeholder/300/200',
-      capacity: 4,
-      available_for: ['self_drive', 'with_driver']
-    }
-  ]);
+  const [vehicles, setVehicles] = useState<Vehicle[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const [formData, setFormData] = useState({
     vehicle_name: '',
@@ -91,8 +30,40 @@ export default function AdminVehicles() {
     extra_charge_per_km: 0.3,
     image: '',
     capacity: 4,
-    available_for: [] as string[]
+    available_for: ''
   });
+
+  // Fetch vehicles from backend on mount
+  useEffect(() => {
+    fetchVehicles();
+  }, []);
+
+  const fetchVehicles = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch('/api/vehicles');
+      if (!res.ok) throw new Error('Failed to fetch vehicles');
+      const data = await res.json();
+      setVehicles(data);
+    } catch (err) {
+      console.error('Error fetching vehicles:', err);
+      alert('Failed to load vehicles');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Helper to parse available_for string to array
+  const parseAvailableFor = (availableForStr: string): string[] => {
+    if (!availableForStr) return [];
+    return availableForStr.split(',').map(s => s.trim()).filter(Boolean);
+  };
+
+  // Helper to convert array to string for DB
+  const stringifyAvailableFor = (availableForArr: string | string[]): string => {
+    if (typeof availableForArr === 'string') return availableForArr;
+    return availableForArr.join(',');
+  };
 
   const filteredVehicles = vehicles.filter(vehicle =>
     vehicle.vehicle_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -130,24 +101,42 @@ export default function AdminVehicles() {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (editingVehicle) {
-      // Update existing vehicle
-      setVehicles(vehicles.map(vehicle => 
-        vehicle.vehicle_id === editingVehicle.vehicle_id 
-          ? { ...formData, vehicle_id: editingVehicle.vehicle_id }
-          : vehicle
-      ));
-    } else {
-      // Add new vehicle
-      const newVehicle: Vehicle = {
-        ...formData,
-        vehicle_id: Math.max(...vehicles.map(v => v.vehicle_id)) + 1
-      };
-      setVehicles([...vehicles, newVehicle]);
+    
+    try {
+      if (editingVehicle) {
+        // Update existing vehicle
+        const res = await fetch(`/api/vehicles/${editingVehicle.vehicle_id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formData)
+        });
+        if (!res.ok) throw new Error('Failed to update vehicle');
+        const updated = await res.json();
+        setVehicles(vehicles.map(v => v.vehicle_id === updated.vehicle_id ? updated : v));
+      } else {
+        // Add new vehicle
+        const res = await fetch('/api/vehicles', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formData)
+        });
+        if (!res.ok) throw new Error('Failed to create vehicle');
+        const created = await res.json();
+        setVehicles([...vehicles, created]);
+      }
+      
+      setShowModal(false);
+      resetForm();
+      setEditingVehicle(null);
+    } catch (err) {
+      console.error('Error saving vehicle:', err);
+      alert('Failed to save vehicle');
     }
-    setShowModal(false);
+  };
+
+  const resetForm = () => {
     setFormData({ 
       vehicle_name: '', 
       vehicle_type: '', 
@@ -157,9 +146,8 @@ export default function AdminVehicles() {
       extra_charge_per_km: 0.3,
       image: '', 
       capacity: 4,
-      available_for: []
+      available_for: ''
     });
-    setEditingVehicle(null);
   };
 
   const handleEdit = (vehicle: Vehicle) => {
@@ -178,18 +166,27 @@ export default function AdminVehicles() {
     setShowModal(true);
   };
 
-  const handleDelete = (vehicleId: number) => {
-    if (confirm('Are you sure you want to delete this vehicle?')) {
-      setVehicles(vehicles.filter(vehicle => vehicle.vehicle_id !== vehicleId));
+  const handleDelete = async (vehicleId: string) => {
+    if (!confirm('Are you sure you want to delete this vehicle?')) return;
+    
+    try {
+      const res = await fetch(`/api/vehicles/${vehicleId}`, { method: 'DELETE' });
+      if (!res.ok) throw new Error('Failed to delete vehicle');
+      setVehicles(vehicles.filter(v => v.vehicle_id !== vehicleId));
+    } catch (err) {
+      console.error('Error deleting vehicle:', err);
+      alert('Failed to delete vehicle');
     }
   };
 
   const toggleAvailableFor = (type: string) => {
+    const currentTypes = formData.available_for.split(',').filter(Boolean);
+    const newTypes = currentTypes.includes(type)
+      ? currentTypes.filter(t => t !== type)
+      : [...currentTypes, type];
     setFormData(prev => ({
       ...prev,
-      available_for: prev.available_for.includes(type)
-        ? prev.available_for.filter(t => t !== type)
-        : [...prev.available_for, type]
+      available_for: newTypes.join(',')
     }));
   };
 
@@ -199,6 +196,17 @@ export default function AdminVehicles() {
     { value: 'with_driver', label: 'With Driver', icon: '👨‍💼' },
     { value: 'tour', label: 'Tour Package', icon: '🗺️' }
   ];
+
+  if (loading) {
+    return (
+      <div style={{ display: 'flex', minHeight: '100vh' }}>
+        <AdminSidebar />
+        <div style={{ flex: 1, padding: '40px', textAlign: 'center' }}>
+          <h2>Loading vehicles...</h2>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div style={{ fontFamily: 'Poppins, sans-serif', backgroundColor: '#f8fafc', minHeight: '100vh', display: 'flex' }}>
@@ -337,7 +345,7 @@ export default function AdminVehicles() {
               }}>👤</div>
               <div>
                 <h3 style={{ fontSize: '20px', fontWeight: '700', color: '#053b3c', margin: 0 }}>
-                  {vehicles.filter(v => v.available_for.includes('self_drive')).length}
+                  {vehicles.filter(v => parseAvailableFor(v.available_for).includes('self_drive')).length}
                 </h3>
                 <p style={{ fontSize: '12px', color: '#64748b', margin: 0 }}>Self Drive</p>
               </div>
@@ -365,7 +373,7 @@ export default function AdminVehicles() {
               }}>👨‍💼</div>
               <div>
                 <h3 style={{ fontSize: '20px', fontWeight: '700', color: '#053b3c', margin: 0 }}>
-                  {vehicles.filter(v => v.available_for.includes('with_driver')).length}
+                  {vehicles.filter(v => parseAvailableFor(v.available_for).includes('with_driver')).length}
                 </h3>
                 <p style={{ fontSize: '12px', color: '#64748b', margin: 0 }}>With Driver</p>
               </div>
@@ -488,7 +496,7 @@ export default function AdminVehicles() {
                     Available For:
                   </div>
                   <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                    {vehicle.available_for.map(type => (
+                    {parseAvailableFor(vehicle.available_for).map(type => (
                       <div
                         key={type}
                         style={{
@@ -811,32 +819,36 @@ export default function AdminVehicles() {
                   Available For
                 </label>
                 <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-                  {usageTypes.map(usage => (
-                    <label
-                      key={usage.value}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '6px',
-                        cursor: 'pointer',
-                        padding: '8px 12px',
-                        border: `1px solid ${formData.available_for.includes(usage.value) ? '#053b3c' : '#d1d5db'}`,
-                        borderRadius: '6px',
-                        backgroundColor: formData.available_for.includes(usage.value) ? '#053b3c' : 'transparent',
-                        color: formData.available_for.includes(usage.value) ? 'white' : '#374151',
-                        transition: 'all 0.2s ease'
-                      }}
-                    >
-                      <input
-                        type="checkbox"
-                        checked={formData.available_for.includes(usage.value)}
-                        onChange={() => toggleAvailableFor(usage.value)}
-                        style={{ display: 'none' }}
-                      />
-                      <span>{usage.icon}</span>
-                      <span style={{ fontSize: '12px', fontWeight: '500' }}>{usage.label}</span>
-                    </label>
-                  ))}
+                  {usageTypes.map(usage => {
+                    const currentTypes = formData.available_for.split(',').filter(Boolean);
+                    const isChecked = currentTypes.includes(usage.value);
+                    return (
+                      <label
+                        key={usage.value}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '6px',
+                          cursor: 'pointer',
+                          padding: '8px 12px',
+                          border: `1px solid ${isChecked ? '#053b3c' : '#d1d5db'}`,
+                          borderRadius: '6px',
+                          backgroundColor: isChecked ? '#053b3c' : 'transparent',
+                          color: isChecked ? 'white' : '#374151',
+                          transition: 'all 0.2s ease'
+                        }}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={isChecked}
+                          onChange={() => toggleAvailableFor(usage.value)}
+                          style={{ display: 'none' }}
+                        />
+                        <span>{usage.icon}</span>
+                        <span style={{ fontSize: '12px', fontWeight: '500' }}>{usage.label}</span>
+                      </label>
+                    );
+                  })}
                 </div>
               </div>
 

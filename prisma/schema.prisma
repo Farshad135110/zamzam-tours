@@ -28,6 +28,7 @@ model feedback {
   country     String? @db.VarChar(100)
   review      String
   rating      Int?
+  image       String?
 }
 
 model gallery {
@@ -37,11 +38,13 @@ model gallery {
 }
 
 model hotel {
-  hotel_id    String  @id @default(dbgenerated("concat('H', lpad((nextval('hotel_seq'::regclass))::text, 3, '0'::text))")) @db.VarChar(10)
-  hotel_name  String  @db.VarChar(100)
-  location    String  @db.VarChar(150)
-  price_range String? @db.VarChar(50)
-  image       String?
+  hotel_id      String          @id @default(dbgenerated("concat('H', lpad((nextval('hotel_seq'::regclass))::text, 3, '0'::text))")) @db.VarChar(10)
+  hotel_name    String          @db.VarChar(100)
+  location      String          @db.VarChar(150)
+  price_range   String?         @db.VarChar(50)
+  image         String?
+  facilities    String?
+  hotel_booking hotel_booking[]
 }
 
 /// This model has been renamed to 'Renamedpackage' during introspection, because the original name 'package' is reserved.
@@ -51,6 +54,8 @@ model Renamedpackage {
   description  String
   price        Decimal?       @db.Decimal(10, 2)
   image        String?        @db.VarChar(255)
+  highlights   String?
+  includings   String?
   tour_booking tour_booking[]
 
   @@map("package")
@@ -70,17 +75,18 @@ model tour_booking {
 }
 
 model vehicle {
-  vehicle_id          String           @id @default(dbgenerated("concat('V', lpad((nextval('vehicle_seq'::regclass))::text, 3, '0'::text))")) @db.VarChar(10)
-  vehicle_name        String           @db.VarChar(100)
-  vehicle_type        String           @db.VarChar(50)
+  vehicle_id          String            @id @default(dbgenerated("concat('V', lpad((nextval('vehicle_seq'::regclass))::text, 3, '0'::text))")) @db.VarChar(10)
+  vehicle_name        String            @db.VarChar(100)
+  vehicle_type        String            @db.VarChar(50)
   description         String?
   km_per_day          Int?
-  price_per_day       Decimal?         @db.Decimal(10, 2)
-  extra_charge_per_km Decimal?         @db.Decimal(10, 2)
+  price_per_day       Decimal?          @db.Decimal(10, 2)
+  extra_charge_per_km Decimal?          @db.Decimal(10, 2)
   image               String?
   capacity            Int?
-  available_for       String?          @db.VarChar(100)
+  available_for       String?           @db.VarChar(100)
   airport_pickup      airport_pickup[]
+  vehicle_booking     vehicle_booking[]
 }
 
 model vehicle_booking {
@@ -95,9 +101,25 @@ model vehicle_booking {
   return_date        DateTime @db.Date
   no_of_dates        Int
   special_request    String?
+  vehicle_id         String?  @db.VarChar(10)
+  vehicle            vehicle? @relation(fields: [vehicle_id], references: [vehicle_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_vehicle")
+}
+
+model hotel_booking {
+  hotel_booking_id String   @id @db.VarChar(10)
+  hotel_id         String?  @db.VarChar(10)
+  name             String   @db.VarChar(100)
+  email            String   @db.VarChar(100)
+  phone_no         String   @db.VarChar(15)
+  check_in         DateTime @db.Date
+  check_out        DateTime @db.Date
+  no_of_dates      Int?     @default(dbgenerated("(check_out - check_in)"))
+  no_of_rooms      Int
+  no_of_people     Int
+  hotel            hotel?   @relation(fields: [hotel_id], references: [hotel_id], onDelete: Cascade, onUpdate: NoAction)
 }
 
 enum pickup_type {
-  way @map("1 way")
-  way @map("2 way")
+  one_way @map("1 way")
+  two_way @map("2 way")
 }
