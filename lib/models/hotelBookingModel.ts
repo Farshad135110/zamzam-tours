@@ -38,7 +38,7 @@ function recordToDb(record: Partial<HotelBookingRecord>) {
     hotel_id: record.hotel_id || null,
     name: record.name || '',
     email: record.email || '',
-    phone_no: record.phone_no,
+    phone_no: record.phone_no || '',
     check_in: record.check_in ? new Date(record.check_in) : new Date(),
     check_out: record.check_out ? new Date(record.check_out) : new Date(),
     no_of_rooms: record.no_of_rooms || 1,

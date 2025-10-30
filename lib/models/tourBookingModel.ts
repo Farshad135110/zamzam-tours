@@ -32,13 +32,13 @@ function dbToRecord(db: any): TourBookingRecord {
 // Convert API record to DB data
 function recordToDb(record: Partial<TourBookingRecord>) {
   return {
-    package_id: record.package_id,
-    name: record.name,
-    email: record.email,
-    phone_no: record.phone_no,
-    no_of_travellers: record.no_of_travellers,
-    starting_date: record.starting_date ? new Date(record.starting_date) : undefined,
-    pickup_location: record.pickup_location,
+    package_id: record.package_id || '',
+    name: record.name || '',
+    email: record.email || '',
+    phone_no: record.phone_no || '',
+    no_of_travellers: record.no_of_travellers || 1,
+    starting_date: record.starting_date ? new Date(record.starting_date) : new Date(),
+    pickup_location: record.pickup_location || '',
     special_requirements: record.special_requirements ?? null
   };
 }

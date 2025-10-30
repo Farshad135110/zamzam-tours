@@ -39,10 +39,10 @@ function dbToRecord(dbRecord: any): AirportPickupRecord {
 function recordToDb(record: Partial<AirportPickupRecord>) {
   return {
     type: record.pickup_type === 'one_way' ? 'one_way' : 'two_way' as any, // Map to enum
-    pickup_from: record.pickup_from,
-    drop_off: record.dropoff,
+    pickup_from: record.pickup_from || '',
+    drop_off: record.dropoff || '',
     airport: record.airport || '',
-    no_of_passengers: record.passengers,
+    no_of_passengers: record.passengers || 1,
     pickup_time: record.pickup_time ? new Date(record.pickup_time) : new Date(),
     vehicle_id: null, // You can map vehicle name to vehicle_id later
     note: record.note || '',

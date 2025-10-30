@@ -32,15 +32,15 @@ function dbToRecord(dbRecord: any): VehicleRecord {
 // Helper to convert frontend format to DB format
 function recordToDb(record: Partial<VehicleRecord>) {
   return {
-    vehicle_name: record.vehicle_name,
-    vehicle_type: record.vehicle_type,
-    description: record.description,
-    km_per_day: record.km_per_day,
-    price_per_day: record.price_per_day,
-    extra_charge_per_km: record.extra_charge_per_km,
-    image: record.image,
-    capacity: record.capacity,
-    available_for: record.available_for
+    vehicle_name: record.vehicle_name || '',
+    vehicle_type: record.vehicle_type || '',
+    description: record.description || '',
+    km_per_day: record.km_per_day || 0,
+    price_per_day: record.price_per_day || 0,
+    extra_charge_per_km: record.extra_charge_per_km || 0,
+    image: record.image || '',
+    capacity: record.capacity || 0,
+    available_for: record.available_for || ''
   };
 }
 

@@ -3,7 +3,7 @@ import { prisma } from '../../src/lib/prisma';
 export interface VehicleBookingRecord {
   vehicle_booking_id: string;
   rental_type: string; // self_drive | with_driver | tour
-  customer_type: string; // individual | corporate | family
+  customer_type: string;
   name: string;
   email: string;
   phone_no: string;
@@ -34,15 +34,15 @@ function dbToRecord(db: any): VehicleBookingRecord {
 
 function recordToDb(record: Partial<VehicleBookingRecord>) {
   return {
-    rental_type: record.rental_type,
-    customer_type: record.customer_type,
-    name: record.name,
-    email: record.email,
-    phone_no: record.phone_no,
-    pickup_location: record.pickup_location,
-    pickup_date: record.pickup_date ? new Date(record.pickup_date) : undefined,
-    return_date: record.return_date ? new Date(record.return_date) : undefined,
-    no_of_dates: record.no_of_days,
+    rental_type: record.rental_type || 'self_drive',
+    customer_type: record.customer_type || 'foreign',
+    name: record.name || '',
+    email: record.email || '',
+    phone_no: record.phone_no || '',
+    pickup_location: record.pickup_location || '',
+    pickup_date: record.pickup_date ? new Date(record.pickup_date) : new Date(),
+    return_date: record.return_date ? new Date(record.return_date) : new Date(),
+    no_of_dates: record.no_of_days || 1,
     special_request: record.special_request ?? null,
     vehicle_id: record.vehicle_id ?? null
   };

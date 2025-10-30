@@ -27,12 +27,12 @@ function dbToRecord(dbRecord: any): PackageRecord {
 // Helper to convert frontend format to DB format
 function recordToDb(record: Partial<PackageRecord>) {
   return {
-    package_name: record.package_name,
-    description: record.description,
-    price: record.price,
-    image: record.image,
-    highlights: record.highlights,
-    includings: record.includings
+    package_name: record.package_name || '',
+    description: record.description || '',
+    price: record.price ?? null,
+    image: record.image || '',
+    highlights: record.highlights || '',
+    includings: record.includings || ''
   };
 }
 
