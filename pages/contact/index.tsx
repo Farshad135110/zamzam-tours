@@ -133,8 +133,8 @@ export default function Contact() {
   ];
 
   // Handle form input changes
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value } = e.target as HTMLInputElement;
     setFormData(prev => ({
       ...prev,
       [name]: value
@@ -417,7 +417,7 @@ Please respond promptly.
                   value={formData.message}
                   onChange={handleInputChange}
                   required
-                  rows="6"
+                  rows={6}
                   placeholder="Please provide details about your inquiry, including travel dates, number of travelers, preferred destinations, and any specific requirements..."
                 ></textarea>
               </div>

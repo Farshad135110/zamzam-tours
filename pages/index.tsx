@@ -37,17 +37,44 @@ export default function Home() {
     { code: 'it', name: 'Italiano' }
   ];
   
-  // Vehicle fleet data - with Cloudinary image IDs
-  const vehicles = [
-    { name: 'Bus', capacity: '30-50', type: 'self-drive, with-driver', image: 'zamzam-tours/vehicles/bus', description: 'Perfect for large groups and tours' },
-    { name: 'KDH Van', capacity: '6-8', type: 'self-drive, with-driver', image: 'zamzam-tours/vehicles/kdh-van', description: 'Comfortable family vehicle' },
-    { name: 'Tour Van', capacity: '12-15', type: 'self-drive, with-driver', image: 'zamzam-tours/vehicles/tour-van', description: 'Ideal for group tours' },
-    { name: 'WagonR', capacity: '4', type: 'self-drive, with-driver', image: 'zamzam-tours/vehicles/wagonr', description: 'Economical city car' },
-    { name: 'Shuttle', capacity: '10-12', type: 'self-drive, with-driver', image: 'zamzam-tours/vehicles/shuttle', description: 'Airport shuttle service' },
-    { name: 'Every Buddy Van', capacity: '8-10', type: 'self-drive, with-driver', image: 'zamzam-tours/vehicles/every-buddy', description: 'Spacious van for families' },
-    { name: 'Aqua', capacity: '4', type: 'self-drive, with-driver', image: 'zamzam-tours/vehicles/aqua', description: 'Fuel-efficient hybrid' },
-    { name: 'Prius', capacity: '4', type: 'self-drive, with-driver', image: 'zamzam-tours/vehicles/prius', description: 'Premium hybrid sedan' }
-  ];
+  // Vehicle fleet data - fetched from backend API (pages/api/vehicles)
+  const [vehicles, setVehicles] = useState<Array<{ name: string; capacity: string; type: string; image: string; description: string }>>([]);
+  const [vehiclesLoading, setVehiclesLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchVehicles = async () => {
+      try {
+        setVehiclesLoading(true);
+        const res = await fetch('/api/vehicles');
+        if (!res.ok) throw new Error('Failed to fetch vehicles');
+        const data = await res.json();
+
+        const mapped = data.map((v: any) => ({
+          name: v.vehicle_name || v.name || 'Vehicle',
+          capacity: v.capacity ? `${v.capacity}` : (v.seats ? `${v.seats}` : '4'),
+          type: (v.available_for || v.type || 'self-drive, with-driver').toString(),
+          // If backend provides a cloudinary public id use it, otherwise fall back to image URL or default
+          image: v.image || v.cloudinary_id || 'zamzam-tours/vehicles/default',
+          description: v.description || v.vehicle_name || ''
+        }));
+
+        setVehicles(mapped);
+      } catch (err) {
+        console.error('Error loading vehicles for homepage:', err);
+        // Fallback: use a small local set so the homepage still shows vehicles when the DB/API isn't available locally
+        const fallback = [
+          { name: 'Prius', capacity: '4', type: 'self-drive, with-driver', image: 'zamzam-tours/vehicles/prius', description: 'Premium hybrid sedan' },
+          { name: 'Aqua', capacity: '4', type: 'self-drive, with-driver', image: 'zamzam-tours/vehicles/aqua', description: 'Fuel-efficient hybrid' },
+          { name: 'KDH Van', capacity: '6-8', type: 'with-driver', image: 'zamzam-tours/vehicles/kdh-van', description: 'Comfortable family vehicle' },
+        ];
+        setVehicles(fallback);
+      } finally {
+        setVehiclesLoading(false);
+      }
+    };
+
+    fetchVehicles();
+  }, []);
   
   // Popular destinations - with Cloudinary image IDs
   const destinations = [

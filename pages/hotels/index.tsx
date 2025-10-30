@@ -86,8 +86,8 @@ export default function Hotels() {
     { id: 'bar', name: 'Bar' }
   ];
 
-  // Sample hotels data
-  const hotels = [
+  // Sample hotels data (fallback) - kept as a local fallback if API is unreachable
+  const sampleHotels = [
     {
       id: 1,
       name: 'Cinnamon Grand Colombo',
@@ -194,6 +194,76 @@ export default function Hotels() {
     }
   ];
 
+  // Ensure sample hotels have a `facilities` field so the UI shows facilities for fallback data
+  sampleHotels.forEach(h => {
+    if (!('facilities' in h) || !h.facilities) {
+      h.facilities = h.amenities ? [...h.amenities] : [];
+    }
+  });
+
+  // Hotels loaded from the DB (mapped to UI shape). Falls back to sampleHotels when API is unavailable.
+  const [hotelsData, setHotelsData] = useState<any[]>([]);
+
+  useEffect(() => {
+    let mounted = true;
+
+    async function loadHotels() {
+      try {
+        const res = await fetch('/api/hotels');
+        if (!mounted) return;
+        if (res.ok) {
+          const data = await res.json();
+          // Map DB hotel structure to the UI shape used in this page
+          const mapped = (data || []).map((h: any, idx: number) => ({
+            id: h.hotel_id || `db-${idx}`,
+            name: h.hotel_name || 'Unknown Hotel',
+            location: h.location || 'all',
+            // If DB doesn't have rating/reviews, use gentle defaults
+            rating: h.rating || 4.5,
+            reviews: h.reviews || 0,
+            // price_range may be a string like "100-200" or a number string; try to extract a number
+            price: (() => {
+              const pr = h.price_range;
+              if (!pr) return 120;
+              if (typeof pr === 'number') return pr;
+              if (typeof pr === 'string') {
+                const m = pr.match(/\d+/);
+                return m ? Number(m[0]) : 120;
+              }
+              return 120;
+            })(),
+            image: h.image || '/hotels/default.jpg',
+            // Parse facilities (DB `facilities` column may be CSV or array). Populate both `facilities` and `amenities` for the UI.
+            facilities: (() => {
+              if (!h.facilities) return [];
+              if (Array.isArray(h.facilities)) return h.facilities.map((s: any) => String(s).trim());
+              return String(h.facilities).split(',').map((s: string) => s.trim());
+            })(),
+            amenities: (() => {
+              if (h.amenities && Array.isArray(h.amenities)) return h.amenities.map((s: any) => String(s).trim());
+              if (h.facilities && Array.isArray(h.facilities)) return h.facilities.map((s: any) => String(s).trim());
+              if (h.facilities) return String(h.facilities).split(',').map((s: string) => s.trim());
+              return [];
+            })(),
+            description: h.description || '',
+            coordinates: h.coordinates || { lat: 0, lng: 0 },
+            popularPackages: h.popularPackages || []
+          }));
+
+          setHotelsData(mapped);
+        } else {
+          setHotelsData(sampleHotels);
+        }
+      } catch (err) {
+        console.error('Failed to load hotels from API:', err);
+        if (mounted) setHotelsData(sampleHotels);
+      }
+    }
+
+    loadHotels();
+    return () => { mounted = false; };
+  }, []);
+
   // Additional services
   const additionalServices = [
     {
@@ -253,13 +323,16 @@ export default function Hotels() {
     }
   ];
 
+  // Use hotels loaded from DB when available, otherwise fall back to sampleHotels
+  const activeHotels = hotelsData.length > 0 ? hotelsData : sampleHotels;
+
   // Filter hotels based on search criteria
-  const filteredHotels = hotels.filter(hotel => {
+  const filteredHotels = activeHotels.filter(hotel => {
     const matchesLocation = searchParams.location === 'all' || hotel.location === searchParams.location;
     const matchesPrice = hotel.price >= searchParams.priceRange[0] && hotel.price <= searchParams.priceRange[1];
     const matchesRating = hotel.rating >= searchParams.rating;
     const matchesAmenities = searchParams.amenities.length === 0 || 
-      searchParams.amenities.every(amenity => hotel.amenities.includes(amenity));
+      searchParams.amenities.every(amenity => hotel.amenities && hotel.amenities.includes(amenity));
     
     return matchesLocation && matchesPrice && matchesRating && matchesAmenities;
   });
@@ -795,30 +868,24 @@ export default function Hotels() {
                 <div className="hotel-content">
                   <h3>{hotel.name}</h3>
                   <p className="hotel-description">{hotel.description}</p>
-                  
-                  <div className="hotel-amenities">
-                    {hotel.amenities.slice(0, 4).map(amenity => (
-                      <span key={amenity} className="amenity-tag">
-                        {amenitiesList.find(a => a.id === amenity)?.name}
-                      </span>
-                    ))}
-                    {hotel.amenities.length > 4 && (
-                      <span className="amenity-more">+{hotel.amenities.length - 4} more</span>
-                    )}
-                  </div>
 
-                  <div className="hotel-popular">
-                    <span>Popular with:</span>
-                    <div className="popular-tags">
-                      {hotel.popularPackages.map(pkg => (
-                        <span key={pkg} className="popular-tag">{pkg.replace('-', ' ')}</span>
-                      ))}
+                  {/* Facilities list (from DB 'facilities' column). Show full list as tags or comma list */}
+                  {hotel.facilities && hotel.facilities.length > 0 && (
+                    <div className="hotel-facilities">
+                      <strong>Facilities:</strong>
+                      <div className="facility-tags">
+                        {hotel.facilities.map((f: string) => (
+                          <span key={f} className="facility-tag">{f.trim()}</span>
+                        ))}
+                      </div>
                     </div>
-                  </div>
+                  )}
+                  
+                  
 
                   <div className="hotel-footer">
                     <div className="hotel-price">
-                      <span className="price">${hotel.price}</span>
+                      <span className="price">From ${hotel.price}</span>
                       <span className="period">per night</span>
                     </div>
                     <div className="hotel-actions">
@@ -1999,6 +2066,26 @@ export default function Hotels() {
           border-radius: 10px;
           font-size: 0.7rem;
           font-weight: 600;
+        }
+
+        /* Facilities (from DB) */
+        .hotel-facilities {
+          margin-bottom: 1rem;
+        }
+
+        .facility-tags {
+          display: flex;
+          gap: 0.5rem;
+          flex-wrap: wrap;
+          margin-top: 0.5rem;
+        }
+
+        .facility-tag {
+          background: var(--section-bg);
+          padding: 3px 8px;
+          border-radius: 10px;
+          font-size: 0.75rem;
+          color: var(--text-light);
         }
 
         .hotel-popular {

@@ -71,180 +71,60 @@ export default function SelfDrive() {
     }
   }, []);
 
-  // Vehicle fleet data
-  const vehicles: Vehicle[] = [
-    {
-      id: 1,
-      name: 'Toyota Prius',
-      category: 'economy',
-      type: 'self-drive, with-driver',
-      image: '/vehicles/prius.svg',
-      capacity: '4 passengers, 2 luggage',
-      transmission: 'Automatic',
-      fuel: 'Hybrid',
-      features: ['AC', 'GPS', 'Bluetooth', 'Airbags'],
-      touristPrices: {
-        'self-drive': { daily: 45, weekly: 270, monthly: 900 },
-        'with-driver': { daily: 65, weekly: 390, monthly: 1300 }
-      },
-      localPrices: {
-        'self-drive': { daily: 35, weekly: 210, monthly: 700 },
-        'with-driver': { daily: 55, weekly: 330, monthly: 1100 }
+  // Vehicles will be fetched from the backend API (pages/api/vehicles)
+  const [vehicles, setVehicles] = useState<Vehicle[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchVehicles = async () => {
+      try {
+        setLoading(true);
+        const res = await fetch('/api/vehicles');
+        if (!res.ok) throw new Error('Failed to fetch vehicles');
+        const vehiclesData = await res.json();
+
+        const transformed = vehiclesData.map((vehicle: any) => {
+          const basePrice = parseFloat(vehicle.price_per_day) || 0;
+          const typesArr = (vehicle.available_for || '')
+            .toString()
+            .toLowerCase()
+            .split(',')
+            .map((s: string) => s.trim())
+            .filter(Boolean)
+            .map((t: string) => t.replace(/\s+/g, '-'));
+          const availableFor = typesArr.length ? typesArr.join(', ') : 'self-drive, with-driver';
+
+          return {
+            id: parseInt((vehicle.vehicle_id || '0').toString().replace(/\D/g, '')) || 0,
+            name: vehicle.vehicle_name || 'Vehicle',
+            category: (vehicle.vehicle_type || '').toLowerCase(),
+            type: availableFor,
+            image: vehicle.image || '/vehicles/default.jpg',
+            capacity: `${vehicle.capacity || 4} passengers`,
+            transmission: vehicle.transmission || 'Automatic',
+            fuel: vehicle.fuel || 'Hybrid',
+            features: vehicle.description ? vehicle.description.split(',').map((f: string) => f.trim()).slice(0, 4) : ['AC', 'GPS', 'Comfortable'],
+            touristPrices: {
+              'self-drive': { daily: basePrice, weekly: Math.round(basePrice * 6), monthly: Math.round(basePrice * 20) },
+              'with-driver': { daily: Math.round(basePrice * 1.5), weekly: Math.round(basePrice * 9), monthly: Math.round(basePrice * 30) }
+            },
+            localPrices: {
+              'self-drive': { daily: Math.round(basePrice * 0.8), weekly: Math.round(basePrice * 4.8), monthly: Math.round(basePrice * 16) },
+              'with-driver': { daily: Math.round(basePrice * 1.2), weekly: Math.round(basePrice * 7.2), monthly: Math.round(basePrice * 24) }
+            }
+          } as Vehicle;
+        });
+
+        setVehicles(transformed);
+      } catch (error) {
+        console.error('Error fetching vehicles:', error);
+      } finally {
+        setLoading(false);
       }
-    },
-    {
-      id: 2,
-      name: 'Toyota Vitz',
-      category: 'compact',
-      type: 'self-drive, with-driver',
-      image: '/vehicles/vitz.svg',
-      capacity: '4 passengers, 2 luggage',
-      transmission: 'Automatic',
-      fuel: 'Petrol',
-      features: ['AC', 'GPS', 'Power Steering', 'Airbags'],
-      touristPrices: {
-        'self-drive': { daily: 38, weekly: 228, monthly: 760 },
-        'with-driver': { daily: 58, weekly: 348, monthly: 1160 }
-      },
-      localPrices: {
-        'self-drive': { daily: 28, weekly: 168, monthly: 560 },
-        'with-driver': { daily: 48, weekly: 288, monthly: 960 }
-      }
-    },
-    {
-      id: 3,
-      name: 'Toyota Aqua',
-      category: 'compact',
-      type: 'self-drive, with-driver',
-      image: '/vehicles/aqua.svg',
-      capacity: '4 passengers, 2 luggage',
-      transmission: 'Automatic',
-      fuel: 'Hybrid',
-      features: ['AC', 'GPS', 'Bluetooth', 'Airbags'],
-      touristPrices: {
-        'self-drive': { daily: 40, weekly: 240, monthly: 800 },
-        'with-driver': { daily: 60, weekly: 360, monthly: 1200 }
-      },
-      localPrices: {
-        'self-drive': { daily: 30, weekly: 180, monthly: 600 },
-        'with-driver': { daily: 50, weekly: 300, monthly: 1000 }
-      }
-    },
-    {
-      id: 4,
-      name: 'Suzuki WagonR',
-      category: 'hatchback',
-      type: 'self-drive, with-driver',
-      image: '/vehicles/wagonr.svg',
-      capacity: '4 passengers, 2 luggage',
-      transmission: 'Automatic',
-      fuel: 'Petrol',
-      features: ['AC', 'Power Steering', 'Airbags'],
-      touristPrices: {
-        'self-drive': { daily: 35, weekly: 210, monthly: 700 },
-        'with-driver': { daily: 55, weekly: 330, monthly: 1100 }
-      },
-      localPrices: {
-        'self-drive': { daily: 25, weekly: 150, monthly: 500 },
-        'with-driver': { daily: 45, weekly: 270, monthly: 900 }
-      }
-    },
-    {
-      id: 5,
-      name: 'Toyota KDH',
-      category: 'van',
-      type: 'self-drive, with-driver',
-      image: '/vehicles/kdh.svg',
-      capacity: '6-8 passengers, 4 luggage',
-      transmission: 'Manual',
-      fuel: 'Diesel',
-      features: ['AC', 'Spacious', 'Comfortable', 'Reliable'],
-      touristPrices: {
-        'self-drive': { daily: 60, weekly: 360, monthly: 1200 },
-        'with-driver': { daily: 80, weekly: 480, monthly: 1600 }
-      },
-      localPrices: {
-        'self-drive': { daily: 50, weekly: 300, monthly: 1000 },
-        'with-driver': { daily: 70, weekly: 420, monthly: 1400 }
-      }
-    },
-    {
-      id: 6,
-      name: 'Tour Van',
-      category: 'van',
-      type: 'with-driver',
-      image: '/vehicles/tour-van.svg',
-      capacity: '12-15 passengers, 8 luggage',
-      transmission: 'Manual',
-      fuel: 'Diesel',
-      features: ['AC', 'Comfortable Seats', 'Luggage Space', 'Tour Guide Ready'],
-      touristPrices: {
-        'self-drive': { daily: 0, weekly: 0, monthly: 0 },
-        'with-driver': { daily: 120, weekly: 720, monthly: 2400 }
-      },
-      localPrices: {
-        'self-drive': { daily: 0, weekly: 0, monthly: 0 },
-        'with-driver': { daily: 100, weekly: 600, monthly: 2000 }
-      }
-    },
-    {
-      id: 7,
-      name: 'Every Buddy Van',
-      category: 'van',
-      type: 'self-drive, with-driver',
-      image: '/vehicles/every-buddy.svg',
-      capacity: '8-10 passengers, 6 luggage',
-      transmission: 'Manual',
-      fuel: 'Diesel',
-      features: ['AC', 'Spacious', 'Family Friendly', 'Reliable'],
-      touristPrices: {
-        'self-drive': { daily: 70, weekly: 420, monthly: 1400 },
-        'with-driver': { daily: 90, weekly: 540, monthly: 1800 }
-      },
-      localPrices: {
-        'self-drive': { daily: 60, weekly: 360, monthly: 1200 },
-        'with-driver': { daily: 80, weekly: 480, monthly: 1600 }
-      }
-    },
-    {
-      id: 8,
-      name: 'Shuttle Van',
-      category: 'van',
-      type: 'self-drive, with-driver',
-      image: '/vehicles/shuttle.svg',
-      capacity: '10-12 passengers, 6 luggage',
-      transmission: 'Manual',
-      fuel: 'Diesel',
-      features: ['AC', 'Comfortable', 'Airport Transfers', 'Group Travel'],
-      touristPrices: {
-        'self-drive': { daily: 80, weekly: 480, monthly: 1600 },
-        'with-driver': { daily: 100, weekly: 600, monthly: 2000 }
-      },
-      localPrices: {
-        'self-drive': { daily: 70, weekly: 420, monthly: 1400 },
-        'with-driver': { daily: 90, weekly: 540, monthly: 1800 }
-      }
-    },
-    {
-      id: 9,
-      name: 'Tourist Bus',
-      category: 'bus',
-      type: 'with-driver',
-      image: '/vehicles/bus.svg',
-      capacity: '30-50 passengers, 20 luggage',
-      transmission: 'Manual',
-      fuel: 'Diesel',
-      features: ['AC', 'Comfortable Seats', 'Luggage Compartment', 'Tour Guide'],
-      touristPrices: {
-        'self-drive': { daily: 0, weekly: 0, monthly: 0 },
-        'with-driver': { daily: 200, weekly: 1200, monthly: 4000 }
-      },
-      localPrices: {
-        'self-drive': { daily: 0, weekly: 0, monthly: 0 },
-        'with-driver': { daily: 180, weekly: 1080, monthly: 3600 }
-      }
-    }
-  ];
+    };
+
+    fetchVehicles();
+  }, []);
 
   // Pickup locations
   const locations = [
