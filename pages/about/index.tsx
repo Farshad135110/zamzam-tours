@@ -552,10 +552,11 @@ export default function About() {
 
       <style jsx>{`
         /* About Page Specific Styles */
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 1rem; }
         .about-hero {
           position: relative;
-          height: 70vh;
-          min-height: 500px;
+          height: 72vh;
+          min-height: 520px;
           display: flex;
           align-items: center;
           color: white;
@@ -596,6 +597,7 @@ export default function About() {
           font-weight: 700;
           margin-bottom: 1.5rem;
           line-height: 1.1;
+          text-shadow: 0 6px 30px rgba(3,20,20,0.6);
         }
 
         .hero-text p {
@@ -881,7 +883,7 @@ export default function About() {
 
         .team-grid {
           display: grid;
-          grid-template-columns: repeat(2, 1fr);
+          grid-template-columns: repeat(3, 1fr);
           gap: 2rem;
           margin-top: 3rem;
         }
