@@ -1,203 +1,127 @@
-// pages/airport-transfer/index.js - Airport Transfers Main Page
-import { useState, useEffect } from 'react';
+﻿// pages/airport-transfer/index.js - Airport Transfers Main Page
+import { useState, useEffect, useRef } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import Image from 'next/image';
+import { motion } from 'framer-motion';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
+import { fadeInUp } from '../../src/utils/animations';
 
 export default function AirportTransfer() {
-  const [transferType, setTransferType] = useState('standard');
+  const [tripType, setTripType] = useState('one-way'); // 'one-way' or 'two-way'
   const [passengers, setPassengers] = useState(1);
-  const [luggage, setLuggage] = useState(1);
-  const [flightNumber, setFlightNumber] = useState('');
-  const [arrivalDate, setArrivalDate] = useState('');
-  const [arrivalTime, setArrivalTime] = useState('');
-  const [pickupLocation, setPickupLocation] = useState('cmb-airport');
-  const [dropoffLocation, setDropoffLocation] = useState('colombo-city');
-  const [calculatedPrice, setCalculatedPrice] = useState(0);
-  const [showBookingForm, setShowBookingForm] = useState(false);
+  const [pickupLocation, setPickupLocation] = useState('');
+  const [airport, setAirport] = useState('');
+  const [dropoffLocation, setDropoffLocation] = useState('');
+  const [pickupDate, setPickupDate] = useState('');
+  const [pickupTime, setPickupTime] = useState('');
+  const [selectedVehicle, setSelectedVehicle] = useState('');
+  const [notes, setNotes] = useState('');
 
-  // Transfer services
-  const transferServices = [
-    {
-      type: 'standard',
-      name: 'Standard Transfer',
-      description: 'Direct and reliable transfer from airport to your destination',
-      features: [
-        'Airport pickup with name board',
-        'Direct transfer to destination', 
-        'English speaking driver',
-        'Luggage assistance',
-        'Air-conditioned vehicle',
-        'Free waiting time (1 hour)'
-      ],
-      price: 25,
-      vehicles: ['Toyota Prius', 'Toyota Aqua', 'Suzuki WagonR'],
-      image: '/transfer/standard.jpg',
-      icon: '🚗'
-    },
-    {
-      type: 'premium',
-      name: 'Premium Transfer',
-      description: 'Luxury service with meet & greet and VIP treatment',
-      features: [
-        'Personal meet & greet at arrivals',
-        'Professional chauffeur service',
-        'VIP lounge access (if available)',
-        'Complimentary refreshments',
-        'Premium luxury vehicle',
-        'Multi-lingual chauffeur',
-        'Free waiting time (2 hours)'
-      ],
-      price: 45,
-      vehicles: ['Toyota Camry', 'Mercedes Benz', 'BMW Series'],
-      image: '/transfer/premium.jpg',
-      icon: '⭐'
-    },
-    {
-      type: 'group',
-      name: 'Group Transfer',
-      description: 'Perfect for families, friends and small groups',
-      features: [
-        'Spacious vehicle for groups',
-        'Multiple stops allowed',
-        'Child seats available',
-        'Special group discounts',
-        'Extra luggage space',
-        'Experienced group driver'
-      ],
-      price: 60,
-      vehicles: ['Toyota KDH', 'Every Buddy Van', 'Shuttle Van'],
-      image: '/transfer/group.jpg',
-      icon: '👨‍👩‍👧‍👦'
-    }
-  ];
+  // Video hero refs
+  const heroRef = useRef(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
-  // Airport locations
-  const airports = [
-    { id: 'cmb-airport', name: 'Bandaranaike International Airport (CMB)', code: 'CMB' },
-    { id: 'hri-airport', name: 'Mattala Rajapaksa International Airport (HRI)', code: 'HRI' },
-    { id: 'colombo-city', name: 'Colombo City Center', code: 'City' },
-    { id: 'colombo-hotels', name: 'Colombo Hotel Area', code: 'Hotels' }
-  ];
-
-  // Popular destinations from airport
-  const popularDestinations = [
-    { 
-      id: 'colombo-city',
-      name: 'Colombo City', 
-      distance: '35km', 
-      time: '45-60 min', 
-      standardPrice: 25,
-      premiumPrice: 45,
-      image: '/destinations/colombo.jpg'
-    },
-    { 
-      id: 'negombo-beach',
-      name: 'Negombo Beach', 
-      distance: '8km', 
-      time: '15-20 min', 
-      standardPrice: 15,
-      premiumPrice: 30,
-      image: '/destinations/negombo.jpg'
-    },
-    { 
-      id: 'kandy-city',
-      name: 'Kandy City', 
-      distance: '115km', 
-      time: '3-4 hours', 
-      standardPrice: 80,
-      premiumPrice: 120,
-      image: '/destinations/kandy.jpg'
-    },
-    { 
-      id: 'galle-fort',
-      name: 'Galle Fort', 
-      distance: '150km', 
-      time: '3.5 hours', 
-      standardPrice: 100,
-      premiumPrice: 150,
-      image: '/destinations/galle.jpg'
-    },
-    { 
-      id: 'bentota-beach',
-      name: 'Bentota Beach', 
-      distance: '95km', 
-      time: '2 hours', 
-      standardPrice: 70,
-      premiumPrice: 100,
-      image: '/destinations/bentota.jpg'
-    },
-    { 
-      id: 'sigiriya',
-      name: 'Sigiriya', 
-      distance: '175km', 
-      time: '4-5 hours', 
-      standardPrice: 120,
-      premiumPrice: 180,
-      image: '/destinations/sigiriya.jpg'
-    }
-  ];
-
-  // Vehicle options based on passengers
-  const vehicleOptions = [
-    { type: 'sedan', name: 'Toyota Prius/Aqua', capacity: '3 passengers + 2 luggage', price: 0 },
-    { type: 'suv', name: 'Toyota KDH/Van', capacity: '6-8 passengers + 4 luggage', price: 15 },
-    { type: 'large-van', name: 'Every Buddy Van', capacity: '8-10 passengers + 6 luggage', price: 25 },
-    { type: 'shuttle', name: 'Shuttle Van', capacity: '10-12 passengers + 8 luggage', price: 35 },
-    { type: 'bus', name: 'Tourist Bus', capacity: '30-50 passengers + 20 luggage', price: 100 }
-  ];
-
-  // Calculate price based on selections
+  // Handle video autoplay
   useEffect(() => {
-    let basePrice = 0;
-    const selectedService = transferServices.find(service => service.type === transferType);
-    const selectedDestination = popularDestinations.find(dest => dest.id === dropoffLocation);
-    
-    if (selectedService && selectedDestination) {
-      basePrice = transferType === 'standard' ? selectedDestination.standardPrice : selectedDestination.premiumPrice;
-      
-      // Add vehicle upgrade cost based on passengers
-      if (passengers > 3) basePrice += 15;
-      if (passengers > 6) basePrice += 25;
-      if (passengers > 10) basePrice += 35;
-      
-      setCalculatedPrice(basePrice);
+    if (videoRef.current) {
+      videoRef.current.play().catch((error) => {
+        console.log('Video autoplay failed:', error);
+      });
     }
-  }, [transferType, passengers, dropoffLocation]);
+  }, []);
 
-  // Handle WhatsApp booking
-  const handleWhatsAppBooking = (customMessage = '') => {
-    const selectedService = transferServices.find(service => service.type === transferType);
-    const selectedDestination = popularDestinations.find(dest => dest.id === dropoffLocation);
-    
-    let message = customMessage;
-    if (!customMessage) {
-      message = `Hello Zamzam Tours! I would like to book a ${selectedService?.name} transfer. \n\n`;
-      message += `• Service: ${selectedService?.name}\n`;
-      message += `• From: ${airports.find(a => a.id === pickupLocation)?.name}\n`;
-      message += `• To: ${selectedDestination?.name}\n`;
-      message += `• Passengers: ${passengers}\n`;
-      message += `• Luggage: ${luggage} pieces\n`;
-      if (flightNumber) message += `• Flight: ${flightNumber}\n`;
-      if (arrivalDate) message += `• Arrival Date: ${arrivalDate}\n`;
-      if (arrivalTime) message += `• Arrival Time: ${arrivalTime}\n`;
-      message += `• Estimated Price: $${calculatedPrice}\n\n`;
-      message += `Please confirm availability and provide booking details.`;
-    }
-    
-    const encodedMessage = encodeURIComponent(message);
-    window.open(`https://wa.me/94766135110?text=${encodedMessage}`, '_blank');
+  // Sri Lankan airports
+  const airports = [
+    'Bandaranaike International Airport (CMB) - Colombo',
+    'Mattala Rajapaksa International Airport (HRI) - Hambantota',
+    'Ratmalana Airport (RML) - Colombo'
+  ];
+
+  // Sri Lankan districts
+  const districts = [
+    'Colombo', 'Gampaha', 'Kalutara', 'Kandy', 'Matale', 'Nuwara Eliya',
+    'Galle', 'Matara', 'Hambantota', 'Jaffna', 'Kilinochchi', 'Mannar',
+    'Vavuniya', 'Mullaitivu', 'Batticaloa', 'Ampara', 'Trincomalee',
+    'Kurunegala', 'Puttalam', 'Anuradhapura', 'Polonnaruwa', 'Badulla',
+    'Monaragala', 'Ratnapura', 'Kegalle'
+  ];
+
+  // Fleet vehicles with passenger capacity
+  const fleetVehicles = [
+    { name: 'Mini Car (2-3 passengers)', capacity: 3 },
+    { name: 'Toyota Vitz (Economy Car)', capacity: 4 },
+    { name: 'Suzuki Alto (Budget Car)', capacity: 4 },
+    { name: 'Toyota Aqua (Compact Car)', capacity: 4 },
+    { name: 'Toyota Prius (Hybrid Car)', capacity: 4 },
+    { name: 'Toyota Axio (Sedan)', capacity: 4 },
+    { name: 'Luxury SUV', capacity: 6 },
+    { name: 'Toyota Hiace (Luxury Van)', capacity: 10 },
+    { name: 'Toyota KDH Van (14 seats)', capacity: 14 }
+  ];
+
+  // Get available vehicles based on passenger count
+  const getAvailableVehicles = () => {
+    return fleetVehicles.filter(vehicle => vehicle.capacity >= passengers);
   };
 
-  // Get recommended vehicle based on passengers
-  const getRecommendedVehicle = () => {
-    if (passengers <= 3) return vehicleOptions[0];
-    if (passengers <= 6) return vehicleOptions[1];
-    if (passengers <= 10) return vehicleOptions[2];
-    if (passengers <= 12) return vehicleOptions[3];
-    return vehicleOptions[4];
+  // Get pickup options based on trip type
+  const getPickupOptions = () => {
+    if (tripType === 'one-way') {
+      return airports;
+    } else {
+      return districts;
+    }
+  };
+
+  // Get dropoff options based on trip type
+  const getDropoffOptions = () => {
+    return districts;
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    let message = '';
+    message += '\u{1F697} *AIRPORT TRANSFER BOOKING REQUEST*\n';
+    message += '\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\n\n';
+    
+    message += '*TRIP DETAILS*\n';
+    message += `\u{251C} Type: ${tripType === 'one-way' ? '\u{2708}\u{FE0F} One Way' : '\u{1F504} Round Trip'}\n`;
+    message += `\u{251C} Passengers: \u{1F465} ${passengers} ${passengers === 1 ? 'Person' : 'People'}\n`;
+    message += `\u{2514} Vehicle: \u{1F699} ${selectedVehicle}\n\n`;
+    
+    if (tripType === 'one-way') {
+      message += '*JOURNEY*\n';
+      message += `\u{251C} From: \u{2708}\u{FE0F} ${pickupLocation}\n`;
+      message += `\u{2514} To: \u{1F4CD} ${dropoffLocation}\n\n`;
+      
+      message += '*SCHEDULE*\n';
+      message += `\u{251C} Date: \u{1F4C5} ${pickupDate}\n`;
+      message += `\u{2514} Time: \u{23F0} ${pickupTime}\n`;
+    } else {
+      message += '*JOURNEY*\n';
+      message += `\u{251C} Pickup: \u{1F4CD} ${pickupLocation}\n`;
+      message += `\u{251C} Airport: \u{2708}\u{FE0F} ${airport}\n`;
+      message += `\u{2514} Drop-off: \u{1F4CD} ${dropoffLocation}\n\n`;
+      
+      message += '*SCHEDULE*\n';
+      message += `\u{251C} Date: \u{1F4C5} ${pickupDate}\n`;
+      message += `\u{2514} Time: \u{23F0} ${pickupTime}\n`;
+    }
+    
+    if (notes) {
+      message += '\n*SPECIAL REQUESTS*\n';
+      message += `${notes}\n`;
+    }
+    
+    message += '\n\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}';
+    message += '\n_Please confirm availability and pricing_ \u{1F4AC}';
+
+    const whatsappNumber = '+94766135110';
+    const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank');
   };
 
   return (
@@ -211,518 +135,351 @@ export default function AirportTransfer() {
       <Navbar />
 
       {/* Hero Section */}
-      <section className="transfer-hero" style={{ marginTop: '80px' }}>
-        <div className="transfer-hero-background">
-          <Image 
-            src="/transfer/airport-hero.jpg" 
-            alt="Airport Transfer Service" 
-            layout="fill"
-            objectFit="cover"
-            priority
+      <section className="transfer-hero" ref={heroRef} style={{ marginTop: '0', position: 'relative', minHeight: '100vh', overflow: 'hidden' }}>
+        {/* Cloudinary Hero Background Video */}
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          zIndex: 0,
+          overflow: 'hidden'
+        }}>
+          <video
+            ref={videoRef}
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="auto"
+            style={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover'
+            }}
+            src="https://res.cloudinary.com/dhfqwxyb4/video/upload/v1761687230/12177913_3840_2160_30fps_d6dhi5.mp4"
           />
-          <div className="transfer-hero-overlay"></div>
         </div>
         
-        <div className="transfer-hero-content">
-          <h1>Stress-Free Airport Transfers in Sri Lanka</h1>
-          <p>Professional meet & greet service with comfortable vehicles</p>
-          
-          <div className="hero-features">
-            <div className="feature-item">
-              <span className="icon">👨‍💼</span>
-              <span>Meet & Greet</span>
-            </div>
-            <div className="feature-item">
-              <span className="icon">🚗</span>
-              <span>Professional Drivers</span>
-            </div>
-            <div className="feature-item">
-              <span className="icon">⏱️</span>
-              <span>24/7 Service</span>
-            </div>
-            <div className="feature-item">
-              <span className="icon">💰</span>
-              <span>No Hidden Costs</span>
-            </div>
+        <div className="transfer-hero-overlay" style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'linear-gradient(135deg, rgba(5, 59, 60, 0.45), rgba(10, 92, 94, 0.35))',
+          zIndex: 1
+        }}></div>
+        
+        <motion.div 
+          style={{ position: 'relative', zIndex: 2 }}
+          initial="hidden"
+          animate="visible"
+          variants={fadeInUp}
+        >
+          <div className="transfer-hero-content">
+            <motion.div
+              variants={fadeInUp}
+              transition={{ delay: 0.2 }}
+            >
+              <h1 style={{ 
+                textShadow: '2px 2px 8px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 0, 0, 0.5)',
+                color: '#ffffff'
+              }}>
+                Stress-Free <span style={{ color: '#f8b500' }}>Airport Transfers</span> in Sri Lanka
+              </h1>
+            </motion.div>
+            
+            <motion.div
+              variants={fadeInUp}
+              transition={{ delay: 0.4 }}
+            >
+              <p style={{ 
+                textShadow: '1px 1px 6px rgba(0, 0, 0, 0.9), 0 0 15px rgba(0, 0, 0, 0.6)',
+                color: '#ffffff'
+              }}>
+                Professional meet & greet service with comfortable vehicles
+              </p>
+            </motion.div>
+            
+            <motion.div
+              variants={fadeInUp}
+              transition={{ delay: 0.6 }}
+            >
+              <div className="hero-features">
+                <div className="feature-item">
+                  <span className="icon">👨‍💼</span>
+                  <span>Meet & Greet</span>
+                </div>
+                <div className="feature-item">
+                  <span className="icon">🚗</span>
+                  <span>Professional Drivers</span>
+                </div>
+                <div className="feature-item">
+                  <span className="icon">🕒</span>
+                  <span>24/7 Service</span>
+                </div>
+                <div className="feature-item">
+                  <span className="icon">💰</span>
+                  <span>No Hidden Costs</span>
+                </div>
+              </div>
+            </motion.div>
           </div>
-        </div>
+        </motion.div>
+        
+        <motion.div 
+          style={{ position: 'relative', zIndex: 2 }}
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1, duration: 0.8, repeat: Infinity, repeatType: 'reverse' }}
+        >
+          <div className="scroll-indicator" style={{
+            position: 'absolute',
+            bottom: '30px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            textAlign: 'center',
+            color: '#ffffff'
+          }}>
+            <span style={{ 
+              display: 'block',
+              marginBottom: '10px',
+              fontSize: '14px',
+              fontWeight: '500',
+              textShadow: '1px 1px 4px rgba(0, 0, 0, 0.8)'
+            }}>Scroll to explore</span>
+            <div className="arrow-down" style={{
+              width: '30px',
+              height: '30px',
+              margin: '0 auto',
+              borderLeft: '2px solid #ffffff',
+              borderBottom: '2px solid #ffffff',
+              transform: 'rotate(-45deg)',
+              filter: 'drop-shadow(0 0 4px rgba(0, 0, 0, 0.8))'
+            }}></div>
+          </div>
+        </motion.div>
       </section>
 
-      {/* Quick Booking Widget */}
+      {/* Booking Form Section */}
       <section className="booking-widget-section">
         <div className="container">
           <div className="booking-widget">
             <h2>Book Your Airport Transfer</h2>
-            <div className="widget-form">
+            
+            {/* Trip Type Selection */}
+            <div className="trip-type-selector">
+              <button
+                className={`trip-type-btn ${tripType === 'one-way' ? 'active' : ''}`}
+                onClick={() => setTripType('one-way')}
+              >
+                <span className="icon">🛫</span>
+                <span>One Way</span>
+              </button>
+              <button
+                className={`trip-type-btn ${tripType === 'two-way' ? 'active' : ''}`}
+                onClick={() => setTripType('two-way')}
+              >
+                <span className="icon">🛬</span>
+                <span>Two Way (Round Trip)</span>
+              </button>
+            </div>
+
+            <form onSubmit={handleSubmit} className="widget-form">
+              {/* Row 1: Passengers and Vehicle */}
               <div className="form-row">
                 <div className="form-group">
-                  <label>Service Type</label>
-                  <div className="service-buttons">
-                    {transferServices.map(service => (
-                      <button
-                        key={service.type}
-                        className={`service-btn ${transferType === service.type ? 'active' : ''}`}
-                        onClick={() => setTransferType(service.type)}
-                      >
-                        <span className="service-icon">{service.icon}</span>
-                        <span className="service-name">{service.name}</span>
-                        <span className="service-price">From ${service.price}</span>
-                      </button>
+                  <label>👨‍👩‍👧‍👦 Number of Passengers</label>
+                  <select 
+                    value={passengers}
+                    onChange={(e) => {
+                      setPassengers(parseInt(e.target.value));
+                      setSelectedVehicle(''); // Reset vehicle when passengers change
+                    }}
+                    required
+                  >
+                    {[1,2,3,4,5,6,7,8,9,10,12,14].map(num => (
+                      <option key={num} value={num}>{num} {num === 1 ? 'Passenger' : 'Passengers'}</option>
                     ))}
-                  </div>
+                  </select>
+                </div>
+
+                <div className="form-group">
+                  <label>🚙 Select Vehicle</label>
+                  <select 
+                    value={selectedVehicle}
+                    onChange={(e) => setSelectedVehicle(e.target.value)}
+                    required
+                  >
+                    <option value="">Select Vehicle</option>
+                    {getAvailableVehicles().map((vehicle, index) => (
+                      <option key={index} value={vehicle.name}>{vehicle.name}</option>
+                    ))}
+                  </select>
                 </div>
               </div>
 
+              {/* Row 2: Pickup Location */}
               <div className="form-row">
-                <div className="form-group">
-                  <label>Pickup From</label>
+                <div className="form-group full-width">
+                  <label>
+                    {tripType === 'one-way' ? '✈️ Pickup Location (Airport)' : '📍 Pickup Location (District)'}
+                  </label>
                   <select 
                     value={pickupLocation}
                     onChange={(e) => setPickupLocation(e.target.value)}
+                    required
                   >
-                    {airports.map(airport => (
-                      <option key={airport.id} value={airport.id}>
-                        {airport.name}
-                      </option>
+                    <option value="">Select {tripType === 'one-way' ? 'Airport' : 'District'}</option>
+                    {getPickupOptions().map((location, index) => (
+                      <option key={index} value={location}>{location}</option>
                     ))}
                   </select>
                 </div>
+              </div>
 
-                <div className="form-group">
-                  <label>Dropoff To</label>
+              {/* Row 3: Airport (Two-Way only) */}
+              {tripType === 'two-way' && (
+                <div className="form-row">
+                  <div className="form-group full-width">
+                    <label>✈️ Airport</label>
+                    <select 
+                      value={airport}
+                      onChange={(e) => setAirport(e.target.value)}
+                      required
+                    >
+                      <option value="">Select Airport</option>
+                      {airports.map((airportOption, index) => (
+                        <option key={index} value={airportOption}>{airportOption}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+              )}
+
+              {/* Row 4: Drop-off Location */}
+              <div className="form-row">
+                <div className="form-group full-width">
+                  <label>📍Drop-off Location (District)</label>
                   <select 
                     value={dropoffLocation}
                     onChange={(e) => setDropoffLocation(e.target.value)}
+                    required
                   >
-                    {popularDestinations.map(destination => (
-                      <option key={destination.id} value={destination.id}>
-                        {destination.name} - {destination.distance} - {destination.time}
-                      </option>
+                    <option value="">Select District</option>
+                    {getDropoffOptions().map((location, index) => (
+                      <option key={index} value={location}>{location}</option>
                     ))}
                   </select>
                 </div>
               </div>
 
+              {/* Row 5: Date and Time */}
               <div className="form-row">
                 <div className="form-group">
-                  <label>Number of Passengers</label>
-                  <select 
-                    value={passengers}
-                    onChange={(e) => setPassengers(parseInt(e.target.value))}
-                  >
-                    {[1,2,3,4,5,6,7,8,9,10,11,12].map(num => (
-                      <option key={num} value={num}>{num} {num === 1 ? 'passenger' : 'passengers'}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="form-group">
-                  <label>Number of Luggage</label>
-                  <select 
-                    value={luggage}
-                    onChange={(e) => setLuggage(parseInt(e.target.value))}
-                  >
-                    {[1,2,3,4,5,6,7,8].map(num => (
-                      <option key={num} value={num}>{num} {num === 1 ? 'piece' : 'pieces'}</option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              <div className="form-row">
-                <div className="form-group">
-                  <label>Flight Number (Optional)</label>
-                  <input 
-                    type="text" 
-                    placeholder="e.g., UL 123"
-                    value={flightNumber}
-                    onChange={(e) => setFlightNumber(e.target.value)}
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label>Arrival Date</label>
+                  <label>📅 Date</label>
                   <input 
                     type="date" 
-                    value={arrivalDate}
-                    onChange={(e) => setArrivalDate(e.target.value)}
+                    value={pickupDate}
+                    onChange={(e) => setPickupDate(e.target.value)}
                     min={new Date().toISOString().split('T')[0]}
+                    required
                   />
                 </div>
 
                 <div className="form-group">
-                  <label>Arrival Time</label>
+                  <label>🕒 Time</label>
                   <input 
                     type="time" 
-                    value={arrivalTime}
-                    onChange={(e) => setArrivalTime(e.target.value)}
+                    value={pickupTime}
+                    onChange={(e) => setPickupTime(e.target.value)}
+                    required
                   />
                 </div>
               </div>
 
-              {calculatedPrice > 0 && (
-                <div className="price-summary">
-                  <div className="price-details">
-                    <div className="price-line">
-                      <span>Transfer Cost:</span>
-                      <span>${calculatedPrice}</span>
-                    </div>
-                    <div className="price-line">
-                      <span>Recommended Vehicle:</span>
-                      <span>{getRecommendedVehicle().name}</span>
-                    </div>
-                    <div className="price-total">
-                      <span>Total Amount:</span>
-                      <span>${calculatedPrice}</span>
-                    </div>
-                  </div>
-                  
-                  <button 
-                    className="btn-primary large"
-                    onClick={() => setShowBookingForm(true)}
-                  >
-                    Book Now - ${calculatedPrice}
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Services Details */}
-      <section className="services-details-section">
-        <div className="container">
-          <div className="section-header">
-            <h2>Our Transfer Services</h2>
-            <p>Choose the perfect service for your arrival in Sri Lanka</p>
-          </div>
-
-          <div className="services-grid">
-            {transferServices.map(service => (
-              <div key={service.type} className="service-card detailed">
-                <div className="service-header">
-                  <div className="service-icon-large">{service.icon}</div>
-                  <h3>{service.name}</h3>
-                  <p className="service-description">{service.description}</p>
-                </div>
-
-                <div className="service-features">
-                  <h4>What's Included:</h4>
-                  <ul>
-                    {service.features.map((feature, index) => (
-                      <li key={index}>✓ {feature}</li>
-                    ))}
-                  </ul>
-                </div>
-
-                <div className="service-vehicles">
-                  <h4>Available Vehicles:</h4>
-                  <div className="vehicles-list">
-                    {service.vehicles.map((vehicle, index) => (
-                      <span key={index} className="vehicle-tag">{vehicle}</span>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="service-action">
-                  <button 
-                    className={`btn-primary ${transferType === service.type ? 'active' : ''}`}
-                    onClick={() => setTransferType(service.type)}
-                  >
-                    Select This Service
-                  </button>
-                </div>
+              {/* Additional Notes */}
+              <div className="form-group">
+                <label>📝 Additional Notes (Optional)</label>
+                <textarea
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  placeholder="Flight number, special requests, luggage details, etc."
+                  rows={2}
+                />
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
-      {/* Popular Destinations */}
-      <section className="destinations-section">
-        <div className="container">
-          <div className="section-header">
-            <h2>Popular Transfer Routes</h2>
-            <p>Quick transfers to major destinations across Sri Lanka</p>
-          </div>
-
-          <div className="destinations-grid">
-            {popularDestinations.map(destination => (
-              <div key={destination.id} className="destination-card transfer">
-                <div className="destination-image">
-                  <Image 
-                    src={destination.image} 
-                    alt={destination.name}
-                    width={300}
-                    height={200}
-                    objectFit="cover"
-                  />
-                </div>
-                
-                <div className="destination-content">
-                  <h3>{destination.name}</h3>
-                  <div className="destination-meta">
-                    <span>📏 {destination.distance}</span>
-                    <span>⏱️ {destination.time}</span>
-                  </div>
-                  
-                  <div className="pricing">
-                    <div className="price-option">
-                      <span>Standard:</span>
-                      <span className="price">${destination.standardPrice}</span>
-                    </div>
-                    <div className="price-option">
-                      <span>Premium:</span>
-                      <span className="price premium">${destination.premiumPrice}</span>
-                    </div>
-                  </div>
-
-                  <button 
-                    className="btn-small"
-                    onClick={() => {
-                      setDropoffLocation(destination.id);
-                      window.scrollTo({ top: 0, behavior: 'smooth' });
-                    }}
-                  >
-                    Select This Route
-                  </button>
-                </div>
+              {/* Pricing Notice */}
+              <div className="pricing-notice">
+                <p>💰 <strong>Pricing will be discussed via WhatsApp</strong></p>
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
-      {/* Meet & Greet Features */}
-      <section className="meet-greet-section">
-        <div className="container">
-          <div className="meet-greet-content">
-            <div className="content-text">
-              <h2>Premium Meet & Greet Service</h2>
-              <p>Experience the ultimate airport arrival service designed for your comfort and convenience</p>
-              
-              <div className="features-list">
-                <div className="feature">
-                  <div className="feature-icon">🛬</div>
-                  <div className="feature-text">
-                    <h4>Airport Arrival Assistance</h4>
-                    <p>Our representative will meet you at the arrival gate with a name board</p>
-                  </div>
-                </div>
-                
-                <div className="feature">
-                  <div className="feature-icon">🎯</div>
-                  <div className="feature-text">
-                    <h4>On-Time Service</h4>
-                    <p>Punctual and reliable pickup service at the scheduled time</p>
-                  </div>
-                </div>
-                
-                <div className="feature">
-                  <div className="feature-icon">🧳</div>
-                  <div className="feature-text">
-                    <h4>Luggage Handling</h4>
-                    <p>We assist with your luggage from baggage claim to the vehicle</p>
-                  </div>
-                </div>
-                
-                <div className="feature">
-                  <div className="feature-icon">💬</div>
-                  <div className="feature-text">
-                    <h4>Local SIM & Information</h4>
-                    <p>Get local SIM card assistance and travel information upon arrival</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <div className="content-image">
-              <Image 
-                src="/transfer/meet-greet.jpg" 
-                alt="Meet and Greet Service"
-                width={400}
-                height={500}
-                objectFit="cover"
-              />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="transfer-cta-section">
-        <div className="container">
-          <div className="cta-content">
-            <h2>Ready for a Stress-Free Arrival?</h2>
-            <p>Book your airport transfer now and start your Sri Lankan adventure the right way</p>
-            <div className="cta-buttons">
-              <button 
-                className="btn-primary large"
-                onClick={() => setShowBookingForm(true)}
-              >
-                Book Transfer Now
+              {/* Submit Button */}
+              <button type="submit" className="btn-primary large">
+                <span>📲 Send Booking Request via WhatsApp</span>
               </button>
-              <button 
-                className="btn-secondary"
-                onClick={() => handleWhatsAppBooking('Hello Zamzam Tours! I have questions about airport transfer services.')}
-              >
-                💬 Chat on WhatsApp
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Booking Form Modal */}
-      {showBookingForm && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <button 
-              className="modal-close"
-              onClick={() => setShowBookingForm(false)}
-            >
-              ×
-            </button>
-            
-            <h2>Confirm Your Airport Transfer</h2>
-            
-            <div className="booking-summary">
-              <div className="summary-item">
-                <span>Service Type:</span>
-                <span>{transferServices.find(s => s.type === transferType)?.name}</span>
-              </div>
-              <div className="summary-item">
-                <span>From:</span>
-                <span>{airports.find(a => a.id === pickupLocation)?.name}</span>
-              </div>
-              <div className="summary-item">
-                <span>To:</span>
-                <span>{popularDestinations.find(d => d.id === dropoffLocation)?.name}</span>
-              </div>
-              <div className="summary-item">
-                <span>Passengers:</span>
-                <span>{passengers}</span>
-              </div>
-              <div className="summary-item">
-                <span>Luggage:</span>
-                <span>{luggage} pieces</span>
-              </div>
-              {flightNumber && (
-                <div className="summary-item">
-                  <span>Flight Number:</span>
-                  <span>{flightNumber}</span>
-                </div>
-              )}
-              <div className="summary-item total">
-                <span>Total Amount:</span>
-                <span>${calculatedPrice}</span>
-              </div>
-            </div>
-
-            <form className="booking-form">
-              <div className="form-section">
-                <h3>Personal Information</h3>
-                <div className="form-row">
-                  <div className="form-group">
-                    <label>Full Name *</label>
-                    <input type="text" required />
-                  </div>
-                  <div className="form-group">
-                    <label>Email Address *</label>
-                    <input type="email" required />
-                  </div>
-                </div>
-
-                <div className="form-row">
-                  <div className="form-group">
-                    <label>Phone Number *</label>
-                    <input type="tel" required />
-                  </div>
-                  <div className="form-group">
-                    <label>Nationality *</label>
-                    <input type="text" required />
-                  </div>
-                </div>
-              </div>
-
-              <div className="form-section">
-                <h3>Flight Details</h3>
-                <div className="form-row">
-                  <div className="form-group">
-                    <label>Airline & Flight Number</label>
-                    <input 
-                      type="text" 
-                      value={flightNumber}
-                      onChange={(e) => setFlightNumber(e.target.value)}
-                      placeholder="e.g., Emirates EK 650"
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label>Arrival Date *</label>
-                    <input 
-                      type="date" 
-                      value={arrivalDate}
-                      onChange={(e) => setArrivalDate(e.target.value)}
-                      required
-                    />
-                  </div>
-                </div>
-
-                <div className="form-row">
-                  <div className="form-group">
-                    <label>Scheduled Arrival Time *</label>
-                    <input 
-                      type="time" 
-                      value={arrivalTime}
-                      onChange={(e) => setArrivalTime(e.target.value)}
-                      required
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label>Terminal (if known)</label>
-                    <input type="text" placeholder="e.g., Terminal 1" />
-                  </div>
-                </div>
-              </div>
-
-              <div className="form-section">
-                <h3>Special Requirements</h3>
-                <div className="form-group">
-                  <label>Additional Notes</label>
-                  <textarea 
-                    rows={3}
-                    placeholder="Child seats needed, special assistance required, multiple stops, etc."
-                  ></textarea>
-                </div>
-              </div>
-
-              <div className="form-actions">
-                <button 
-                  type="button"
-                  className="btn-secondary"
-                  onClick={() => setShowBookingForm(false)}
-                >
-                  Cancel
-                </button>
-                <button 
-                  type="button"
-                  className="btn-primary"
-                  onClick={() => handleWhatsAppBooking()}
-                >
-                  Confirm & Book via WhatsApp
-                </button>
-              </div>
             </form>
           </div>
         </div>
-      )}
+      </section>
+
+      {/* Why Choose Us */}
+      <section className="why-choose-section">
+        <div className="container">
+          <div className="section-header">
+            <h2>Why Choose Zamzam Tours?</h2>
+            <p>Reliable, professional, and hassle-free airport transfer services</p>
+          </div>
+
+          <div className="features-grid">
+            <div className="feature-box">
+              <div className="feature-icon">👨‍💼</div>
+              <h3>Professional Drivers</h3>
+              <p>Experienced, licensed, and English-speaking drivers</p>
+            </div>
+
+            <div className="feature-box">
+              <div className="feature-icon">📍</div>
+              <h3>Modern Fleet</h3>
+              <p>Well-maintained, comfortable, and air-conditioned vehicles</p>
+            </div>
+
+            <div className="feature-box">
+              <div className="feature-icon">🕒</div>
+              <h3>24/7 Service</h3>
+              <p>Available round the clock for your convenience</p>
+            </div>
+
+            <div className="feature-box">
+              <div className="feature-icon">💰</div>
+              <h3>Competitive Rates</h3>
+              <p>Transparent pricing with no hidden costs</p>
+            </div>
+
+            <div className="feature-box">
+              <div className="feature-icon">🔒</div>
+              <h3>Safe & Secure</h3>
+              <p>Fully insured vehicles and trained drivers</p>
+            </div>
+
+            <div className="feature-box">
+              <div className="feature-icon">📲</div>
+              <h3>Easy Booking</h3>
+              <p>Simple WhatsApp booking process</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <Footer />
 
       <style jsx>{`
         /* Airport Transfer Specific Styles */
         .transfer-hero {
           position: relative;
-          height: 70vh;
+          height: 60vh;
           min-height: 500px;
           display: flex;
           align-items: center;
@@ -730,6 +487,7 @@ export default function AirportTransfer() {
           text-align: center;
           color: white;
           overflow: hidden;
+          margin-top: 80px;
         }
 
         .transfer-hero-background {
@@ -747,32 +505,44 @@ export default function AirportTransfer() {
           left: 0;
           width: 100%;
           height: 100%;
-          background: linear-gradient(135deg, #053b3c 0%, #0a5c5e 100%);
+          background: linear-gradient(135deg, rgba(5, 59, 60, 0.45), rgba(10, 92, 94, 0.35));
         }
 
         .transfer-hero-content {
-          max-width: 800px;
-          padding: 0 20px;
+          position: relative;
           z-index: 1;
+          max-width: 900px;
+          padding: 0 20px;
+          text-align: center;
         }
 
         .transfer-hero-content h1 {
           font-size: 3rem;
           margin-bottom: 1rem;
           font-weight: 700;
+          text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 0, 0, 0.5);
+          color: #ffffff;
         }
 
         .transfer-hero-content p {
           font-size: 1.3rem;
           margin-bottom: 2.5rem;
-          opacity: 0.9;
+          opacity: 0.95;
+          text-shadow: 1px 1px 6px rgba(0, 0, 0, 0.9), 0 0 15px rgba(0, 0, 0, 0.6);
+          color: #ffffff;
         }
 
         .hero-features {
           display: flex;
           justify-content: center;
-          gap: 2rem;
+          gap: 2.5rem;
           flex-wrap: wrap;
+          background: rgba(255, 255, 255, 0.1);
+          padding: 1.5rem 2rem;
+          border-radius: 15px;
+          backdrop-filter: blur(10px);
+          max-width: 700px;
+          margin: 0 auto;
         }
 
         .feature-item {
@@ -780,16 +550,31 @@ export default function AirportTransfer() {
           flex-direction: column;
           align-items: center;
           gap: 0.5rem;
+          color: white;
         }
 
         .feature-item .icon {
           font-size: 2rem;
         }
 
+        .feature-item span:last-child {
+          font-size: 0.9rem;
+          font-weight: 500;
+        }
+
+        .scroll-indicator {
+          position: absolute;
+          bottom: 30px;
+          left: 50%;
+          transform: translateX(-50%);
+          text-align: center;
+          color: #ffffff;
+        }
+
         /* Booking Widget */
         .booking-widget-section {
           padding: 3rem 0;
-          background: var(--section-bg);
+          background: #f9f9f9;
         }
 
         .booking-widget {
@@ -797,79 +582,185 @@ export default function AirportTransfer() {
           padding: 2rem;
           border-radius: 15px;
           box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-          max-width: 900px;
+          max-width: 700px;
           margin: 0 auto;
         }
 
         .booking-widget h2 {
           text-align: center;
           color: var(--primary-color);
-          margin-bottom: 2rem;
+          margin-bottom: 1.5rem;
+          font-size: 1.8rem;
         }
 
-        .service-buttons {
+        .trip-type-selector {
           display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-          gap: 1rem;
+          grid-template-columns: 1fr 1fr;
+          gap: 0.8rem;
+          margin-bottom: 1.5rem;
         }
 
-        .service-btn {
-          padding: 1.5rem 1rem;
+        .trip-type-btn {
+          padding: 1rem;
           border: 2px solid var(--border-color);
           background: white;
           border-radius: 10px;
           cursor: pointer;
           transition: all 0.3s ease;
-          text-align: center;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.5rem;
+          font-size: 1rem;
+          font-weight: 600;
         }
 
-        .service-btn.active {
-          border-color: var(--primary-color);
-          background: var(--primary-color);
+        .trip-type-btn .icon {
+          font-size: 1.3rem;
+        }
+
+        .trip-type-btn.active {
+          border-color: #053b3c;
+          background: #053b3c;
           color: white;
         }
 
-        .service-btn:hover:not(.active) {
-          border-color: var(--primary-light);
-        }
-
-        .service-icon {
-          font-size: 2rem;
-          display: block;
-          margin-bottom: 0.5rem;
-        }
-
-        .service-name {
-          display: block;
-          font-weight: 600;
-          margin-bottom: 0.3rem;
-        }
-
-        .service-price {
-          display: block;
-          font-size: 0.9rem;
-          opacity: 0.8;
+        .trip-type-btn:hover:not(.active) {
+          border-color: #053b3c;
+          background: #f0f8f8;
         }
 
         .widget-form .form-row {
           display: grid;
           grid-template-columns: 1fr 1fr;
-          gap: 1rem;
-          margin-bottom: 1.5rem;
+          gap: 0.8rem;
+          margin-bottom: 0.8rem;
+        }
+
+        .widget-form .form-group {
+          display: flex;
+          flex-direction: column;
+        }
+
+        .widget-form .form-group.full-width {
+          grid-column: 1 / -1;
         }
 
         .widget-form .form-group:last-child {
           grid-column: 1 / -1;
+          margin-bottom: 0;
         }
 
         .widget-form label {
           display: block;
-          margin-bottom: 0.5rem;
+          margin-bottom: 0.4rem;
           font-weight: 600;
-          color: var(--primary-color);
+          color: #053b3c;
+          font-size: 0.9rem;
         }
 
         .widget-form select,
+        .widget-form input,
+        .widget-form textarea {
+          width: 100%;
+          padding: 10px 12px;
+          border: 1px solid #ddd;
+          border-radius: 8px;
+          font-size: 0.95rem;
+          transition: all 0.3s ease;
+        }
+
+        .widget-form select:focus,
+        .widget-form input:focus,
+        .widget-form textarea:focus {
+          outline: none;
+          border-color: #053b3c;
+          box-shadow: 0 0 0 3px rgba(5, 59, 60, 0.1);
+        }
+
+        .widget-form textarea {
+          resize: vertical;
+          font-family: inherit;
+        }
+
+        .pricing-notice {
+          background: linear-gradient(135deg, #053b3c 0%, #077f82 100%);
+          color: white;
+          padding: 1rem;
+          border-radius: 10px;
+          margin: 1rem 0;
+          text-align: center;
+        }
+
+        .pricing-notice p {
+          margin: 0;
+          font-size: 0.95rem;
+        }
+
+        .pricing-notice strong {
+          color: #f8b500;
+          font-size: 1rem;
+        }
+
+        .btn-primary.large {
+          padding: 12px 24px;
+          font-size: 1rem;
+          width: 100%;
+          background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+          color: white;
+          border: none;
+          border-radius: 10px;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          font-weight: 600;
+        }
+
+        .btn-primary.large:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 5px 15px rgba(37, 211, 102, 0.3);
+        }
+
+        /* Why Choose Us Section */
+        .why-choose-section {
+          padding: 4rem 0;
+          background: white;
+        }
+
+        .features-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+          gap: 2rem;
+          margin-top: 2rem;
+        }
+
+        .feature-box {
+          text-align: center;
+          padding: 2rem;
+          background: #f9f9f9;
+          border-radius: 10px;
+          transition: all 0.3s ease;
+        }
+
+        .feature-box:hover {
+          background: white;
+          box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+          transform: translateY(-5px);
+        }
+
+        .feature-box .feature-icon {
+          font-size: 3rem;
+          margin-bottom: 1rem;
+        }
+
+        .feature-box h3 {
+          color: #053b3c;
+          margin-bottom: 0.5rem;
+        }
+
+        .feature-box p {
+          color: #666;
+          font-size: 0.95rem;
+        }
         .widget-form input {
           width: 100%;
           padding: 10px 15px;
@@ -1244,21 +1135,12 @@ export default function AirportTransfer() {
 
         /* Responsive Design */
         @media (max-width: 992px) {
-          .meet-greet-content {
-            grid-template-columns: 1fr;
-            gap: 2rem;
-          }
-
           .widget-form .form-row {
             grid-template-columns: 1fr;
           }
 
-          .services-grid {
-            grid-template-columns: 1fr;
-          }
-
-          .destinations-grid {
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+          .features-grid {
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
           }
         }
 
@@ -1272,29 +1154,31 @@ export default function AirportTransfer() {
           }
 
           .hero-features {
-            gap: 1rem;
+            gap: 1.5rem;
+            padding: 1.25rem 1.5rem;
           }
 
-          .service-buttons {
+          .feature-item .icon {
+            font-size: 1.5rem;
+          }
+
+          .feature-item span:last-child {
+            font-size: 0.85rem;
+          }
+
+          .trip-type-selector {
             grid-template-columns: 1fr;
           }
 
-          .cta-buttons {
-            flex-direction: column;
-          }
-
-          .booking-form .form-row {
-            grid-template-columns: 1fr;
-          }
-
-          .form-actions {
-            flex-direction: column;
+          .trip-type-btn {
+            font-size: 1rem;
+            padding: 1.2rem;
           }
         }
 
         @media (max-width: 576px) {
           .transfer-hero {
-            height: 60vh;
+            height: 50vh;
             min-height: 400px;
           }
 
@@ -1302,12 +1186,27 @@ export default function AirportTransfer() {
             font-size: 1.8rem;
           }
 
-          .booking-widget {
-            padding: 1.5rem;
+          .hero-features {
+            gap: 1rem;
+            padding: 1rem;
+            grid-template-columns: repeat(2, 1fr);
           }
 
-          .modal-content {
-            padding: 1rem;
+          .booking-widget {
+            padding: 1.2rem;
+          }
+
+          .booking-widget h2 {
+            font-size: 1.5rem;
+          }
+
+          .trip-type-btn {
+            font-size: 0.9rem;
+            padding: 0.8rem;
+          }
+
+          .features-grid {
+            grid-template-columns: 1fr;
           }
         }
       `}</style>
@@ -1316,3 +1215,4 @@ export default function AirportTransfer() {
     </>
   );
 }
+
