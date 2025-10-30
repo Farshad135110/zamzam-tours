@@ -23,6 +23,11 @@ interface Tour {
   highlights: string[];
   included: string[];
   itinerary: any[];
+  priceRange?: string;
+  includes?: string[];
+  groupSize?: string;
+  rating?: number;
+  reviews?: number;
 }
 
 export default function Tours() {
@@ -34,6 +39,8 @@ export default function Tours() {
   const [selectedTour, setSelectedTour] = useState<Tour | null>(null);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [tours, setTours] = useState<Tour[]>([]);
+  const [loading, setLoading] = useState(true);
   
   // Video hero refs
   const heroRef = useRef(null);
@@ -48,6 +55,48 @@ export default function Tours() {
     'https://res.cloudinary.com/dhfqwxyb4/video/upload/v1761571365/158112-816068529_small_jsqcds.mp4',
     'https://res.cloudinary.com/dhfqwxyb4/video/upload/v1761571370/158220-816359501_small_dp2ik1.mp4',
   ];
+
+  // Fetch packages from database
+  useEffect(() => {
+    const fetchPackages = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch('/api/packages');
+        if (!response.ok) throw new Error('Failed to fetch packages');
+        const packages = await response.json();
+        
+        // Transform database packages to Tour format
+        const transformedTours = packages.map((pkg: any) => ({
+          id: parseInt(pkg.package_id.replace('P', '')) || 0,
+          name: pkg.package_name,
+          category: 'cultural', // Default category
+          duration: '7 days', // Default duration
+          priceRange: pkg.price ? (pkg.price < 1000 ? 'budget' : pkg.price < 2000 ? 'standard' : 'premium') : 'standard',
+          price: pkg.price ? parseFloat(pkg.price) : 0,
+          image: pkg.image || '/tours/default.jpg',
+          highlights: pkg.highlights ? pkg.highlights.split(',').map((h: string) => h.trim()) : [],
+          description: pkg.description || '',
+          includes: pkg.includings ? pkg.includings.split(',').map((i: string) => i.trim()) : [],
+          difficulty: 'Moderate',
+          groupSize: '2-12 people',
+          season: 'Year-round',
+          rating: 4.5,
+          reviews: 0,
+          included: pkg.includings ? pkg.includings.split(',').map((i: string) => i.trim()) : [],
+          itinerary: []
+        }));
+        
+        setTours(transformedTours);
+      } catch (error) {
+        console.error('Error fetching packages:', error);
+        alert('Failed to load tour packages');
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchPackages();
+  }, []);
 
   // Handle scroll
   useEffect(() => {
@@ -120,112 +169,6 @@ export default function Tours() {
     { id: 'standard', name: 'Standard ($1000-$2000)' },
     { id: 'premium', name: 'Premium ($2000-$4000)' },
     { id: 'luxury', name: 'Luxury ($4000+)' }
-  ];
-
-  // Sample tour data
-  const tours = [
-    {
-      id: 1,
-      name: 'North East Cultural Explorer',
-      category: 'north-east',
-      duration: '7 days',
-      priceRange: 'standard',
-      price: 1250,
-      image: '/tours/north-east.jpg',
-      highlights: ['Trincomalee Beaches', 'Koneswaram Temple', 'Batticaloa Lagoon', 'Arugam Bay Surfing'],
-      description: 'Explore the untouched beauty of Sri Lanka\'s North Eastern region with its pristine beaches, rich Tamil culture, and historical sites.',
-      includes: ['Accommodation', 'Transport', 'English Guide', 'Entrance Fees', 'Breakfast'],
-      difficulty: 'Easy',
-      groupSize: '2-12 people',
-      season: 'Year-round',
-      rating: 4.8,
-      reviews: 124
-    },
-    {
-      id: 2,
-      name: 'Cultural Triangle Heritage Tour',
-      category: 'cultural',
-      duration: '5 days',
-      priceRange: 'budget',
-      price: 750,
-      image: '/tours/cultural-triangle.jpg',
-      highlights: ['Sigiriya Rock Fortress', 'Dambulla Cave Temple', 'Polonnaruwa Ancient City', 'Minneriya Safari'],
-      description: 'Journey through Sri Lanka\'s ancient kingdoms and UNESCO World Heritage sites in the cultural heartland.',
-      includes: ['Accommodation', 'Transport', 'Guide', 'Entrance Fees', 'All Meals'],
-      difficulty: 'Moderate',
-      groupSize: '2-15 people',
-      season: 'Year-round',
-      rating: 4.9,
-      reviews: 203
-    },
-    {
-      id: 3,
-      name: 'Hill Country Adventure',
-      category: 'adventure',
-      duration: '6 days',
-      priceRange: 'standard',
-      price: 1100,
-      image: '/tours/hill-country.jpg',
-      highlights: ['Ella Rock Hike', 'Adam\'s Peak Pilgrimage', 'Tea Plantation Tour', 'Nine Arch Bridge', 'Ravana Falls'],
-      description: 'Trek through misty mountains, visit tea estates, and experience the cool climate of Sri Lanka\'s hill country.',
-      includes: ['Accommodation', 'Transport', 'Adventure Guide', 'All Meals', 'Activity Equipment'],
-      difficulty: 'Moderate to Challenging',
-      groupSize: '2-8 people',
-      season: 'December to April',
-      rating: 4.7,
-      reviews: 89
-    },
-    {
-      id: 4,
-      name: 'Wildlife Safari Expedition',
-      category: 'wildlife',
-      duration: '4 days',
-      priceRange: 'premium',
-      price: 1800,
-      image: '/tours/wildlife-safari.jpg',
-      highlights: ['Yala National Park', 'Udawalawe Elephant Sanctuary', 'Wilpattu Leopard Spotting', 'Bird Watching'],
-      description: 'Get up close with Sri Lanka\'s diverse wildlife including elephants, leopards, and hundreds of bird species.',
-      includes: ['Luxury Tented Camp', 'Safari Jeep', 'Expert Naturalist', 'All Meals', 'Park Fees'],
-      difficulty: 'Easy',
-      groupSize: '2-6 people',
-      season: 'February to July',
-      rating: 4.9,
-      reviews: 156
-    },
-    {
-      id: 5,
-      name: 'Beach Paradise Tour',
-      category: 'beach',
-      duration: '8 days',
-      priceRange: 'standard',
-      price: 1350,
-      image: '/tours/beach-paradise.jpg',
-      highlights: ['Mirissa Whale Watching', 'Unawatuna Beach', 'Tangalle Bay', 'Galle Fort Exploration', 'Snorkeling'],
-      description: 'Relax on pristine beaches, enjoy water sports, and explore coastal fortresses on this tropical getaway.',
-      includes: ['Beach Resorts', 'Transport', 'Some Meals', 'Water Activities', 'Guide'],
-      difficulty: 'Easy',
-      groupSize: '2-10 people',
-      season: 'November to April',
-      rating: 4.6,
-      reviews: 178
-    },
-    {
-      id: 6,
-      name: 'Ancient Kingdoms Tour',
-      category: 'historical',
-      duration: '10 days',
-      priceRange: 'premium',
-      price: 2200,
-      image: '/tours/ancient-kingdoms.jpg',
-      highlights: ['Anuradhapura Sacred City', 'Mihintale', 'Ritigala Monastery', 'Yapahuwa Rock Fortress'],
-      description: 'Discover the grandeur of Sri Lanka\'s ancient civilizations and their remarkable architectural achievements.',
-      includes: ['Boutique Hotels', 'Private Transport', 'Archaeology Expert', 'All Meals', 'Special Access'],
-      difficulty: 'Moderate',
-      groupSize: '2-8 people',
-      season: 'Year-round',
-      rating: 4.8,
-      reviews: 67
-    }
   ];
 
   // Popular destinations in Sri Lanka
@@ -804,7 +747,12 @@ export default function Tours() {
               <p>Handpicked experiences for every type of traveler</p>
             </div>
 
-            {filteredTours.length > 0 ? (
+            {loading ? (
+              <div className="loading-state">
+                <h3>Loading tour packages...</h3>
+                <p>Please wait while we fetch the best tours for you</p>
+              </div>
+            ) : filteredTours.length > 0 ? (
               <div className="tours-grid">
                 {filteredTours.map(tour => (
                   <div key={tour.id} className="tour-card">
@@ -844,7 +792,7 @@ export default function Tours() {
 
                       <div className="tour-includes">
                         <h4>Includes:</h4>
-                        <p>{tour.includes.join(', ')}</p>
+                        <p>{tour.includes?.join(', ') || tour.included.join(', ')}</p>
                       </div>
 
                       <div className="tour-footer">
@@ -1414,6 +1362,25 @@ export default function Tours() {
         .no-results p {
           color: var(--text-light);
           margin-bottom: 2rem;
+        }
+
+        /* Loading State */
+        .loading-state {
+          text-align: center;
+          padding: 4rem 2rem;
+          background: var(--section-bg);
+          border-radius: 10px;
+          margin-bottom: 4rem;
+        }
+
+        .loading-state h3 {
+          color: var(--primary-color);
+          margin-bottom: 1rem;
+          font-size: 1.5rem;
+        }
+
+        .loading-state p {
+          color: var(--text-light);
         }
 
         /* Destinations Section */
