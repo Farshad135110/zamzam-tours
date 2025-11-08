@@ -41,6 +41,7 @@ export default function Tours() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [tours, setTours] = useState<Tour[]>([]);
   const [loading, setLoading] = useState(true);
+  const [portraitMap, setPortraitMap] = useState<Record<string, boolean>>({});
   
   // Video hero refs
   const heroRef = useRef(null);
@@ -114,7 +115,17 @@ export default function Tours() {
         console.log('Video autoplay failed:', error);
       });
     }
+    // pre-check images currently in the page (popular destinations and initial tours)
+    popularDestinations.forEach(d => checkImageOrientation(d.image));
+    tours.forEach(t => checkImageOrientation(t.image));
   }, []);
+
+  // When tours load, check their image orientations
+  useEffect(() => {
+    if (tours && tours.length > 0) {
+      tours.forEach(t => checkImageOrientation(t.image));
+    }
+  }, [tours]);
   
   // Handle video end - switch to other player
   const handleVideo1End = () => {
@@ -139,6 +150,19 @@ export default function Tours() {
       setActivePlayer(1);
       setCurrentVideoIndex(nextIndex);
     }
+  };
+
+  // Detect image orientation (client-side) and mark portrait images so we can adjust objectPosition
+  const checkImageOrientation = (src: string) => {
+    if (!src || portraitMap[src] !== undefined) return;
+    if (typeof window === 'undefined') return;
+    const img = new window.Image();
+    img.src = src;
+    img.onload = () => {
+      const isPortrait = img.naturalHeight > img.naturalWidth;
+      setPortraitMap(prev => ({ ...prev, [src]: isPortrait }));
+    };
+    img.onerror = () => setPortraitMap(prev => ({ ...prev, [src]: false }));
   };
 
   // Tour categories
@@ -173,146 +197,26 @@ export default function Tours() {
 
   // Popular destinations in Sri Lanka
   const popularDestinations = [
-    {
-      name: 'Sigiriya',
-      image: 'zamzam-tours/destinations/sigiriya',
-      description: 'Ancient rock fortress - UNESCO World Heritage Site with stunning frescoes',
-      category: 'Cultural',
-      slug: 'sigiriya'
-    },
-    {
-      name: 'Kandy',
-      image: 'zamzam-tours/destinations/kandy',
-      description: 'Sacred city with Temple of the Tooth Relic and cultural performances',
-      category: 'Cultural',
-      slug: 'kandy'
-    },
-    {
-      name: 'Ella',
-      image: 'zamzam-tours/destinations/ella',
-      description: 'Mountain paradise with tea plantations, Nine Arch Bridge, and hiking trails',
-      category: 'Nature',
-      slug: 'ella'
-    },
-    {
-      name: 'Galle',
-      image: 'zamzam-tours/destinations/galle',
-      description: 'Historic Dutch fort city by the ocean - UNESCO World Heritage Site',
-      category: 'Cultural',
-      slug: 'galle'
-    },
-    {
-      name: 'Yala',
-      image: 'zamzam-tours/destinations/yala',
-      description: 'Premier wildlife sanctuary with highest leopard density in the world',
-      category: 'Wildlife',
-      slug: 'yala'
-    },
-    {
-      name: 'Nuwara Eliya',
-      image: 'zamzam-tours/destinations/nuwara-eliya',
-      description: 'Little England - Cool climate hill station with tea plantations',
-      category: 'Nature',
-      slug: 'nuwara-eliya'
-    },
-    {
-      name: 'Mirissa',
-      image: 'zamzam-tours/destinations/mirissa',
-      description: 'Whale watching capital with pristine beaches and tropical vibes',
-      category: 'Beach',
-      slug: 'mirissa'
-    },
-    {
-      name: 'Anuradhapura',
-      image: 'zamzam-tours/destinations/anuradhapura',
-      description: 'Ancient capital with sacred Buddhist sites and massive stupas',
-      category: 'Cultural',
-      slug: 'anuradhapura'
-    },
-    {
-      name: 'Polonnaruwa',
-      image: 'zamzam-tours/destinations/polonnaruwa',
-      description: 'Medieval capital with Gal Vihara rock sculptures',
-      category: 'Cultural',
-      slug: 'polonnaruwa'
-    },
-    {
-      name: 'Udawalawe',
-      image: 'zamzam-tours/destinations/udawalawe',
-      description: 'Elephant paradise with guaranteed sightings of wild elephant herds',
-      category: 'Wildlife',
-      slug: 'udawalawe'
-    },
-    {
-      name: 'Trincomalee',
-      image: 'zamzam-tours/destinations/trincomalee',
-      description: 'Pristine east coast beaches, diving spots, and historic temples',
-      category: 'Beach',
-      slug: 'trincomalee'
-    },
-    {
-      name: 'Arugam Bay',
-      image: 'zamzam-tours/destinations/arugam-bay',
-      description: 'World-famous surfing destination on the southeast coast',
-      category: 'Beach',
-      slug: 'arugam-bay'
-    },
-    {
-      name: 'Bentota',
-      image: 'zamzam-tours/destinations/bentota',
-      description: 'Golden beaches and water sports paradise on the southwest coast',
-      category: 'Beach',
-      slug: 'bentota'
-    },
-    {
-      name: 'Hikkaduwa',
-      image: 'zamzam-tours/destinations/hikkaduwa',
-      description: 'Coral reefs, sea turtles, and vibrant beach town atmosphere',
-      category: 'Beach',
-      slug: 'hikkaduwa'
-    },
-    {
-      name: 'Dambulla',
-      image: 'zamzam-tours/destinations/dambulla',
-      description: 'Golden Temple with cave shrines and 150+ Buddha statues',
-      category: 'Cultural',
-      slug: 'dambulla'
-    },
-    {
-      name: 'Horton Plains',
-      image: 'zamzam-tours/destinations/horton-plains',
-      description: 'World\'s End cliff with dramatic 880m drop and cloud forests',
-      category: 'Nature',
-      slug: 'horton-plains'
-    },
-    {
-      name: 'Unawatuna',
-      image: 'zamzam-tours/destinations/unawatuna',
-      description: 'Crescent bay paradise voted one of world\'s best beaches',
-      category: 'Beach',
-      slug: 'unawatuna'
-    },
-    {
-      name: 'Wilpattu',
-      image: 'zamzam-tours/destinations/wilpattu',
-      description: 'Largest national park with unique villus (lakes) and leopards',
-      category: 'Wildlife',
-      slug: 'wilpattu'
-    },
-    {
-      name: 'Jaffna',
-      image: 'zamzam-tours/destinations/jaffna',
-      description: 'Northern Tamil cultural capital with unique heritage and islands',
-      category: 'Cultural',
-      slug: 'jaffna'
-    },
-    {
-      name: 'Adam\'s Peak',
-      image: 'zamzam-tours/destinations/adams-peak',
-      description: 'Sacred mountain pilgrimage with spectacular sunrise views',
-      category: 'Nature',
-      slug: 'adams-peak'
-    }
+    { name: 'Sigiriya', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453704/dylan-shaw-smUAKwMT8XA-unsplash_qhenhx.jpg', description: 'Ancient rock fortress - UNESCO World Heritage Site with stunning frescoes', category: 'Cultural', slug: 'sigiriya' },
+    { name: 'Kandy', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762454466/chathura-anuradha-subasinghe-40uQmE9Zq8g-unsplash_tvflxt.jpg', description: 'Sacred city with Temple of the Tooth Relic and cultural performances', category: 'Cultural', slug: 'kandy' },
+    { name: 'Ella', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453781/adam-vandermeer-Dw9dWTzzsUE-unsplash_l49hhe.jpg', description: 'Mountain paradise with tea plantations, Nine Arch Bridge, and hiking trails', category: 'Nature', slug: 'ella' },
+    { name: 'Galle', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453796/chathura-indika-LAj-XlHP6Rs-unsplash_o7mzbc.jpg', description: 'Historic Dutch fort city by the ocean - UNESCO World Heritage Site', category: 'Cultural', slug: 'galle' },
+    { name: 'Yala', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453757/gemmmm-FRTpkBIi-1Y-unsplash_iggwsm.jpg', description: 'Premier wildlife sanctuary with highest leopard density in the world', category: 'Wildlife', slug: 'yala' },
+    { name: 'Nuwara Eliya', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453797/anton-lecock-TPtaNsBOW9Q-unsplash_g0htag.jpg', description: 'Little England - Cool climate hill station with tea plantations', category: 'Nature', slug: 'nuwara-eliya' },
+    { name: 'Mirissa', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762454382/siarhei-palishchuk-hgiby6qxvpc-unsplash_prnosl.jpg', description: 'Whale watching capital with pristine beaches and tropical vibes', category: 'Beach', slug: 'mirissa' },
+    { name: 'Anuradhapura', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762454366/andrea-zanenga-U2-9JKq3Sv8-unsplash_ykmenj.jpg', description: 'Ancient capital with sacred Buddhist sites and massive stupas', category: 'Cultural', slug: 'anuradhapura' },
+    { name: 'Polonnaruwa', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762454341/birendra-padmaperuma-jB7TbGrC1xM-unsplash_qcpkau.jpg', description: 'Medieval capital with Gal Vihara rock sculptures', category: 'Cultural', slug: 'polonnaruwa' },
+    { name: 'Udawalawe', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1761861324/sachindra-chalaka-ERIYlk3Hppo-unsplash_n41n9c.jpg', description: 'Elephant paradise with guaranteed sightings of wild elephant herds', category: 'Wildlife', slug: 'udawalawe' },
+    { name: 'Trincomalee', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453771/claus-giering-YmcSXWcmh6w-unsplash_zw66ck.jpg', description: 'Pristine east coast beaches, diving spots, and historic temples', category: 'Beach', slug: 'trincomalee' },
+    { name: 'Arugam Bay', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453785/udara-karunarathna-LfUJO4whcSU-unsplash_xnxl7h.jpg', description: 'World-famous surfing destination on the southeast coast', category: 'Beach', slug: 'arugam-bay' },
+    { name: 'Bentota', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453760/ivani-de-silva-p4CkGihlKeI-unsplash_faup7y.jpg', description: 'Golden beaches and water sports paradise on the southwest coast', category: 'Beach', slug: 'bentota' },
+    { name: 'Hikkaduwa', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453918/croyde-bay-qw6f1CIXOqQ-unsplash_heu61d.jpg', description: 'Coral reefs, sea turtles, and vibrant beach town atmosphere', category: 'Beach', slug: 'hikkaduwa' },
+    { name: 'Dambulla', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1761861700/agnieszka-stankiewicz-OMgi4DfiO3c-unsplash_dfa3pd.jpg', description: 'Golden Temple with cave shrines and 150+ Buddha statues', category: 'Cultural', slug: 'dambulla' },
+    { name: 'Horton Plains', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1761861681/anupa-uthsara-Prg6PmMQdK4-unsplash_rfz6fv.jpg', description: "World's End cliff with dramatic 880m drop and cloud forests", category: 'Nature', slug: 'horton-plains' },
+    { name: 'Unawatuna', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453914/eirik-skarstein-7CsKioF9O6g-unsplash_gb7eow.jpg', description: "Crescent bay paradise voted one of world's best beaches", category: 'Beach', slug: 'unawatuna' },
+    { name: 'Wilpattu', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453910/udara-karunarathna-PPGM2ZpCrzc-unsplash_vchneo.jpg', description: 'Largest national park with unique villus (lakes) and leopards', category: 'Wildlife', slug: 'wilpattu' },
+    { name: 'Jaffna', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1761861565/ajai-s-A4amRej5Hes-unsplash_ofpmmw.jpg', description: 'Northern Tamil cultural capital with unique heritage and islands', category: 'Cultural', slug: 'jaffna' },
+    { name: "Adam's Peak", image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453906/manoj-dharmarathne-sznpwfFhfrU-unsplash_hnkhcg.jpg', description: 'Sacred mountain pilgrimage with spectacular sunrise views', category: 'Nature', slug: 'adams-peak' }
   ];
 
   // Activities available
@@ -762,7 +666,7 @@ export default function Tours() {
                         alt={tour.name}
                         width={400}
                         height={250}
-                        objectFit="cover"
+                        style={{ objectFit: 'cover', objectPosition: portraitMap[tour.image] ? 'bottom center' : 'center', width: '100%', height: '100%' }}
                       />
                       <div className="tour-badge">{tour.category.replace('-', ' ')}</div>
                       <div className="tour-rating">
@@ -854,7 +758,7 @@ export default function Tours() {
                       alt={destination.name}
                       width={300}
                       height={200}
-                      style={{ objectFit: 'cover', width: '100%', height: '100%' }}
+                      style={{ objectFit: 'cover', objectPosition: portraitMap[destination.image] ? 'bottom center' : 'center', width: '100%', height: '100%' }}
                     />
                     <div className="destination-overlay">
                       <span className="destination-category">{destination.category}</span>
@@ -1228,6 +1132,33 @@ export default function Tours() {
           position: relative;
           height: 250px;
           overflow: hidden;
+          border-top-left-radius: 10px;
+          border-top-right-radius: 10px;
+          background: linear-gradient(180deg, #f0f3f4 0%, #eef2f3 100%);
+        }
+
+        .tour-image img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          display: block;
+          transition: transform 0.6s cubic-bezier(.2,.8,.2,1), filter 0.35s ease;
+          will-change: transform;
+        }
+
+        .tour-image:hover img {
+          transform: scale(1.06) translateZ(0);
+        }
+
+        .tour-image::after {
+          content: '';
+          position: absolute;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          height: 40%;
+          background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.35) 100%);
+          pointer-events: none;
         }
 
         .tour-badge {
@@ -1394,6 +1325,35 @@ export default function Tours() {
           gap: 2rem;
         }
 
+
+        .destination-image {
+          position: relative;
+          height: 180px;
+          overflow: hidden;
+          border-radius: 8px;
+          background: #f6f7f8;
+        }
+
+        .destination-image img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          transition: transform 0.45s cubic-bezier(.2,.8,.2,1);
+        }
+
+        .destination-card:hover .destination-image img {
+          transform: scale(1.03);
+        }
+
+        .destination-overlay {
+          position: absolute;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          padding: 1rem;
+          color: white;
+          background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.45) 100%);
+        }
         .destination-card {
           border-radius: 10px;
           overflow: hidden;

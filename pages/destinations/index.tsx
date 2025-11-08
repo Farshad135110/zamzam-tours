@@ -23,191 +23,29 @@ export default function Destinations() {
   }, []);
 
   const destinations = [
-    { 
-      name: 'Sigiriya', 
-      image: 'zamzam-tours/destinations/sigiriya', 
-      description: 'Ancient rock fortress with breathtaking views',
-      longDescription: 'Climb the iconic Lion Rock and explore one of the most spectacular archaeological sites in the world.',
-      category: 'cultural',
-      duration: '1 Day',
-      slug: 'sigiriya' 
-    },
-    { 
-      name: 'Kandy', 
-      image: 'zamzam-tours/destinations/kandy', 
-      description: 'Cultural capital with the Temple of the Tooth',
-      longDescription: 'Visit the sacred Temple of the Tooth Relic and experience traditional Kandyan dance performances.',
-      category: 'cultural',
-      duration: '1-2 Days',
-      slug: 'kandy' 
-    },
-    { 
-      name: 'Galle', 
-      image: 'zamzam-tours/destinations/galle', 
-      description: 'Historic fort city by the ocean',
-      longDescription: 'Walk through the colonial Dutch fort and enjoy stunning ocean views from the ramparts.',
-      category: 'cultural',
-      duration: '1 Day',
-      slug: 'galle' 
-    },
-    { 
-      name: 'Ella', 
-      image: 'zamzam-tours/destinations/ella', 
-      description: 'Mountain paradise with tea plantations',
-      longDescription: 'Hike to Little Adam\'s Peak, visit Nine Arch Bridge, and enjoy panoramic views from Ella Rock.',
-      category: 'nature',
-      duration: '2-3 Days',
-      slug: 'ella' 
-    },
-    { 
-      name: 'Yala', 
-      image: 'zamzam-tours/destinations/yala', 
-      description: 'Premier wildlife sanctuary',
-      longDescription: 'Spot leopards, elephants, and exotic birds in Sri Lanka\'s most famous national park.',
-      category: 'wildlife',
-      duration: '1-2 Days',
-      slug: 'yala' 
-    },
-    { 
-      name: 'Nuwara Eliya', 
-      image: 'zamzam-tours/destinations/nuwara-eliya', 
-      description: 'Little England in the hills',
-      longDescription: 'Experience the cool climate, visit tea factories, and explore colonial-era architecture.',
-      category: 'nature',
-      duration: '1-2 Days',
-      slug: 'nuwara-eliya' 
-    },
-    { 
-      name: 'Mirissa', 
-      image: 'zamzam-tours/destinations/mirissa', 
-      description: 'Beach paradise and whale watching hub',
-      longDescription: 'Relax on pristine beaches and embark on whale watching adventures.',
-      category: 'beach',
-      duration: '2-3 Days',
-      slug: 'mirissa' 
-    },
-    { 
-      name: 'Anuradhapura', 
-      image: 'zamzam-tours/destinations/anuradhapura', 
-      description: 'Ancient capital with sacred sites',
-      longDescription: 'Explore the ruins of an ancient civilization and visit the sacred Bodhi tree.',
-      category: 'cultural',
-      duration: '1 Day',
-      slug: 'anuradhapura' 
-    },
-    { 
-      name: 'Polonnaruwa', 
-      image: 'zamzam-tours/destinations/polonnaruwa', 
-      description: 'Medieval capital with ancient ruins',
-      longDescription: 'Cycle through well-preserved ruins and marvel at the Gal Vihara rock sculptures.',
-      category: 'cultural',
-      duration: '1 Day',
-      slug: 'polonnaruwa' 
-    },
-    { 
-      name: 'Udawalawe', 
-      image: 'zamzam-tours/destinations/udawalawe', 
-      description: 'Elephant sanctuary and national park',
-      longDescription: 'Witness large herds of elephants in their natural habitat.',
-      category: 'wildlife',
-      duration: '1 Day',
-      slug: 'udawalawe' 
-    },
-    { 
-      name: 'Trincomalee', 
-      image: 'zamzam-tours/destinations/trincomalee', 
-      description: 'Pristine beaches and historic temples',
-      longDescription: 'Enjoy crystal-clear waters, world-class diving, and ancient Hindu temples.',
-      category: 'beach',
-      duration: '2-3 Days',
-      slug: 'trincomalee' 
-    },
-    { 
-      name: 'Arugam Bay', 
-      image: 'zamzam-tours/destinations/arugam-bay', 
-      description: 'World-famous surfing destination',
-      longDescription: 'Catch the perfect wave and enjoy the laid-back beach atmosphere.',
-      category: 'beach',
-      duration: '2-4 Days',
-      slug: 'arugam-bay' 
-    },
-    { 
-      name: 'Bentota', 
-      image: 'zamzam-tours/destinations/bentota', 
-      description: 'Golden beaches and water sports paradise',
-      longDescription: 'Enjoy pristine beaches, water sports, and luxury resorts on the southwest coast.',
-      category: 'beach',
-      duration: '2-3 Days',
-      slug: 'bentota' 
-    },
-    { 
-      name: 'Hikkaduwa', 
-      image: 'zamzam-tours/destinations/hikkaduwa', 
-      description: 'Coral reefs and vibrant nightlife',
-      longDescription: 'Snorkel with sea turtles, explore coral reefs, and enjoy beachside cafes.',
-      category: 'beach',
-      duration: '2-3 Days',
-      slug: 'hikkaduwa' 
-    },
-    { 
-      name: 'Dambulla', 
-      image: 'zamzam-tours/destinations/dambulla', 
-      description: 'Golden Temple and cave monasteries',
-      longDescription: 'Discover the UNESCO World Heritage cave temple complex with stunning Buddha statues.',
-      category: 'cultural',
-      duration: 'Half Day',
-      slug: 'dambulla' 
-    },
-    { 
-      name: 'Horton Plains', 
-      image: 'zamzam-tours/destinations/horton-plains', 
-      description: 'World\'s End cliff and cloud forests',
-      longDescription: 'Trek through misty highlands to the dramatic World\'s End precipice.',
-      category: 'nature',
-      duration: '1 Day',
-      slug: 'horton-plains' 
-    },
-    { 
-      name: 'Unawatuna', 
-      image: 'zamzam-tours/destinations/unawatuna', 
-      description: 'Crescent bay with coral reefs',
-      longDescription: 'Swim in the protected bay, snorkel among colorful fish, and relax on golden sands.',
-      category: 'beach',
-      duration: '2-3 Days',
-      slug: 'unawatuna' 
-    },
-    { 
-      name: 'Wilpattu', 
-      image: 'zamzam-tours/destinations/wilpattu', 
-      description: 'Largest national park with leopards',
-      longDescription: 'Safari through ancient lakes and dense forests to spot leopards and sloth bears.',
-      category: 'wildlife',
-      duration: '1-2 Days',
-      slug: 'wilpattu' 
-    },
-    { 
-      name: 'Jaffna', 
-      image: 'zamzam-tours/destinations/jaffna', 
-      description: 'Northern peninsula with Tamil culture',
-      longDescription: 'Experience unique Tamil culture, visit historic temples, and explore remote islands.',
-      category: 'cultural',
-      duration: '2-3 Days',
-      slug: 'jaffna' 
-    },
-    { 
-      name: 'Adam\'s Peak', 
-      image: 'zamzam-tours/destinations/adams-peak', 
-      description: 'Sacred mountain pilgrimage',
-      longDescription: 'Climb the holy peak for sunrise views and visit the sacred footprint at the summit.',
-      category: 'nature',
-      duration: '1 Day',
-      slug: 'adams-peak' 
-    }
+    { name: 'Sigiriya', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453704/dylan-shaw-smUAKwMT8XA-unsplash_qhenhx.jpg', description: 'Ancient rock fortress with breathtaking views', longDescription: 'Climb the iconic Lion Rock and explore one of the most spectacular archaeological sites in the world.', category: 'cultural', duration: '1 Day', slug: 'sigiriya' },
+  { name: 'Kandy', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762454466/chathura-anuradha-subasinghe-40uQmE9Zq8g-unsplash_tvflxt.jpg', description: 'Cultural capital with the Temple of the Tooth', longDescription: 'Visit the sacred Temple of the Tooth Relic and experience traditional Kandyan dance performances.', category: 'cultural', duration: '1-2 Days', slug: 'kandy' },
+    { name: 'Galle', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453796/chathura-indika-LAj-XlHP6Rs-unsplash_o7mzbc.jpg', description: 'Historic fort city by the ocean', longDescription: 'Walk through the colonial Dutch fort and enjoy stunning ocean views from the ramparts.', category: 'cultural', duration: '1 Day', slug: 'galle' },
+    { name: 'Ella', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453781/adam-vandermeer-Dw9dWTzzsUE-unsplash_l49hhe.jpg', description: 'Mountain paradise with tea plantations', longDescription: 'Hike to Little Adam\'s Peak, visit Nine Arch Bridge, and enjoy panoramic views from Ella Rock.', category: 'nature', duration: '2-3 Days', slug: 'ella' },
+    { name: 'Yala', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453757/gemmmm-FRTpkBIi-1Y-unsplash_iggwsm.jpg', description: 'Premier wildlife sanctuary', longDescription: 'Spot leopards, elephants, and exotic birds in Sri Lanka\'s most famous national park.', category: 'wildlife', duration: '1-2 Days', slug: 'yala' },
+    { name: 'Nuwara Eliya', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453797/anton-lecock-TPtaNsBOW9Q-unsplash_g0htag.jpg', description: 'Little England in the hills', longDescription: 'Experience the cool climate, visit tea factories, and explore colonial-era architecture.', category: 'nature', duration: '1-2 Days', slug: 'nuwara-eliya' },
+    { name: 'Mirissa', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762454382/siarhei-palishchuk-hgiby6qxvpc-unsplash_prnosl.jpg', description: 'Beach paradise and whale watching hub', longDescription: 'Relax on pristine beaches and embark on whale watching adventures.', category: 'beach', duration: '2-3 Days', slug: 'mirissa' },
+    { name: 'Anuradhapura', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762454366/andrea-zanenga-U2-9JKq3Sv8-unsplash_ykmenj.jpg', description: 'Ancient capital with sacred sites', longDescription: 'Explore the ruins of an ancient civilization and visit the sacred Bodhi tree.', category: 'cultural', duration: '1 Day', slug: 'anuradhapura' },
+    { name: 'Polonnaruwa', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762454341/birendra-padmaperuma-jB7TbGrC1xM-unsplash_qcpkau.jpg', description: 'Medieval capital with ancient ruins', longDescription: 'Cycle through well-preserved ruins and marvel at the Gal Vihara rock sculptures.', category: 'cultural', duration: '1 Day', slug: 'polonnaruwa' },
+    { name: 'Udawalawe', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1761861324/sachindra-chalaka-ERIYlk3Hppo-unsplash_n41n9c.jpg', description: 'Elephant sanctuary and national park', longDescription: 'Witness large herds of elephants in their natural habitat.', category: 'wildlife', duration: '1 Day', slug: 'udawalawe' },
+    { name: 'Trincomalee', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453771/claus-giering-YmcSXWcmh6w-unsplash_zw66ck.jpg', description: 'Pristine beaches and historic temples', longDescription: 'Enjoy crystal-clear waters, world-class diving, and ancient Hindu temples.', category: 'beach', duration: '2-3 Days', slug: 'trincomalee' },
+    { name: 'Arugam Bay', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453785/udara-karunarathna-LfUJO4whcSU-unsplash_xnxl7h.jpg', description: 'World-famous surfing destination', longDescription: 'Catch the perfect wave and enjoy the laid-back beach atmosphere.', category: 'beach', duration: '2-4 Days', slug: 'arugam-bay' },
+    { name: 'Bentota', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453760/ivani-de-silva-p4CkGihlKeI-unsplash_faup7y.jpg', description: 'Golden beaches and water sports paradise', longDescription: 'Enjoy pristine beaches, water sports, and luxury resorts on the southwest coast.', category: 'beach', duration: '2-3 Days', slug: 'bentota' },
+    { name: 'Hikkaduwa', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453918/croyde-bay-qw6f1CIXOqQ-unsplash_heu61d.jpg', description: 'Coral reefs and vibrant nightlife', longDescription: 'Snorkel with sea turtles, explore coral reefs, and enjoy beachside cafes.', category: 'beach', duration: '2-3 Days', slug: 'hikkaduwa' },
+    { name: 'Dambulla', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1761861700/agnieszka-stankiewicz-OMgi4DfiO3c-unsplash_dfa3pd.jpg', description: 'Golden Temple and cave monasteries', longDescription: 'Discover the UNESCO World Heritage cave temple complex with stunning Buddha statues.', category: 'cultural', duration: 'Half Day', slug: 'dambulla' },
+    { name: 'Horton Plains', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1761861681/anupa-uthsara-Prg6PmMQdK4-unsplash_rfz6fv.jpg', description: 'World\'s End cliff and cloud forests', longDescription: 'Trek through misty highlands to the dramatic World\'s End precipice.', category: 'nature', duration: '1 Day', slug: 'horton-plains' },
+    { name: 'Unawatuna', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453914/eirik-skarstein-7CsKioF9O6g-unsplash_gb7eow.jpg', description: 'Crescent bay with coral reefs', longDescription: 'Swim in the protected bay, snorkel among colorful fish, and relax on golden sands.', category: 'beach', duration: '2-3 Days', slug: 'unawatuna' },
+    { name: 'Wilpattu', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453910/udara-karunarathna-PPGM2ZpCrzc-unsplash_vchneo.jpg', description: 'Largest national park with leopards', longDescription: 'Safari through ancient lakes and dense forests to spot leopards and sloth bears.', category: 'wildlife', duration: '1-2 Days', slug: 'wilpattu' },
+    { name: 'Jaffna', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1761861565/ajai-s-A4amRej5Hes-unsplash_ofpmmw.jpg', description: 'Northern peninsula with Tamil culture', longDescription: 'Experience unique Tamil culture, visit historic temples, and explore remote islands.', category: 'cultural', duration: '2-3 Days', slug: 'jaffna' },
+    { name: 'Adams Peak', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453906/manoj-dharmarathne-sznpwfFhfrU-unsplash_hnkhcg.jpg', description: 'Sacred mountain pilgrimage', longDescription: 'Climb the holy peak for sunrise views and visit the sacred footprint at the summit.', category: 'nature', duration: '1 Day', slug: 'adams-peak' }
   ];
 
-  const filteredDestinations = activeFilter === 'all' 
-    ? destinations 
-    : destinations.filter(dest => dest.category === activeFilter);
+  const filteredDestinations = activeFilter === 'all' ? destinations : destinations.filter(dest => dest.category === activeFilter);
 
   return (
     <>

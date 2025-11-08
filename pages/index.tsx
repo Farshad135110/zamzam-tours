@@ -78,21 +78,67 @@ export default function Home() {
   
   // Popular destinations - with Cloudinary image IDs
   const destinations = [
-    { name: 'Sigiriya', image: 'zamzam-tours/destinations/sigiriya', description: 'Ancient rock fortress', slug: 'sigiriya' },
-    { name: 'Kandy', image: 'zamzam-tours/destinations/kandy', description: 'Cultural capital', slug: 'kandy' },
-    { name: 'Galle', image: 'zamzam-tours/destinations/galle', description: 'Historic fort city', slug: 'galle' },
-    { name: 'Ella', image: 'zamzam-tours/destinations/ella', description: 'Mountain paradise', slug: 'ella' },
-    { name: 'Yala', image: 'zamzam-tours/destinations/yala', description: 'Wildlife sanctuary', slug: 'yala' },
-    { name: 'Nuwara Eliya', image: 'zamzam-tours/destinations/nuwara-eliya', description: 'Little England', slug: 'nuwara-eliya' }
+  { name: 'Sigiriya', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453704/dylan-shaw-smUAKwMT8XA-unsplash_qhenhx.jpg', description: 'Ancient rock fortress', slug: 'sigiriya' },
+  { name: 'Kandy', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762454466/chathura-anuradha-subasinghe-40uQmE9Zq8g-unsplash_tvflxt.jpg', description: 'Cultural capital', slug: 'kandy' },
+  { name: 'Galle', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453796/chathura-indika-LAj-XlHP6Rs-unsplash_o7mzbc.jpg', description: 'Historic fort city', slug: 'galle' },
+  { name: 'Ella', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453781/adam-vandermeer-Dw9dWTzzsUE-unsplash_l49hhe.jpg', description: 'Mountain paradise', slug: 'ella' },
+  { name: 'Yala', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453757/gemmmm-FRTpkBIi-1Y-unsplash_iggwsm.jpg', description: 'Wildlife sanctuary', slug: 'yala' },
+  { name: 'Nuwara Eliya', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453797/anton-lecock-TPtaNsBOW9Q-unsplash_g0htag.jpg', description: 'Little England', slug: 'nuwara-eliya' }
+  ];
+
+  // Activities / Things to do (show a few popular activities and link to detailed pages)
+  // Note: emojis-only presentation — no photos as requested.
+  const activities = [
+    { name: 'Wildlife Safaris', icon: '🦁', description: 'Elephant, leopard and bird watching in national parks', slug: 'wildlife-safaris' },
+    { name: 'Hiking & Trekking', icon: '🥾', description: 'Mountain trails and nature walks through stunning landscapes', slug: 'hiking-trekking' },
+    { name: 'Cultural Tours', icon: '🏛️', description: 'Ancient temples, forts and historical monuments', slug: 'cultural-tours' },
+    { name: 'Beach Activities', icon: '🏖️', description: 'Swimming, surfing, snorkeling and beach relaxation', slug: 'beach-activities' },
+    { name: 'Tea Plantation Tours', icon: '🍵', description: 'Visit tea estates and experience Ceylon tea culture', slug: 'tea-plantation-tours' },
+    { name: 'Whale Watching', icon: '🐋', description: 'Witness blue whales and dolphins in their natural habitat', slug: 'whale-watching' }
   ];
   
-  // Tour packages
-  const tourPackages = [
+  // Default tour packages (used as a fallback)
+  const defaultTourPackages = [
     { name: 'North East Tour', duration: '7 days', highlights: ['Trincomalee', 'Batticaloa', 'Arugam Bay'] },
     { name: 'Cultural Triangle', duration: '5 days', highlights: ['Sigiriya', 'Dambulla', 'Polonnaruwa'] },
     { name: 'Hill Country', duration: '6 days', highlights: ['Kandy', 'Nuwara Eliya', 'Ella'] },
     { name: 'Beach Paradise', duration: '8 days', highlights: ['Mirissa', 'Galle', 'Hikkaduwa'] }
   ];
+
+  // Homepage tours loaded from API (/api/packages). Falls back to defaultTourPackages when API fails.
+  const [homeTours, setHomeTours] = useState<any[]>(defaultTourPackages);
+  const [homeToursLoading, setHomeToursLoading] = useState<boolean>(false);
+
+  useEffect(() => {
+    const fetchHomeTours = async () => {
+      try {
+        setHomeToursLoading(true);
+        const res = await fetch('/api/packages');
+        if (!res.ok) throw new Error('Failed to fetch packages');
+        const packages = await res.json();
+
+        const transformedTours = packages.map((pkg: any) => ({
+          id: pkg.package_id ? parseInt(pkg.package_id.replace('P', '')) || 0 : 0,
+          name: pkg.package_name || pkg.name || 'Tour',
+          duration: pkg.duration || 'N/A',
+          price: pkg.price ? parseFloat(pkg.price) : 0,
+          priceRange: pkg.price ? (pkg.price < 1000 ? 'budget' : pkg.price < 2000 ? 'standard' : 'premium') : 'standard',
+          image: pkg.image || '/tours/default.jpg',
+          highlights: pkg.highlights ? pkg.highlights.split(',').map((h: string) => h.trim()) : (pkg.highlights || []).slice(0,3),
+          description: pkg.description || '',
+        }));
+
+        if (transformedTours && transformedTours.length > 0) setHomeTours(transformedTours);
+      } catch (err) {
+        console.error('Failed to load home tour packages:', err);
+        // keep fallback
+      } finally {
+        setHomeToursLoading(false);
+      }
+    };
+
+    fetchHomeTours();
+  }, []);
   
   // Handle scroll effect
   useEffect(() => {
@@ -415,31 +461,39 @@ export default function Home() {
                   <p>Explore Sri Lanka's rich culture, stunning landscapes, and pristine beaches with our expert guides.</p>
                 </AnimatedSection>
                 
-                <div className="tour-grid">
-                  {tourPackages.map((tour, index) => (
-                    <AnimatedSection 
-                      key={index} 
-                      animation="fadeInUp" 
-                      delay={index * 0.15}
-                    >
-                      <div className="tour-card">
-                        <h4>{tour.name}</h4>
-                        <p className="duration">{tour.duration}</p>
-                        <ul>
-                          {tour.highlights.map((highlight, i) => (
-                            <li key={i}>{highlight}</li>
-                          ))}
-                        </ul>
-                        <button 
-                          className="btn btn-small"
-                          onClick={() => handleWhatsAppBooking(`the ${tour.name} package`)}
+                    <div className="tour-grid">
+                      {homeTours.map((tour, index) => (
+                        <AnimatedSection
+                          key={index}
+                          animation="fadeInUp"
+                          delay={index * 0.12}
                         >
-                          Book This Tour
-                        </button>
-                      </div>
-                    </AnimatedSection>
-                  ))}
-                </div>
+                          <div className="tour-card">
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12 }}>
+                              <div>
+                                <h4 style={{ margin: '0 0 6px' }}>{tour.name}</h4>
+                                <p className="duration" style={{ margin: '0 0 8px' }}>{tour.duration}</p>
+                                <p style={{ margin: 0 }}><strong>Highlights:</strong> {Array.isArray(tour.highlights) ? tour.highlights.join(', ') : tour.highlights}</p>
+                              </div>
+                              <div style={{ textAlign: 'right' }}>
+                                <p style={{ margin: 0, fontWeight: 700 }}>From $—</p>
+                                <p className="muted" style={{ margin: '6px 0 0' }}>Starting price depends on group size</p>
+                              </div>
+                            </div>
+
+                            <div style={{ marginTop: 12, display: 'flex', gap: 8 }}>
+                              <button
+                                className="btn btn-small"
+                                onClick={() => handleWhatsAppBooking(`the ${tour.name} package`)}
+                              >
+                                Book This Tour
+                              </button>
+                              <Link href={`/tours`} className="btn btn-secondary">View details</Link>
+                            </div>
+                          </div>
+                        </AnimatedSection>
+                      ))}
+                    </div>
               </div>
             )}
             
@@ -451,31 +505,27 @@ export default function Home() {
                 </AnimatedSection>
                 
                 <div className="transfer-options">
-                  <AnimatedSection animation="fadeInLeft" delay={0.2}>
-                    <div className="transfer-card">
-                      <h4>Standard Transfer</h4>
-                      <p>Direct transfer from airport to your destination</p>
-                      <button 
-                        className="btn btn-small"
-                        onClick={() => handleWhatsAppBooking('an airport transfer')}
-                      >
-                        Book Transfer
-                      </button>
-                    </div>
-                  </AnimatedSection>
-                  
-                  <AnimatedSection animation="fadeInRight" delay={0.2}>
-                    <div className="transfer-card">
-                      <h4>Premium Transfer</h4>
-                      <p>Includes meet & greet, refreshments, and assistance with luggage</p>
-                      <button 
-                        className="btn btn-small"
-                        onClick={() => handleWhatsAppBooking('a premium airport transfer')}
-                      >
-                        Book Premium
-                      </button>
-                    </div>
-                  </AnimatedSection>
+                  {[
+                    { key: 'one-way', title: 'One-way Transfer', desc: 'Airport → Hotel (single trip). Ideal for arrivals.', price: 'From $25' },
+                    { key: 'round-trip', title: 'Round-trip (Two-way)', desc: 'Airport pickup and return transfer. Best for return flights.', price: 'From $45' }
+                  ].map((t, idx) => (
+                    <AnimatedSection key={t.key} animation={idx % 2 === 0 ? 'fadeInLeft' : 'fadeInRight'} delay={0.15 * idx}>
+                      <div className="transfer-card">
+                        <h4>{t.title}</h4>
+                        <p>{t.desc}</p>
+                        <p style={{ fontWeight: 700, marginTop: 6 }}>{t.price}</p>
+                        <div style={{ marginTop: 10, display: 'flex', gap: 8 }}>
+                          <button
+                            className="btn btn-small"
+                            onClick={() => handleWhatsAppBooking(t.title)}
+                          >
+                            Book
+                          </button>
+                          <Link href={`/airport-transfer?type=${t.key}`} className="btn btn-secondary">Details</Link>
+                        </div>
+                      </div>
+                    </AnimatedSection>
+                  ))}
                 </div>
               </div>
             )}
@@ -529,6 +579,41 @@ export default function Home() {
         </div>
       </section>
       
+      {/* Activities / Things to Do Section */}
+      <section className="activities-section">
+        <div className="container">
+          <AnimatedSection animation="fadeInUp">
+            <h2 className="section-title">Things to Do</h2>
+            <p className="section-subtitle">Popular activities and experiences you can book</p>
+          </AnimatedSection>
+
+          <div className="destinations-grid">
+            {activities.map((act, index) => (
+              <AnimatedSection key={act.slug} animation="fadeInUp" delay={index * 0.08}>
+                <div className="destination-card">
+                  {/* emoji header instead of photo */}
+                  <div style={{ height: '120px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg, rgba(5,59,60,0.04), rgba(248,181,0,0.04))' }}>
+                    <div style={{ fontSize: '3rem' }}>{act.icon}</div>
+                  </div>
+
+                  <div style={{ padding: '1rem' }}>
+                    <h3 style={{ margin: '0 0 0.5rem' }}>{act.name}</h3>
+                    <p style={{ color: '#666', margin: '0 0 0.8rem' }}>{act.description}</p>
+                    <Link href={`/activities/${act.slug}`} className="btn btn-small">Explore</Link>
+                  </div>
+                </div>
+              </AnimatedSection>
+            ))}
+          </div>
+
+          <AnimatedSection animation="fadeInUp" delay={0.2}>
+            <div className="section-cta">
+              <Link href="/activities" className="btn btn-primary">View All Activities</Link>
+            </div>
+          </AnimatedSection>
+        </div>
+      </section>
+
       {/* Testimonials Section */}
       <section className="testimonials">
         <div className="container">
@@ -599,82 +684,7 @@ export default function Home() {
         </div>
       </section>
       
-      {/* Footer */}
-      <footer className="footer">
-        <div className="container">
-          <div className="footer-content">
-            <div className="footer-section">
-              <div className="footer-logo">
-                <Image src="/logo.png" alt="Zamzam Tours" width={150} height={60} />
-              </div>
-              <p>Your trusted partner for premium travel experiences in Sri Lanka since 2010.</p>
-              <div className="social-links">
-                <a href="#" aria-label="Facebook">FB</a>
-                <a href="#" aria-label="Instagram">IG</a>
-                <a href="#" aria-label="Twitter">TW</a>
-                <a href="#" aria-label="YouTube">YT</a>
-              </div>
-            </div>
-            
-            <div className="footer-section">
-              <h3>Services</h3>
-              <ul>
-                <li><Link href="/self-drive">Self-Drive Rentals</Link></li>
-                <li><Link href="/tours">Guided Tours</Link></li>
-                <li><Link href="/airport-transfer">Airport Transfers</Link></li>
-                <li><Link href="/hotels">Hotel Booking</Link></li>
-                <li><Link href="/activities">Activities</Link></li>
-              </ul>
-            </div>
-            
-            <div className="footer-section">
-              <h3>Company</h3>
-              <ul>
-                <li><Link href="/about">About Us</Link></li>
-                <li><Link href="/gallery">Gallery</Link></li>
-                <li><Link href="/testimonials">Testimonials</Link></li>
-                <li><Link href="/blog">Blog</Link></li>
-                <li><Link href="/careers">Careers</Link></li>
-              </ul>
-            </div>
-            
-            <div className="footer-section">
-              <h3>Support</h3>
-              <ul>
-                <li><Link href="/contact">Contact Us</Link></li>
-                <li><Link href="/faq">FAQ</Link></li>
-                <li><Link href="/terms">Terms & Conditions</Link></li>
-                <li><Link href="/privacy">Privacy Policy</Link></li>
-                <li><Link href="/cancellation">Cancellation Policy</Link></li>
-              </ul>
-            </div>
-            
-            <div className="footer-section">
-              <h3>Contact Info</h3>
-              <ul className="contact-info">
-                <li>📍 123 Galle Road, Colombo, Sri Lanka</li>
-                <li>📞 +94 77 123 4567</li>
-                <li>📧 info@zamzamtours.com</li>
-                <li>🕒 Open 24/7</li>
-              </ul>
-            </div>
-          </div>
-          
-          <div className="footer-bottom">
-            <p>&copy; {new Date().getFullYear()} Zamzam Tours. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
       
-      {/* WhatsApp Floating Button */}
-      <div className="whatsapp-float">
-        <button 
-          onClick={() => handleWhatsAppBooking('assistance')}
-          aria-label="Contact via WhatsApp"
-        >
-          <Image src="/whatsapp-icon.svg" alt="WhatsApp" width={30} height={30} />
-        </button>
-      </div>
 
       <Footer />
     </>

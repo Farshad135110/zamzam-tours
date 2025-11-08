@@ -1211,7 +1211,7 @@ export default function AirportTransfer() {
         }
       `}</style>
 
-      <Footer />
+   
     </>
   );
 }

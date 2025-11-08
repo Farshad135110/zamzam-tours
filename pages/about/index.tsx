@@ -7,7 +7,7 @@ import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 
 export default function About() {
-  const [activeTab, setActiveTab] = useState('story');
+  const [activeTab, setActiveTab] = useState('mission');
   const [counterValues, setCounterValues] = useState({
     travelers: 0,
     tours: 0,
@@ -17,47 +17,9 @@ export default function About() {
   const [isVisible, setIsVisible] = useState(false);
   const counterRef = useRef(null);
 
-  // Company milestones
-  const milestones = [
-    {
-      year: '2010',
-      title: 'Humble Beginnings',
-      description: 'Started with just 2 vehicles and a dream to showcase Sri Lanka\'s beauty',
-      icon: '🚗'
-    },
-    {
-      year: '2012',
-      title: 'First International Clients',
-      description: 'Welcomed our first European tour groups, specializing in cultural experiences',
-      icon: '🌍'
-    },
-    {
-      year: '2015',
-      title: 'Fleet Expansion',
-      description: 'Expanded our vehicle fleet to include luxury vans and buses for larger groups',
-      icon: '🚐'
-    },
-    {
-      year: '2018',
-      title: 'Award Recognition',
-      description: 'Received "Best Tour Operator" award from Sri Lanka Tourism Development Authority',
-      icon: '🏆'
-    },
-    {
-      year: '2020',
-      title: 'Digital Transformation',
-      description: 'Launched comprehensive online booking system and mobile-friendly services',
-      icon: '📱'
-    },
-    {
-      year: '2023',
-      title: 'Sustainable Tourism',
-      description: 'Partnered with local communities for eco-friendly and responsible tourism',
-      icon: '🌱'
-    }
-  ];
+  // (timeline removed per request)
 
-  // Team members
+  // Team members — only founder kept per request
   const teamMembers = [
     {
       name: 'Mohamed Zamzam',
@@ -67,33 +29,6 @@ export default function About() {
       image: '/team/zamzam-founder.jpg',
       quote: 'Our mission is to create unforgettable Sri Lankan experiences that connect people with our rich culture and natural beauty.',
       social: { linkedin: '#', email: 'zamzam@zamzamtours.com' }
-    },
-    {
-      name: 'Sarah Perera',
-      position: 'Head of European Operations',
-      experience: '12 years in hospitality',
-      specialization: 'European Market & Luxury Travel',
-      image: '/team/sarah-operations.jpg',
-      quote: 'We understand European travelers\' expectations and deliver exceptional service that exceeds them.',
-      social: { linkedin: '#', email: 'sarah@zamzamtours.com' }
-    },
-    {
-      name: 'James Fernando',
-      position: 'Tour Experience Manager',
-      experience: '10 years as tour guide',
-      specialization: 'Adventure & Wildlife Tours',
-      image: '/team/james-tours.jpg',
-      quote: 'Every tour is crafted to provide authentic experiences while ensuring comfort and safety.',
-      social: { linkedin: '#', email: 'james@zamzamtours.com' }
-    },
-    {
-      name: 'Lisa Chen',
-      position: 'Customer Relations Manager',
-      experience: '8 years in customer service',
-      specialization: 'Client Satisfaction & Support',
-      image: '/team/lisa-customer.jpg',
-      quote: 'We treat every client like family, ensuring their journey with us is seamless from start to finish.',
-      social: { linkedin: '#', email: 'lisa@zamzamtours.com' }
     }
   ];
 
@@ -131,33 +66,7 @@ export default function About() {
     }
   ];
 
-  // Certifications and awards
-  const certifications = [
-    {
-      name: 'SLTDA Registered',
-      issuer: 'Sri Lanka Tourism Development Authority',
-      year: '2010',
-      image: '/certifications/sltda.png'
-    },
-    {
-      name: 'Best Tour Operator 2022',
-      issuer: 'Sri Lanka Tourism Awards',
-      year: '2022',
-      image: '/certifications/tourism-award.png'
-    },
-    {
-      name: 'Sustainable Tourism Partner',
-      issuer: 'Green Globe Certification',
-      year: '2021',
-      image: '/certifications/green-globe.png'
-    },
-    {
-      name: 'Quality Service Excellence',
-      issuer: 'Sri Lanka Chamber of Tourism',
-      year: '2023',
-      image: '/certifications/quality-service.png'
-    }
-  ];
+  // certifications removed per request
 
   // Counter animation
   useEffect(() => {
@@ -215,10 +124,10 @@ export default function About() {
         <meta name="description" content="Learn about Zamzam Tours' journey, team, values, and commitment to providing exceptional travel experiences in Sri Lanka since 2010." />
       </Head>
 
-      <Navbar />
+  <Navbar />
 
-      {/* Hero Section */}
-      <section className="about-hero" style={{ marginTop: '80px' }}>
+  {/* Hero Section */}
+  <section className="about-hero">
         <div className="hero-background">
           <Image 
             src="/about/hero-about.jpg" 
@@ -230,7 +139,7 @@ export default function About() {
           <div className="hero-overlay"></div>
         </div>
         
-        <div className="hero-content">
+  <div className="hero-content">
           <div className="hero-text">
             <h1>Creating Unforgettable Sri Lankan Journeys Since 2010</h1>
             <p>From humble beginnings to becoming Sri Lanka's trusted travel partner, we've been crafting authentic experiences that connect travelers with the soul of our beautiful island.</p>
@@ -258,12 +167,6 @@ export default function About() {
         <div className="container">
           <div className="section-tabs">
             <button 
-              className={`tab ${activeTab === 'story' ? 'active' : ''}`}
-              onClick={() => setActiveTab('story')}
-            >
-              Our Story
-            </button>
-            <button 
               className={`tab ${activeTab === 'mission' ? 'active' : ''}`}
               onClick={() => setActiveTab('mission')}
             >
@@ -278,46 +181,6 @@ export default function About() {
           </div>
 
           <div className="tab-content">
-            {activeTab === 'story' && (
-              <div className="content-story">
-                <div className="story-text">
-                  <h2>From Local Passion to Premier Tour Operator</h2>
-                  <p>
-                    Founded in 2010 by Mohamed Zamzam, our journey began with a simple Toyota car and a big dream: 
-                    to share the authentic beauty of Sri Lanka with the world. What started as a small transfer service 
-                    has grown into a comprehensive tour operation trusted by thousands of international travelers.
-                  </p>
-                  <p>
-                    We've remained true to our roots while expanding our services. Our deep local knowledge, combined 
-                    with understanding international travelers' needs, allows us to create experiences that are both 
-                    authentic and comfortable.
-                  </p>
-                  <div className="story-highlights">
-                    <div className="highlight">
-                      <span className="icon">🚗</span>
-                      <span>Started with just 2 vehicles</span>
-                    </div>
-                    <div className="highlight">
-                      <span className="icon">🌍</span>
-                      <span>Now serving travelers from 30+ countries</span>
-                    </div>
-                    <div className="highlight">
-                      <span className="icon">⭐</span>
-                      <span>98% customer satisfaction rate</span>
-                    </div>
-                  </div>
-                </div>
-                <div className="story-image">
-                  <Image 
-                    src="/about/founder-story.jpg" 
-                    alt="Founder Story" 
-                    width={500}
-                    height={400}
-                    objectFit="cover"
-                  />
-                </div>
-              </div>
-            )}
 
             {activeTab === 'mission' && (
               <div className="content-mission">
@@ -449,7 +312,7 @@ export default function About() {
                     alt={member.name}
                     width={300}
                     height={350}
-                    objectFit="cover"
+                    style={{ objectFit: 'cover', width: '100%', height: '100%' }}
                   />
                   <div className="member-overlay">
                     <div className="social-links">
@@ -471,59 +334,7 @@ export default function About() {
         </div>
       </section>
 
-      {/* Timeline Section */}
-      <section className="timeline-section">
-        <div className="container">
-          <div className="section-header">
-            <h2>Our Journey Through the Years</h2>
-            <p>Milestones that shaped Zamzam Tours into Sri Lanka's trusted travel partner</p>
-          </div>
-
-          <div className="timeline">
-            {milestones.map((milestone, index) => (
-              <div key={index} className={`timeline-item ${index % 2 === 0 ? 'left' : 'right'}`}>
-                <div className="timeline-content">
-                  <div className="timeline-year">{milestone.year}</div>
-                  <div className="timeline-icon">{milestone.icon}</div>
-                  <h3>{milestone.title}</h3>
-                  <p>{milestone.description}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Certifications Section */}
-      <section className="certifications-section">
-        <div className="container">
-          <div className="section-header">
-            <h2>Certifications & Recognition</h2>
-            <p>Official recognition of our commitment to quality and excellence</p>
-          </div>
-
-          <div className="certifications-grid">
-            {certifications.map((cert, index) => (
-              <div key={index} className="certification-card">
-                <div className="cert-image">
-                  <Image 
-                    src={cert.image} 
-                    alt={cert.name}
-                    width={100}
-                    height={100}
-                    objectFit="contain"
-                  />
-                </div>
-                <div className="cert-info">
-                  <h3>{cert.name}</h3>
-                  <p className="issuer">{cert.issuer}</p>
-                  <p className="year">{cert.year}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* Timeline and Certifications removed per request */}
 
       {/* CTA Section */}
       <section className="about-cta">
@@ -584,7 +395,7 @@ export default function About() {
         .hero-content {
           max-width: 1200px;
           margin: 0 auto;
-          padding: 0 2rem;
+          padding: 100px 2rem 0 2rem; /* leave space for fixed navbar so hero content is visible */
           width: 100%;
           display: grid;
           grid-template-columns: 2fr 1fr;

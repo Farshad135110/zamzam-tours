@@ -2,6 +2,8 @@
 import { useState, useEffect, useRef } from 'react';
 import Head from 'next/head';
 import Image from 'next/image';
+import Navbar from '../../components/Navbar';
+import Footer from '../../components/Footer';
 
 export default function SimpleGallery() {
   const [selectedImage, setSelectedImage] = useState(null);
@@ -12,91 +14,20 @@ export default function SimpleGallery() {
   const galleryRef = useRef(null);
 
   // Simple gallery images data
+  // Use Cloudinary-hosted images (these assets exist in the repo's sample data)
   const galleryImages = [
-    {
-      id: 1,
-      src: '/gallery/sigiriya-sunrise.jpg',
-      alt: 'Sigiriya Rock at sunrise',
-      title: 'Sigiriya Sunrise',
-      location: 'Central Province'
-    },
-    {
-      id: 2,
-      src: '/gallery/ella-nine-arch.jpg',
-      alt: 'Nine Arch Bridge in Ella',
-      title: 'Nine Arch Bridge',
-      location: 'Ella'
-    },
-    {
-      id: 3,
-      src: '/gallery/galle-fort-sunset.jpg',
-      alt: 'Galle Fort during sunset',
-      title: 'Galle Fort Sunset',
-      location: 'Galle'
-    },
-    {
-      id: 4,
-      src: '/gallery/kandy-temple.jpg',
-      alt: 'Temple of the Sacred Tooth',
-      title: 'Sacred Temple',
-      location: 'Kandy'
-    },
-    {
-      id: 5,
-      src: '/gallery/mirissa-beach.jpg',
-      alt: 'Mirissa Beach coastline',
-      title: 'Mirissa Beach',
-      location: 'Southern Coast'
-    },
-    {
-      id: 6,
-      src: '/gallery/yala-leopard.jpg',
-      alt: 'Leopard in Yala National Park',
-      title: 'Yala Wildlife',
-      location: 'Yala National Park'
-    },
-    {
-      id: 7,
-      src: '/gallery/tea-plantations.jpg',
-      alt: 'Tea plantations in hill country',
-      title: 'Tea Country',
-      location: 'Nuwara Eliya'
-    },
-    {
-      id: 8,
-      src: '/gallery/arugam-bay-surf.jpg',
-      alt: 'Surfing at Arugam Bay',
-      title: 'Arugam Bay Waves',
-      location: 'East Coast'
-    },
-    {
-      id: 9,
-      src: '/gallery/adams-peak-hike.jpg',
-      alt: 'Hiking Adams Peak',
-      title: 'Adams Peak Pilgrimage',
-      location: 'Central Highlands'
-    },
-    {
-      id: 10,
-      src: '/gallery/trincomalee-beach.jpg',
-      alt: 'Pristine beach in Trincomalee',
-      title: 'Trincomalee Beaches',
-      location: 'East Coast'
-    },
-    {
-      id: 11,
-      src: '/gallery/train-journey.jpg',
-      alt: 'Scenic train journey',
-      title: 'Mountain Railway',
-      location: 'Hill Country'
-    },
-    {
-      id: 12,
-      src: '/gallery/wild-elephants.jpg',
-      alt: 'Elephants in the wild',
-      title: 'Wild Elephants',
-      location: 'National Parks'
-    }
+    { id: 1, src: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453704/dylan-shaw-smUAKwMT8XA-unsplash_qhenhx.jpg', alt: 'Sigiriya Rock at sunrise', title: 'Sigiriya Sunrise', location: 'Central Province' },
+    { id: 2, src: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762454466/chathura-anuradha-subasinghe-40uQmE9Zq8g-unsplash_tvflxt.jpg', alt: 'Kandy Temple', title: 'Sacred Temple', location: 'Kandy' },
+    { id: 3, src: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453781/adam-vandermeer-Dw9dWTzzsUE-unsplash_l49hhe.jpg', alt: 'Nine Arch Bridge in Ella', title: 'Nine Arch Bridge', location: 'Ella' },
+    { id: 4, src: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453796/chathura-indika-LAj-XlHP6Rs-unsplash_o7mzbc.jpg', alt: 'Galle Fort during sunset', title: 'Galle Fort Sunset', location: 'Galle' },
+    { id: 5, src: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762454382/siarhei-palishchuk-hgiby6qxvpc-unsplash_prnosl.jpg', alt: 'Mirissa Beach coastline', title: 'Mirissa Beach', location: 'Southern Coast' },
+    { id: 6, src: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453757/gemmmm-FRTpkBIi-1Y-unsplash_iggwsm.jpg', alt: 'Leopard in Yala National Park', title: 'Yala Wildlife', location: 'Yala National Park' },
+    { id: 7, src: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453797/anton-lecock-TPtaNsBOW9Q-unsplash_g0htag.jpg', alt: 'Tea plantations in hill country', title: 'Tea Country', location: 'Nuwara Eliya' },
+    { id: 8, src: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453785/udara-karunarathna-LfUJO4whcSU-unsplash_xnxl7h.jpg', alt: 'Surfing at Arugam Bay', title: 'Arugam Bay Waves', location: 'East Coast' },
+    { id: 9, src: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453771/claus-giering-YmcSXWcmh6w-unsplash_zw66ck.jpg', alt: 'Pristine beach in Trincomalee', title: 'Trincomalee Beaches', location: 'East Coast' },
+    { id: 10, src: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453710/train-journey.jpg', alt: 'Scenic train journey', title: 'Mountain Railway', location: 'Hill Country' },
+    { id: 11, src: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762454341/birendra-padmaperuma-jB7TbGrC1xM-unsplash_qcpkau.jpg', alt: 'Polonnaruwa ruins', title: 'Polonnaruwa', location: 'Cultural' },
+    { id: 12, src: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1761861700/agnieszka-stankiewicz-OMgi4DfiO3c-unsplash_dfa3pd.jpg', alt: 'Dambulla cave temples', title: 'Dambulla Golden Temple', location: 'Dambulla' }
   ];
 
   // Open lightbox with selected image
@@ -180,6 +111,8 @@ export default function SimpleGallery() {
         <meta name="description" content="Explore stunning photos of Sri Lanka's landscapes, wildlife, and cultural heritage through Zamzam Tours' visual journey." />
       </Head>
 
+  <Navbar />
+
       {/* Hero Section */}
       <section className="gallery-hero">
         <div className="hero-content">
@@ -224,9 +157,9 @@ export default function SimpleGallery() {
                     alt={image.alt}
                     width={400}
                     height={300}
-                    objectFit="cover"
                     placeholder="blur"
                     blurDataURL="/placeholder.jpg"
+                    style={{ objectFit: 'cover', width: '100%', height: '100%' }}
                   />
                   <div className="image-overlay">
                     <div className="image-info">
@@ -290,7 +223,7 @@ export default function SimpleGallery() {
                 alt={selectedImage.alt}
                 width={1200}
                 height={800}
-                objectFit="contain"
+                style={{ objectFit: 'contain', maxWidth: '100%', height: 'auto' }}
               />
               <div className="lightbox-info">
                 <h2>{selectedImage.title}</h2>
@@ -312,7 +245,9 @@ export default function SimpleGallery() {
         </div>
       )}
 
-      <style jsx>{`
+  <Footer />
+
+  <style jsx>{`
         /* Simple Gallery Styles */
         .gallery-hero {
           height: 60vh;
@@ -435,6 +370,10 @@ export default function SimpleGallery() {
 
         .image-container img {
           transition: transform 0.5s ease;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          display: block;
         }
 
         .gallery-item:hover .image-container img {

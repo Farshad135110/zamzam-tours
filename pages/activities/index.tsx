@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { CldImage } from 'next-cloudinary';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 
@@ -238,7 +237,6 @@ const ActivitiesPage = () => {
 
   return (
     <div className="activities-page">
-      <Navbar />
       
       {/* Hero Section */}
       <section className="hero-section" style={{ position: 'relative', height: '50vh', overflow: 'hidden' }}>
@@ -273,10 +271,17 @@ const ActivitiesPage = () => {
           textAlign: 'center',
           padding: '0 20px'
         }}>
-          <h1 style={{ fontSize: '2.5rem', marginBottom: '0.5rem', color: '#f8b500' }}>Things to Do in Sri Lanka</h1>
-          <p style={{ fontSize: '1.2rem', maxWidth: '700px' }}>
-            Discover exciting activities and unforgettable experiences across the island
-          </p>
+          {/* Navbar inside hero for consistent layout with other pages */}
+          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, zIndex: 3 }}>
+            <Navbar />
+          </div>
+
+          <div style={{ marginTop: '64px' }}>
+            <h1 style={{ fontSize: '2.5rem', marginBottom: '0.5rem', color: '#f8b500' }}>Things to Do in Sri Lanka</h1>
+            <p style={{ fontSize: '1.2rem', maxWidth: '700px' }}>
+              Discover exciting activities and unforgettable experiences across the island
+            </p>
+          </div>
         </div>
       </section>
 
@@ -340,33 +345,24 @@ const ActivitiesPage = () => {
                   e.currentTarget.style.boxShadow = '0 4px 15px rgba(0,0,0,0.1)';
                 }}
               >
-                <div style={{ position: 'relative', height: '180px', overflow: 'hidden' }}>
-                  <CldImage
-                    src={activity.image}
-                    alt={activity.name}
-                    width={400}
-                    height={200}
-                    crop="fill"
-                    gravity="auto"
-                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                  />
-                  <div style={{
-                    position: 'absolute',
-                    top: '10px',
-                    right: '10px',
-                    background: '#f8b500',
-                    color: '#fff',
-                    padding: '0.3rem 0.7rem',
-                    borderRadius: '20px',
-                    fontSize: '0.8rem',
-                    fontWeight: '600'
-                  }}>
-                    {activity.category}
+                <div style={{ height: '120px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg, rgba(5,59,60,0.04), rgba(248,181,0,0.04))' }}>
+                    <div style={{ fontSize: '3rem' }}>{activity.icon}</div>
+                    <div style={{
+                      position: 'absolute',
+                      top: '10px',
+                      right: '10px',
+                      background: '#f8b500',
+                      color: '#fff',
+                      padding: '0.3rem 0.7rem',
+                      borderRadius: '20px',
+                      fontSize: '0.8rem',
+                      fontWeight: '600'
+                    }}>
+                      {activity.category}
+                    </div>
                   </div>
-                </div>
                 
-                <div style={{ padding: '1.2rem' }}>
-                  <div style={{ fontSize: '2.5rem', marginBottom: '0.3rem' }}>{activity.icon}</div>
+                  <div style={{ padding: '1.2rem' }}>
                   <h3 style={{ 
                     fontSize: '1.3rem', 
                     marginBottom: '0.5rem',
