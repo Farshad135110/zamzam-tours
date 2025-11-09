@@ -9,6 +9,7 @@ import Footer from '../../components/Footer';
 import AnimatedSection from '../../components/AnimatedSection';
 import { CldImage } from 'next-cloudinary';
 import { fadeInUp } from '../../src/utils/animations';
+import useTranslation from '../../src/i18n/useTranslation';
 
 interface Tour {
   id: number;
@@ -31,6 +32,11 @@ interface Tour {
 }
 
 export default function Tours() {
+  const { t } = useTranslation();
+  const get = (key: string, fallback: string) => {
+    const val = t(key);
+    return val === key ? fallback : val;
+  };
   const [activeCategory, setActiveCategory] = useState('all');
   const [selectedDuration, setSelectedDuration] = useState('all');
   const [selectedPriceRange, setSelectedPriceRange] = useState('all');
@@ -67,24 +73,26 @@ export default function Tours() {
         const packages = await response.json();
         
         // Transform database packages to Tour format
+        // Use locale-backed fallbacks: if a translation key exists for the package (tours.packages.<package_id>.*)
+        // the localized string will be used, otherwise the backend-provided text is used.
         const transformedTours = packages.map((pkg: any) => ({
           id: parseInt(pkg.package_id.replace('P', '')) || 0,
-          name: pkg.package_name,
+          name: get(`tours.packages.${pkg.package_id}.name`, pkg.package_name),
           category: 'cultural', // Default category
-          duration: '7 days', // Default duration
+          duration: pkg.duration || '7 days', // prefer backend duration when available
           priceRange: pkg.price ? (pkg.price < 1000 ? 'budget' : pkg.price < 2000 ? 'standard' : 'premium') : 'standard',
           price: pkg.price ? parseFloat(pkg.price) : 0,
           image: pkg.image || '/tours/default.jpg',
           highlights: pkg.highlights ? pkg.highlights.split(',').map((h: string) => h.trim()) : [],
-          description: pkg.description || '',
+          description: get(`tours.packages.${pkg.package_id}.description`, pkg.description || ''),
           includes: pkg.includings ? pkg.includings.split(',').map((i: string) => i.trim()) : [],
-          difficulty: 'Moderate',
-          groupSize: '2-12 people',
-          season: 'Year-round',
-          rating: 4.5,
-          reviews: 0,
+          difficulty: pkg.difficulty || 'Moderate',
+          groupSize: pkg.group_size || '2-12 people',
+          season: pkg.season || 'Year-round',
+          rating: pkg.rating ? Number(pkg.rating) : 4.5,
+          reviews: pkg.reviews ? Number(pkg.reviews) : 0,
           included: pkg.includings ? pkg.includings.split(',').map((i: string) => i.trim()) : [],
-          itinerary: []
+          itinerary: pkg.itinerary || []
         }));
         
         setTours(transformedTours);
@@ -167,32 +175,32 @@ export default function Tours() {
 
   // Tour categories
   const categories = [
-    { id: 'all', name: 'All Tours' },
-    { id: 'cultural', name: 'Cultural' },
-    { id: 'adventure', name: 'Adventure' },
-    { id: 'beach', name: 'Beach & Relaxation' },
-    { id: 'wildlife', name: 'Wildlife' },
-    { id: 'north-east', name: 'North East' },
-    { id: 'hill-country', name: 'Hill Country' },
-    { id: 'historical', name: 'Historical' }
+    { id: 'all', name: get('tours.filters.categories.all', 'All Tours') },
+    { id: 'cultural', name: get('tours.filters.categories.cultural', 'Cultural') },
+    { id: 'adventure', name: get('tours.filters.categories.adventure', 'Adventure') },
+    { id: 'beach', name: get('tours.filters.categories.beach', 'Beach & Relaxation') },
+    { id: 'wildlife', name: get('tours.filters.categories.wildlife', 'Wildlife') },
+    { id: 'north-east', name: get('tours.filters.categories.northeast', 'North East') },
+    { id: 'hill-country', name: get('tours.filters.categories.hillCountry', 'Hill Country') },
+    { id: 'historical', name: get('tours.filters.categories.historical', 'Historical') }
   ];
 
   // Duration filters
   const durations = [
-    { id: 'all', name: 'Any Duration' },
-    { id: '1-3', name: '1-3 Days' },
-    { id: '4-7', name: '4-7 Days' },
-    { id: '8-14', name: '8-14 Days' },
-    { id: '15+', name: '15+ Days' }
+    { id: 'all', name: get('tours.filters.durations.any', 'Any Duration') },
+    { id: '1-3', name: get('tours.filters.durations.1-3', '1-3 Days') },
+    { id: '4-7', name: get('tours.filters.durations.4-7', '4-7 Days') },
+    { id: '8-14', name: get('tours.filters.durations.8-14', '8-14 Days') },
+    { id: '15+', name: get('tours.filters.durations.15', '15+ Days') }
   ];
 
   // Price ranges
   const priceRanges = [
-    { id: 'all', name: 'Any Price' },
-    { id: 'budget', name: 'Budget ($500-$1000)' },
-    { id: 'standard', name: 'Standard ($1000-$2000)' },
-    { id: 'premium', name: 'Premium ($2000-$4000)' },
-    { id: 'luxury', name: 'Luxury ($4000+)' }
+    { id: 'all', name: get('tours.filters.prices.any', 'Any Price') },
+    { id: 'budget', name: get('tours.filters.prices.budget', 'Budget ($500-$1000)') },
+    { id: 'standard', name: get('tours.filters.prices.standard', 'Standard ($1000-$2000)') },
+    { id: 'premium', name: get('tours.filters.prices.premium', 'Premium ($2000-$4000)') },
+    { id: 'luxury', name: get('tours.filters.prices.luxury', 'Luxury ($4000+)') }
   ];
 
   // Popular destinations in Sri Lanka
@@ -401,7 +409,8 @@ export default function Tours() {
 
   // Handle WhatsApp booking
   const handleWhatsAppBooking = (tour: any) => {
-    const message = `Hello Zamzam Tours! I'm interested in booking the "${tour.name}" tour. Please provide more details and availability.`;
+    const template = get('tours.messages.whatsappTemplate', 'Hello Zamzam Tours! I\'m interested in booking the "{tour}" tour. Please provide more details and availability.');
+    const message = template.replace('{tour}', tour.name);
     const encodedMessage = encodeURIComponent(message);
     window.open(`https://wa.me/94766135110?text=${encodedMessage}`, '_blank');
   };
@@ -415,9 +424,9 @@ export default function Tours() {
   return (
     <>
       <Head>
-        <title>Sri Lanka Tour Packages | Zamzam Tours</title>
-        <meta name="description" content="Discover amazing Sri Lanka tour packages with Zamzam Tours. Cultural, adventure, beach, wildlife, and North East tours with expert guides and best prices." />
-        <meta name="keywords" content="Sri Lanka tours, cultural tours, adventure tours, beach tours, wildlife safari, North East Sri Lanka, tour packages" />
+        <title>{get('tours.pageTitle', 'Sri Lanka Tour Packages | Zamzam Tours')}</title>
+        <meta name="description" content={get('tours.metaDescription', 'Discover amazing Sri Lanka tour packages with Zamzam Tours. Cultural, adventure, beach, wildlife, and North East tours with expert guides and best prices.')} />
+        <meta name="keywords" content={get('tours.metaKeywords', 'Sri Lanka tours, cultural tours, adventure tours, beach tours, wildlife safari, North East Sri Lanka, tour packages')} />
       </Head>
 
       <Navbar />
@@ -499,7 +508,7 @@ export default function Tours() {
                 textShadow: '2px 2px 8px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 0, 0, 0.5)',
                 color: '#ffffff'
               }}>
-                Discover <span style={{ color: '#f8b500' }}>Sri Lanka</span> with Expert Guides
+                {get('tours.hero.title', 'Discover ')}<span style={{ color: '#f8b500' }}>{get('tours.hero.title.highlight', 'Sri Lanka')}</span>{get('tours.hero.title.suffix', ' with Expert Guides')}
               </h1>
             </motion.div>
             
@@ -511,7 +520,7 @@ export default function Tours() {
                 textShadow: '1px 1px 6px rgba(0, 0, 0, 0.9), 0 0 15px rgba(0, 0, 0, 0.6)',
                 color: '#ffffff'
               }}>
-                Curated tour packages showcasing the best of Sri Lankan culture, nature, and adventure
+                {get('tours.hero.subtitle', 'Curated tour packages showcasing the best of Sri Lankan culture, nature, and adventure')}
               </p>
             </motion.div>
             
@@ -522,7 +531,7 @@ export default function Tours() {
               <div className="hero-search">
                 <input
                   type="text"
-                  placeholder="Search tours by name, destination, or activity..."
+                  placeholder={get('tours.hero.searchPlaceholder', 'Search tours by name, destination, or activity...')}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="search-input"
@@ -574,7 +583,7 @@ export default function Tours() {
               fontSize: '14px',
               fontWeight: '500',
               textShadow: '1px 1px 4px rgba(0, 0, 0, 0.8)'
-            }}>Scroll to explore</span>
+            }}>{get('tours.hero.scrollIndicator', 'Scroll to explore')}</span>
             <div className="arrow-down" style={{
               width: '30px',
               height: '30px',
@@ -596,7 +605,7 @@ export default function Tours() {
             <div className="filters-grid">
               {/* Category Filter */}
               <div className="filter-group">
-                <label>Tour Category</label>
+                <label>{get('tours.filters.categoryLabel', 'Tour Category')}</label>
                 <div className="filter-buttons">
                   {categories.map(category => (
                     <button
@@ -612,7 +621,7 @@ export default function Tours() {
 
               {/* Duration Filter */}
               <div className="filter-group">
-                <label>Duration</label>
+                <label>{get('tours.filters.durationLabel', 'Duration')}</label>
                 <select 
                   value={selectedDuration}
                   onChange={(e) => setSelectedDuration(e.target.value)}
@@ -628,7 +637,7 @@ export default function Tours() {
 
               {/* Price Filter */}
               <div className="filter-group">
-                <label>Price Range</label>
+                <label>{get('tours.filters.priceLabel', 'Price Range')}</label>
                 <select 
                   value={selectedPriceRange}
                   onChange={(e) => setSelectedPriceRange(e.target.value)}
@@ -647,14 +656,14 @@ export default function Tours() {
           {/* Tours Grid */}
           <section className="tours-grid-section">
             <div className="section-header">
-              <h2>Featured Tour Packages</h2>
-              <p>Handpicked experiences for every type of traveler</p>
+              <h2>{get('tours.featured.title', 'Featured Tour Packages')}</h2>
+              <p>{get('tours.featured.subtitle', 'Handpicked experiences for every type of traveler')}</p>
             </div>
 
             {loading ? (
               <div className="loading-state">
-                <h3>Loading tour packages...</h3>
-                <p>Please wait while we fetch the best tours for you</p>
+                <h3>{get('tours.loading.title', 'Loading tour packages...')}</h3>
+                <p>{get('tours.loading.subtitle', 'Please wait while we fetch the best tours for you')}</p>
               </div>
             ) : filteredTours.length > 0 ? (
               <div className="tours-grid">
@@ -686,7 +695,7 @@ export default function Tours() {
                       <p className="tour-description">{tour.description}</p>
 
                       <div className="tour-highlights">
-                        <h4>Highlights:</h4>
+                        <h4>{get('tours.card.highlightsTitle', 'Highlights:')}</h4>
                         <ul>
                           {tour.highlights.slice(0, 3).map((highlight, index) => (
                             <li key={index}>✓ {highlight}</li>
@@ -695,27 +704,27 @@ export default function Tours() {
                       </div>
 
                       <div className="tour-includes">
-                        <h4>Includes:</h4>
+                        <h4>{get('tours.card.includesTitle', 'Includes:')}</h4>
                         <p>{tour.includes?.join(', ') || tour.included.join(', ')}</p>
                       </div>
 
                       <div className="tour-footer">
                         <div className="tour-price">
                           <span className="price">${tour.price}</span>
-                          <span className="per-person">per person</span>
+                          <span className="per-person">{get('tours.card.perPerson', 'per person')}</span>
                         </div>
                         <div className="tour-actions">
                           <button 
                             className="btn-secondary"
                             onClick={() => openBookingForm(tour)}
                           >
-                            View Details
+                            {get('tours.card.viewDetails', 'View Details')}
                           </button>
                           <button 
                             className="btn-primary"
                             onClick={() => handleWhatsAppBooking(tour)}
                           >
-                            Book Now
+                            {get('tours.card.bookNow', 'Book Now')}
                           </button>
                         </div>
                       </div>
@@ -725,8 +734,8 @@ export default function Tours() {
               </div>
             ) : (
               <div className="no-results">
-                <h3>No tours found matching your criteria</h3>
-                <p>Try adjusting your filters or search terms</p>
+                <h3>{get('tours.noResults.title', 'No tours found matching your criteria')}</h3>
+                <p>{get('tours.noResults.subtitle', 'Try adjusting your filters or search terms')}</p>
                 <button 
                   className="btn-primary"
                   onClick={() => {
@@ -736,7 +745,7 @@ export default function Tours() {
                     setSearchQuery('');
                   }}
                 >
-                  Reset Filters
+                  {get('tours.noResults.resetFilters', 'Reset Filters')}
                 </button>
               </div>
             )}
@@ -745,8 +754,8 @@ export default function Tours() {
           {/* Popular Destinations */}
           <section className="destinations-section">
             <div className="section-header">
-              <h2>Popular Destinations in Sri Lanka</h2>
-              <p>Explore 20 amazing destinations across the island</p>
+              <h2>{get('tours.destinations.title', 'Popular Destinations in Sri Lanka')}</h2>
+              <p>{get('tours.destinations.subtitle', 'Explore 20 amazing destinations across the island')}</p>
             </div>
 
             <div className="destinations-grid">
@@ -764,7 +773,7 @@ export default function Tours() {
                       <span className="destination-category">{destination.category}</span>
                       <h3>{destination.name}</h3>
                       <p>{destination.description}</p>
-                      <span className="btn-small">Learn More →</span>
+                      <span className="btn-small">{get('tours.destinations.learnMore', 'Learn More →')}</span>
                     </div>
                   </div>
                 </Link>
@@ -775,8 +784,8 @@ export default function Tours() {
           {/* Activities Section */}
           <section className="activities-section">
             <div className="section-header">
-              <h2>Things to Do in Sri Lanka</h2>
-              <p>Experience diverse activities across the island</p>
+              <h2>{get('tours.activities.title', 'Things to Do in Sri Lanka')}</h2>
+              <p>{get('tours.activities.subtitle', 'Experience diverse activities across the island')}</p>
             </div>
 
             <div className="activities-grid">
@@ -790,62 +799,34 @@ export default function Tours() {
                   <h3>{activity.name}</h3>
                   <p>{activity.description}</p>
                   <span className="link-arrow">
-                    Learn More →
+                    {get('tours.activities.learnMore', 'Learn More →')}
                   </span>
                 </Link>
               ))}
             </div>
           </section>
 
-          {/* Special Offers */}
-          <section className="offers-section">
-            <div className="offer-banner">
-              <div className="offer-content">
-                <h2>Special Offer: North East Tour Package</h2>
-                <p>Book our exclusive North East cultural tour and get 15% off with free airport transfer</p>
-                <div className="offer-details">
-                  <span className="original-price">$1250</span>
-                  <span className="discounted-price">$1062</span>
-                  <span className="discount-badge">Save 15%</span>
-                </div>
-                <button 
-                  className="btn-primary"
-                  onClick={() => handleWhatsAppBooking(tours[0])}
-                >
-                  Grab This Offer
-                </button>
-              </div>
-              <div className="offer-image">
-                <Image 
-                  src="/tours/special-offer.jpg" 
-                  alt="Special Offer"
-                  width={400}
-                  height={250}
-                  objectFit="cover"
-                />
-              </div>
-            </div>
-          </section>
+          {/* Special Offers removed per request */}
 
           {/* Cancellation Policy */}
           <section className="policy-section">
             <div className="policy-card">
-              <h2>Flexible Cancellation Policy</h2>
+              <h2>{get('tours.policy.title', 'Flexible Cancellation Policy')}</h2>
               <div className="policy-details">
                 <div className="policy-item">
-                  <h3>✅ 14+ Days Notice</h3>
-                  <p>50% refund of tour cost</p>
+                  <h3>{get('tours.policy.noticeTitle', '✅ 14+ Days Notice')}</h3>
+                  <p>{get('tours.policy.noticeDetail', '50% refund of tour cost')}</p>
                 </div>
                 <div className="policy-item">
-                  <h3>❌ Less than 14 Days</h3>
-                  <p>No refund available</p>
+                  <h3>{get('tours.policy.lessTitle', '❌ Less than 14 Days')}</h3>
+                  <p>{get('tours.policy.lessDetail', 'No refund available')}</p>
                 </div>
                 <div className="policy-item">
-                  <h3>🔄 Rescheduling</h3>
-                  <p>Free rescheduling up to 7 days before tour</p>
+                  <h3>{get('tours.policy.rescheduleTitle', '🔄 Rescheduling')}</h3>
+                  <p>{get('tours.policy.rescheduleDetail', 'Free rescheduling up to 7 days before tour')}</p>
                 </div>
               </div>
-              <p className="policy-note">* Some special tours may have different cancellation policies</p>
+              <p className="policy-note">{get('tours.policy.note', '* Some special tours may have different cancellation policies')}</p>
             </div>
           </section>
         </div>
@@ -862,63 +843,63 @@ export default function Tours() {
               ×
             </button>
             
-            <h2>Book {selectedTour.name}</h2>
+            <h2>{`${get('tours.modal.bookPrefix', 'Book')} ${selectedTour.name}`}</h2>
             
             <div className="tour-summary">
               <div className="summary-item">
-                <span>Duration:</span>
+                <span>{get('tours.modal.summary.duration', 'Duration:')}</span>
                 <span>{selectedTour.duration}</span>
               </div>
               <div className="summary-item">
-                <span>Price:</span>
-                <span>${selectedTour.price} per person</span>
+                <span>{get('tours.modal.summary.price', 'Price:')}</span>
+                <span>{`${selectedTour.price} ${get('tours.modal.summary.perPerson', 'per person')}`}</span>
               </div>
               <div className="summary-item">
-                <span>Difficulty:</span>
+                <span>{get('tours.modal.summary.difficulty', 'Difficulty:')}</span>
                 <span>{selectedTour.difficulty}</span>
               </div>
               <div className="summary-item">
-                <span>Best Season:</span>
+                <span>{get('tours.modal.summary.season', 'Best Season:')}</span>
                 <span>{selectedTour.season}</span>
               </div>
             </div>
 
             <form className="booking-form">
               <div className="form-group">
-                <label>Full Name *</label>
+                <label>{get('tours.form.label.fullName', 'Full Name *')}</label>
                 <input type="text" required />
               </div>
               
               <div className="form-row">
                 <div className="form-group">
-                  <label>Email *</label>
+                  <label>{get('tours.form.label.email', 'Email *')}</label>
                   <input type="email" required />
                 </div>
                 <div className="form-group">
-                  <label>Phone *</label>
+                  <label>{get('tours.form.label.phone', 'Phone *')}</label>
                   <input type="tel" required />
                 </div>
               </div>
 
               <div className="form-row">
                 <div className="form-group">
-                  <label>Number of Travelers *</label>
+                  <label>{get('tours.form.label.travelers', 'Number of Travelers *')}</label>
                   <select required>
-                    <option value="">Select</option>
+                    <option value="">{get('tours.form.select.placeholder', 'Select')}</option>
                     {[1,2,3,4,5,6,7,8,9,10].map(num => (
-                      <option key={num} value={num}>{num} {num === 1 ? 'person' : 'people'}</option>
+                      <option key={num} value={num}>{num} {num === 1 ? get('tours.form.person', 'person') : get('tours.form.people', 'people')}</option>
                     ))}
                   </select>
                 </div>
                 <div className="form-group">
-                  <label>Preferred Start Date *</label>
+                  <label>{get('tours.form.label.startDate', 'Preferred Start Date *')}</label>
                   <input type="date" required />
                 </div>
               </div>
 
               <div className="form-group">
-                <label>Special Requirements</label>
-                <textarea rows={3} placeholder="Dietary restrictions, accessibility needs, etc."></textarea>
+                <label>{get('tours.form.label.requirements', 'Special Requirements')}</label>
+                <textarea rows={3} placeholder={get('tours.form.placeholder.requirements', 'Dietary restrictions, accessibility needs, etc.')}></textarea>
               </div>
 
               <div className="form-actions">
@@ -927,14 +908,14 @@ export default function Tours() {
                   className="btn-secondary"
                   onClick={() => setShowBookingForm(false)}
                 >
-                  Cancel
+                  {get('tours.form.actions.cancel', 'Cancel')}
                 </button>
                 <button 
                   type="button"
                   className="btn-primary"
                   onClick={() => handleWhatsAppBooking(selectedTour)}
                 >
-                  Proceed to WhatsApp Booking
+                  {get('tours.form.actions.proceedWhatsApp', 'Proceed to WhatsApp Booking')}
                 </button>
               </div>
             </form>
@@ -1412,7 +1393,7 @@ export default function Tours() {
 
         /* Activities Section */
         .activities-section {
-          margin-bottom: 4rem;
+          margin-bottom: 0 rem;
         }
 
         .activities-grid {
@@ -1462,68 +1443,13 @@ export default function Tours() {
           color: var(--primary-light);
         }
 
-        /* Offers Section */
-        .offers-section {
-          margin-bottom: 4rem;
-        }
+       
 
-        .offer-banner {
-          background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
-          border-radius: 15px;
-          padding: 3rem;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          color: white;
-        }
-
-        .offer-content {
-          flex: 1;
-          max-width: 500px;
-        }
-
-        .offer-content h2 {
-          font-size: 2rem;
-          margin-bottom: 1rem;
-        }
-
-        .offer-content p {
-          margin-bottom: 1.5rem;
-          opacity: 0.9;
-        }
-
-        .offer-details {
-          display: flex;
-          align-items: center;
-          gap: 1rem;
-          margin-bottom: 2rem;
-        }
-
-        .original-price {
-          text-decoration: line-through;
-          opacity: 0.7;
-        }
-
-        .discounted-price {
-          font-size: 1.5rem;
-          font-weight: 700;
-        }
-
-        .discount-badge {
-          background: var(--secondary-color);
-          color: var(--text-color);
-          padding: 5px 10px;
-          border-radius: 15px;
-          font-weight: 600;
-        }
-
-        .offer-image {
-          flex: 0 0 300px;
-        }
+       
 
         /* Policy Section */
         .policy-section {
-          margin-bottom: 4rem;
+          margin-bottom: 0 rem;
         }
 
         .policy-card {

@@ -4,6 +4,7 @@ import Head from 'next/head';
 import Image from 'next/image';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
+import useTranslation from '../../src/i18n/useTranslation';
 
 export default function Contact() {
   const [activeTab, setActiveTab] = useState('general');
@@ -18,91 +19,91 @@ export default function Contact() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState(null);
-  const mapRef = useRef(null);
+  const { t } = useTranslation();
 
   // Contact methods
   const contactMethods = [
     {
       icon: '📞',
-      title: 'Phone Call',
-      description: 'Speak directly with our travel experts',
-      details: '+94 77 123 4567',
+      title: t('contact.methods.phone.title'),
+      description: t('contact.methods.phone.description'),
+      details: t('contact.methods.phone.details'),
       action: 'call',
-      availability: '24/7 Support'
+      availability: t('contact.badge.phone')
     },
     {
-      icon: '💬',
-      title: 'WhatsApp',
-      description: 'Quick responses and easy communication',
-      details: '+94 77 123 4567',
+      icon: (<span className="svg-icon"><Image src="/whatsapp-icon.svg" alt="WhatsApp" width={74} height={74} /></span>),
+      title: t('contact.methods.whatsapp.title'),
+      description: t('contact.methods.whatsapp.description'),
+      details: t('contact.methods.whatsapp.details'),
       action: 'whatsapp',
-      availability: 'Instant Replies'
+      availability: t('contact.badge.whatsapp')
     },
     {
       icon: '📧',
-      title: 'Email',
-      description: 'Detailed inquiries and documentation',
-      details: 'info@zamzamtours.com',
+      title: t('contact.methods.email.title'),
+      description: t('contact.methods.email.description'),
+      details: t('contact.methods.email.details'),
       action: 'email',
-      availability: 'Within 2 hours'
+      availability: t('contact.badge.response')
     },
     {
       icon: '📍',
-      title: 'Visit Us',
-      description: 'Meet us at our main office',
-      details: '123 Galle Road, Colombo 03, Sri Lanka',
+      title: t('contact.methods.visit.title'),
+      description: t('contact.methods.visit.description'),
+      details: t('contact.methods.visit.details'),
       action: 'visit',
-      availability: 'Mon-Sun: 8:00 AM - 8:00 PM'
+      availability: t('contact.methods.visit.details')
     }
   ];
 
   // Service types for inquiry
   const serviceTypes = [
-    { value: 'general-inquiry', label: 'General Inquiry' },
-    { value: 'tour-booking', label: 'Tour Package Booking' },
-    { value: 'hotel-booking', label: 'Hotel Reservation' },
-    { value: 'car-rental', label: 'Vehicle Rental' },
-    { value: 'airport-transfer', label: 'Airport Transfer' },
-    { value: 'custom-package', label: 'Custom Package Request' },
-    { value: 'group-booking', label: 'Group Booking' },
-    { value: 'complaint', label: 'Complaint' },
-    { value: 'partnership', label: 'Partnership Inquiry' }
+    { value: 'general-inquiry', label: t('contact.service.general-inquiry') },
+    { value: 'tour-booking', label: t('contact.service.tour-booking') },
+    { value: 'hotel-booking', label: t('contact.service.hotel-booking') },
+    { value: 'car-rental', label: t('contact.service.car-rental') },
+    { value: 'airport-transfer', label: t('contact.service.airport-transfer') },
+    { value: 'custom-package', label: t('contact.service.custom-package') },
+    { value: 'group-booking', label: t('contact.service.group-booking') },
+    { value: 'complaint', label: t('contact.service.complaint') },
+    { value: 'partnership', label: t('contact.service.partnership') }
   ];
 
   // Urgency levels
   const urgencyLevels = [
-    { value: 'low', label: 'Low - Planning Phase', color: 'green' },
-    { value: 'normal', label: 'Normal - Ready to Book', color: 'blue' },
-    { value: 'high', label: 'High - Urgent Booking', color: 'orange' },
-    { value: 'emergency', label: 'Emergency - Immediate Assistance', color: 'red' }
+    { value: 'low', label: t('contact.urgency.low'), color: 'green' },
+    { value: 'normal', label: t('contact.urgency.normal'), color: 'blue' },
+    { value: 'high', label: t('contact.urgency.high'), color: 'orange' },
+    { value: 'emergency', label: t('contact.urgency.emergency'), color: 'red' }
   ];
 
   // Office locations
   const officeLocations = [
     {
-      name: 'Main Office - Colombo',
-      address: '123 Galle Road, Colombo 03, Sri Lanka',
-      phone: '+94 77 123 4567',
-      email: 'colombo@zamzamtours.com',
-      hours: 'Mon-Sun: 8:00 AM - 8:00 PM',
+      name: t('contact.locations.office1.name'),
+      address: t('contact.locations.office1.address'),
+      phone: t('contact.locations.office1.phone'),
+      email: t('contact.locations.office1.email'),
+      hours: t('contact.locations.office1.hours'),
       coordinates: { lat: 6.9271, lng: 79.8612 },
       image: '/contact/colombo-office.jpg'
     },
     {
-      name: 'Airport Counter - CMB',
-      address: 'Arrival Hall, Bandaranaike International Airport, Katunayake',
-      phone: '+94 77 123 4568',
-      email: 'airport@zamzamtours.com',
-      hours: '24/7 Operation',
+      name: t('contact.locations.office2.name'),
+      address: t('contact.locations.office2.address'),
+      phone: t('contact.locations.office2.phone'),
+      email: t('contact.locations.office2.email'),
+      hours: t('contact.locations.office2.hours'),
       coordinates: { lat: 7.1805, lng: 79.8841 },
       image: '/contact/airport-counter.jpg'
     },
     {
-      name: 'Kandy City Office',
-      address: '45 Dalada Veediya, Kandy, Sri Lanka',
-      phone: '+94 77 123 4569',
-      email: 'kandy@zamzamtours.com',
-      hours: 'Mon-Sat: 8:00 AM - 6:00 PM',
+      name: t('contact.locations.office3.name'),
+      address: t('contact.locations.office3.address'),
+      phone: t('contact.locations.office3.phone'),
+      email: t('contact.locations.office3.email'),
+      hours: t('contact.locations.office3.hours'),
       coordinates: { lat: 7.2906, lng: 80.6337 },
       image: '/contact/kandy-office.jpg'
     }
@@ -111,24 +112,24 @@ export default function Contact() {
   // FAQ items
   const faqItems = [
     {
-      question: 'What is your response time for inquiries?',
-      answer: 'We respond to all inquiries within 2 hours during business hours. WhatsApp messages are answered instantly, and emails are replied within 2 hours.'
+      question: t('contact.faq.q1.question'),
+      answer: t('contact.faq.q1.answer')
     },
     {
-      question: 'Do you provide 24/7 customer support?',
-      answer: 'Yes! Our main phone line and WhatsApp are available 24/7 for urgent matters, especially for existing bookings and airport transfers.'
+      question: t('contact.faq.q2.question'),
+      answer: t('contact.faq.q2.answer')
     },
     {
-      question: 'What information should I provide when contacting?',
-      answer: 'Please include your travel dates, number of travelers, preferred destinations, and any specific requirements. This helps us provide accurate recommendations quickly.'
+      question: t('contact.faq.q3.question'),
+      answer: t('contact.faq.q3.answer')
     },
     {
-      question: 'Can I modify my booking after confirmation?',
-      answer: 'Yes, modifications are possible based on availability. Contact us immediately for any changes. Please refer to our cancellation policy for details.'
+      question: t('contact.faq.q4.question'),
+      answer: t('contact.faq.q4.answer')
     },
     {
-      question: 'Do you have English-speaking staff?',
-      answer: 'All our staff are fluent in English. We also have team members who speak French, German, and Chinese to assist international travelers.'
+      question: t('contact.faq.q5.question'),
+      answer: t('contact.faq.q5.answer')
     }
   ];
 
@@ -209,61 +210,57 @@ Please respond promptly.
     }
   };
 
-  // Initialize map (simplified version)
-  useEffect(() => {
-    // In a real implementation, you would initialize Google Maps or similar here
-    console.log('Map would be initialized here');
-  }, []);
+  // map initialization removed (interactive map section was removed)
 
   return (
     <>
       <Head>
-        <title>Contact Zamzam Tours | 24/7 Support in Sri Lanka</title>
-        <meta name="description" content="Get in touch with Zamzam Tours. Multiple contact methods including phone, WhatsApp, email, and office locations across Sri Lanka." />
+        <title>{t('contact.pageTitle')}</title>
+        <meta name="description" content={t('contact.metaDescription')} />
       </Head>
 
-      <Navbar />
+  <Navbar />
 
-      {/* Hero Section */}
-      <section className="contact-hero" style={{ marginTop: '80px' }}>
+      {/* Hero Section - use shared hero styles for consistency */}
+      <section className="hero contact-hero">
         <div className="hero-background">
           <Image 
             src="/contact/contact-hero.jpg" 
-            alt="Contact Zamzam Tours" 
+            alt={t('contact.hero.alt')}
             layout="fill"
             objectFit="cover"
             priority
           />
           <div className="hero-overlay"></div>
         </div>
-        
+
         <div className="hero-content">
-          <h1>We're Here to Help Your Sri Lankan Adventure</h1>
-          <p>Multiple ways to reach us, 24/7 support for your convenience</p>
-          
-          <div className="hero-contact-badges">
+          <h1 className="hero-title">{t('contact.hero.title')}</h1>
+          <p className="hero-subtitle">{t('contact.hero.subtitle')}</p>
+
+          <div className="hero-buttons" style={{ marginTop: '1.25rem' }}>
             <div className="contact-badge">
               <span className="badge-icon">📞</span>
-              <span className="badge-text">24/7 Phone Support</span>
+              <span className="badge-text">{t('contact.badge.phone')}</span>
             </div>
             <div className="contact-badge">
-              <span className="badge-icon">💬</span>
-              <span className="badge-text">Instant WhatsApp</span>
+              <span className="badge-icon svg-icon"><Image src="/whatsapp-icon.svg" alt="WhatsApp" width={24} height={24} /></span>
+              <span className="badge-text">{t('contact.badge.whatsapp')}</span>
             </div>
             <div className="contact-badge">
               <span className="badge-icon">⏱️</span>
-              <span className="badge-text">2-Hour Response</span>
+              <span className="badge-text">{t('contact.badge.response')}</span>
+            </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
       {/* Quick Contact Methods */}
       <section className="quick-contact">
         <div className="container">
-          <div className="section-header">
-            <h2>Choose Your Preferred Contact Method</h2>
-            <p>We're available through multiple channels for your convenience</p>
+          <div className="section-header centered">
+            <h2 className="section-title">{t('contact.section.chooseMethod.title')}</h2>
+            <p className="section-subtitle">{t('contact.section.chooseMethod.subtitle')}</p>
           </div>
 
           <div className="contact-methods-grid">
@@ -280,10 +277,7 @@ Please respond promptly.
                   className="method-action-btn"
                   onClick={() => handleContactAction(method)}
                 >
-                  {method.action === 'call' && 'Call Now'}
-                  {method.action === 'whatsapp' && 'Message on WhatsApp'}
-                  {method.action === 'email' && 'Send Email'}
-                  {method.action === 'visit' && 'Get Directions'}
+                  {t(`contact.action.${method.action}`)}
                 </button>
               </div>
             ))}
@@ -296,8 +290,8 @@ Please respond promptly.
         <div className="container">
           <div className="form-container">
             <div className="form-header">
-              <h2>Send Us a Detailed Message</h2>
-              <p>Fill out the form below and we'll get back to you promptly</p>
+              <h2>{t('contact.form.title')}</h2>
+              <p>{t('contact.form.subtitle')}</p>
             </div>
 
             <div className="inquiry-tabs">
@@ -305,26 +299,26 @@ Please respond promptly.
                 className={`tab ${activeTab === 'general' ? 'active' : ''}`}
                 onClick={() => setActiveTab('general')}
               >
-                General Inquiry
+                {t('contact.form.tab.general')}
               </button>
               <button 
                 className={`tab ${activeTab === 'booking' ? 'active' : ''}`}
                 onClick={() => setActiveTab('booking')}
               >
-                Booking Request
+                {t('contact.form.tab.booking')}
               </button>
               <button 
                 className={`tab ${activeTab === 'urgent' ? 'active' : ''}`}
                 onClick={() => setActiveTab('urgent')}
               >
-                Urgent Assistance
+                {t('contact.form.tab.urgent')}
               </button>
             </div>
 
             <form onSubmit={handleSubmit} className="contact-form">
               <div className="form-row">
                 <div className="form-group">
-                  <label htmlFor="name">Full Name *</label>
+                  <label htmlFor="name">{t('contact.form.label.name')}</label>
                   <input
                     type="text"
                     id="name"
@@ -332,11 +326,11 @@ Please respond promptly.
                     value={formData.name}
                     onChange={handleInputChange}
                     required
-                    placeholder="Enter your full name"
+                    placeholder={t('contact.form.label.name')}
                   />
                 </div>
                 <div className="form-group">
-                  <label htmlFor="email">Email Address *</label>
+                  <label htmlFor="email">{t('contact.form.label.email')}</label>
                   <input
                     type="email"
                     id="email"
@@ -344,25 +338,25 @@ Please respond promptly.
                     value={formData.email}
                     onChange={handleInputChange}
                     required
-                    placeholder="your@email.com"
+                    placeholder={t('contact.form.label.email')}
                   />
                 </div>
               </div>
 
               <div className="form-row">
                 <div className="form-group">
-                  <label htmlFor="phone">Phone Number</label>
+                  <label htmlFor="phone">{t('contact.form.label.phone')}</label>
                   <input
                     type="tel"
                     id="phone"
                     name="phone"
                     value={formData.phone}
                     onChange={handleInputChange}
-                    placeholder="+94 77 123 4567"
+                      placeholder={t('contact.form.label.phone')}
                   />
                 </div>
                 <div className="form-group">
-                  <label htmlFor="serviceType">Service Type *</label>
+                    <label htmlFor="serviceType">{t('contact.form.label.serviceType')}</label>
                   <select
                     id="serviceType"
                     name="serviceType"
@@ -381,7 +375,7 @@ Please respond promptly.
 
               <div className="form-row">
                 <div className="form-group">
-                  <label htmlFor="urgency">Urgency Level</label>
+                  <label htmlFor="urgency">{t('contact.form.label.urgency')}</label>
                   <select
                     id="urgency"
                     name="urgency"
@@ -396,7 +390,7 @@ Please respond promptly.
                   </select>
                 </div>
                 <div className="form-group">
-                  <label htmlFor="subject">Subject *</label>
+                    <label htmlFor="subject">{t('contact.form.label.subject')}</label>
                   <input
                     type="text"
                     id="subject"
@@ -404,13 +398,13 @@ Please respond promptly.
                     value={formData.subject}
                     onChange={handleInputChange}
                     required
-                    placeholder="Brief subject of your inquiry"
+                      placeholder={t('contact.form.label.subject')}
                   />
                 </div>
               </div>
 
               <div className="form-group full-width">
-                <label htmlFor="message">Your Message *</label>
+                <label htmlFor="message">{t('contact.form.label.message')}</label>
                 <textarea
                   id="message"
                   name="message"
@@ -418,19 +412,19 @@ Please respond promptly.
                   onChange={handleInputChange}
                   required
                   rows={6}
-                  placeholder="Please provide details about your inquiry, including travel dates, number of travelers, preferred destinations, and any specific requirements..."
+                  placeholder={t('contact.form.label.message')}
                 ></textarea>
               </div>
 
               {submitStatus === 'success' && (
                 <div className="form-message success">
-                  ✅ Thank you! Your message has been sent. We'll contact you shortly.
+                  {t('contact.form.success')}
                 </div>
               )}
 
               {submitStatus === 'error' && (
                 <div className="form-message error">
-                  ❌ There was an error sending your message. Please try again or contact us directly.
+                  {t('contact.form.error')}
                 </div>
               )}
 
@@ -443,10 +437,10 @@ Please respond promptly.
                   {isSubmitting ? (
                     <>
                       <span className="spinner"></span>
-                      Sending...
+                      {t('contact.form.submit')}
                     </>
                   ) : (
-                    'Send Message via WhatsApp'
+                    t('contact.form.submit')
                   )}
                 </button>
                 
@@ -458,7 +452,7 @@ Please respond promptly.
                     window.open(`https://wa.me/94766135110?text=${encodeURIComponent(message)}`, '_blank');
                   }}
                 >
-                  Quick WhatsApp Chat
+                  {t('contact.form.quickChat')}
                 </button>
               </div>
             </form>
@@ -469,9 +463,9 @@ Please respond promptly.
       {/* Office Locations */}
       <section className="locations-section" id="locations">
         <div className="container">
-          <div className="section-header">
-            <h2>Our Office Locations</h2>
-            <p>Visit us at any of our conveniently located offices across Sri Lanka</p>
+          <div className="section-header centered">
+            <h2 className="section-title">{t('contact.locations.title')}</h2>
+            <p className="section-subtitle">{t('contact.locations.subtitle')}</p>
           </div>
 
           <div className="locations-grid">
@@ -506,20 +500,20 @@ Please respond promptly.
                       <span className="text">{office.hours}</span>
                     </div>
                   </div>
-                  <div className="location-actions">
-                    <button 
-                      className="btn-small"
-                      onClick={() => window.open(`tel:${office.phone}`)}
-                    >
-                      Call Office
-                    </button>
-                    <button 
-                      className="btn-small secondary"
-                      onClick={() => window.open(`https://maps.google.com/?q=${encodeURIComponent(office.address)}`, '_blank')}
-                    >
-                      Get Directions
-                    </button>
-                  </div>
+                        <div className="location-actions">
+                          <button 
+                            className="btn-small"
+                            onClick={() => window.open(`tel:${office.phone}`)}
+                          >
+                            {t('contact.action.call')}
+                          </button>
+                          <button 
+                            className="btn-small secondary"
+                            onClick={() => window.open(`https://maps.google.com/?q=${encodeURIComponent(office.address)}`, '_blank')}
+                          >
+                            {t('contact.action.visit')}
+                          </button>
+                        </div>
                 </div>
               </div>
             ))}
@@ -527,47 +521,14 @@ Please respond promptly.
         </div>
       </section>
 
-      {/* Interactive Map Section */}
-      <section className="map-section">
-        <div className="container">
-          <div className="map-container">
-            <div className="map-header">
-              <h2>Find Us on the Map</h2>
-              <p>Interactive map showing all our office locations across Sri Lanka</p>
-            </div>
-            <div className="map-placeholder" ref={mapRef}>
-              <div className="map-fallback">
-                <div className="fallback-content">
-                  <span className="map-icon">🗺️</span>
-                  <h3>Interactive Map</h3>
-                  <p>Our offices are strategically located for your convenience</p>
-                  <div className="map-locations-list">
-                    {officeLocations.map((office, index) => (
-                      <div key={index} className="map-location-item">
-                        <span className="location-marker">{index + 1}</span>
-                        <span className="location-name">{office.name}</span>
-                      </div>
-                    ))}
-                  </div>
-                  <button 
-                    className="btn-primary"
-                    onClick={() => window.open('https://maps.google.com/maps?q=Zamzam+Tours+Colombo+Sri+Lanka', '_blank')}
-                  >
-                    Open in Google Maps
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Interactive Map removed per request */}
 
       {/* FAQ Section */}
       <section className="faq-section">
         <div className="container">
-          <div className="section-header">
-            <h2>Frequently Asked Questions</h2>
-            <p>Quick answers to common questions about contacting us</p>
+          <div className="section-header centered">
+            <h2 className="section-title">{t('contact.faq.title')}</h2>
+            <p className="section-subtitle">{t('contact.faq.subtitle')}</p>
           </div>
 
           <div className="faq-grid">
@@ -588,8 +549,8 @@ Please respond promptly.
             <div className="emergency-info">
               <div className="emergency-icon">🚨</div>
               <div className="emergency-text">
-                <h3>24/7 Emergency Support</h3>
-                <p>Urgent assistance for existing bookings and emergencies</p>
+                <h3>{t('contact.emergency.title')}</h3>
+                <p>{t('contact.emergency.subtitle')}</p>
               </div>
             </div>
             <div className="emergency-actions">
@@ -597,7 +558,7 @@ Please respond promptly.
                 className="btn-primary"
                 onClick={() => window.open('tel:+94766135110')}
               >
-                Emergency Call
+                {t('contact.emergency.call')}
               </button>
               <button 
                 className="btn-secondary"
@@ -606,7 +567,7 @@ Please respond promptly.
                   window.open(`https://wa.me/94766135110?text=${encodeURIComponent(message)}`, '_blank');
                 }}
               >
-                Emergency WhatsApp
+                {t('contact.emergency.whatsapp')}
               </button>
             </div>
           </div>
@@ -651,17 +612,7 @@ Please respond promptly.
           z-index: 1;
         }
 
-        .hero-content h1 {
-          font-size: 3rem;
-          margin-bottom: 1.5rem;
-          font-weight: 700;
-        }
-
-        .hero-content p {
-          font-size: 1.3rem;
-          margin-bottom: 2.5rem;
-          opacity: 0.9;
-        }
+        /* Use global .hero-title and .hero-subtitle from styles/home.css so hero matches other pages */
 
         .hero-contact-badges {
           display: flex;
@@ -683,10 +634,42 @@ Please respond promptly.
 
         .badge-icon {
           font-size: 1.5rem;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
         }
 
         .badge-text {
           font-weight: 600;
+        }
+
+        /* Ensure SVG icons match emoji sizing */
+        .svg-icon img {
+          width: 1.5rem !important;
+          height: 1.5rem !important;
+          display: inline-block;
+          vertical-align: middle;
+          object-fit: contain;
+        }
+
+        /* Section header (homepage-like) */
+        .section-header.centered {
+          text-align: center;
+          max-width: 900px;
+          margin: 0 auto 1.5rem;
+        }
+
+        .section-title {
+          font-size: 2rem;
+          margin-bottom: 0.5rem;
+          color: var(--primary-color);
+          font-weight: 400; /* not bold */
+        }
+
+        .section-subtitle {
+          color: var(--text-light);
+          margin-bottom: 1.5rem;
+          font-size: 1.05rem;
         }
 
         /* Quick Contact Methods */
@@ -718,6 +701,17 @@ Please respond promptly.
         .method-icon {
           font-size: 3rem;
           margin-bottom: 1.5rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .method-icon .svg-icon img {
+          width: 3rem !important;
+          height: 3rem !important;
+          display: inline-block;
+          vertical-align: middle;
+          object-fit: contain;
         }
 
         .contact-method-card h3 {
@@ -754,18 +748,19 @@ Please respond promptly.
         .method-action-btn {
           width: 100%;
           padding: 12px 20px;
-          background: var(--primary-color);
-          color: white;
+          background: var(--secondary-color); /* gold */
+          color: #000;
           border: none;
-          border-radius: 8px;
-          font-weight: 600;
+          border-radius: 10px;
+          font-weight: 700;
           cursor: pointer;
-          transition: all 0.3s ease;
+          box-shadow: 0 8px 20px rgba(248,181,0,0.18);
+          transition: transform 0.18s ease, box-shadow 0.18s ease;
         }
 
         .method-action-btn:hover {
-          background: var(--primary-light);
-          transform: translateY(-2px);
+          transform: translateY(-3px);
+          box-shadow: 0 12px 30px rgba(248,181,0,0.24);
         }
 
         /* Contact Form Section */
@@ -992,118 +987,60 @@ Please respond promptly.
         .btn-small {
           padding: 8px 16px;
           border: none;
-          border-radius: 6px;
-          font-size: 0.9rem;
-          font-weight: 600;
+          border-radius: 8px;
+          font-size: 0.95rem;
+          font-weight: 700;
           cursor: pointer;
-          transition: all 0.3s ease;
+          transition: transform 0.18s ease, box-shadow 0.18s ease;
           flex: 1;
+          box-shadow: 0 6px 18px rgba(0,0,0,0.06);
         }
 
         .btn-small:not(.secondary) {
-          background: var(--primary-color);
+          background: var(--primary-color); /* green */
           color: white;
         }
 
         .btn-small.secondary {
-          background: var(--section-bg);
-          color: var(--primary-color);
-          border: 1px solid var(--border-color);
+          background: var(--secondary-color); /* gold */
+          color: #000;
+          border: none;
         }
 
         .btn-small:hover {
-          transform: translateY(-2px);
+          transform: translateY(-3px);
         }
 
-        /* Map Section */
-        .map-section {
-          padding: 5rem 0;
+        /* Local button color theme for this page: primary = gold, secondary = green outline */
+        .btn-primary {
+          background: var(--secondary-color);
+          color: #000;
+          border: none;
+          padding: 12px 20px;
+          border-radius: 12px;
+          font-weight: 700;
+          box-shadow: 0 10px 30px rgba(248,181,0,0.18);
         }
 
-        .map-container {
-          background: white;
-          border-radius: 15px;
-          overflow: hidden;
-          box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        .btn-primary:hover {
+          transform: translateY(-3px);
+          box-shadow: 0 16px 40px rgba(248,181,0,0.22);
         }
 
-        .map-header {
-          padding: 2rem;
-          text-align: center;
-          background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
-          color: white;
-        }
-
-        .map-header h2 {
-          margin-bottom: 0.5rem;
-        }
-
-        .map-placeholder {
-          height: 400px;
-          background: var(--section-bg);
-        }
-
-        .map-fallback {
-          height: 100%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-
-        .fallback-content {
-          text-align: center;
-          max-width: 400px;
-        }
-
-        .map-icon {
-          font-size: 4rem;
-          margin-bottom: 1rem;
-        }
-
-        .fallback-content h3 {
+        .btn-secondary {
+          background: transparent;
           color: var(--primary-color);
-          margin-bottom: 1rem;
+          border: 2px solid var(--primary-color);
+          padding: 10px 18px;
+          border-radius: 12px;
+          font-weight: 700;
         }
 
-        .fallback-content p {
-          color: var(--text-light);
-          margin-bottom: 2rem;
+        .btn-secondary:hover {
+          background: rgba(5,59,60,0.06);
         }
 
-        .map-locations-list {
-          display: flex;
-          flex-direction: column;
-          gap: 1rem;
-          margin-bottom: 2rem;
-        }
-
-        .map-location-item {
-          display: flex;
-          align-items: center;
-          gap: 1rem;
-          padding: 0.8rem;
-          background: white;
-          border-radius: 8px;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        .location-marker {
-          width: 30px;
-          height: 30px;
-          background: var(--primary-color);
-          color: white;
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-weight: 600;
-          font-size: 0.9rem;
-        }
-
-        .location-name {
-          font-weight: 600;
-          color: var(--primary-color);
-        }
+        /* Map section removed */
 
         /* FAQ Section */
         .faq-section {

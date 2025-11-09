@@ -4,6 +4,7 @@ import Head from 'next/head';
 import Image from 'next/image';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
+import useTranslation from '../../src/i18n/useTranslation'
 
 export default function SimpleGallery() {
   const [selectedImage, setSelectedImage] = useState(null);
@@ -12,6 +13,12 @@ export default function SimpleGallery() {
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
   const galleryRef = useRef(null);
+  const { t } = useTranslation()
+
+  const get = (key: string, fallback: string) => {
+    const val = t(key)
+    return val === key ? fallback : val
+  }
 
   // Simple gallery images data
   // Use Cloudinary-hosted images (these assets exist in the repo's sample data)
@@ -107,8 +114,8 @@ export default function SimpleGallery() {
   return (
     <>
       <Head>
-        <title>Photo Gallery | Beautiful Sri Lanka | Zamzam Tours</title>
-        <meta name="description" content="Explore stunning photos of Sri Lanka's landscapes, wildlife, and cultural heritage through Zamzam Tours' visual journey." />
+        <title>{t('gallery.pageTitle')}</title>
+        <meta name="description" content={t('gallery.metaDescription')} />
       </Head>
 
   <Navbar />
@@ -116,10 +123,10 @@ export default function SimpleGallery() {
       {/* Hero Section */}
       <section className="gallery-hero">
         <div className="hero-content">
-          <h1>Visual Journey Through Sri Lanka</h1>
-          <p>Discover the beauty of paradise island through our lens</p>
+          <h1>{t('gallery.hero.title')}</h1>
+          <p>{t('gallery.hero.subtitle')}</p>
           <div className="scroll-indicator">
-            <span>Scroll to Explore</span>
+            <span>{t('gallery.hero.scroll')}</span>
             <div className="arrow">↓</div>
           </div>
         </div>
@@ -131,15 +138,15 @@ export default function SimpleGallery() {
           <div className="gallery-stats">
             <div className="stat">
               <span className="number">{galleryImages.length}</span>
-              <span className="label">Stunning Photos</span>
+              <span className="label">{t('gallery.stats.photosLabel')}</span>
             </div>
             <div className="stat">
               <span className="number">12</span>
-              <span className="label">Unique Locations</span>
+              <span className="label">{t('gallery.stats.locationsLabel')}</span>
             </div>
             <div className="stat">
               <span className="number">100+</span>
-              <span className="label">Happy Travelers</span>
+              <span className="label">{t('gallery.stats.travelersLabel')}</span>
             </div>
           </div>
 
@@ -167,7 +174,7 @@ export default function SimpleGallery() {
                       <p>{image.location}</p>
                     </div>
                     <div className="view-button">
-                      <span>👁️ View</span>
+                      <span>{t('gallery.view')}</span>
                     </div>
                   </div>
                 </div>
@@ -181,16 +188,16 @@ export default function SimpleGallery() {
       <section className="gallery-cta">
         <div className="container">
           <div className="cta-content">
-            <h2>Ready to Create Your Own Memories?</h2>
-            <p>Let us help you experience these beautiful locations firsthand</p>
+            <h2>{t('gallery.cta.title')}</h2>
+            <p>{t('gallery.cta.subtitle')}</p>
             <button 
               className="cta-button"
               onClick={() => {
-                const message = "Hello Zamzam Tours! I saw your beautiful gallery and would like to plan a trip to Sri Lanka.";
+                const message = get('gallery.cta.waMessage', "Hello ZamZam Tours! I saw your beautiful gallery and would like to plan a trip to Sri Lanka.");
                 window.open(`https://wa.me/94771234567?text=${encodeURIComponent(message)}`, '_blank');
               }}
             >
-              Start Your Journey
+              {t('gallery.cta.button')}
             </button>
           </div>
         </div>

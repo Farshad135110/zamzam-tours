@@ -7,6 +7,7 @@ import { motion } from 'framer-motion';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import { fadeInUp } from '../../src/utils/animations';
+import useTranslation from '../../src/i18n/useTranslation'
 
 export default function Hotels() {
   // Video hero refs
@@ -44,6 +45,13 @@ export default function Hotels() {
   });
   const [selectedAdditionalServices, setSelectedAdditionalServices] = useState<string[]>([]);
 
+  const { t } = useTranslation()
+
+  const get = (key: string, fallback: string) => {
+    const val = t(key)
+    return val === key ? fallback : val
+  }
+
   // Hotel locations - All Sri Lankan Districts
   const locations = [
     { id: 'all', name: 'All Sri Lanka' },
@@ -76,14 +84,14 @@ export default function Hotels() {
 
   // Amenities filter
   const amenitiesList = [
-    { id: 'pool', name: 'Swimming Pool' },
-    { id: 'spa', name: 'Spa' },
-    { id: 'gym', name: 'Gym' },
-    { id: 'wifi', name: 'Free WiFi' },
-    { id: 'breakfast', name: 'Breakfast Included' },
-    { id: 'beach', name: 'Beach Access' },
-    { id: 'restaurant', name: 'Restaurant' },
-    { id: 'bar', name: 'Bar' }
+    { id: 'pool', name: get('hotels.amenities.pool', 'Swimming Pool') },
+    { id: 'spa', name: get('hotels.amenities.spa', 'Spa') },
+    { id: 'gym', name: get('hotels.amenities.gym', 'Gym') },
+    { id: 'wifi', name: get('hotels.amenities.wifi', 'Free WiFi') },
+    { id: 'breakfast', name: get('hotels.amenities.breakfast', 'Breakfast Included') },
+    { id: 'beach', name: get('hotels.amenities.beach', 'Beach Access') },
+    { id: 'restaurant', name: get('hotels.amenities.restaurant', 'Restaurant') },
+    { id: 'bar', name: get('hotels.amenities.bar', 'Bar') }
   ];
 
   // Sample hotels data (fallback) - kept as a local fallback if API is unreachable
@@ -268,24 +276,24 @@ export default function Hotels() {
   const additionalServices = [
     {
       id: 'airport-transfer',
-      name: 'Airport Transfer',
-      description: 'Hassle-free pickup from airport to hotel',
+      name: get('hotels.services.airportTransfer.name', 'Airport Transfer'),
+      description: get('hotels.services.airportTransfer.description', 'Hassle-free pickup from airport to hotel'),
       price: 25,
       types: ['standard', 'premium'],
       image: '/services/airport-transfer.jpg'
     },
     {
       id: 'daily-tours',
-      name: 'Daily Tours',
-      description: 'Guided tours from your hotel location',
+      name: get('hotels.services.dailyTours.name', 'Daily Tours'),
+      description: get('hotels.services.dailyTours.description', 'Guided tours from your hotel location'),
       price: 50,
       types: ['cultural', 'adventure', 'wildlife', 'beach'],
       image: '/services/daily-tours.jpg'
     },
     {
       id: 'rental-car',
-      name: 'Car Rental',
-      description: 'Self-drive or with driver vehicle rental',
+      name: get('hotels.services.rentalCar.name', 'Car Rental'),
+      description: get('hotels.services.rentalCar.description', 'Self-drive or with driver vehicle rental'),
       price: 40,
       types: ['self-drive', 'with-driver'],
       image: '/services/car-rental.jpg'
@@ -296,29 +304,44 @@ export default function Hotels() {
   const packageDeals = [
     {
       id: 'beach-paradise',
-      name: 'Beach Paradise Package',
-      description: '7 nights beachfront accommodation + airport transfers + daily beach tours',
+      name: get('hotels.packages.beachParadise.name', 'Beach Paradise Package'),
+      description: get('hotels.packages.beachParadise.description', '7 nights beachfront accommodation + airport transfers + daily beach tours'),
       originalPrice: 1200,
       discountedPrice: 999,
-      includes: ['7 nights hotel', 'Airport transfers', '3 beach tours', 'Breakfast included'],
+      includes: [
+        get('hotels.packages.includes.7nights', '7 nights hotel'),
+        get('hotels.packages.includes.airportTransfers', 'Airport transfers'),
+        get('hotels.packages.includes.3beachTours', '3 beach tours'),
+        get('hotels.packages.includes.breakfastIncluded', 'Breakfast included')
+      ],
       image: '/packages/beach-paradise.jpg'
     },
     {
       id: 'cultural-journey',
-      name: 'Cultural Journey Package',
-      description: '5 nights heritage hotels + cultural triangle tours + airport transfers',
+      name: get('hotels.packages.culturalJourney.name', 'Cultural Journey Package'),
+      description: get('hotels.packages.culturalJourney.description', '5 nights heritage hotels + cultural triangle tours + airport transfers'),
       originalPrice: 800,
       discountedPrice: 650,
-      includes: ['5 nights hotel', 'All entrance fees', 'Expert guide', 'Breakfast & dinner'],
+      includes: [
+        get('hotels.packages.includes.5nights', '5 nights hotel'),
+        get('hotels.packages.includes.entranceFees', 'All entrance fees'),
+        get('hotels.packages.includes.expertGuide', 'Expert guide'),
+        get('hotels.packages.includes.breakfastDinner', 'Breakfast & dinner')
+      ],
       image: '/packages/cultural-journey.jpg'
     },
     {
       id: 'adventure-combo',
-      name: 'Adventure Combo Package',
-      description: '6 nights adventure resorts + hiking + safari + transfers',
+      name: get('hotels.packages.adventureCombo.name', 'Adventure Combo Package'),
+      description: get('hotels.packages.adventureCombo.description', '6 nights adventure resorts + hiking + safari + transfers'),
       originalPrice: 1100,
       discountedPrice: 899,
-      includes: ['6 nights hotel', 'Safari experience', 'Hiking tours', 'All transfers'],
+      includes: [
+        get('hotels.packages.includes.6nights', '6 nights hotel'),
+        get('hotels.packages.includes.safari', 'Safari experience'),
+        get('hotels.packages.includes.hikingTours', 'Hiking tours'),
+        get('hotels.packages.includes.allTransfers', 'All transfers')
+      ],
       image: '/packages/adventure-combo.jpg'
     }
   ];
@@ -358,26 +381,26 @@ export default function Hotels() {
 
   // Handle WhatsApp booking
   const handleWhatsAppBooking = () => {
-    let message = `Hello Zamzam Tours! I would like to book accommodation and services:\n\n`;
+    let message = `${get('hotels.messages.greeting','Hello Zamzam Tours! I would like to book accommodation and services:')}\n\n`;
     
     if (selectedHotel) {
-      message += `🏨 *Hotel Booking:*\n`;
-      message += `• Hotel: ${selectedHotel.name}\n`;
-      message += `• Location: ${locations.find(l => l.id === selectedHotel.location)?.name}\n`;
-      if (searchParams.checkIn) message += `• Check-in: ${searchParams.checkIn}\n`;
-      if (searchParams.checkOut) message += `• Check-out: ${searchParams.checkOut}\n`;
-      message += `• Guests: ${searchParams.guests}\n`;
-      message += `• Rooms: ${searchParams.rooms}\n`;
-      message += `• Hotel Price: $${selectedHotel.price}/night\n\n`;
+      message += `🏨 ${get('hotels.messages.hotelBookingBadge','*Hotel Booking:*')}\n`;
+      message += `• ${get('hotels.messages.hotelLabel','Hotel:')} ${selectedHotel.name}\n`;
+      message += `• ${get('hotels.messages.locationLabel','Location:')} ${locations.find(l => l.id === selectedHotel.location)?.name}\n`;
+      if (searchParams.checkIn) message += `• ${get('hotels.messages.checkInLabel','Check-in:')} ${searchParams.checkIn}\n`;
+      if (searchParams.checkOut) message += `• ${get('hotels.messages.checkOutLabel','Check-out:')} ${searchParams.checkOut}\n`;
+      message += `• ${get('hotels.messages.guestsLabel','Guests:')} ${searchParams.guests}\n`;
+      message += `• ${get('hotels.messages.roomsLabel','Rooms:')} ${searchParams.rooms}\n`;
+      message += `• ${get('hotels.messages.hotelPriceLabel','Hotel Price:')} $${selectedHotel.price}/${get('hotels.price.perNightShort','night')}\n\n`;
     }
 
-    message += `🚗 *Additional Services:*\n`;
-    if (selectedPackages.airportTransfer) message += `• Airport Transfer: Yes\n`;
-    if (selectedPackages.dailyTours) message += `• Daily Tours: Yes\n`;
-    if (selectedPackages.rentalCar) message += `• Car Rental: Yes\n\n`;
+    message += `🚗 ${get('hotels.messages.additionalServicesBadge','*Additional Services:*')}\n`;
+    if (selectedPackages.airportTransfer) message += `• ${get('hotels.services.airportTransfer.name','Airport Transfer')}: ${get('hotels.messages.yes','Yes')}\n`;
+    if (selectedPackages.dailyTours) message += `• ${get('hotels.services.dailyTours.name','Daily Tours')}: ${get('hotels.messages.yes','Yes')}\n`;
+    if (selectedPackages.rentalCar) message += `• ${get('hotels.services.rentalCar.name','Car Rental')}: ${get('hotels.messages.yes','Yes')}\n\n`;
 
-    message += `💰 *Total Estimated Cost:* $${calculateTotalPrice()}\n\n`;
-    message += `Please provide availability and complete booking details.`;
+    message += `💰 ${get('hotels.messages.totalEstimatedCost','*Total Estimated Cost:*')} $${calculateTotalPrice()}\n\n`;
+    message += get('hotels.messages.pleaseProvide','Please provide availability and complete booking details.');
 
     const encodedMessage = encodeURIComponent(message);
     window.open(`https://wa.me/94766135110?text=${encodedMessage}`, '_blank');
@@ -392,9 +415,9 @@ export default function Hotels() {
   return (
     <>
       <Head>
-        <title>Hotel Booking Sri Lanka | Best Accommodations & Packages | Zamzam Tours</title>
-        <meta name="description" content="Book best hotels in Sri Lanka with Zamzam Tours. Complete packages with airport transfers, daily tours, and car rentals. Best prices guaranteed." />
-        <meta name="keywords" content="Sri Lanka hotels, accommodation booking, hotel packages, beach resorts, luxury hotels, Colombo hotels, Galle hotels" />
+        <title>{t('hotels.pageTitle')}</title>
+        <meta name="description" content={t('hotels.metaDescription')} />
+        <meta name="keywords" content={t('hotels.metaKeywords')} />
       </Head>
 
       <Navbar />
@@ -459,7 +482,9 @@ export default function Hotels() {
                 fontWeight: '700',
                 marginBottom: '1.5rem'
               }}>
-                Luxury <span style={{ color: '#f8b500' }}>Accommodations</span> in Sri Lanka
+                {get('hotels.hero.titlePrefix', 'Luxury')}{' '}
+                <span style={{ color: '#f8b500' }}>{get('hotels.hero.titleHighlight', 'Accommodations')}</span>{' '}
+                {get('hotels.hero.titleSuffix', 'in Sri Lanka')}
               </h1>
             </motion.div>
             
@@ -474,7 +499,7 @@ export default function Hotels() {
                 marginBottom: '2.5rem',
                 opacity: '0.98'
               }}>
-                Book your perfect stay with integrated travel services
+                {get('hotels.hero.subtitle', 'Book your perfect stay with integrated travel services')}
               </p>
             </motion.div>
             
@@ -503,7 +528,7 @@ export default function Hotels() {
                   color: 'white'
                 }}>
                   <span style={{ fontSize: '2.5rem' }}>🏨</span>
-                  <span style={{ fontSize: '1rem', fontWeight: '600', textShadow: '1px 1px 4px rgba(0,0,0,0.8)' }}>Luxury Hotels</span>
+                  <span style={{ fontSize: '1rem', fontWeight: '600', textShadow: '1px 1px 4px rgba(0,0,0,0.8)' }}>{get('hotels.feature.luxuryHotels', 'Luxury Hotels')}</span>
                 </div>
                 <div className="feature-item" style={{
                   display: 'flex',
@@ -513,7 +538,7 @@ export default function Hotels() {
                   color: 'white'
                 }}>
                   <span style={{ fontSize: '2.5rem' }}>🚗</span>
-                  <span style={{ fontSize: '1rem', fontWeight: '600', textShadow: '1px 1px 4px rgba(0,0,0,0.8)' }}>Airport Transfers</span>
+                  <span style={{ fontSize: '1rem', fontWeight: '600', textShadow: '1px 1px 4px rgba(0,0,0,0.8)' }}>{get('hotels.feature.airportTransfers', 'Airport Transfers')}</span>
                 </div>
                 <div className="feature-item" style={{
                   display: 'flex',
@@ -523,7 +548,7 @@ export default function Hotels() {
                   color: 'white'
                 }}>
                   <span style={{ fontSize: '2.5rem' }}>🗺️</span>
-                  <span style={{ fontSize: '1rem', fontWeight: '600', textShadow: '1px 1px 4px rgba(0,0,0,0.8)' }}>Daily Tours</span>
+                  <span style={{ fontSize: '1rem', fontWeight: '600', textShadow: '1px 1px 4px rgba(0,0,0,0.8)' }}>{get('hotels.feature.dailyTours', 'Daily Tours')}</span>
                 </div>
                 <div className="feature-item" style={{
                   display: 'flex',
@@ -533,7 +558,7 @@ export default function Hotels() {
                   color: 'white'
                 }}>
                   <span style={{ fontSize: '2.5rem' }}>💼</span>
-                  <span style={{ fontSize: '1rem', fontWeight: '600', textShadow: '1px 1px 4px rgba(0,0,0,0.8)' }}>Complete Packages</span>
+                  <span style={{ fontSize: '1rem', fontWeight: '600', textShadow: '1px 1px 4px rgba(0,0,0,0.8)' }}>{get('hotels.feature.completePackages', 'Complete Packages')}</span>
                 </div>
               </div>
             </motion.div>
@@ -561,6 +586,14 @@ export default function Hotels() {
               fontWeight: '500',
               textShadow: '1px 1px 4px rgba(0, 0, 0, 0.8)'
             }}>Scroll to explore</span>
+            { /* scroll indicator text --- localized */ }
+            <span style={{ 
+              display: 'block',
+              marginBottom: '10px',
+              fontSize: '14px',
+              fontWeight: '500',
+              textShadow: '1px 1px 4px rgba(0, 0, 0, 0.8)'
+            }}>{get('hotels.hero.scroll', 'Scroll to explore')}</span>
             <div className="arrow-down" style={{
               width: '30px',
               height: '30px',
@@ -578,18 +611,18 @@ export default function Hotels() {
       <section className="search-section">
         <div className="container">
           <div className="section-header">
-            <h2>Find Your Perfect Stay</h2>
-            <p>Tell us your preferences and we'll help you find the ideal accommodation</p>
+            <h2>{get('hotels.search.title', 'Find Your Perfect Stay')}</h2>
+            <p>{get('hotels.search.subtitle', "Tell us your preferences and we'll help you find the ideal accommodation")}</p>
           </div>
           
           <div className="search-card">
             <div className="search-form">
               <div className="form-row">
                 <div className="form-group">
-                  <label>Your Name *</label>
+                  <label>{get('hotels.form.label.name', 'Your Name *')}</label>
                   <input 
                     type="text" 
-                    placeholder="Enter your full name"
+                    placeholder={get('hotels.form.placeholder.name', 'Enter your full name')}
                     value={searchParams.name}
                     onChange={(e) => setSearchParams({...searchParams, name: e.target.value})}
                     required
@@ -597,10 +630,10 @@ export default function Hotels() {
                 </div>
 
                 <div className="form-group">
-                  <label>Email Address *</label>
+                  <label>{get('hotels.form.label.email', 'Email Address *')}</label>
                   <input 
                     type="email" 
-                    placeholder="your.email@example.com"
+                    placeholder={get('hotels.form.placeholder.email', 'your.email@example.com')}
                     value={searchParams.email}
                     onChange={(e) => setSearchParams({...searchParams, email: e.target.value})}
                     required
@@ -610,7 +643,7 @@ export default function Hotels() {
 
               <div className="form-row">
                 <div className="form-group">
-                  <label>Destination</label>
+                  <label>{get('hotels.form.label.destination', 'Destination')}</label>
                   <select 
                     value={searchParams.location}
                     onChange={(e) => setSearchParams({...searchParams, location: e.target.value})}
@@ -624,7 +657,7 @@ export default function Hotels() {
                 </div>
 
                 <div className="form-group">
-                  <label>Check-in Date</label>
+                  <label>{get('hotels.form.label.checkIn', 'Check-in Date')}</label>
                   <input 
                     type="date" 
                     value={searchParams.checkIn}
@@ -634,7 +667,7 @@ export default function Hotels() {
                 </div>
 
                 <div className="form-group">
-                  <label>Check-out Date</label>
+                  <label>{get('hotels.form.label.checkOut', 'Check-out Date')}</label>
                   <input 
                     type="date" 
                     value={searchParams.checkOut}
@@ -644,25 +677,25 @@ export default function Hotels() {
                 </div>
 
                 <div className="form-group">
-                  <label>Guests</label>
+                  <label>{get('hotels.form.label.guests', 'Guests')}</label>
                   <select 
                     value={searchParams.guests}
                     onChange={(e) => setSearchParams({...searchParams, guests: parseInt(e.target.value)})}
                   >
                     {[1,2,3,4,5,6,7,8,9,10,12,14,16,18,20].map(num => (
-                      <option key={num} value={num}>{num} {num === 1 ? 'Guest' : 'Guests'}</option>
+                      <option key={num} value={num}>{num} {num === 1 ? get('hotels.form.guestSingular','Guest') : get('hotels.form.guestPlural','Guests')}</option>
                     ))}
                   </select>
                 </div>
 
                 <div className="form-group">
-                  <label>Rooms</label>
+                  <label>{get('hotels.form.label.rooms', 'Rooms')}</label>
                   <select 
                     value={searchParams.rooms}
                     onChange={(e) => setSearchParams({...searchParams, rooms: parseInt(e.target.value)})}
                   >
                     {[1,2,3,4,5,6,7,8,9,10].map(num => (
-                      <option key={num} value={num}>{num} {num === 1 ? 'Room' : 'Rooms'}</option>
+                      <option key={num} value={num}>{num} {num === 1 ? get('hotels.form.roomSingular','Room') : get('hotels.form.roomPlural','Rooms')}</option>
                     ))}
                   </select>
                 </div>
@@ -670,7 +703,7 @@ export default function Hotels() {
 
               <div className="advanced-filters">
                 <div className="filter-group">
-                  <label>Price Range: ${searchParams.priceRange[0]} - ${searchParams.priceRange[1]}</label>
+                  <label>{get('hotels.filters.priceRange', 'Price Range:')} ${searchParams.priceRange[0]} - ${searchParams.priceRange[1]}</label>
                   <input 
                     type="range" 
                     min="0"
@@ -686,7 +719,7 @@ export default function Hotels() {
                 </div>
 
                 <div className="filter-group">
-                  <label>Minimum Rating</label>
+                  <label>{get('hotels.filters.minimumRating', 'Minimum Rating')}</label>
                   <div className="rating-filters">
                     {[4.5, 4, 3.5, 3, 0].map(rating => (
                       <button
@@ -694,14 +727,14 @@ export default function Hotels() {
                         className={`rating-btn ${searchParams.rating === rating ? 'active' : ''}`}
                         onClick={() => setSearchParams({...searchParams, rating})}
                       >
-                        {rating === 0 ? 'Any' : `${rating}+`} ⭐
+                        {rating === 0 ? get('hotels.filters.any', 'Any') : `${rating}+`} ⭐
                       </button>
                     ))}
                   </div>
                 </div>
 
                 <div className="filter-group">
-                  <label>Amenities</label>
+                  <label>{get('hotels.filters.amenities', 'Amenities')}</label>
                   <div className="amenities-filters">
                     {amenitiesList.map(amenity => (
                       <label key={amenity.id} className="amenity-checkbox">
@@ -731,7 +764,7 @@ export default function Hotels() {
 
               {/* Additional Services - Compact Design */}
               <div className="services-compact">
-                <label className="services-compact-label">Additional Services (Optional)</label>
+                <label className="services-compact-label">{get('hotels.services.compactLabel', 'Additional Services (Optional)')}</label>
                 <div className="services-compact-grid">
                   <div 
                     className={`service-compact-card ${selectedAdditionalServices.includes('airport-transfer') ? 'selected' : ''}`}
@@ -745,8 +778,8 @@ export default function Hotels() {
                   >
                     <div className="service-compact-icon">✈️</div>
                     <div className="service-compact-content">
-                      <h4>Airport Transfer</h4>
-                      <p>Hassle-free pickup from airport to hotel</p>
+                      <h4>{get('hotels.services.airportTransfer.name', 'Airport Transfer')}</h4>
+                      <p>{get('hotels.services.airportTransfer.description', 'Hassle-free pickup from airport to hotel')}</p>
                     </div>
                     <div className="service-compact-check">
                       {selectedAdditionalServices.includes('airport-transfer') && '✓'}
@@ -765,8 +798,8 @@ export default function Hotels() {
                   >
                     <div className="service-compact-icon">🗺️</div>
                     <div className="service-compact-content">
-                      <h4>Daily Tours</h4>
-                      <p>Guided tours from your hotel location</p>
+                      <h4>{get('hotels.services.dailyTours.name', 'Daily Tours')}</h4>
+                      <p>{get('hotels.services.dailyTours.description', 'Guided tours from your hotel location')}</p>
                     </div>
                     <div className="service-compact-check">
                       {selectedAdditionalServices.includes('daily-tours') && '✓'}
@@ -785,8 +818,8 @@ export default function Hotels() {
                   >
                     <div className="service-compact-icon">🚗</div>
                     <div className="service-compact-content">
-                      <h4>Car Rental</h4>
-                      <p>Self-drive or with driver vehicle rental</p>
+                      <h4>{get('hotels.services.rentalCar.name', 'Car Rental')}</h4>
+                      <p>{get('hotels.services.rentalCar.description', 'Self-drive or with driver vehicle rental')}</p>
                     </div>
                     <div className="service-compact-check">
                       {selectedAdditionalServices.includes('rental-car') && '✓'}
@@ -798,19 +831,19 @@ export default function Hotels() {
               <button 
                 className="btn-primary search-btn"
                 onClick={() => {
-                  let message = '🏨 *HOTEL INQUIRY*\n';
-                  message += '━━━━━━━━━━━━━━━━━━━━━━━━\n\n';
-                  if (searchParams.name) message += `👤 *Name:* ${searchParams.name}\n`;
-                  if (searchParams.email) message += `📧 *Email:* ${searchParams.email}\n\n`;
-                  message += `📍 *Destination:* ${locations.find(l => l.id === searchParams.location)?.name}\n`;
-                  if (searchParams.checkIn) message += `📅 *Check-in:* ${searchParams.checkIn}\n`;
-                  if (searchParams.checkOut) message += `📅 *Check-out:* ${searchParams.checkOut}\n`;
-                  message += `👥 *Guests:* ${searchParams.guests}\n`;
-                  message += `🛏️ *Rooms:* ${searchParams.rooms}\n`;
-                  message += `💰 *Budget:* $${searchParams.priceRange[0]} - $${searchParams.priceRange[1]} per night\n`;
-                  if (searchParams.rating > 0) message += `⭐ *Minimum Rating:* ${searchParams.rating}+\n`;
+                  let message = `${get('hotels.messages.inquiryBadge','🏨 *HOTEL INQUIRY*')}\n`;
+                  message += `${get('hotels.messages.lineSeparator','━━━━━━━━━━━━━━━━━━━━━━━━')}\n\n`;
+                  if (searchParams.name) message += `👤 ${get('hotels.messages.nameLabel','*Name:*')} ${searchParams.name}\n`;
+                  if (searchParams.email) message += `📧 ${get('hotels.messages.emailLabel','*Email:*')} ${searchParams.email}\n\n`;
+                  message += `📍 ${get('hotels.messages.destinationLabel','*Destination:*')} ${locations.find(l => l.id === searchParams.location)?.name}\n`;
+                  if (searchParams.checkIn) message += `📅 ${get('hotels.messages.checkInLabel','*Check-in:*')} ${searchParams.checkIn}\n`;
+                  if (searchParams.checkOut) message += `📅 ${get('hotels.messages.checkOutLabel','*Check-out:*')} ${searchParams.checkOut}\n`;
+                  message += `👥 ${get('hotels.messages.guestsLabel','*Guests:*')} ${searchParams.guests}\n`;
+                  message += `🛏️ ${get('hotels.messages.roomsLabel','*Rooms:*')} ${searchParams.rooms}\n`;
+                  message += `💰 ${get('hotels.messages.budgetLabel','*Budget:*')} $${searchParams.priceRange[0]} - $${searchParams.priceRange[1]} ${get('hotels.price.perNight','per night')}\n`;
+                  if (searchParams.rating > 0) message += `⭐ ${get('hotels.messages.minimumRatingLabel','*Minimum Rating:*')} ${searchParams.rating}+\n`;
                   if (searchParams.amenities.length > 0) {
-                    message += `🎯 *Preferred Amenities:* ${searchParams.amenities.map(a => amenitiesList.find(am => am.id === a)?.name).join(', ')}\n`;
+                    message += `🎯 ${get('hotels.messages.preferredAmenitiesLabel','*Preferred Amenities:*')} ${searchParams.amenities.map(a => amenitiesList.find(am => am.id === a)?.name).join(', ')}\n`;
                   }
                   
                   if (selectedAdditionalServices.length > 0) {
@@ -830,7 +863,7 @@ export default function Hotels() {
                   window.open(`https://wa.me/94766135110?text=${encodedMessage}`, '_blank');
                 }}
               >
-                📱 Send Inquiry via WhatsApp
+                {get('hotels.search.sendWhatsApp', '📱 Send Inquiry via WhatsApp')}
               </button>
             </div>
           </div>
@@ -841,8 +874,8 @@ export default function Hotels() {
       <section className="hotels-grid-section">
         <div className="container">
           <div className="section-header">
-            <h2>Featured Hotels & Resorts</h2>
-            <p>Curated selection of the best accommodations across Sri Lanka</p>
+            <h2>{get('hotels.grid.title', 'Featured Hotels & Resorts')}</h2>
+            <p>{get('hotels.grid.subtitle', 'Curated selection of the best accommodations across Sri Lanka')}</p>
           </div>
 
           <div className="hotels-grid">
@@ -872,7 +905,7 @@ export default function Hotels() {
                   {/* Facilities list (from DB 'facilities' column). Show full list as tags or comma list */}
                   {hotel.facilities && hotel.facilities.length > 0 && (
                     <div className="hotel-facilities">
-                      <strong>Facilities:</strong>
+                      <strong>{get('hotels.facilities.label', 'Facilities:')}</strong>
                       <div className="facility-tags">
                         {hotel.facilities.map((f: string) => (
                           <span key={f} className="facility-tag">{f.trim()}</span>
@@ -885,15 +918,15 @@ export default function Hotels() {
 
                   <div className="hotel-footer">
                     <div className="hotel-price">
-                      <span className="price">From ${hotel.price}</span>
-                      <span className="period">per night</span>
+                      <span className="price">{get('hotels.price.from', 'From')} ${hotel.price}</span>
+                      <span className="period">{get('hotels.price.perNight', 'per night')}</span>
                     </div>
                     <div className="hotel-actions">
                       <button 
                         className="btn-view-details"
                         onClick={() => openHotelBooking(hotel)}
                       >
-                        View Details
+                        {get('hotels.buttons.viewDetails', 'View Details')}
                       </button>
                       <button 
                         className="btn-book-now"
@@ -902,7 +935,7 @@ export default function Hotels() {
                           setShowBookingForm(true);
                         }}
                       >
-                        Book Now
+                        {get('hotels.buttons.bookNow', 'Book Now')}
                       </button>
                     </div>
                   </div>
@@ -913,11 +946,11 @@ export default function Hotels() {
 
           {filteredHotels.length === 0 && (
             <div className="no-results">
-              <h3>No hotels found matching your criteria</h3>
-              <p>Try adjusting your filters or search parameters</p>
-              <button 
-                className="btn-primary"
-                onClick={() => setSearchParams({
+              <h3>{get('hotels.noResults.title', 'No hotels found matching your criteria')}</h3>
+                <p>{get('hotels.noResults.subtitle', 'Try adjusting your filters or search parameters')}</p>
+                <button 
+                  className="btn-primary"
+                  onClick={() => setSearchParams({
                   name: '',
                   email: '',
                   location: 'all',
@@ -930,7 +963,7 @@ export default function Hotels() {
                   amenities: []
                 })}
               >
-                Reset Filters
+                  {get('hotels.buttons.resetFilters', 'Reset Filters')}
               </button>
             </div>
           )}
@@ -941,39 +974,39 @@ export default function Hotels() {
       <section className="integrated-banner">
         <div className="container">
           <div className="banner-content">
-            <h2>One Booking, Complete Journey</h2>
-            <p>From airport pickup to hotel stay, daily tours, and departure - we handle everything</p>
+            <h2>{get('hotels.integrated.title', 'One Booking, Complete Journey')}</h2>
+            <p>{get('hotels.integrated.subtitle', 'From airport pickup to hotel stay, daily tours, and departure - we handle everything')}</p>
             
             <div className="banner-steps">
               <div className="step">
                 <div className="step-icon">🛬</div>
                 <div className="step-text">
-                  <h4>Airport Pickup</h4>
-                  <p>Meet & greet service with comfortable transfer to hotel</p>
+                  <h4>{get('hotels.integrated.steps.airportPickup.title', 'Airport Pickup')}</h4>
+                  <p>{get('hotels.integrated.steps.airportPickup.description', 'Meet & greet service with comfortable transfer to hotel')}</p>
                 </div>
               </div>
               
               <div className="step">
                 <div className="step-icon">🏨</div>
                 <div className="step-text">
-                  <h4>Hotel Stay</h4>
-                  <p>Luxury accommodation with best locations and amenities</p>
+                  <h4>{get('hotels.integrated.steps.hotelStay.title', 'Hotel Stay')}</h4>
+                  <p>{get('hotels.integrated.steps.hotelStay.description', 'Luxury accommodation with best locations and amenities')}</p>
                 </div>
               </div>
               
               <div className="step">
                 <div className="step-icon">🚗</div>
                 <div className="step-text">
-                  <h4>Daily Tours</h4>
-                  <p>Guided excursions from your hotel to major attractions</p>
+                  <h4>{get('hotels.integrated.steps.dailyTours.title', 'Daily Tours')}</h4>
+                  <p>{get('hotels.integrated.steps.dailyTours.description', 'Guided excursions from your hotel to major attractions')}</p>
                 </div>
               </div>
               
               <div className="step">
                 <div className="step-icon">✈️</div>
                 <div className="step-text">
-                  <h4>Departure Transfer</h4>
-                  <p>Timely pickup from hotel to airport for your flight</p>
+                  <h4>{get('hotels.integrated.steps.departure.title', 'Departure Transfer')}</h4>
+                  <p>{get('hotels.integrated.steps.departure.description', 'Timely pickup from hotel to airport for your flight')}</p>
                 </div>
               </div>
             </div>
@@ -987,7 +1020,7 @@ export default function Hotels() {
                   window.open(`https://wa.me/94766135110?text=${encodedMessage}`, '_blank');
                 }}
               >
-                💬 Plan My Complete Trip on WhatsApp
+                {get('hotels.integrated.cta', '💬 Plan My Complete Trip on WhatsApp')}
               </button>
             </div>
           </div>
@@ -1000,7 +1033,7 @@ export default function Hotels() {
           <div className="modal-content-modern" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header-modern">
               <div className="modal-title-section">
-                <h2>Book Your Stay</h2>
+                <h2>{get('hotels.modal.title', 'Book Your Stay')}</h2>
                 <p className="modal-subtitle">{selectedHotel.name}</p>
               </div>
               <button 
@@ -1017,21 +1050,21 @@ export default function Hotels() {
                 onClick={() => setBookingType('hotel-only')}
               >
                 <span className="tab-icon">🏨</span>
-                <span className="tab-label">Hotel Only</span>
+                <span className="tab-label">{get('hotels.modal.tab.hotelOnly', 'Hotel Only')}</span>
               </button>
               <button 
                 className={`tab-modern ${bookingType === 'with-services' ? 'active' : ''}`}
                 onClick={() => setBookingType('with-services')}
               >
                 <span className="tab-icon">🎯</span>
-                <span className="tab-label">Hotel + Services</span>
+                <span className="tab-label">{get('hotels.modal.tab.hotelPlusServices', 'Hotel + Services')}</span>
               </button>
               <button 
                 className={`tab-modern ${bookingType === 'complete-package' ? 'active' : ''}`}
                 onClick={() => setBookingType('complete-package')}
               >
                 <span className="tab-icon">⭐</span>
-                <span className="tab-label">Complete Package</span>
+                <span className="tab-label">{get('hotels.modal.tab.completePackage', 'Complete Package')}</span>
               </button>
             </div>
 
@@ -1072,11 +1105,11 @@ export default function Hotels() {
                 <div className="form-section-modern">
                   <h3 className="section-heading-modern">
                     <span className="heading-icon">📅</span>
-                    Booking Details
+                    {get('hotels.modal.bookingDetails.title', 'Booking Details')}
                   </h3>
                   <div className="form-row-modern">
                     <div className="form-group-modern">
-                      <label>Check-in Date *</label>
+                      <label>{get('hotels.form.label.checkInRequired', 'Check-in Date *')}</label>
                       <input 
                         type="date" 
                         value={searchParams.checkIn}
@@ -1085,7 +1118,7 @@ export default function Hotels() {
                       />
                     </div>
                     <div className="form-group-modern">
-                      <label>Check-out Date *</label>
+                      <label>{get('hotels.form.label.checkOutRequired', 'Check-out Date *')}</label>
                       <input 
                         type="date" 
                         value={searchParams.checkOut}
@@ -1097,26 +1130,26 @@ export default function Hotels() {
 
                   <div className="form-row-modern">
                     <div className="form-group-modern">
-                      <label>Guests *</label>
+                      <label>{get('hotels.form.label.guestsRequired', 'Guests *')}</label>
                       <select 
                         value={searchParams.guests}
                         onChange={(e) => setSearchParams({...searchParams, guests: parseInt(e.target.value)})}
                         required
                       >
-                        {[1,2,3,4,5,6].map(num => (
-                          <option key={num} value={num}>{num} {num === 1 ? 'Guest' : 'Guests'}</option>
+                          {[1,2,3,4,5,6].map(num => (
+                          <option key={num} value={num}>{num} {num === 1 ? get('hotels.form.guestSingular','Guest') : get('hotels.form.guestPlural','Guests')}</option>
                         ))}
                       </select>
                     </div>
                     <div className="form-group-modern">
-                      <label>Rooms *</label>
+                      <label>{get('hotels.form.label.roomsRequired', 'Rooms *')}</label>
                       <select 
                         value={searchParams.rooms}
                         onChange={(e) => setSearchParams({...searchParams, rooms: parseInt(e.target.value)})}
                         required
                       >
-                        {[1,2,3,4].map(num => (
-                          <option key={num} value={num}>{num} {num === 1 ? 'Room' : 'Rooms'}</option>
+                          {[1,2,3,4].map(num => (
+                          <option key={num} value={num}>{num} {num === 1 ? get('hotels.form.roomSingular','Room') : get('hotels.form.roomPlural','Rooms')}</option>
                         ))}
                       </select>
                     </div>
@@ -1128,7 +1161,7 @@ export default function Hotels() {
                   <div className="form-section-modern">
                     <h3 className="section-heading-modern">
                       <span className="heading-icon">🎯</span>
-                      Additional Services
+                      {get('hotels.modal.additionalServices.title', 'Additional Services')}
                     </h3>
                     <div className="services-selection-modern">
                       {additionalServices.map(service => (
@@ -1158,38 +1191,38 @@ export default function Hotels() {
                 <div className="form-section-modern">
                   <h3 className="section-heading-modern">
                     <span className="heading-icon">💰</span>
-                    Price Summary
+                    {get('hotels.modal.priceSummary.title', 'Price Summary')}
                   </h3>
                   <div className="price-summary-modern">
                     <div className="summary-row-modern">
-                      <span>Hotel ({searchParams.rooms} rooms)</span>
+                      <span>{get('hotels.modal.priceSummary.hotelLabel', 'Hotel')} ({searchParams.rooms} {get('hotels.modal.priceSummary.roomsLabel','rooms')})</span>
                       <span className="summary-price">${selectedHotel.price * searchParams.rooms}</span>
                     </div>
                     
                     {selectedPackages.airportTransfer && (
                       <div className="summary-row-modern">
-                        <span>✈️ Airport Transfer</span>
+                        <span>✈️ {get('hotels.services.airportTransfer.name','Airport Transfer')}</span>
                         <span className="summary-price">+${additionalServices.find(s => s.id === 'airport-transfer')?.price}</span>
                       </div>
                     )}
                     
                     {selectedPackages.dailyTours && (
                       <div className="summary-row-modern">
-                        <span>🗺️ Daily Tours</span>
+                        <span>🗺️ {get('hotels.services.dailyTours.name','Daily Tours')}</span>
                         <span className="summary-price">+${additionalServices.find(s => s.id === 'daily-tours')?.price}</span>
                       </div>
                     )}
                     
                     {selectedPackages.rentalCar && (
                       <div className="summary-row-modern">
-                        <span>🚗 Car Rental</span>
+                        <span>🚗 {get('hotels.services.rentalCar.name','Car Rental')}</span>
                         <span className="summary-price">+${additionalServices.find(s => s.id === 'rental-car')?.price}</span>
                       </div>
                     )}
 
                     <div className="summary-divider-modern"></div>
                     <div className="summary-row-modern total-modern">
-                      <span>Total Amount</span>
+                      <span>{get('hotels.modal.priceSummary.totalLabel','Total Amount')}</span>
                       <span className="summary-total-price">${calculateTotalPrice()}</span>
                     </div>
                   </div>
@@ -1202,7 +1235,7 @@ export default function Hotels() {
                     onClick={() => setShowBookingForm(false)}
                   >
                     <span className="btn-icon">✕</span>
-                    <span className="btn-text">Cancel</span>
+                    <span className="btn-text">{get('hotels.buttons.cancel','Cancel')}</span>
                   </button>
                   <button 
                     type="button"
@@ -1210,7 +1243,7 @@ export default function Hotels() {
                     onClick={handleWhatsAppBooking}
                   >
                     <span className="btn-icon">💬</span>
-                    <span className="btn-text">Confirm & Book via WhatsApp</span>
+                    <span className="btn-text">{get('hotels.buttons.confirmAndBook','Confirm & Book via WhatsApp')}</span>
                   </button>
                 </div>
               </form>

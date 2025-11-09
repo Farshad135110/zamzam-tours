@@ -8,6 +8,7 @@ import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import AnimatedSection from '../../components/AnimatedSection';
 import { fadeInUp } from '../../src/utils/animations';
+import useTranslation from '../../src/i18n/useTranslation';
 
 interface PriceStructure {
   daily: number;
@@ -38,6 +39,12 @@ interface Vehicle {
 type RentalType = 'self-drive' | 'with-driver';
 
 export default function SelfDrive() {
+  const { t } = useTranslation();
+  const get = (key: string, fallback: string) => {
+    const val = t(key);
+    return val === key ? fallback : val;
+  };
+
   const [rentalType, setRentalType] = useState<RentalType>('self-drive');
   const [customerType, setCustomerType] = useState('tourist');
   const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
@@ -128,12 +135,12 @@ export default function SelfDrive() {
 
   // Pickup locations
   const locations = [
-    { id: 'colombo', name: 'Colombo City' },
-    { id: 'airport', name: 'Bandaranaike International Airport (CMB)' },
-    { id: 'kandy', name: 'Kandy City' },
-    { id: 'galle', name: 'Galle City' },
-    { id: 'negombo', name: 'Negombo Beach' },
-    { id: 'other', name: 'Other Location' }
+    { id: 'colombo', name: get('carRental.locations.colombo', 'Colombo City') },
+    { id: 'airport', name: get('carRental.locations.airport', 'Bandaranaike International Airport (CMB)') },
+    { id: 'kandy', name: get('carRental.locations.kandy', 'Kandy City') },
+    { id: 'galle', name: get('carRental.locations.galle', 'Galle City') },
+    { id: 'negombo', name: get('carRental.locations.negombo', 'Negombo Beach') },
+    { id: 'other', name: get('carRental.locations.other', 'Other Location') }
   ];
 
   // Calculate price based on selection
@@ -200,9 +207,9 @@ export default function SelfDrive() {
   return (
     <>
       <Head>
-        <title>Vehicle Rentals in Sri Lanka | Self-Drive & With Driver | Zamzam Tours</title>
-        <meta name="description" content="Rent vehicles in Sri Lanka with Zamzam Tours. Self-drive and with-driver options for tourists and locals. Best prices for Prius, Aqua, Vans, Buses and more." />
-        <meta name="keywords" content="Sri Lanka car rental, self-drive, with driver, vehicle hire, tourist rental, local rental, Prius, Aqua, van rental, bus rental" />
+        <title>{get('carRental.pageTitle', 'Vehicle Rentals in Sri Lanka | Self-Drive & With Driver | Zamzam Tours')}</title>
+        <meta name="description" content={get('carRental.metaDescription', 'Rent vehicles in Sri Lanka with ZamZam Tours. Self-drive and with-driver options for tourists and locals. Best prices for Prius, Aqua, Vans, Buses and more.')} />
+        <meta name="keywords" content={get('carRental.metaKeywords', 'Sri Lanka car rental, self-drive, with driver, vehicle hire, tourist rental, local rental, Prius, Aqua, van rental, bus rental')} />
       </Head>
 
       <Navbar />
@@ -260,7 +267,7 @@ export default function SelfDrive() {
                 textShadow: '2px 2px 8px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 0, 0, 0.5)',
                 color: '#ffffff'
               }}>
-                Premium <span style={{ color: '#f8b500' }}>Vehicle Rentals</span> in Sri Lanka
+                {get('carRental.hero.titlePrefix', 'Premium')} <span style={{ color: '#f8b500' }}>{get('carRental.hero.titleHighlight', 'Vehicle Rentals')}</span> {get('carRental.hero.titleSuffix', 'in Sri Lanka')}
               </h1>
             </motion.div>
             
@@ -272,7 +279,7 @@ export default function SelfDrive() {
                 textShadow: '1px 1px 6px rgba(0, 0, 0, 0.9), 0 0 15px rgba(0, 0, 0, 0.6)',
                 color: '#ffffff'
               }}>
-                Self-drive or with driver - Choose from our extensive fleet of well-maintained vehicles
+                {get('carRental.hero.subtitle', 'Self-drive or with driver - Choose from our extensive fleet of well-maintained vehicles')}
               </p>
             </motion.div>
             
@@ -282,20 +289,20 @@ export default function SelfDrive() {
             >
           
           <div className="hero-filters">
-            <div className="filter-group">
-              <label>Rental Type</label>
+              <div className="filter-group">
+              <label>{get('carRental.filters.rentalTypeLabel', 'Rental Type')}</label>
               <div className="filter-buttons">
                 <button 
                   className={`filter-btn ${rentalType === 'self-drive' ? 'active' : ''}`}
                   onClick={() => setRentalType('self-drive')}
                 >
-                  Self-Drive
+                  {get('carRental.filters.selfDrive', 'Self-Drive')}
                 </button>
                 <button 
                   className={`filter-btn ${rentalType === 'with-driver' ? 'active' : ''}`}
                   onClick={() => setRentalType('with-driver')}
                 >
-                  With Driver
+                  {get('carRental.filters.withDriver', 'With Driver')}
                 </button>
               </div>
             </div>
@@ -324,7 +331,7 @@ export default function SelfDrive() {
               fontSize: '14px',
               fontWeight: '500',
               textShadow: '1px 1px 4px rgba(0, 0, 0, 0.8)'
-            }}>Scroll to explore</span>
+            }}>{get('carRental.hero.scroll', 'Scroll to explore')}</span>
             <div className="arrow-down" style={{
               width: '30px',
               height: '30px',
@@ -343,8 +350,8 @@ export default function SelfDrive() {
         <div className="container">
           <section className="vehicles-section">
             <div className="section-header">
-              <h2>Our Fleet</h2>
-              <p>All vehicles are well-maintained, fully insured, and ready for your journey</p>
+              <h2>{get('carRental.fleet.title', 'Our Fleet')}</h2>
+              <p>{get('carRental.fleet.description', 'All vehicles are well-maintained, fully insured, and ready for your journey')}</p>
             </div>
 
             <div className="vehicles-grid">
@@ -365,7 +372,7 @@ export default function SelfDrive() {
                     
                     <div className="vehicle-specs">
                       <div className="spec">
-                        <span className="label">Capacity:</span>
+                        <span className="label">{get('carRental.labels.capacity', 'Capacity:')}</span>
                         <span>{vehicle.capacity}</span>
                       </div>
                     </div>
@@ -378,7 +385,7 @@ export default function SelfDrive() {
 
                     <div className="vehicle-pricing">
                       <div className="price-item">
-                        <span className="period">Daily Rate</span>
+                        <span className="period">{get('carRental.labels.dailyRate', 'Daily Rate')}</span>
                         <span className="price">
                           ${customerType === 'tourist' ? 
                             vehicle.touristPrices[rentalType].daily : 
@@ -387,8 +394,8 @@ export default function SelfDrive() {
                       </div>
                     </div>
                     <p className="pricing-note">
-                      Weekly & monthly rates available via WhatsApp<br/>
-                      <span className="km-charge">+ Additional charge per km applies</span>
+                      {get('carRental.pricing.weeklyMonthly', 'Weekly & monthly rates available via WhatsApp')}<br/>
+                      <span className="km-charge">{get('carRental.pricing.perKm', '+ Additional charge per km applies')}</span>
                     </p>
 
                     <div className="vehicle-actions">
@@ -396,13 +403,13 @@ export default function SelfDrive() {
                         className="btn btn-primary"
                         onClick={() => openBookingForm(vehicle)}
                       >
-                        Book Now
+                        {get('carRental.actions.bookNow', 'Book Now')}
                       </button>
                       <button 
                         className="btn btn-secondary"
                         onClick={() => handleWhatsAppBooking(vehicle)}
                       >
-                        WhatsApp
+                        {get('carRental.actions.whatsapp', 'WhatsApp')}
                       </button>
                     </div>
                   </div>
@@ -414,42 +421,42 @@ export default function SelfDrive() {
           {/* Terms & Conditions */}
           <section className="terms-section">
             <div className="terms-card">
-              <h2>Rental Terms & Conditions</h2>
+              <h2>{get('carRental.terms.title', 'Rental Terms & Conditions')}</h2>
               <div className="terms-grid">
                 <div className="term-item">
-                  <h3>🚗 Self-Drive Requirements</h3>
+                  <h3>🚗 {get('carRental.terms.selfDrive.title', 'Self-Drive Requirements')}</h3>
                   <ul>
-                    <li>Valid international driving license</li>
-                    <li>Minimum age: 21 years</li>
-                    <li>Security deposit required</li>
-                    <li>Comprehensive insurance included</li>
+                    <li>{get('carRental.terms.selfDrive.validLicense', 'Valid international driving license')}</li>
+                    <li>{get('carRental.terms.selfDrive.minAge', 'Minimum age: 21 years')}</li>
+                    <li>{get('carRental.terms.selfDrive.deposit', 'Security deposit required')}</li>
+                    <li>{get('carRental.terms.selfDrive.insurance', 'Comprehensive insurance included')}</li>
                   </ul>
                 </div>
                 <div className="term-item">
-                  <h3>👨‍✈️ With Driver Service</h3>
+                  <h3>👨‍✈️ {get('carRental.terms.withDriver.title', 'With Driver Service')}</h3>
                   <ul>
-                    <li>Professional, experienced drivers</li>
-                    <li>English-speaking guides available</li>
-                    <li>Flexible itinerary planning</li>
-                    <li>Local knowledge & expertise</li>
+                    <li>{get('carRental.terms.withDriver.professional', 'Professional, experienced drivers')}</li>
+                    <li>{get('carRental.terms.withDriver.guides', 'English-speaking guides available')}</li>
+                    <li>{get('carRental.terms.withDriver.itinerary', 'Flexible itinerary planning')}</li>
+                    <li>{get('carRental.terms.withDriver.localKnowledge', 'Local knowledge & expertise')}</li>
                   </ul>
                 </div>
                 <div className="term-item">
-                  <h3>📅 Booking & Payment</h3>
+                  <h3>📅 {get('carRental.terms.booking.title', 'Booking & Payment')}</h3>
                   <ul>
-                    <li>Advance booking recommended</li>
-                    <li>50% deposit to confirm booking</li>
-                    <li>Balance on vehicle pickup</li>
-                    <li>Cancellation: 7 days notice</li>
+                    <li>{get('carRental.terms.booking.advance', 'Advance booking recommended')}</li>
+                    <li>{get('carRental.terms.booking.deposit', '50% deposit to confirm booking')}</li>
+                    <li>{get('carRental.terms.booking.balance', 'Balance on vehicle pickup')}</li>
+                    <li>{get('carRental.terms.booking.cancellation', 'Cancellation: 7 days notice')}</li>
                   </ul>
                 </div>
                 <div className="term-item">
-                  <h3>🛡️ Insurance & Safety</h3>
+                  <h3>🛡️ {get('carRental.terms.insurance.title', 'Insurance & Safety')}</h3>
                   <ul>
-                    <li>Full insurance coverage</li>
-                    <li>24/7 roadside assistance</li>
-                    <li>GPS tracking for safety</li>
-                    <li>Emergency contact support</li>
+                    <li>{get('carRental.terms.insurance.coverage', 'Full insurance coverage')}</li>
+                    <li>{get('carRental.terms.insurance.roadside', '24/7 roadside assistance')}</li>
+                    <li>{get('carRental.terms.insurance.gps', 'GPS tracking for safety')}</li>
+                    <li>{get('carRental.terms.insurance.emergency', 'Emergency contact support')}</li>
                   </ul>
                 </div>
               </div>
@@ -469,7 +476,7 @@ export default function SelfDrive() {
               ×
             </button>
             
-            <h2>Book {selectedVehicle.name}</h2>
+            <h2>{get('carRental.modal.bookPrefix', 'Book')} {selectedVehicle.name}</h2>
             
             <div className="vehicle-summary">
               <div className="summary-image">
@@ -483,19 +490,19 @@ export default function SelfDrive() {
               <div className="summary-details">
                 <h3>{selectedVehicle.name}</h3>
                 <div className="summary-item">
-                  <span>Category:</span>
+                  <span>{get('carRental.modal.label.category', 'Category:')}</span>
                   <span>{selectedVehicle.category}</span>
                 </div>
                 <div className="summary-item">
-                  <span>Capacity:</span>
+                  <span>{get('carRental.modal.label.capacity', 'Capacity:')}</span>
                   <span>{selectedVehicle.capacity}</span>
                 </div>
                 <div className="summary-item">
-                  <span>Transmission:</span>
+                  <span>{get('carRental.modal.label.transmission', 'Transmission:')}</span>
                   <span>{selectedVehicle.transmission}</span>
                 </div>
                 <div className="summary-item">
-                  <span>Fuel Type:</span>
+                  <span>{get('carRental.modal.label.fuel', 'Fuel Type:')}</span>
                   <span>{selectedVehicle.fuel}</span>
                 </div>
               </div>
@@ -504,40 +511,40 @@ export default function SelfDrive() {
             <form className="booking-form" onSubmit={(e) => {
               e.preventDefault();
               const formData = new FormData(e.currentTarget);
-              const message = `
-Booking Request - ${selectedVehicle.name}
-Name: ${formData.get('name')}
-Email: ${formData.get('email')}
-Phone: ${formData.get('phone')}
-Rental Type: ${rentalType}
-Customer Type: ${customerType}
-Pickup Date: ${pickupDate}
-Return Date: ${returnDate}
-Pickup Location: ${pickupLocation}
-${getRentalPeriod() ? `Duration: ${getRentalPeriod()}` : ''}
-${calculatedPrice > 0 ? `Estimated Cost: $${calculatedPrice}` : ''}
-Special Requests: ${formData.get('requests')}
-              `.trim();
+              const message = [
+                `${get('carRental.messages.bookingRequestHeading', 'Booking Request')} - ${selectedVehicle.name}`,
+                `${get('carRental.messages.label.name', 'Name')}: ${formData.get('name')}`,
+                `${get('carRental.messages.label.email', 'Email')}: ${formData.get('email')}`,
+                `${get('carRental.messages.label.phone', 'Phone')}: ${formData.get('phone')}`,
+                `${get('carRental.messages.label.rentalType', 'Rental Type')}: ${rentalType}`,
+                `${get('carRental.messages.label.customerType', 'Customer Type')}: ${customerType}`,
+                `${get('carRental.messages.label.pickupDate', 'Pickup Date')}: ${pickupDate}`,
+                `${get('carRental.messages.label.returnDate', 'Return Date')}: ${returnDate}`,
+                `${get('carRental.messages.label.pickupLocation', 'Pickup Location')}: ${pickupLocation}`,
+                getRentalPeriod() ? `${get('carRental.messages.label.duration', 'Duration')}: ${getRentalPeriod()}` : null,
+                calculatedPrice > 0 ? `${get('carRental.messages.label.estimatedCost', 'Estimated Cost')}: $${calculatedPrice}` : null,
+                `${get('carRental.messages.label.specialRequests', 'Special Requests')}: ${formData.get('requests')}`
+              ].filter(Boolean).join('\n');
               handleWhatsAppBooking(selectedVehicle, message);
             }}>
               <div className="form-row">
                 <div className="form-group">
-                  <label>Full Name *</label>
+                  <label>{get('carRental.form.label.name', 'Full Name *')}</label>
                   <input type="text" name="name" required />
                 </div>
                 <div className="form-group">
-                  <label>Email *</label>
+                  <label>{get('carRental.form.label.email', 'Email *')}</label>
                   <input type="email" name="email" required />
                 </div>
               </div>
 
               <div className="form-row">
                 <div className="form-group">
-                  <label>Phone Number *</label>
+                  <label>{get('carRental.form.label.phone', 'Phone Number *')}</label>
                   <input type="tel" name="phone" required />
                 </div>
                 <div className="form-group">
-                  <label>Pickup Location *</label>
+                  <label>{get('carRental.form.label.pickupLocation', 'Pickup Location *')}</label>
                   <select 
                     value={pickupLocation}
                     onChange={(e) => setPickupLocation(e.target.value)}
@@ -552,7 +559,7 @@ Special Requests: ${formData.get('requests')}
 
               <div className="form-row">
                 <div className="form-group">
-                  <label>Pickup Date *</label>
+                  <label>{get('carRental.form.label.pickupDate', 'Pickup Date *')}</label>
                   <input 
                     type="date" 
                     value={pickupDate}
@@ -562,7 +569,7 @@ Special Requests: ${formData.get('requests')}
                   />
                 </div>
                 <div className="form-group">
-                  <label>Return Date *</label>
+                  <label>{get('carRental.form.label.returnDate', 'Return Date *')}</label>
                   <input 
                     type="date" 
                     value={returnDate}
@@ -576,31 +583,31 @@ Special Requests: ${formData.get('requests')}
               {calculatedPrice > 0 && (
                 <div className="price-summary">
                   <div className="summary-row">
-                    <span>Rental Period:</span>
-                    <strong>{getRentalPeriod()}</strong>
-                  </div>
-                  <div className="summary-row">
-                    <span>Estimated Total:</span>
-                    <strong className="price-highlight">${calculatedPrice}</strong>
-                  </div>
+                      <span>{get('carRental.form.summary.rentalPeriod', 'Rental Period:')}</span>
+                      <strong>{getRentalPeriod()}</strong>
+                    </div>
+                    <div className="summary-row">
+                      <span>{get('carRental.form.summary.estimatedTotal', 'Estimated Total:')}</span>
+                      <strong className="price-highlight">${calculatedPrice}</strong>
+                    </div>
                 </div>
               )}
 
               <div className="form-group">
-                <label>Special Requests</label>
+                <label>{get('carRental.form.label.requests', 'Special Requests')}</label>
                 <textarea 
                   name="requests" 
                   rows={3} 
-                  placeholder="Additional requirements, pickup/dropoff instructions, etc."
+                  placeholder={get('carRental.form.placeholder.requests', 'Additional requirements, pickup/dropoff instructions, etc.')}
                 ></textarea>
               </div>
 
               <div className="form-actions">
                 <button type="button" className="btn btn-secondary" onClick={() => setShowBookingForm(false)}>
-                  Cancel
+                  {get('carRental.form.actions.cancel', 'Cancel')}
                 </button>
                 <button type="submit" className="btn btn-primary">
-                  Send via WhatsApp
+                  {get('carRental.form.actions.sendWhatsApp', 'Send via WhatsApp')}
                 </button>
               </div>
             </form>

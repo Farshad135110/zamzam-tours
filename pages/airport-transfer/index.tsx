@@ -7,6 +7,7 @@ import { motion } from 'framer-motion';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import { fadeInUp } from '../../src/utils/animations';
+import useTranslation from '../../src/i18n/useTranslation'
 
 export default function AirportTransfer() {
   const [tripType, setTripType] = useState('one-way'); // 'one-way' or 'two-way'
@@ -32,33 +33,60 @@ export default function AirportTransfer() {
     }
   }, []);
 
+  const { t } = useTranslation()
+
+  const get = (key: string, fallback: string) => {
+    const val = t(key)
+    return val === key ? fallback : val
+  }
+
   // Sri Lankan airports
   const airports = [
-    'Bandaranaike International Airport (CMB) - Colombo',
-    'Mattala Rajapaksa International Airport (HRI) - Hambantota',
-    'Ratmalana Airport (RML) - Colombo'
+    get('airportTransfer.airports.cmb', 'Bandaranaike International Airport (CMB) - Colombo'),
+    get('airportTransfer.airports.hri', 'Mattala Rajapaksa International Airport (HRI) - Hambantota'),
+    get('airportTransfer.airports.rml', 'Ratmalana Airport (RML) - Colombo')
   ];
 
   // Sri Lankan districts
   const districts = [
-    'Colombo', 'Gampaha', 'Kalutara', 'Kandy', 'Matale', 'Nuwara Eliya',
-    'Galle', 'Matara', 'Hambantota', 'Jaffna', 'Kilinochchi', 'Mannar',
-    'Vavuniya', 'Mullaitivu', 'Batticaloa', 'Ampara', 'Trincomalee',
-    'Kurunegala', 'Puttalam', 'Anuradhapura', 'Polonnaruwa', 'Badulla',
-    'Monaragala', 'Ratnapura', 'Kegalle'
+    get('airportTransfer.districts.colombo', 'Colombo'),
+    get('airportTransfer.districts.gampaha', 'Gampaha'),
+    get('airportTransfer.districts.kalutara', 'Kalutara'),
+    get('airportTransfer.districts.kandy', 'Kandy'),
+    get('airportTransfer.districts.matale', 'Matale'),
+    get('airportTransfer.districts.nuwaraEliya', 'Nuwara Eliya'),
+    get('airportTransfer.districts.galle', 'Galle'),
+    get('airportTransfer.districts.matara', 'Matara'),
+    get('airportTransfer.districts.hambantota', 'Hambantota'),
+    get('airportTransfer.districts.jaffna', 'Jaffna'),
+    get('airportTransfer.districts.kilinochchi', 'Kilinochchi'),
+    get('airportTransfer.districts.mannar', 'Mannar'),
+    get('airportTransfer.districts.vavuniya', 'Vavuniya'),
+    get('airportTransfer.districts.mullaitivu', 'Mullaitivu'),
+    get('airportTransfer.districts.batticaloa', 'Batticaloa'),
+    get('airportTransfer.districts.ampara', 'Ampara'),
+    get('airportTransfer.districts.trincomalee', 'Trincomalee'),
+    get('airportTransfer.districts.kurunegala', 'Kurunegala'),
+    get('airportTransfer.districts.puttalam', 'Puttalam'),
+    get('airportTransfer.districts.anuradhapura', 'Anuradhapura'),
+    get('airportTransfer.districts.polonnaruwa', 'Polonnaruwa'),
+    get('airportTransfer.districts.badulla', 'Badulla'),
+    get('airportTransfer.districts.monaragala', 'Monaragala'),
+    get('airportTransfer.districts.ratnapura', 'Ratnapura'),
+    get('airportTransfer.districts.kegalle', 'Kegalle')
   ];
 
   // Fleet vehicles with passenger capacity
   const fleetVehicles = [
-    { name: 'Mini Car (2-3 passengers)', capacity: 3 },
-    { name: 'Toyota Vitz (Economy Car)', capacity: 4 },
-    { name: 'Suzuki Alto (Budget Car)', capacity: 4 },
-    { name: 'Toyota Aqua (Compact Car)', capacity: 4 },
-    { name: 'Toyota Prius (Hybrid Car)', capacity: 4 },
-    { name: 'Toyota Axio (Sedan)', capacity: 4 },
-    { name: 'Luxury SUV', capacity: 6 },
-    { name: 'Toyota Hiace (Luxury Van)', capacity: 10 },
-    { name: 'Toyota KDH Van (14 seats)', capacity: 14 }
+    { name: get('airportTransfer.vehicles.miniCar', 'Mini Car (2-3 passengers)'), capacity: 3 },
+    { name: get('airportTransfer.vehicles.vitz', 'Toyota Vitz (Economy Car)'), capacity: 4 },
+    { name: get('airportTransfer.vehicles.alto', 'Suzuki Alto (Budget Car)'), capacity: 4 },
+    { name: get('airportTransfer.vehicles.aqua', 'Toyota Aqua (Compact Car)'), capacity: 4 },
+    { name: get('airportTransfer.vehicles.prius', 'Toyota Prius (Hybrid Car)'), capacity: 4 },
+    { name: get('airportTransfer.vehicles.axio', 'Toyota Axio (Sedan)'), capacity: 4 },
+    { name: get('airportTransfer.vehicles.luxurySuv', 'Luxury SUV'), capacity: 6 },
+    { name: get('airportTransfer.vehicles.hiace', 'Toyota Hiace (Luxury Van)'), capacity: 10 },
+    { name: get('airportTransfer.vehicles.kdhVan', 'Toyota KDH Van (14 seats)'), capacity: 14 }
   ];
 
   // Get available vehicles based on passenger count
@@ -84,40 +112,40 @@ export default function AirportTransfer() {
     e.preventDefault();
     
     let message = '';
-    message += '\u{1F697} *AIRPORT TRANSFER BOOKING REQUEST*\n';
-    message += '\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\n\n';
-    
-    message += '*TRIP DETAILS*\n';
-    message += `\u{251C} Type: ${tripType === 'one-way' ? '\u{2708}\u{FE0F} One Way' : '\u{1F504} Round Trip'}\n`;
-    message += `\u{251C} Passengers: \u{1F465} ${passengers} ${passengers === 1 ? 'Person' : 'People'}\n`;
-    message += `\u{2514} Vehicle: \u{1F699} ${selectedVehicle}\n\n`;
-    
+    message += `\u{1F697} ${get('airportTransfer.messages.heading','*AIRPORT TRANSFER BOOKING REQUEST*')}\n`;
+    message += `${get('airportTransfer.messages.lineSeparator','\u2501'.repeat(24))}\n\n`;
+
+    message += `${get('airportTransfer.messages.tripDetails','*TRIP DETAILS*')}\n`;
+    message += `\u{251C} ${get('airportTransfer.messages.typeLabel','Type')}: ${tripType === 'one-way' ? `\u{2708}\u{FE0F} ${get('airportTransfer.messages.oneWay','One Way')}` : `\u{1F504} ${get('airportTransfer.messages.roundTrip','Round Trip')}`}\n`;
+    message += `\u{251C} ${get('airportTransfer.messages.passengersLabel','Passengers')}: \u{1F465} ${passengers} ${passengers === 1 ? get('airportTransfer.messages.personSingular','Person') : get('airportTransfer.messages.personPlural','People')}\n`;
+    message += `\u{2514} ${get('airportTransfer.messages.vehicleLabel','Vehicle')}: \u{1F699} ${selectedVehicle}\n\n`;
+
     if (tripType === 'one-way') {
-      message += '*JOURNEY*\n';
-      message += `\u{251C} From: \u{2708}\u{FE0F} ${pickupLocation}\n`;
-      message += `\u{2514} To: \u{1F4CD} ${dropoffLocation}\n\n`;
-      
-      message += '*SCHEDULE*\n';
-      message += `\u{251C} Date: \u{1F4C5} ${pickupDate}\n`;
-      message += `\u{2514} Time: \u{23F0} ${pickupTime}\n`;
+      message += `${get('airportTransfer.messages.journey','*JOURNEY*')}\n`;
+      message += `\u{251C} ${get('airportTransfer.messages.fromLabel','From')}: \u{2708}\u{FE0F} ${pickupLocation}\n`;
+      message += `\u{2514} ${get('airportTransfer.messages.toLabel','To')}: \u{1F4CD} ${dropoffLocation}\n\n`;
+
+      message += `${get('airportTransfer.messages.schedule','*SCHEDULE*')}\n`;
+      message += `\u{251C} ${get('airportTransfer.messages.dateLabel','Date')}: \u{1F4C5} ${pickupDate}\n`;
+      message += `\u{2514} ${get('airportTransfer.messages.timeLabel','Time')}: \u{23F0} ${pickupTime}\n`;
     } else {
-      message += '*JOURNEY*\n';
-      message += `\u{251C} Pickup: \u{1F4CD} ${pickupLocation}\n`;
-      message += `\u{251C} Airport: \u{2708}\u{FE0F} ${airport}\n`;
-      message += `\u{2514} Drop-off: \u{1F4CD} ${dropoffLocation}\n\n`;
-      
-      message += '*SCHEDULE*\n';
-      message += `\u{251C} Date: \u{1F4C5} ${pickupDate}\n`;
-      message += `\u{2514} Time: \u{23F0} ${pickupTime}\n`;
+      message += `${get('airportTransfer.messages.journey','*JOURNEY*')}\n`;
+      message += `\u{251C} ${get('airportTransfer.messages.pickupLabel','Pickup')}: \u{1F4CD} ${pickupLocation}\n`;
+      message += `\u{251C} ${get('airportTransfer.messages.airportLabel','Airport')}: \u{2708}\u{FE0F} ${airport}\n`;
+      message += `\u{2514} ${get('airportTransfer.messages.dropoffLabel','Drop-off')}: \u{1F4CD} ${dropoffLocation}\n\n`;
+
+      message += `${get('airportTransfer.messages.schedule','*SCHEDULE*')}\n`;
+      message += `\u{251C} ${get('airportTransfer.messages.dateLabel','Date')}: \u{1F4C5} ${pickupDate}\n`;
+      message += `\u{2514} ${get('airportTransfer.messages.timeLabel','Time')}: \u{23F0} ${pickupTime}\n`;
     }
-    
+
     if (notes) {
-      message += '\n*SPECIAL REQUESTS*\n';
+      message += `\n${get('airportTransfer.messages.specialRequests','*SPECIAL REQUESTS*')}\n`;
       message += `${notes}\n`;
     }
-    
-    message += '\n\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}';
-    message += '\n_Please confirm availability and pricing_ \u{1F4AC}';
+
+    message += `\n${get('airportTransfer.messages.lineSeparator','\u2501'.repeat(24))}`;
+    message += `\n${get('airportTransfer.messages.confirmNote','_Please confirm availability and pricing_')} \u{1F4AC}`;
 
     const whatsappNumber = '+94766135110';
     const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
@@ -127,9 +155,9 @@ export default function AirportTransfer() {
   return (
     <>
       <Head>
-        <title>Airport Transfers Sri Lanka | Meet & Greet Service | Zamzam Tours</title>
-        <meta name="description" content="Hassle-free airport transfers in Sri Lanka with meet & greet service. Professional drivers and comfortable vehicles from Colombo Airport." />
-        <meta name="keywords" content="Sri Lanka airport transfer, Colombo airport pickup, meet and greet, CMB airport, taxi service, airport taxi Sri Lanka" />
+        <title>{get('airportTransfer.pageTitle', 'Airport Transfers Sri Lanka | Meet & Greet Service | Zamzam Tours')}</title>
+        <meta name="description" content={get('airportTransfer.metaDescription', 'Hassle-free airport transfers in Sri Lanka with meet & greet service. Professional drivers and comfortable vehicles from Colombo Airport.')} />
+        <meta name="keywords" content={get('airportTransfer.metaKeywords', 'Sri Lanka airport transfer, Colombo airport pickup, meet and greet, CMB airport, taxi service, airport taxi Sri Lanka')} />
       </Head>
 
       <Navbar />
@@ -187,7 +215,7 @@ export default function AirportTransfer() {
                 textShadow: '2px 2px 8px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 0, 0, 0.5)',
                 color: '#ffffff'
               }}>
-                Stress-Free <span style={{ color: '#f8b500' }}>Airport Transfers</span> in Sri Lanka
+                {get('airportTransfer.hero.titlePrefix','Stress-Free')} <span style={{ color: '#f8b500' }}>{get('airportTransfer.hero.titleHighlight','Airport Transfers')}</span> {get('airportTransfer.hero.titleSuffix','in Sri Lanka')}
               </h1>
             </motion.div>
             
@@ -199,7 +227,7 @@ export default function AirportTransfer() {
                 textShadow: '1px 1px 6px rgba(0, 0, 0, 0.9), 0 0 15px rgba(0, 0, 0, 0.6)',
                 color: '#ffffff'
               }}>
-                Professional meet & greet service with comfortable vehicles
+                {get('airportTransfer.hero.subtitle','Professional meet & greet service with comfortable vehicles')}
               </p>
             </motion.div>
             
@@ -210,19 +238,19 @@ export default function AirportTransfer() {
               <div className="hero-features">
                 <div className="feature-item">
                   <span className="icon">👨‍💼</span>
-                  <span>Meet & Greet</span>
+                  <span>{get('airportTransfer.hero.feature.meetAndGreet','Meet & Greet')}</span>
                 </div>
                 <div className="feature-item">
                   <span className="icon">🚗</span>
-                  <span>Professional Drivers</span>
+                  <span>{get('airportTransfer.hero.feature.professionalDrivers','Professional Drivers')}</span>
                 </div>
                 <div className="feature-item">
                   <span className="icon">🕒</span>
-                  <span>24/7 Service</span>
+                  <span>{get('airportTransfer.hero.feature.twentyFourSeven','24/7 Service')}</span>
                 </div>
                 <div className="feature-item">
                   <span className="icon">💰</span>
-                  <span>No Hidden Costs</span>
+                  <span>{get('airportTransfer.hero.feature.noHiddenCosts','No Hidden Costs')}</span>
                 </div>
               </div>
             </motion.div>
@@ -235,7 +263,7 @@ export default function AirportTransfer() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1, duration: 0.8, repeat: Infinity, repeatType: 'reverse' }}
         >
-          <div className="scroll-indicator" style={{
+            <div className="scroll-indicator" style={{
             position: 'absolute',
             bottom: '30px',
             left: '50%',
@@ -249,7 +277,7 @@ export default function AirportTransfer() {
               fontSize: '14px',
               fontWeight: '500',
               textShadow: '1px 1px 4px rgba(0, 0, 0, 0.8)'
-            }}>Scroll to explore</span>
+            }}> {get('airportTransfer.hero.scroll','Scroll to explore')}</span>
             <div className="arrow-down" style={{
               width: '30px',
               height: '30px',
@@ -267,7 +295,7 @@ export default function AirportTransfer() {
       <section className="booking-widget-section">
         <div className="container">
           <div className="booking-widget">
-            <h2>Book Your Airport Transfer</h2>
+            <h2>{get('airportTransfer.booking.title','Book Your Airport Transfer')}</h2>
             
             {/* Trip Type Selection */}
             <div className="trip-type-selector">
@@ -276,14 +304,14 @@ export default function AirportTransfer() {
                 onClick={() => setTripType('one-way')}
               >
                 <span className="icon">🛫</span>
-                <span>One Way</span>
+                <span>{get('airportTransfer.tripType.oneWay','One Way')}</span>
               </button>
               <button
                 className={`trip-type-btn ${tripType === 'two-way' ? 'active' : ''}`}
                 onClick={() => setTripType('two-way')}
               >
                 <span className="icon">🛬</span>
-                <span>Two Way (Round Trip)</span>
+                <span>{get('airportTransfer.tripType.roundTrip','Two Way (Round Trip)')}</span>
               </button>
             </div>
 
@@ -291,7 +319,7 @@ export default function AirportTransfer() {
               {/* Row 1: Passengers and Vehicle */}
               <div className="form-row">
                 <div className="form-group">
-                  <label>👨‍👩‍👧‍👦 Number of Passengers</label>
+                  <label>{get('airportTransfer.form.label.passengers','👨‍👩‍👧‍👦 Number of Passengers')}</label>
                   <select 
                     value={passengers}
                     onChange={(e) => {
@@ -301,19 +329,19 @@ export default function AirportTransfer() {
                     required
                   >
                     {[1,2,3,4,5,6,7,8,9,10,12,14].map(num => (
-                      <option key={num} value={num}>{num} {num === 1 ? 'Passenger' : 'Passengers'}</option>
+                      <option key={num} value={num}>{num} {num === 1 ? get('airportTransfer.form.passengerSingular','Passenger') : get('airportTransfer.form.passengerPlural','Passengers')}</option>
                     ))}
                   </select>
                 </div>
 
                 <div className="form-group">
-                  <label>🚙 Select Vehicle</label>
+                  <label>{get('airportTransfer.form.label.selectVehicle','🚙 Select Vehicle')}</label>
                   <select 
                     value={selectedVehicle}
                     onChange={(e) => setSelectedVehicle(e.target.value)}
                     required
                   >
-                    <option value="">Select Vehicle</option>
+                    <option value="">{get('airportTransfer.form.selectVehiclePlaceholder','Select Vehicle')}</option>
                     {getAvailableVehicles().map((vehicle, index) => (
                       <option key={index} value={vehicle.name}>{vehicle.name}</option>
                     ))}
@@ -325,14 +353,14 @@ export default function AirportTransfer() {
               <div className="form-row">
                 <div className="form-group full-width">
                   <label>
-                    {tripType === 'one-way' ? '✈️ Pickup Location (Airport)' : '📍 Pickup Location (District)'}
+                    {tripType === 'one-way' ? get('airportTransfer.form.label.pickupAirport','✈️ Pickup Location (Airport)') : get('airportTransfer.form.label.pickupDistrict','📍 Pickup Location (District)')}
                   </label>
                   <select 
                     value={pickupLocation}
                     onChange={(e) => setPickupLocation(e.target.value)}
                     required
                   >
-                    <option value="">Select {tripType === 'one-way' ? 'Airport' : 'District'}</option>
+                    <option value="">{tripType === 'one-way' ? get('airportTransfer.form.selectAirportPlaceholder','Select Airport') : get('airportTransfer.form.selectDistrictPlaceholder','Select District')}</option>
                     {getPickupOptions().map((location, index) => (
                       <option key={index} value={location}>{location}</option>
                     ))}
@@ -344,13 +372,13 @@ export default function AirportTransfer() {
               {tripType === 'two-way' && (
                 <div className="form-row">
                   <div className="form-group full-width">
-                    <label>✈️ Airport</label>
+                    <label>{get('airportTransfer.form.label.airport','✈️ Airport')}</label>
                     <select 
                       value={airport}
                       onChange={(e) => setAirport(e.target.value)}
                       required
                     >
-                      <option value="">Select Airport</option>
+                      <option value="">{get('airportTransfer.form.selectAirportPlaceholder','Select Airport')}</option>
                       {airports.map((airportOption, index) => (
                         <option key={index} value={airportOption}>{airportOption}</option>
                       ))}
@@ -362,13 +390,13 @@ export default function AirportTransfer() {
               {/* Row 4: Drop-off Location */}
               <div className="form-row">
                 <div className="form-group full-width">
-                  <label>📍Drop-off Location (District)</label>
+                  <label>{get('airportTransfer.form.label.dropoff','📍Drop-off Location (District)')}</label>
                   <select 
                     value={dropoffLocation}
                     onChange={(e) => setDropoffLocation(e.target.value)}
                     required
                   >
-                    <option value="">Select District</option>
+                    <option value="">{get('airportTransfer.form.selectDistrictPlaceholder','Select District')}</option>
                     {getDropoffOptions().map((location, index) => (
                       <option key={index} value={location}>{location}</option>
                     ))}
@@ -379,7 +407,7 @@ export default function AirportTransfer() {
               {/* Row 5: Date and Time */}
               <div className="form-row">
                 <div className="form-group">
-                  <label>📅 Date</label>
+                  <label>{get('airportTransfer.form.label.date','📅 Date')}</label>
                   <input 
                     type="date" 
                     value={pickupDate}
@@ -390,7 +418,7 @@ export default function AirportTransfer() {
                 </div>
 
                 <div className="form-group">
-                  <label>🕒 Time</label>
+                  <label>{get('airportTransfer.form.label.time','🕒 Time')}</label>
                   <input 
                     type="time" 
                     value={pickupTime}
@@ -402,23 +430,23 @@ export default function AirportTransfer() {
 
               {/* Additional Notes */}
               <div className="form-group">
-                <label>📝 Additional Notes (Optional)</label>
+                <label>{get('airportTransfer.form.label.notes','📝 Additional Notes (Optional)')}</label>
                 <textarea
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
-                  placeholder="Flight number, special requests, luggage details, etc."
+                  placeholder={get('airportTransfer.form.placeholder.notes','Flight number, special requests, luggage details, etc.')}
                   rows={2}
                 />
               </div>
 
               {/* Pricing Notice */}
               <div className="pricing-notice">
-                <p>💰 <strong>Pricing will be discussed via WhatsApp</strong></p>
+                <p>💰 <strong>{get('airportTransfer.pricing.notice','Pricing will be discussed via WhatsApp')}</strong></p>
               </div>
 
               {/* Submit Button */}
               <button type="submit" className="btn-primary large">
-                <span>📲 Send Booking Request via WhatsApp</span>
+                <span>{get('airportTransfer.buttons.sendWhatsApp','📲 Send Booking Request via WhatsApp')}</span>
               </button>
             </form>
           </div>
@@ -429,45 +457,45 @@ export default function AirportTransfer() {
       <section className="why-choose-section">
         <div className="container">
           <div className="section-header">
-            <h2>Why Choose Zamzam Tours?</h2>
-            <p>Reliable, professional, and hassle-free airport transfer services</p>
+            <h2>{get('airportTransfer.why.title','Why Choose Zamzam Tours?')}</h2>
+            <p>{get('airportTransfer.why.subtitle','Reliable, professional, and hassle-free airport transfer services')}</p>
           </div>
 
           <div className="features-grid">
             <div className="feature-box">
               <div className="feature-icon">👨‍💼</div>
-              <h3>Professional Drivers</h3>
-              <p>Experienced, licensed, and English-speaking drivers</p>
+              <h3>{get('airportTransfer.why.professionalDrivers.title','Professional Drivers')}</h3>
+              <p>{get('airportTransfer.why.professionalDrivers.desc','Experienced, licensed, and English-speaking drivers')}</p>
             </div>
 
             <div className="feature-box">
               <div className="feature-icon">📍</div>
-              <h3>Modern Fleet</h3>
-              <p>Well-maintained, comfortable, and air-conditioned vehicles</p>
+              <h3>{get('airportTransfer.why.modernFleet.title','Modern Fleet')}</h3>
+              <p>{get('airportTransfer.why.modernFleet.desc','Well-maintained, comfortable, and air-conditioned vehicles')}</p>
             </div>
 
             <div className="feature-box">
               <div className="feature-icon">🕒</div>
-              <h3>24/7 Service</h3>
-              <p>Available round the clock for your convenience</p>
+              <h3>{get('airportTransfer.why.twentyFourSeven.title','24/7 Service')}</h3>
+              <p>{get('airportTransfer.why.twentyFourSeven.desc','Available round the clock for your convenience')}</p>
             </div>
 
             <div className="feature-box">
               <div className="feature-icon">💰</div>
-              <h3>Competitive Rates</h3>
-              <p>Transparent pricing with no hidden costs</p>
+              <h3>{get('airportTransfer.why.competitiveRates.title','Competitive Rates')}</h3>
+              <p>{get('airportTransfer.why.competitiveRates.desc','Transparent pricing with no hidden costs')}</p>
             </div>
 
             <div className="feature-box">
               <div className="feature-icon">🔒</div>
-              <h3>Safe & Secure</h3>
-              <p>Fully insured vehicles and trained drivers</p>
+              <h3>{get('airportTransfer.why.safeSecure.title','Safe & Secure')}</h3>
+              <p>{get('airportTransfer.why.safeSecure.desc','Fully insured vehicles and trained drivers')}</p>
             </div>
 
             <div className="feature-box">
               <div className="feature-icon">📲</div>
-              <h3>Easy Booking</h3>
-              <p>Simple WhatsApp booking process</p>
+              <h3>{get('airportTransfer.why.easyBooking.title','Easy Booking')}</h3>
+              <p>{get('airportTransfer.why.easyBooking.desc','Simple WhatsApp booking process')}</p>
             </div>
           </div>
         </div>
