@@ -490,7 +490,6 @@ export default function AirportTransfer() {
                       <option key={vehicle.vehicle_id} value={vehicle.vehicle_name}>{vehicle.vehicle_name}</option>
                     ))}
                   </select>
->>>>>>> Stashed changes
                 </div>
               </div>
 
