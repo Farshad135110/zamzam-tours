@@ -8,6 +8,7 @@ import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import { fadeInUp } from '../../src/utils/animations';
 import useTranslation from '../../src/i18n/useTranslation'
+import { CONTACT_INFO } from '../../src/constants/config';
 
 export default function AirportTransfer() {
   const [tripType, setTripType] = useState('one-way'); // 'one-way' or 'two-way'
@@ -147,9 +148,7 @@ export default function AirportTransfer() {
     message += `\n${get('airportTransfer.messages.lineSeparator','\u2501'.repeat(24))}`;
     message += `\n${get('airportTransfer.messages.confirmNote','_Please confirm availability and pricing_')} \u{1F4AC}`;
 
-    const whatsappNumber = '+94766135110';
-    const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
-    window.open(whatsappUrl, '_blank');
+    window.open(`${CONTACT_INFO.whatsappUrl}?text=${encodeURIComponent(message)}`, '_blank');
   };
 
   return (

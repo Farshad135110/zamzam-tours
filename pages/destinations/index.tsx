@@ -276,21 +276,7 @@ export default function Destinations() {
                       fill
                       style={{ objectFit: 'cover' }}
                     />
-                    <div 
-                      style={{
-                        position: 'absolute',
-                        top: '1rem',
-                        right: '1rem',
-                        background: '#f8b500',
-                        color: '#000',
-                        padding: '0.5rem 1rem',
-                        borderRadius: '20px',
-                        fontSize: '0.85rem',
-                        fontWeight: '600'
-                      }}
-                    >
-                      {destination.duration}
-                    </div>
+                    {/* duration removed per request */}
                   </div>
                   <div style={{ padding: '1.5rem' }}>
                     <h3 style={{ fontSize: '1.5rem', marginBottom: '0.5rem', color: '#053b3c' }}>

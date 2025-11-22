@@ -1,5 +1,6 @@
 import React from 'react';
 import Image from 'next/image';
+import { SITE_INFO, CONTACT_INFO } from '../src/constants/config';
 import Link from 'next/link';
 
 export default function Footer() {
@@ -7,7 +8,7 @@ export default function Footer() {
     const message = `Hello Zamzam Tours! I need ${service}`;
     const encoded = encodeURIComponent(message);
     if (typeof window !== 'undefined') {
-      window.open(`https://wa.me/94766135110?text=${encoded}`, '_blank');
+      window.open(`${CONTACT_INFO.whatsappUrl}?text=${encoded}`, '_blank');
     }
   };
 
@@ -17,7 +18,7 @@ export default function Footer() {
         <div className="footer-content">
           <div className="footer-section">
             <div className="footer-logo">
-              <Image src="/logo.png" alt="Zamzam Tours" width={150} height={60} />
+              <Image src={SITE_INFO.logo} alt={SITE_INFO.name} width={110} height={36} />
             </div>
             <p>Your trusted partner for premium travel experiences in Sri Lanka since 2010.</p>
             <div className="social-links">
@@ -64,10 +65,10 @@ export default function Footer() {
           <div className="footer-section">
             <h3>Contact Info</h3>
             <ul className="contact-info">
-              <li>📍 123 Galle Road, Colombo, Sri Lanka</li>
-              <li>📞 +94 77 123 4567</li>
-              <li>📧 info@zamzamtours.com</li>
-              <li>🕒 Open 24/7</li>
+              <li><span className="contact-icon">📍</span><span className="contact-text">{CONTACT_INFO.address}</span></li>
+              <li><span className="contact-icon">📞</span><span className="contact-text">{CONTACT_INFO.phone}</span></li>
+              <li><span className="contact-icon">📧</span><span className="contact-text">{CONTACT_INFO.email}</span></li>
+              <li><span className="contact-icon">🕒</span><span className="contact-text">Open 24/7</span></li>
             </ul>
           </div>
         </div>
@@ -78,14 +79,33 @@ export default function Footer() {
       </div>
 
       {/* WhatsApp Floating Button */}
-      <div className="whatsapp-float">
-        <button
-          onClick={() => handleWhatsAppBooking('assistance')}
-          aria-label="Contact via WhatsApp"
-        >
-          <Image src="/whatsapp-icon.svg" alt="WhatsApp" width={30} height={30} />
-        </button>
-      </div>
+        <div className="whatsapp-float">
+          <button
+            onClick={() => window.open(`${CONTACT_INFO.whatsappUrl}?text=${encodeURIComponent('Hello ZamZam Tours! I need assistance')}`, '_blank')}
+            aria-label="Contact via WhatsApp"
+          >
+            <Image src="/whatsapp-icon.svg" alt="WhatsApp" width={30} height={30} />
+          </button>
+        </div>
+
+      <style jsx>{`
+        .footer-content { display: flex; flex-wrap: wrap; gap: 1.5rem; }
+        .footer-section { flex: 1 1 200px; min-width: 180px; }
+
+        .footer-logo { display: flex; align-items: center; gap: 0.75rem; }
+
+        /* Contact list - keep icon + text on one line and remove implicit width limits */
+        .contact-info { list-style: none; padding: 0; margin: 0; border: none; }
+        .contact-info li { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; white-space: nowrap; }
+        .contact-icon { line-height: 1; font-size: 1.05rem; flex: 0 0 auto; }
+        .contact-text { display: inline-block; white-space: nowrap; overflow: visible; text-overflow: clip; max-width: none; }
+
+        /* On very small screens allow some wrapping to avoid overflow off-screen */
+        @media (max-width: 420px) {
+          .contact-info li { white-space: normal; }
+          .footer-section { flex: 1 1 100%; }
+        }
+      `}</style>
     </footer>
   );
 }

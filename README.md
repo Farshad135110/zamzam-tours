@@ -7,7 +7,7 @@ Features included:
 - Tailwind CSS
 - Simple client-side i18n (English, German)
 - Fleet & Tours pages
-- Booking form that opens WhatsApp with a pre-filled message (uses +94766135110)
+- Booking form that opens WhatsApp with a pre-filled message (uses +94701888993)
 
 How to run locally:
 

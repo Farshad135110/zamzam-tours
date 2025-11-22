@@ -916,15 +916,7 @@ export default function DestinationDetail() {
               }}>
                 {destination.category}
               </span>
-              <span style={{ 
-                background: 'rgba(255, 255, 255, 0.9)', 
-                color: '#053b3c', 
-                padding: '0.5rem 1.5rem', 
-                borderRadius: '25px',
-                fontWeight: '600'
-              }}>
-                📅 {destination.duration}
-              </span>
+              {/* duration removed per request */}
               <span style={{ 
                 background: 'rgba(255, 255, 255, 0.9)', 
                 color: '#053b3c', 

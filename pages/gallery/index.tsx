@@ -4,6 +4,7 @@ import Head from 'next/head';
 import Image from 'next/image';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
+import { CONTACT_INFO } from '../../src/constants/config';
 import useTranslation from '../../src/i18n/useTranslation'
 
 export default function SimpleGallery() {
@@ -193,9 +194,9 @@ export default function SimpleGallery() {
             <button 
               className="cta-button"
               onClick={() => {
-                const message = get('gallery.cta.waMessage', "Hello ZamZam Tours! I saw your beautiful gallery and would like to plan a trip to Sri Lanka.");
-                window.open(`https://wa.me/94771234567?text=${encodeURIComponent(message)}`, '_blank');
-              }}
+                  const message = get('gallery.cta.waMessage', "Hello ZamZam Tours! I saw your beautiful gallery and would like to plan a trip to Sri Lanka.");
+                  window.open(`${CONTACT_INFO.whatsappUrl}?text=${encodeURIComponent(message)}`, '_blank');
+                }}
             >
               {t('gallery.cta.button')}
             </button>

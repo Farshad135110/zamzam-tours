@@ -1,11 +1,11 @@
 // Global configuration constants for ZamZam Tours
 
 export const CONTACT_INFO = {
-  whatsapp: '94766135110',
-  whatsappUrl: 'https://wa.me/94766135110',
-  phone: '+94 76 613 5110',
-  email: 'info@zamzamtours.com',
-  address: 'Colombo, Sri Lanka'
+  whatsapp: '94701888993',
+  whatsappUrl: 'https://wa.me/94701888993',
+  phone: '+94 70 188 8993',
+  email: 'reservation@zamzamtours.com',
+  address: 'H.K. Edmand mawatha, Milidduwa, Galle.'
 };
 
 export const SITE_INFO = {
@@ -13,7 +13,7 @@ export const SITE_INFO = {
   tagline: 'Best Travel Experience in Sri Lanka',
   description: 'Premium travel services including self-drive car rentals, guided tours, and airport transfers across Sri Lanka.',
   url: 'https://zamzamtours.com',
-  logo: '/logo.svg'
+  logo: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1763663535/Project_Luvi_-_Gemstones_ce9h12.png'
 };
 
 export const SOCIAL_MEDIA = {

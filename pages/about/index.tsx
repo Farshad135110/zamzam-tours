@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
+import { CONTACT_INFO } from '../../src/constants/config';
 import useTranslation from '../../src/i18n/useTranslation'
 
 export default function About() {
@@ -357,7 +358,7 @@ export default function About() {
                 onClick={() => {
                   const message = "Hello ZamZam Tours! I'd like to learn more about your company and services.";
                   const encodedMessage = encodeURIComponent(message);
-                  window.open(`https://wa.me/94766135110?text=${encodedMessage}`, '_blank');
+                  window.open(`${CONTACT_INFO.whatsappUrl}?text=${encodedMessage}`, '_blank');
                 }}
               >
                 {t('about.cta.chat')}

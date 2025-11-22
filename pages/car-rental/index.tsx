@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { motion } from 'framer-motion';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
+import { CONTACT_INFO } from '../../src/constants/config';
 import AnimatedSection from '../../components/AnimatedSection';
 import { fadeInUp } from '../../src/utils/animations';
 import useTranslation from '../../src/i18n/useTranslation';
@@ -186,7 +187,7 @@ export default function SelfDrive() {
       message += `Please provide more details and availability.`;
     }
     const encodedMessage = encodeURIComponent(message);
-    window.open(`https://wa.me/94766135110?text=${encodedMessage}`, '_blank');
+    window.open(`${CONTACT_INFO.whatsappUrl}?text=${encodedMessage}`, '_blank');
   };
 
   // Open booking form

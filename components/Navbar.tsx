@@ -44,7 +44,7 @@ export default function Navbar() {
       <nav className={`navbar ${isScrolled ? 'scrolled' : ''}`}>
         <div className="container">
           <Link href="/" className="logo">
-            <Image src={SITE_INFO.logo} alt={SITE_INFO.name} width={120} height={48} priority />
+            <Image src={SITE_INFO.logo} alt={SITE_INFO.name} width={90} height={36} priority />
           </Link>
           
           <button 

@@ -8,6 +8,7 @@ import 'next-cloudinary/dist/cld-video-player.css';
 import { motion } from 'framer-motion';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import { CONTACT_INFO } from '../src/constants/config';
 import AnimatedSection from '../components/AnimatedSection';
 import { fadeInUp, staggerContainer, cardHover } from '../src/utils/animations';
 import useTranslation from '../src/i18n/useTranslation';
@@ -194,7 +195,7 @@ export default function Home() {
   const handleWhatsAppBooking = (service: string) => {
     const message = `Hello Zamzam Tours! I'm interested in booking ${service}. Please provide more details.`;
     const encodedMessage = encodeURIComponent(message);
-    window.open(`https://wa.me/94766135110?text=${encodedMessage}`, '_blank');
+    window.open(`${CONTACT_INFO.whatsappUrl}?text=${encodedMessage}`, '_blank');
   };
   
   return (

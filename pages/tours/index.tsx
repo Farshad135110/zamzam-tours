@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { motion } from 'framer-motion';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
+import { CONTACT_INFO } from '../../src/constants/config';
 import AnimatedSection from '../../components/AnimatedSection';
 import { CldImage } from 'next-cloudinary';
 import { fadeInUp } from '../../src/utils/animations';
@@ -412,7 +413,7 @@ export default function Tours() {
     const template = get('tours.messages.whatsappTemplate', 'Hello Zamzam Tours! I\'m interested in booking the "{tour}" tour. Please provide more details and availability.');
     const message = template.replace('{tour}', tour.name);
     const encodedMessage = encodeURIComponent(message);
-    window.open(`https://wa.me/94766135110?text=${encodedMessage}`, '_blank');
+    window.open(`${CONTACT_INFO.whatsappUrl}?text=${encodedMessage}`, '_blank');
   };
 
   // Open booking form

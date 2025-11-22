@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { motion } from 'framer-motion';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
+import { CONTACT_INFO } from '../../src/constants/config';
 import { fadeInUp } from '../../src/utils/animations';
 import useTranslation from '../../src/i18n/useTranslation'
 
@@ -403,7 +404,7 @@ export default function Hotels() {
     message += get('hotels.messages.pleaseProvide','Please provide availability and complete booking details.');
 
     const encodedMessage = encodeURIComponent(message);
-    window.open(`https://wa.me/94766135110?text=${encodedMessage}`, '_blank');
+    window.open(`${CONTACT_INFO.whatsappUrl}?text=${encodedMessage}`, '_blank');
   };
 
   // Open hotel details and booking
@@ -860,7 +861,7 @@ export default function Hotels() {
                   message += '_Please share available hotels and packages_';
                   
                   const encodedMessage = encodeURIComponent(message);
-                  window.open(`https://wa.me/94766135110?text=${encodedMessage}`, '_blank');
+                  window.open(`${CONTACT_INFO.whatsappUrl}?text=${encodedMessage}`, '_blank');
                 }}
               >
                 {get('hotels.search.sendWhatsApp', '📱 Send Inquiry via WhatsApp')}
@@ -1017,7 +1018,7 @@ export default function Hotels() {
                 onClick={() => {
                   const message = `Hello Zamzam Tours! I want to book a complete travel package including hotel, transfers, and tours. Please help me plan my trip.`;
                   const encodedMessage = encodeURIComponent(message);
-                  window.open(`https://wa.me/94766135110?text=${encodedMessage}`, '_blank');
+                  window.open(`${CONTACT_INFO.whatsappUrl}?text=${encodedMessage}`, '_blank');
                 }}
               >
                 {get('hotels.integrated.cta', '💬 Plan My Complete Trip on WhatsApp')}

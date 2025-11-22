@@ -4,6 +4,7 @@ import Head from 'next/head';
 import Image from 'next/image';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
+import { CONTACT_INFO } from '../../src/constants/config';
 import useTranslation from '../../src/i18n/useTranslation';
 
 export default function Contact() {
@@ -81,31 +82,14 @@ export default function Contact() {
   // Office locations
   const officeLocations = [
     {
+      // Keep only the main office (Galle)
       name: t('contact.locations.office1.name'),
-      address: t('contact.locations.office1.address'),
-      phone: t('contact.locations.office1.phone'),
-      email: t('contact.locations.office1.email'),
+      address: CONTACT_INFO.address,
+      phone: CONTACT_INFO.phone,
+      email: CONTACT_INFO.email,
       hours: t('contact.locations.office1.hours'),
-      coordinates: { lat: 6.9271, lng: 79.8612 },
+      coordinates: { lat: 6.0535, lng: 80.2210 },
       image: '/contact/colombo-office.jpg'
-    },
-    {
-      name: t('contact.locations.office2.name'),
-      address: t('contact.locations.office2.address'),
-      phone: t('contact.locations.office2.phone'),
-      email: t('contact.locations.office2.email'),
-      hours: t('contact.locations.office2.hours'),
-      coordinates: { lat: 7.1805, lng: 79.8841 },
-      image: '/contact/airport-counter.jpg'
-    },
-    {
-      name: t('contact.locations.office3.name'),
-      address: t('contact.locations.office3.address'),
-      phone: t('contact.locations.office3.phone'),
-      email: t('contact.locations.office3.email'),
-      hours: t('contact.locations.office3.hours'),
-      coordinates: { lat: 7.2906, lng: 80.6337 },
-      image: '/contact/kandy-office.jpg'
     }
   ];
 
@@ -150,7 +134,7 @@ export default function Contact() {
         break;
       case 'whatsapp':
         const whatsappMessage = `Hello Zamzam Tours! I would like to get more information about your services.`;
-        window.open(`https://wa.me/94766135110?text=${encodeURIComponent(whatsappMessage)}`, '_blank');
+        window.open(`${CONTACT_INFO.whatsappUrl}?text=${encodeURIComponent(whatsappMessage)}`, '_blank');
         break;
       case 'email':
         window.open(`mailto:${method.details}?subject=Inquiry from Zamzam Tours Website`);
@@ -191,7 +175,7 @@ Please respond promptly.
       `.trim();
 
       // Open WhatsApp with pre-filled message
-      window.open(`https://wa.me/94766135110?text=${encodeURIComponent(whatsappMessage)}`, '_blank');
+      window.open(`${CONTACT_INFO.whatsappUrl}?text=${encodeURIComponent(whatsappMessage)}`, '_blank');
       
       setSubmitStatus('success');
       setFormData({
@@ -238,7 +222,7 @@ Please respond promptly.
           <h1 className="hero-title">{t('contact.hero.title')}</h1>
           <p className="hero-subtitle">{t('contact.hero.subtitle')}</p>
 
-          <div className="hero-buttons" style={{ marginTop: '1.25rem' }}>
+          <div className="hero-buttons">
             <div className="contact-badge">
               <span className="badge-icon">📞</span>
               <span className="badge-text">{t('contact.badge.phone')}</span>
@@ -449,7 +433,7 @@ Please respond promptly.
                   className="btn-secondary"
                   onClick={() => {
                     const message = `Hello! I need assistance with: ${formData.subject || 'General inquiry'}`;
-                    window.open(`https://wa.me/94766135110?text=${encodeURIComponent(message)}`, '_blank');
+                    window.open(`${CONTACT_INFO.whatsappUrl}?text=${encodeURIComponent(message)}`, '_blank');
                   }}
                 >
                   {t('contact.form.quickChat')}
@@ -503,7 +487,7 @@ Please respond promptly.
                         <div className="location-actions">
                           <button 
                             className="btn-small"
-                            onClick={() => window.open(`tel:${office.phone}`)}
+                            onClick={() => window.open(`tel:${office.phone.replace(/\s+/g, '')}`)}
                           >
                             {t('contact.action.call')}
                           </button>
@@ -556,7 +540,7 @@ Please respond promptly.
             <div className="emergency-actions">
               <button 
                 className="btn-primary"
-                onClick={() => window.open('tel:+94766135110')}
+                onClick={() => window.open(`tel:${CONTACT_INFO.phone.replace(/\s+/g, '')}`)}
               >
                 {t('contact.emergency.call')}
               </button>
@@ -564,7 +548,7 @@ Please respond promptly.
                 className="btn-secondary"
                 onClick={() => {
                   const message = 'EMERGENCY: I need immediate assistance with my booking.';
-                  window.open(`https://wa.me/94766135110?text=${encodeURIComponent(message)}`, '_blank');
+                  window.open(`${CONTACT_INFO.whatsappUrl}?text=${encodeURIComponent(message)}`, '_blank');
                 }}
               >
                 {t('contact.emergency.whatsapp')}
@@ -620,6 +604,11 @@ Please respond promptly.
           gap: 2rem;
           flex-wrap: wrap;
         }
+
+        /* Hero spacing consistent with other pages */
+        .hero-content { padding: 0 20px; }
+        .hero-title { margin-bottom: 1rem; font-size: 2.4rem; }
+        .hero-highlight { color: var(--secondary-color); }
 
         .contact-badge {
           display: flex;
@@ -923,30 +912,34 @@ Please respond promptly.
 
         .locations-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-          gap: 2rem;
+          grid-template-columns: 1fr;
+          justify-items: center;
+          gap: 1.25rem;
           margin-top: 3rem;
         }
 
+        /* Compact centered card */
         .location-card {
           background: white;
-          border-radius: 15px;
+          border-radius: 12px;
           overflow: hidden;
-          box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-          transition: transform 0.3s ease;
+          box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+          transition: transform 0.18s ease;
+          max-width: 720px;
+          width: 100%;
         }
 
         .location-card:hover {
-          transform: translateY(-5px);
+          transform: translateY(-3px);
         }
 
         .location-image {
-          height: 200px;
+          height: 160px;
           overflow: hidden;
         }
 
         .location-info {
-          padding: 2rem;
+          padding: 1.5rem;
         }
 
         .location-info h3 {
