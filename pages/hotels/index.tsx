@@ -22,6 +22,8 @@ interface Hotel {
 
 export default function Hotels() {
   const [searchParams, setSearchParams] = useState({
+    name: '',
+    email: '',
     location: 'all',
     checkIn: '',
     checkOut: '',
@@ -73,52 +75,120 @@ export default function Hotels() {
     { id: 'bar', name: 'Bar' }
   ];
 
-  // Fetch hotels from database
-  useEffect(() => {
-    const fetchHotels = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch('/api/hotels');
-        if (!response.ok) throw new Error('Failed to fetch hotels');
-        const hotelsData = await response.json();
-        
-        console.log('Fetched hotels from database:', hotelsData);
-        
-        // Transform database hotels to match UI format
-        const transformedHotels = hotelsData.map((hotel: any) => {
-          // Parse facilities as amenities
-          const amenities = hotel.facilities ? hotel.facilities.split(',').map((f: string) => f.trim().toLowerCase()) : [];
-          
-          // Parse price range to get base price
-          const priceMatch = hotel.price_range?.match(/\d+/);
-          const basePrice = priceMatch ? parseInt(priceMatch[0]) : 100;
-          
-          return {
-            id: hotel.hotel_id,
-            name: hotel.hotel_name,
-            location: hotel.location?.toLowerCase().replace(/\s+/g, '-') || 'all',
-            rating: 4.5, // Default rating
-            reviews: Math.floor(Math.random() * 500) + 200, // Random reviews
-            price: basePrice,
-            image: hotel.image || '/hotels/default.jpg',
-            amenities: amenities,
-            description: `Comfortable accommodation in ${hotel.location || 'Sri Lanka'}`,
-            coordinates: { lat: 6.9271, lng: 79.8612 }, // Default coordinates
-            popularPackages: ['airport-transfer', 'city-tour']
-          };
-        });
-        
-        setHotels(transformedHotels);
-      } catch (error) {
-        console.error('Error fetching hotels:', error);
-        alert('Failed to load hotels from database');
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-    fetchHotels();
-  }, []);
+  // Sample hotels data (fallback) - kept as a local fallback if API is unreachable
+  const sampleHotels = [
+    {
+      id: 1,
+      name: 'Cinnamon Grand Colombo',
+      location: 'colombo',
+      rating: 4.8,
+      reviews: 1247,
+      price: 180,
+      image: '/hotels/cinnamon-grand.jpg',
+      amenities: ['pool', 'spa', 'gym', 'wifi', 'breakfast', 'restaurant', 'bar'],
+      description: 'Luxury 5-star hotel in the heart of Colombo with world-class amenities',
+      coordinates: { lat: 6.9271, lng: 79.8612 },
+      popularPackages: ['airport-transfer', 'city-tour']
+    },
+    {
+      id: 2,
+      name: 'Heritance Kandalama',
+      location: 'kandy',
+      rating: 4.9,
+      reviews: 892,
+      price: 220,
+      image: '/hotels/kandalama.jpg',
+      amenities: ['pool', 'spa', 'wifi', 'breakfast', 'restaurant', 'bar'],
+      description: 'Architectural masterpiece nestled between jungle and lake',
+      coordinates: { lat: 7.8731, lng: 80.7718 },
+      popularPackages: ['airport-transfer', 'cultural-tour']
+    },
+    {
+      id: 3,
+      name: 'Fortaleza Hotel Galle',
+      location: 'galle',
+      rating: 4.7,
+      reviews: 567,
+      price: 150,
+      image: '/hotels/fortaleza.jpg',
+      amenities: ['pool', 'wifi', 'breakfast', 'restaurant', 'bar'],
+      description: 'Boutique hotel within Galle Fort with colonial charm',
+      coordinates: { lat: 6.0320, lng: 80.2160 },
+      popularPackages: ['airport-transfer', 'beach-tour']
+    },
+    {
+      id: 4,
+      name: 'Jetwing Beach Negombo',
+      location: 'negombo',
+      rating: 4.6,
+      reviews: 734,
+      price: 120,
+      image: '/hotels/jetwing-beach.jpg',
+      amenities: ['pool', 'spa', 'wifi', 'breakfast', 'beach', 'restaurant', 'bar'],
+      description: 'Beachfront paradise perfect for relaxation and water sports',
+      coordinates: { lat: 7.2080, lng: 79.8450 },
+      popularPackages: ['airport-transfer', 'beach-tour']
+    },
+    {
+      id: 5,
+      name: 'Ceylon Tea Trails',
+      location: 'nuwara-eliya',
+      rating: 4.9,
+      reviews: 423,
+      price: 350,
+      image: '/hotels/tea-trails.jpg',
+      amenities: ['pool', 'spa', 'wifi', 'breakfast', 'restaurant', 'bar'],
+      description: 'Luxury bungalow experience in Sri Lankan tea country',
+      coordinates: { lat: 6.9497, lng: 80.7891 },
+      popularPackages: ['tea-tour', 'hill-country-tour']
+    },
+    {
+      id: 6,
+      name: 'Wild Coast Tented Lodge',
+      location: 'yala',
+      rating: 4.8,
+      reviews: 389,
+      price: 280,
+      image: '/hotels/wild-coast.jpg',
+      amenities: ['pool', 'wifi', 'breakfast', 'restaurant', 'bar'],
+      description: 'Luxury tented safari camp near Yala National Park',
+      coordinates: { lat: 6.3733, lng: 81.5011 },
+      popularPackages: ['safari-tour', 'wildlife-tour']
+    },
+    {
+      id: 7,
+      name: 'Uga Jungle Beach',
+      location: 'trincomalee',
+      rating: 4.5,
+      reviews: 298,
+      price: 190,
+      image: '/hotels/uga-jungle.jpg',
+      amenities: ['pool', 'spa', 'wifi', 'breakfast', 'beach', 'restaurant', 'bar'],
+      description: 'Secluded beach resort perfect for honeymooners',
+      coordinates: { lat: 8.5874, lng: 81.2154 },
+      popularPackages: ['beach-tour', 'whale-watching']
+    },
+    {
+      id: 8,
+      name: '98 Acres Resort Ella',
+      location: 'ella',
+      rating: 4.7,
+      reviews: 512,
+      price: 160,
+      image: '/hotels/98-acres.jpg',
+      amenities: ['pool', 'spa', 'wifi', 'breakfast', 'restaurant', 'bar'],
+      description: 'Eco-luxury resort with stunning views of Ella Gap',
+      coordinates: { lat: 6.8767, lng: 81.0583 },
+      popularPackages: ['hiking-tour', 'adventure-tour']
+    }
+  ];
+
+  // Ensure sample hotels have a `facilities` field so the UI shows facilities for fallback data
+  sampleHotels.forEach(h => {
+    if (!('facilities' in h) || !h.facilities) {
+      h.facilities = h.amenities ? [...h.amenities] : [];
+    }
+  });
 
   // Fetch packages from database
   useEffect(() => {
@@ -250,6 +320,61 @@ export default function Hotels() {
     window.open(`https://wa.me/94766135110?text=${encodedMessage}`, '_blank');
   };
 
+  // Persist booking then open WhatsApp
+  const handleConfirmBooking = async () => {
+    try {
+      if (!selectedHotel) {
+        alert('Please select a hotel first.');
+        return;
+      }
+      const { name, email, phone, checkIn, checkOut, rooms, guests } = searchParams as any;
+      if (!name || !email || !phone) {
+        alert('Please enter your name, email, and phone number.');
+        return;
+      }
+      if (!checkIn || !checkOut) {
+        alert('Please select check-in and check-out dates.');
+        return;
+      }
+      // Use real hotel_id when available (DB-backed). Fallback to null for sample data.
+      const hotelId = typeof selectedHotel.id === 'string' && selectedHotel.id.length <= 20 ? selectedHotel.id : null;
+
+      const payload = {
+        hotel_id: hotelId,
+        name,
+        email,
+        phone_no: phone,
+        check_in: checkIn,      // YYYY-MM-DD
+        check_out: checkOut,    // YYYY-MM-DD
+        no_of_rooms: Number(rooms) || 1,
+        no_of_people: Number(guests) || 1
+      };
+
+      const res = await fetch('/api/hotel-bookings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err?.error || 'Failed to create booking');
+      }
+
+      // Optional: we could use the created booking response if needed
+      // const created = await res.json();
+
+      // After persisting, send the WhatsApp message
+      handleWhatsAppBooking();
+
+      // Close the modal
+      setShowBookingForm(false);
+    } catch (e: any) {
+      console.error('Booking failed:', e);
+      alert(e?.message || 'Booking failed');
+    }
+  };
+
   // Open hotel details and booking
   const openHotelBooking = (hotel: Hotel) => {
     setSelectedHotel(hotel);
@@ -279,10 +404,148 @@ export default function Hotels() {
           <div className="hotels-hero-overlay"></div>
         </div>
         
-        <div className="hotels-hero-content">
-          <h1>Luxury Accommodations in Sri Lanka</h1>
-          <p>Book your perfect stay with integrated travel services</p>
-        </div>
+        <div className="hero-overlay" style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'linear-gradient(135deg, rgba(5, 59, 60, 0.6), rgba(10, 92, 94, 0.5))',
+          zIndex: 1
+        }}></div>
+        
+        <motion.div 
+          className="hero-content"
+          style={{ position: 'relative', zIndex: 2 }}
+          initial="hidden"
+          animate="visible"
+          variants={fadeInUp}
+        >
+          <div className="container">
+            <motion.div
+              variants={fadeInUp}
+              transition={{ delay: 0.2 }}
+            >
+              <h1 style={{ 
+                textShadow: '3px 3px 10px rgba(0, 0, 0, 0.9), 0 0 25px rgba(0, 0, 0, 0.6)',
+                color: '#ffffff',
+                fontSize: '3.5rem',
+                fontWeight: '700',
+                marginBottom: '1.5rem'
+              }}>
+                Luxury <span style={{ color: '#f8b500' }}>Accommodations</span> in Sri Lanka
+              </h1>
+            </motion.div>
+            
+            <motion.div
+              variants={fadeInUp}
+              transition={{ delay: 0.4 }}
+            >
+              <p style={{ 
+                textShadow: '2px 2px 8px rgba(0, 0, 0, 0.9), 0 0 20px rgba(0, 0, 0, 0.7)',
+                color: '#ffffff',
+                fontSize: '1.4rem',
+                marginBottom: '2.5rem',
+                opacity: '0.98'
+              }}>
+                Book your perfect stay with integrated travel services
+              </p>
+            </motion.div>
+            
+            <motion.div
+              variants={fadeInUp}
+              transition={{ delay: 0.6 }}
+            >
+              <div className="hero-features" style={{
+                display: 'flex',
+                justifyContent: 'center',
+                gap: '3rem',
+                flexWrap: 'wrap',
+                background: 'rgba(255, 255, 255, 0.12)',
+                padding: '2rem 2.5rem',
+                borderRadius: '20px',
+                backdropFilter: 'blur(15px)',
+                maxWidth: '800px',
+                margin: '0 auto',
+                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)'
+              }}>
+                <div className="feature-item" style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  gap: '0.8rem',
+                  color: 'white'
+                }}>
+                  <span style={{ fontSize: '2.5rem' }}>🏨</span>
+                  <span style={{ fontSize: '1rem', fontWeight: '600', textShadow: '1px 1px 4px rgba(0,0,0,0.8)' }}>Luxury Hotels</span>
+                </div>
+                <div className="feature-item" style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  gap: '0.8rem',
+                  color: 'white'
+                }}>
+                  <span style={{ fontSize: '2.5rem' }}>🚗</span>
+                  <span style={{ fontSize: '1rem', fontWeight: '600', textShadow: '1px 1px 4px rgba(0,0,0,0.8)' }}>Airport Transfers</span>
+                </div>
+                <div className="feature-item" style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  gap: '0.8rem',
+                  color: 'white'
+                }}>
+                  <span style={{ fontSize: '2.5rem' }}>🗺️</span>
+                  <span style={{ fontSize: '1rem', fontWeight: '600', textShadow: '1px 1px 4px rgba(0,0,0,0.8)' }}>Daily Tours</span>
+                </div>
+                <div className="feature-item" style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  gap: '0.8rem',
+                  color: 'white'
+                }}>
+                  <span style={{ fontSize: '2.5rem' }}>💼</span>
+                  <span style={{ fontSize: '1rem', fontWeight: '600', textShadow: '1px 1px 4px rgba(0,0,0,0.8)' }}>Complete Packages</span>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </motion.div>
+        
+        <motion.div 
+          style={{ position: 'relative', zIndex: 2 }}
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1, duration: 0.8, repeat: Infinity, repeatType: 'reverse' }}
+        >
+          <div className="scroll-indicator" style={{
+            position: 'absolute',
+            bottom: '30px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            textAlign: 'center',
+            color: '#ffffff'
+          }}>
+            <span style={{ 
+              display: 'block',
+              marginBottom: '10px',
+              fontSize: '14px',
+              fontWeight: '500',
+              textShadow: '1px 1px 4px rgba(0, 0, 0, 0.8)'
+            }}>Scroll to explore</span>
+            <div className="arrow-down" style={{
+              width: '30px',
+              height: '30px',
+              margin: '0 auto',
+              borderLeft: '2px solid #ffffff',
+              borderBottom: '2px solid #ffffff',
+              transform: 'rotate(-45deg)',
+              filter: 'drop-shadow(0 0 4px rgba(0, 0, 0, 0.8))'
+            }}></div>
+          </div>
+        </motion.div>
       </section>
 
       {/* Search & Filters Section */}
@@ -585,6 +848,8 @@ export default function Hotels() {
               <button 
                 className="btn-primary"
                 onClick={() => setSearchParams({
+                  name: '',
+                  email: '',
                   location: 'all',
                   checkIn: '',
                   checkOut: '',
@@ -768,11 +1033,14 @@ export default function Hotels() {
               </div>
 
               {/* Booking Form */}
-              <form className="booking-form">
-                <div className="form-section">
-                  <h3>Booking Details</h3>
-                  <div className="form-row">
-                    <div className="form-group">
+              <form className="booking-form-modern">
+                <div className="form-section-modern">
+                  <h3 className="section-heading-modern">
+                    <span className="heading-icon">📅</span>
+                    Booking Details
+                  </h3>
+                  <div className="form-row-modern">
+                    <div className="form-group-modern">
                       <label>Check-in Date *</label>
                       <input 
                         type="date" 
@@ -898,7 +1166,7 @@ export default function Hotels() {
                   </button>
                   <button 
                     type="button"
-                    className="btn-primary"
+                    className="btn-confirm-modern"
                     onClick={handleWhatsAppBooking}
                   >
                     Confirm & Book via WhatsApp

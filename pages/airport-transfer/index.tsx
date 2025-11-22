@@ -91,6 +91,7 @@ export default function AirportTransfer() {
     { id: 'colombo-hotels', name: 'Colombo Hotel Area', code: 'Hotels' }
   ];
 
+<<<<<<< Updated upstream
   // Popular destinations from airport
   const popularDestinations = [
     { 
@@ -146,6 +147,47 @@ export default function AirportTransfer() {
       standardPrice: 120,
       premiumPrice: 180,
       image: '/destinations/sigiriya.jpg'
+=======
+  // Sri Lankan districts
+  const districts = [
+    'Colombo', 'Gampaha', 'Kalutara', 'Kandy', 'Matale', 'Nuwara Eliya',
+    'Galle', 'Matara', 'Hambantota', 'Jaffna', 'Kilinochchi', 'Mannar',
+    'Vavuniya', 'Mullaitivu', 'Batticaloa', 'Ampara', 'Trincomalee',
+    'Kurunegala', 'Puttalam', 'Anuradhapura', 'Polonnaruwa', 'Badulla',
+    'Monaragala', 'Ratnapura', 'Kegalle'
+  ];
+
+  // Vehicles from DB
+  type Vehicle = { vehicle_id: string; vehicle_name: string; capacity: number };
+  const [vehicles, setVehicles] = useState<Vehicle[]>([]);
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const res = await fetch('/api/vehicles');
+        if (!res.ok) return;
+        const data = await res.json();
+        // Expecting array with vehicle_name and capacity
+        if (mounted) setVehicles(Array.isArray(data) ? data : []);
+      } catch (e) {
+        console.error('Failed to load vehicles', e);
+      }
+    })();
+    return () => { mounted = false; };
+  }, []);
+
+  // Get available vehicles based on passenger count
+  const getAvailableVehicles = () => {
+    return vehicles.filter(v => (v.capacity ?? 0) >= passengers);
+  };
+
+  // Get pickup options based on trip type
+  const getPickupOptions = () => {
+    if (tripType === 'one-way') {
+      return airports;
+    } else {
+      return districts;
+>>>>>>> Stashed changes
     }
   ];
 
@@ -209,6 +251,7 @@ export default function AirportTransfer() {
     return vehicleOptions[4];
   };
 
+<<<<<<< Updated upstream
   // Handle form submission to database
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -216,6 +259,88 @@ export default function AirportTransfer() {
     if (!fullName || !email || !phone || !arrivalDate || !arrivalTime) {
       alert('Please fill in all required fields');
       return;
+=======
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // 1) Persist request in DB via API
+    try {
+      // Build a local datetime string without timezone to avoid shifting the selected time
+      const localPickupTime = (() => {
+        if (pickupDate && pickupTime) {
+          return `${pickupDate}T${pickupTime}:00`;
+        }
+        // fallback to current local datetime formatted as YYYY-MM-DDTHH:mm:ss
+        const now = new Date();
+        const pad = (n: number) => String(n).padStart(2, '0');
+        const y = now.getFullYear();
+        const m = pad(now.getMonth() + 1);
+        const d = pad(now.getDate());
+        const hh = pad(now.getHours());
+        const mm = pad(now.getMinutes());
+        const ss = pad(now.getSeconds());
+        return `${y}-${m}-${d}T${hh}:${mm}:${ss}`;
+      })();
+
+      const payload = {
+        pickup_type: tripType === 'one-way' ? 'one_way' as const : 'two_way' as const,
+        pickup_from: pickupLocation, // airport (one-way) or district (two-way)
+        dropoff: dropoffLocation,
+        airport: tripType === 'one-way' ? pickupLocation : airport, // ensure NOT NULL in DB
+        passengers: passengers,
+  pickup_time: localPickupTime,
+        vehicle: selectedVehicle,
+        note: notes,
+        price: 0, // pricing handled later by admin
+        status: 'pending' as const
+      };
+
+      const res = await fetch('/api/airport-pickups', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        console.error('Airport pickup create failed:', err);
+        alert('Sorry, something went wrong saving your request. Please try again.');
+        return;
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Sorry, something went wrong saving your request. Please try again.');
+      return;
+    }
+
+    // 2) Open WhatsApp with nicely formatted summary
+    let message = '';
+    message += '\u{1F697} *AIRPORT TRANSFER BOOKING REQUEST*\n';
+    message += '\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\u{2501}\n\n';
+    
+    message += '*TRIP DETAILS*\n';
+    message += `\u{251C} Type: ${tripType === 'one-way' ? '\u{2708}\u{FE0F} One Way' : '\u{1F504} Round Trip'}\n`;
+    message += `\u{251C} Passengers: \u{1F465} ${passengers} ${passengers === 1 ? 'Person' : 'People'}\n`;
+    message += `\u{2514} Vehicle: \u{1F699} ${selectedVehicle}\n\n`;
+    
+    if (tripType === 'one-way') {
+      message += '*JOURNEY*\n';
+      message += `\u{251C} From: \u{2708}\u{FE0F} ${pickupLocation}\n`;
+      message += `\u{2514} To: \u{1F4CD} ${dropoffLocation}\n\n`;
+      
+      message += '*SCHEDULE*\n';
+      message += `\u{251C} Date: \u{1F4C5} ${pickupDate}\n`;
+      message += `\u{2514} Time: \u{23F0} ${pickupTime}\n`;
+    } else {
+      message += '*JOURNEY*\n';
+      message += `\u{251C} Pickup: \u{1F4CD} ${pickupLocation}\n`;
+      message += `\u{251C} Airport: \u{2708}\u{FE0F} ${airport}\n`;
+      message += `\u{2514} Drop-off: \u{1F4CD} ${dropoffLocation}\n\n`;
+      
+      message += '*SCHEDULE*\n';
+      message += `\u{251C} Date: \u{1F4C5} ${pickupDate}\n`;
+      message += `\u{2514} Time: \u{23F0} ${pickupTime}\n`;
+>>>>>>> Stashed changes
     }
 
     setSubmitting(true);
@@ -347,7 +472,25 @@ export default function AirportTransfer() {
                         <span className="service-price">From ${service.price}</span>
                       </button>
                     ))}
+<<<<<<< Updated upstream
                   </div>
+=======
+                  </select>
+                </div>
+
+                <div className="form-group">
+                  <label>🚙 Select Vehicle</label>
+                  <select 
+                    value={selectedVehicle}
+                    onChange={(e) => setSelectedVehicle(e.target.value)}
+                    required
+                  >
+                    <option value="">Select Vehicle</option>
+                    {getAvailableVehicles().map((vehicle) => (
+                      <option key={vehicle.vehicle_id} value={vehicle.vehicle_name}>{vehicle.vehicle_name}</option>
+                    ))}
+                  </select>
+>>>>>>> Stashed changes
                 </div>
               </div>
 
