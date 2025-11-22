@@ -209,12 +209,11 @@ export default function Hotels() {
       h.facilities = h.amenities ? [...h.amenities] : [];
     }
   });
-<<<<<<< HEAD
-=======
+
 
   // Hotels loaded from the DB (mapped to UI shape). Falls back to sampleHotels when API is unavailable.
   const [hotelsData, setHotelsData] = useState<any[]>([]);
->>>>>>> origin/main
+
 
   useEffect(() => {
     let mounted = true;
