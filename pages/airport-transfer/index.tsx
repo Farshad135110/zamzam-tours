@@ -1,155 +1,99 @@
-﻿// pages/airport-transfer/index.js - Airport Transfers Main Page
+﻿// Clean Airport Transfer page (single coherent component)
 import { useState, useEffect, useRef } from 'react';
 import Head from 'next/head';
-import Link from 'next/link';
-import Image from 'next/image';
-import { motion } from 'framer-motion';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
-import { fadeInUp } from '../../src/utils/animations';
 import useTranslation from '../../src/i18n/useTranslation'
 import { CONTACT_INFO } from '../../src/constants/config';
 
 export default function AirportTransfer() {
-  const [tripType, setTripType] = useState('one-way'); // 'one-way' or 'two-way'
+  const [tripType, setTripType] = useState('one-way');
   const [passengers, setPassengers] = useState(1);
   const [pickupLocation, setPickupLocation] = useState('');
-  const [airport, setAirport] = useState('');
-  const [dropoffLocation, setDropoffLocation] = useState('');
-  const [pickupDate, setPickupDate] = useState('');
-  const [pickupTime, setPickupTime] = useState('');
   const [selectedVehicle, setSelectedVehicle] = useState('');
-  const [notes, setNotes] = useState('');
 
-  // Video hero refs
-  const heroRef = useRef(null);
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  // Handle video autoplay
-  useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.play().catch((error) => {
-        console.log('Video autoplay failed:', error);
-      });
-    }
-  }, []);
+  useEffect(() => { if (videoRef.current) videoRef.current.play().catch(() => {}); }, []);
 
-  const { t } = useTranslation()
+  const { t } = useTranslation();
+  const get = (k: string, f: string) => { const v = t(k); return v === k ? f : v; };
 
-  const get = (key: string, fallback: string) => {
-    const val = t(key)
-    return val === key ? fallback : val
-  }
-
-  // Sri Lankan airports
   const airports = [
     get('airportTransfer.airports.cmb', 'Bandaranaike International Airport (CMB) - Colombo'),
-    get('airportTransfer.airports.hri', 'Mattala Rajapaksa International Airport (HRI) - Hambantota'),
-    get('airportTransfer.airports.rml', 'Ratmalana Airport (RML) - Colombo')
+    get('airportTransfer.airports.hri', 'Mattala Rajapaksa International Airport (HRI) - Hambantota')
   ];
 
-  // Sri Lankan districts
-  const districts = [
-    get('airportTransfer.districts.colombo', 'Colombo'),
-    get('airportTransfer.districts.gampaha', 'Gampaha'),
-    get('airportTransfer.districts.kalutara', 'Kalutara'),
-    get('airportTransfer.districts.kandy', 'Kandy'),
-    get('airportTransfer.districts.matale', 'Matale'),
-    get('airportTransfer.districts.nuwaraEliya', 'Nuwara Eliya'),
-    get('airportTransfer.districts.galle', 'Galle'),
-    get('airportTransfer.districts.matara', 'Matara'),
-    get('airportTransfer.districts.hambantota', 'Hambantota'),
-    get('airportTransfer.districts.jaffna', 'Jaffna'),
-    get('airportTransfer.districts.kilinochchi', 'Kilinochchi'),
-    get('airportTransfer.districts.mannar', 'Mannar'),
-    get('airportTransfer.districts.vavuniya', 'Vavuniya'),
-    get('airportTransfer.districts.mullaitivu', 'Mullaitivu'),
-    get('airportTransfer.districts.batticaloa', 'Batticaloa'),
-    get('airportTransfer.districts.ampara', 'Ampara'),
-    get('airportTransfer.districts.trincomalee', 'Trincomalee'),
-    get('airportTransfer.districts.kurunegala', 'Kurunegala'),
-    get('airportTransfer.districts.puttalam', 'Puttalam'),
-    get('airportTransfer.districts.anuradhapura', 'Anuradhapura'),
-    get('airportTransfer.districts.polonnaruwa', 'Polonnaruwa'),
-    get('airportTransfer.districts.badulla', 'Badulla'),
-    get('airportTransfer.districts.monaragala', 'Monaragala'),
-    get('airportTransfer.districts.ratnapura', 'Ratnapura'),
-    get('airportTransfer.districts.kegalle', 'Kegalle')
-  ];
+  const districts = [get('airportTransfer.districts.colombo', 'Colombo'), get('airportTransfer.districts.kandy', 'Kandy')];
 
-  // Fleet vehicles with passenger capacity
   const fleetVehicles = [
     { name: get('airportTransfer.vehicles.miniCar', 'Mini Car (2-3 passengers)'), capacity: 3 },
-    { name: get('airportTransfer.vehicles.vitz', 'Toyota Vitz (Economy Car)'), capacity: 4 },
-    { name: get('airportTransfer.vehicles.alto', 'Suzuki Alto (Budget Car)'), capacity: 4 },
-    { name: get('airportTransfer.vehicles.aqua', 'Toyota Aqua (Compact Car)'), capacity: 4 },
-    { name: get('airportTransfer.vehicles.prius', 'Toyota Prius (Hybrid Car)'), capacity: 4 },
-    { name: get('airportTransfer.vehicles.axio', 'Toyota Axio (Sedan)'), capacity: 4 },
-    { name: get('airportTransfer.vehicles.luxurySuv', 'Luxury SUV'), capacity: 6 },
-    { name: get('airportTransfer.vehicles.hiace', 'Toyota Hiace (Luxury Van)'), capacity: 10 },
-    { name: get('airportTransfer.vehicles.kdhVan', 'Toyota KDH Van (14 seats)'), capacity: 14 }
+    { name: get('airportTransfer.vehicles.vitz', 'Toyota Vitz (Economy Car)'), capacity: 4 }
   ];
 
-  // Get available vehicles based on passenger count
-  const getAvailableVehicles = () => {
-    return fleetVehicles.filter(vehicle => vehicle.capacity >= passengers);
-  };
-
-  // Get pickup options based on trip type
-  const getPickupOptions = () => {
-    if (tripType === 'one-way') {
-      return airports;
-    } else {
-      return districts;
-    }
-  };
-
-  // Get dropoff options based on trip type
-  const getDropoffOptions = () => {
-    return districts;
-  };
+  const getAvailableVehicles = () => fleetVehicles.filter(v => v.capacity >= passengers);
+  const getPickupOptions = () => tripType === 'one-way' ? airports : districts;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    let message = '';
-    message += `\u{1F697} ${get('airportTransfer.messages.heading','*AIRPORT TRANSFER BOOKING REQUEST*')}\n`;
-    message += `${get('airportTransfer.messages.lineSeparator','\u2501'.repeat(24))}\n\n`;
-
-    message += `${get('airportTransfer.messages.tripDetails','*TRIP DETAILS*')}\n`;
-    message += `\u{251C} ${get('airportTransfer.messages.typeLabel','Type')}: ${tripType === 'one-way' ? `\u{2708}\u{FE0F} ${get('airportTransfer.messages.oneWay','One Way')}` : `\u{1F504} ${get('airportTransfer.messages.roundTrip','Round Trip')}`}\n`;
-    message += `\u{251C} ${get('airportTransfer.messages.passengersLabel','Passengers')}: \u{1F465} ${passengers} ${passengers === 1 ? get('airportTransfer.messages.personSingular','Person') : get('airportTransfer.messages.personPlural','People')}\n`;
-    message += `\u{2514} ${get('airportTransfer.messages.vehicleLabel','Vehicle')}: \u{1F699} ${selectedVehicle}\n\n`;
-
-    if (tripType === 'one-way') {
-      message += `${get('airportTransfer.messages.journey','*JOURNEY*')}\n`;
-      message += `\u{251C} ${get('airportTransfer.messages.fromLabel','From')}: \u{2708}\u{FE0F} ${pickupLocation}\n`;
-      message += `\u{2514} ${get('airportTransfer.messages.toLabel','To')}: \u{1F4CD} ${dropoffLocation}\n\n`;
-
-      message += `${get('airportTransfer.messages.schedule','*SCHEDULE*')}\n`;
-      message += `\u{251C} ${get('airportTransfer.messages.dateLabel','Date')}: \u{1F4C5} ${pickupDate}\n`;
-      message += `\u{2514} ${get('airportTransfer.messages.timeLabel','Time')}: \u{23F0} ${pickupTime}\n`;
-    } else {
-      message += `${get('airportTransfer.messages.journey','*JOURNEY*')}\n`;
-      message += `\u{251C} ${get('airportTransfer.messages.pickupLabel','Pickup')}: \u{1F4CD} ${pickupLocation}\n`;
-      message += `\u{251C} ${get('airportTransfer.messages.airportLabel','Airport')}: \u{2708}\u{FE0F} ${airport}\n`;
-      message += `\u{2514} ${get('airportTransfer.messages.dropoffLabel','Drop-off')}: \u{1F4CD} ${dropoffLocation}\n\n`;
-
-      message += `${get('airportTransfer.messages.schedule','*SCHEDULE*')}\n`;
-      message += `\u{251C} ${get('airportTransfer.messages.dateLabel','Date')}: \u{1F4C5} ${pickupDate}\n`;
-      message += `\u{2514} ${get('airportTransfer.messages.timeLabel','Time')}: \u{23F0} ${pickupTime}\n`;
-    }
-
-    if (notes) {
-      message += `\n${get('airportTransfer.messages.specialRequests','*SPECIAL REQUESTS*')}\n`;
-      message += `${notes}\n`;
-    }
-
-    message += `\n${get('airportTransfer.messages.lineSeparator','\u2501'.repeat(24))}`;
-    message += `\n${get('airportTransfer.messages.confirmNote','_Please confirm availability and pricing_')} \u{1F4AC}`;
-
+    const message = `Booking request - Type: ${tripType}, Passengers: ${passengers}, Vehicle: ${selectedVehicle}`;
     window.open(`${CONTACT_INFO.whatsappUrl}?text=${encodeURIComponent(message)}`, '_blank');
   };
+
+  return (
+    <>
+      <Head>
+        <title>{get('airportTransfer.pageTitle', 'Airport Transfers Sri Lanka')}</title>
+      </Head>
+
+      <Navbar />
+
+      <section className="transfer-hero">
+        <video ref={videoRef} autoPlay loop muted playsInline src="https://res.cloudinary.com/dhfqwxyb4/video/upload/v1761687230/12177913_3840_2160_30fps_d6dhi5.mp4" style={{ width: '100%', height: '60vh', objectFit: 'cover' }} />
+      </section>
+
+      <section className="booking-widget-section">
+        <div className="container">
+          <div className="booking-widget">
+            <h2>{get('airportTransfer.booking.title','Book Your Airport Transfer')}</h2>
+            <form onSubmit={handleSubmit} className="widget-form">
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Passengers</label>
+                  <select value={passengers} onChange={e => setPassengers(Number(e.target.value))}>
+                    {[1,2,3,4].map(n => <option key={n} value={n}>{n}</option>)}
+                  </select>
+                </div>
+
+                <div className="form-group">
+                  <label>Vehicle</label>
+                  <select value={selectedVehicle} onChange={e => setSelectedVehicle(e.target.value)}>
+                    <option value="">Select</option>
+                    {getAvailableVehicles().map((v,i) => <option key={i} value={v.name}>{v.name}</option>)}
+                  </select>
+                </div>
+              </div>
+
+              <div className="form-row">
+                <div className="form-group full-width">
+                  <label>Pickup</label>
+                  <select value={pickupLocation} onChange={e => setPickupLocation(e.target.value)}>
+                    <option value="">Choose</option>
+                    {getPickupOptions().map((o,i) => <option key={i} value={o}>{o}</option>)}
+                  </select>
+                </div>
+              </div>
+
+              <button type="submit">Send via WhatsApp</button>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <Footer />
+    </>
+  );
+}
 
   return (
     <>
@@ -330,19 +274,35 @@ export default function AirportTransfer() {
                     {[1,2,3,4,5,6,7,8,9,10,12,14].map(num => (
                       <option key={num} value={num}>{num} {num === 1 ? get('airportTransfer.form.passengerSingular','Passenger') : get('airportTransfer.form.passengerPlural','Passengers')}</option>
                     ))}
+<<<<<<< HEAD
+<<<<<<< Updated upstream
+                  </div>
+=======
+=======
+>>>>>>> origin/main
                   </select>
                 </div>
 
                 <div className="form-group">
+<<<<<<< HEAD
+                  <label>🚙 Select Vehicle</label>
+=======
                   <label>{get('airportTransfer.form.label.selectVehicle','🚙 Select Vehicle')}</label>
+>>>>>>> origin/main
                   <select 
                     value={selectedVehicle}
                     onChange={(e) => setSelectedVehicle(e.target.value)}
                     required
                   >
+<<<<<<< HEAD
+                    <option value="">Select Vehicle</option>
+                    {getAvailableVehicles().map((vehicle) => (
+                      <option key={vehicle.vehicle_id} value={vehicle.vehicle_name}>{vehicle.vehicle_name}</option>
+=======
                     <option value="">{get('airportTransfer.form.selectVehiclePlaceholder','Select Vehicle')}</option>
                     {getAvailableVehicles().map((vehicle, index) => (
                       <option key={index} value={vehicle.name}>{vehicle.name}</option>
+>>>>>>> origin/main
                     ))}
                   </select>
                 </div>
