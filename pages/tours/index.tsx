@@ -28,8 +28,6 @@ interface Tour {
   priceRange?: string;
   includes?: string[];
   groupSize?: string;
-  rating?: number;
-  reviews?: number;
 }
 
 export default function Tours() {
@@ -90,8 +88,7 @@ export default function Tours() {
           difficulty: pkg.difficulty || 'Moderate',
           groupSize: pkg.group_size || '2-12 people',
           season: pkg.season || 'Year-round',
-          rating: pkg.rating ? Number(pkg.rating) : 4.5,
-          reviews: pkg.reviews ? Number(pkg.reviews) : 0,
+          // rating and reviews removed from tour packages (display suppressed)
           included: pkg.includings ? pkg.includings.split(',').map((i: string) => i.trim()) : [],
           itinerary: pkg.itinerary || []
         }));
@@ -679,10 +676,7 @@ export default function Tours() {
                         style={{ objectFit: 'cover', objectPosition: portraitMap[tour.image] ? 'bottom center' : 'center', width: '100%', height: '100%' }}
                       />
                       <div className="tour-badge">{tour.category.replace('-', ' ')}</div>
-                      <div className="tour-rating">
-                        <span>⭐ {tour.rating}</span>
-                        <span>({tour.reviews})</span>
-                      </div>
+                      {/* ratings removed per request */}
                     </div>
 
                     <div className="tour-content">
@@ -716,13 +710,13 @@ export default function Tours() {
                         </div>
                         <div className="tour-actions">
                           <button 
-                            className="btn-secondary"
+                            className="btn btn-secondary"
                             onClick={() => openBookingForm(tour)}
                           >
                             {get('tours.card.viewDetails', 'View Details')}
                           </button>
                           <button 
-                            className="btn-primary"
+                            className="btn btn-primary"
                             onClick={() => handleWhatsAppBooking(tour)}
                           >
                             {get('tours.card.bookNow', 'Book Now')}
@@ -809,25 +803,19 @@ export default function Tours() {
 
           {/* Special Offers removed per request */}
 
-          {/* Cancellation Policy */}
+          {/* Cancellation Policy (short summary + link to full policy) */}
           <section className="policy-section">
             <div className="policy-card">
               <h2>{get('tours.policy.title', 'Flexible Cancellation Policy')}</h2>
-              <div className="policy-details">
-                <div className="policy-item">
-                  <h3>{get('tours.policy.noticeTitle', '✅ 14+ Days Notice')}</h3>
-                  <p>{get('tours.policy.noticeDetail', '50% refund of tour cost')}</p>
-                </div>
-                <div className="policy-item">
-                  <h3>{get('tours.policy.lessTitle', '❌ Less than 14 Days')}</h3>
-                  <p>{get('tours.policy.lessDetail', 'No refund available')}</p>
-                </div>
-                <div className="policy-item">
-                  <h3>{get('tours.policy.rescheduleTitle', '🔄 Rescheduling')}</h3>
-                  <p>{get('tours.policy.rescheduleDetail', 'Free rescheduling up to 7 days before tour')}</p>
-                </div>
-              </div>
+              <ul className="policy-summary">
+                <li><strong>✅ 14+ Days Notice:</strong> 50% refund of tour cost</li>
+                <li><strong>❌ Less than 14 Days:</strong> No refund available</li>
+                <li><strong>🔄 Rescheduling:</strong> Free rescheduling up to 7 days before tour</li>
+              </ul>
               <p className="policy-note">{get('tours.policy.note', '* Some special tours may have different cancellation policies')}</p>
+              <p style={{ marginTop: '0.75rem' }}>
+                <Link href="/cancellation" className="btn-link">Read full cancellation policy</Link>
+              </p>
             </div>
           </section>
         </div>
@@ -1156,16 +1144,7 @@ export default function Tours() {
           text-transform: capitalize;
         }
 
-        .tour-rating {
-          position: absolute;
-          top: 15px;
-          right: 15px;
-          background: rgba(255, 255, 255, 0.9);
-          padding: 5px 10px;
-          border-radius: 15px;
-          font-size: 0.8rem;
-          font-weight: 600;
-        }
+        /* .tour-rating removed: ratings hidden from tour cards */
 
         .tour-content {
           padding: 1.5rem;

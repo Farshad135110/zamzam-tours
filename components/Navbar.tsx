@@ -28,6 +28,7 @@ export default function Navbar() {
   const navLinks = [
     { href: '/', label: 'Home' },
     { href: '/tours', label: 'Tours' },
+    { href: '/activities', label: 'Things To Do' },
     { href: '/car-rental', label: 'Car Rental' },
     { href: '/airport-transfer', label: 'Airport Transfer' },
     { href: '/hotels', label: 'Hotels' },
@@ -115,13 +116,13 @@ export default function Navbar() {
         }
 
         .container {
-          max-width: 1200px;
+          max-width: 1400px;
           margin: 0 auto;
           padding: 0 2rem;
           display: flex;
           align-items: center;
           justify-content: space-between;
-          gap: 2rem;
+          gap: 1.5rem;
         }
 
         .logo {
@@ -155,21 +156,23 @@ export default function Navbar() {
           display: flex;
           align-items: center;
           gap: 1.5rem;
-          flex: 1;
+          flex: 1 1 auto;
           justify-content: center;
           flex-wrap: nowrap;
+          overflow: visible;
         }
 
         .nav-links a {
           color: #f8b500 !important;
           text-decoration: none;
           font-weight: 600;
-          font-size: 0.9rem;
+          font-size: 0.95rem;
           transition: all 0.3s;
           position: relative;
-          padding: 0.5rem 0;
+          padding: 0.45rem 0.8rem;
           text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
           white-space: nowrap;
+          display: inline-block;
         }
 
         .navbar:not(.scrolled) .nav-links a {

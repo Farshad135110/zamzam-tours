@@ -5,7 +5,7 @@ export const CONTACT_INFO = {
   whatsappUrl: 'https://wa.me/94701888993',
   phone: '+94 70 188 8993',
   email: 'reservation@zamzamtours.com',
-  address: 'H.K. Edmand mawatha, Milidduwa, Galle.'
+  address: '112/13 Morris Road, Milidduwa, Galle.'
 };
 
 export const SITE_INFO = {
@@ -17,9 +17,8 @@ export const SITE_INFO = {
 };
 
 export const SOCIAL_MEDIA = {
-  facebook: 'https://facebook.com/zamzamtours',
-  instagram: 'https://instagram.com/zamzamtours',
-  twitter: 'https://twitter.com/zamzamtours'
+  facebook: 'https://www.facebook.com/share/1AArFVbXiD/',
+  instagram: 'https://www.instagram.com/zamzam_lanka_tours?igsh=MXB4ZmVsdnRhZWZsag=='
 };
 
 export const NAVBAR_HEIGHT = 80;

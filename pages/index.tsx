@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import Image from 'next/image';
 import { CldImage, CldVideoPlayer } from 'next-cloudinary';
 import 'next-cloudinary/dist/cld-video-player.css';
@@ -28,6 +29,7 @@ export default function Home() {
   const video2Ref = useRef<HTMLVideoElement>(null);
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
   const [activePlayer, setActivePlayer] = useState<1 | 2>(1);
+  const router = useRouter();
   
   // Array of videos from zamzam-tours/heroes/home folder
   const heroVideos = [
@@ -317,7 +319,7 @@ export default function Home() {
               <div className="hero-buttons">
                 <button 
                   className="btn btn-primary"
-                  onClick={() => handleWhatsAppBooking('a tour package')}
+                  onClick={() => router.push('/tours')}
                   style={{ 
                     cursor: 'pointer',
                     backgroundColor: '#f8b500',
@@ -343,7 +345,7 @@ export default function Home() {
                 </button>
                 <button 
                   className="btn btn-secondary"
-                  onClick={() => handleWhatsAppBooking('a vehicle')}
+                  onClick={() => router.push('/car-rental')}
                   style={{ 
                     cursor: 'pointer',
                     backgroundColor: 'transparent',

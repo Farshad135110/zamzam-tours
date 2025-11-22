@@ -1,6 +1,6 @@
 import React from 'react';
 import Image from 'next/image';
-import { SITE_INFO, CONTACT_INFO } from '../src/constants/config';
+import { SITE_INFO, CONTACT_INFO, SOCIAL_MEDIA } from '../src/constants/config';
 import Link from 'next/link';
 
 export default function Footer() {
@@ -22,16 +22,22 @@ export default function Footer() {
             </div>
             <p>Your trusted partner for premium travel experiences in Sri Lanka since 2010.</p>
             <div className="social-links">
-              <a href="#" aria-label="Facebook">FB</a>
-              <a href="#" aria-label="Instagram">IG</a>
-              <a href="#" aria-label="Twitter">TW</a>
-              <a href="#" aria-label="YouTube">YT</a>
+              {SOCIAL_MEDIA.facebook && (
+                <a href={SOCIAL_MEDIA.facebook} aria-label="Facebook" target="_blank" rel="noreferrer">
+                  <Image src="/social/facebook.svg" alt="Facebook" width={28} height={28} />
+                </a>
+              )}
+              {SOCIAL_MEDIA.instagram && (
+                <a href={SOCIAL_MEDIA.instagram} aria-label="Instagram" target="_blank" rel="noreferrer">
+                  <Image src="/social/instagram.svg" alt="Instagram" width={28} height={28} />
+                </a>
+              )}
             </div>
           </div>
 
           <div className="footer-section">
             <h3>Services</h3>
-            <ul>
+            <ul className="services-list">
               <li><Link href="/self-drive">Self-Drive Rentals</Link></li>
               <li><Link href="/tours">Guided Tours</Link></li>
               <li><Link href="/airport-transfer">Airport Transfers</Link></li>
@@ -54,8 +60,8 @@ export default function Footer() {
           <div className="footer-section">
             <h3>Support</h3>
             <ul>
-              <li><Link href="/contact">Contact Us</Link></li>
-              <li><Link href="/faq">FAQ</Link></li>
+              <li><Link href="/contact#locations">Contact Us</Link></li>
+              <li><Link href="/contact#faq">FAQ</Link></li>
               <li><Link href="/terms">Terms & Conditions</Link></li>
               <li><Link href="/privacy">Privacy Policy</Link></li>
               <li><Link href="/cancellation">Cancellation Policy</Link></li>

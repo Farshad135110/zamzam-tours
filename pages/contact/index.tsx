@@ -22,6 +22,12 @@ export default function Contact() {
   const [submitStatus, setSubmitStatus] = useState(null);
   const { t } = useTranslation();
 
+  // Hero title helpers: prefer full title key if present, otherwise use split prefix/highlight/suffix
+  const contactFullTitle = t('contact.hero.title');
+  const contactTitlePrefix = t('contact.hero.title.prefix');
+  const contactTitleHighlight = t('contact.hero.title.highlight');
+  const contactTitleSuffix = t('contact.hero.title.suffix');
+
   // Contact methods
   const contactMethods = [
     {
@@ -219,7 +225,15 @@ Please respond promptly.
         </div>
 
         <div className="hero-content">
-          <h1 className="hero-title">{t('contact.hero.title')}</h1>
+          <h1 className="hero-title">
+            {contactFullTitle && contactFullTitle !== 'contact.hero.title' ? (
+              contactFullTitle
+            ) : (
+              <>
+                {contactTitlePrefix} <span className="hero-highlight">{contactTitleHighlight}</span> {contactTitleSuffix}
+              </>
+            )}
+          </h1>
           <p className="hero-subtitle">{t('contact.hero.subtitle')}</p>
 
           <div className="hero-buttons">
@@ -508,7 +522,7 @@ Please respond promptly.
       {/* Interactive Map removed per request */}
 
       {/* FAQ Section */}
-      <section className="faq-section">
+      <section id="faq" className="faq-section">
         <div className="container">
           <div className="section-header centered">
             <h2 className="section-title">{t('contact.faq.title')}</h2>
