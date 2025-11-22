@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { cloudinaryLoader } from '../utils/cloudinary';
+import { cloudinaryLoader } from '../src/utils/cloudinary';
 
 interface CloudinaryImageProps {
   src: string;

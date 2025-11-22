@@ -8,10 +8,17 @@ import 'next-cloudinary/dist/cld-video-player.css';
 import { motion } from 'framer-motion';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import { CONTACT_INFO } from '../src/constants/config';
 import AnimatedSection from '../components/AnimatedSection';
 import { fadeInUp, staggerContainer, cardHover } from '../src/utils/animations';
+import useTranslation from '../src/i18n/useTranslation';
 
 export default function Home() {
+  const { t } = useTranslation();
+  const get = (key: string, fallback: string) => {
+    const val = t(key);
+    return val === key ? fallback : val;
+  };
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('vehicles');
   const [activeLanguage, setActiveLanguage] = useState('en');
@@ -37,35 +44,108 @@ export default function Home() {
     { code: 'it', name: 'Italiano' }
   ];
   
-  // Vehicle fleet data - with Cloudinary image IDs
-  const vehicles = [
-    { name: 'Bus', capacity: '30-50', type: 'self-drive, with-driver', image: 'zamzam-tours/vehicles/bus', description: 'Perfect for large groups and tours' },
-    { name: 'KDH Van', capacity: '6-8', type: 'self-drive, with-driver', image: 'zamzam-tours/vehicles/kdh-van', description: 'Comfortable family vehicle' },
-    { name: 'Tour Van', capacity: '12-15', type: 'self-drive, with-driver', image: 'zamzam-tours/vehicles/tour-van', description: 'Ideal for group tours' },
-    { name: 'WagonR', capacity: '4', type: 'self-drive, with-driver', image: 'zamzam-tours/vehicles/wagonr', description: 'Economical city car' },
-    { name: 'Shuttle', capacity: '10-12', type: 'self-drive, with-driver', image: 'zamzam-tours/vehicles/shuttle', description: 'Airport shuttle service' },
-    { name: 'Every Buddy Van', capacity: '8-10', type: 'self-drive, with-driver', image: 'zamzam-tours/vehicles/every-buddy', description: 'Spacious van for families' },
-    { name: 'Aqua', capacity: '4', type: 'self-drive, with-driver', image: 'zamzam-tours/vehicles/aqua', description: 'Fuel-efficient hybrid' },
-    { name: 'Prius', capacity: '4', type: 'self-drive, with-driver', image: 'zamzam-tours/vehicles/prius', description: 'Premium hybrid sedan' }
-  ];
+  // Vehicle fleet data - fetched from backend API (pages/api/vehicles)
+  const [vehicles, setVehicles] = useState<Array<{ name: string; capacity: string; type: string; image: string; description: string }>>([]);
+  const [vehiclesLoading, setVehiclesLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchVehicles = async () => {
+      try {
+        setVehiclesLoading(true);
+        const res = await fetch('/api/vehicles');
+        if (!res.ok) throw new Error('Failed to fetch vehicles');
+        const data = await res.json();
+
+        const mapped = data.map((v: any) => ({
+          name: get(`home.vehicles.${v.vehicle_id || v.id || v.vehicle_name}.name`, v.vehicle_name || v.name || 'Vehicle'),
+          capacity: v.capacity ? `${v.capacity}` : (v.seats ? `${v.seats}` : '4'),
+          type: (v.available_for || v.type || 'self-drive, with-driver').toString(),
+          // If backend provides a cloudinary public id use it, otherwise fall back to image URL or default
+          image: v.image || v.cloudinary_id || 'zamzam-tours/vehicles/default',
+          description: get(`home.vehicles.${v.vehicle_id || v.id || v.vehicle_name}.description`, v.description || v.vehicle_name || '')
+        }));
+
+        setVehicles(mapped);
+      } catch (err) {
+        console.error('Error loading vehicles for homepage:', err);
+        // Fallback: use a small local set so the homepage still shows vehicles when the DB/API isn't available locally
+        const fallback = [
+          { name: 'Prius', capacity: '4', type: 'self-drive, with-driver', image: 'zamzam-tours/vehicles/prius', description: 'Premium hybrid sedan' },
+          { name: 'Aqua', capacity: '4', type: 'self-drive, with-driver', image: 'zamzam-tours/vehicles/aqua', description: 'Fuel-efficient hybrid' },
+          { name: 'KDH Van', capacity: '6-8', type: 'with-driver', image: 'zamzam-tours/vehicles/kdh-van', description: 'Comfortable family vehicle' },
+        ];
+        setVehicles(fallback);
+      } finally {
+        setVehiclesLoading(false);
+      }
+    };
+
+    fetchVehicles();
+  }, []);
   
   // Popular destinations - with Cloudinary image IDs
   const destinations = [
-    { name: 'Sigiriya', image: 'zamzam-tours/destinations/sigiriya', description: 'Ancient rock fortress', slug: 'sigiriya' },
-    { name: 'Kandy', image: 'zamzam-tours/destinations/kandy', description: 'Cultural capital', slug: 'kandy' },
-    { name: 'Galle', image: 'zamzam-tours/destinations/galle', description: 'Historic fort city', slug: 'galle' },
-    { name: 'Ella', image: 'zamzam-tours/destinations/ella', description: 'Mountain paradise', slug: 'ella' },
-    { name: 'Yala', image: 'zamzam-tours/destinations/yala', description: 'Wildlife sanctuary', slug: 'yala' },
-    { name: 'Nuwara Eliya', image: 'zamzam-tours/destinations/nuwara-eliya', description: 'Little England', slug: 'nuwara-eliya' }
+  { name: 'Sigiriya', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453704/dylan-shaw-smUAKwMT8XA-unsplash_qhenhx.jpg', description: 'Ancient rock fortress', slug: 'sigiriya' },
+  { name: 'Kandy', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762454466/chathura-anuradha-subasinghe-40uQmE9Zq8g-unsplash_tvflxt.jpg', description: 'Cultural capital', slug: 'kandy' },
+  { name: 'Galle', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453796/chathura-indika-LAj-XlHP6Rs-unsplash_o7mzbc.jpg', description: 'Historic fort city', slug: 'galle' },
+  { name: 'Ella', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453781/adam-vandermeer-Dw9dWTzzsUE-unsplash_l49hhe.jpg', description: 'Mountain paradise', slug: 'ella' },
+  { name: 'Yala', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453757/gemmmm-FRTpkBIi-1Y-unsplash_iggwsm.jpg', description: 'Wildlife sanctuary', slug: 'yala' },
+  { name: 'Nuwara Eliya', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453797/anton-lecock-TPtaNsBOW9Q-unsplash_g0htag.jpg', description: 'Little England', slug: 'nuwara-eliya' }
+  ];
+
+  // Activities / Things to do (show a few popular activities and link to detailed pages)
+  // Note: emojis-only presentation — no photos as requested.
+  const activities = [
+    { name: 'Wildlife Safaris', icon: '🦁', description: 'Elephant, leopard and bird watching in national parks', slug: 'wildlife-safaris' },
+    { name: 'Hiking & Trekking', icon: '🥾', description: 'Mountain trails and nature walks through stunning landscapes', slug: 'hiking-trekking' },
+    { name: 'Cultural Tours', icon: '🏛️', description: 'Ancient temples, forts and historical monuments', slug: 'cultural-tours' },
+    { name: 'Beach Activities', icon: '🏖️', description: 'Swimming, surfing, snorkeling and beach relaxation', slug: 'beach-activities' },
+    { name: 'Tea Plantation Tours', icon: '🍵', description: 'Visit tea estates and experience Ceylon tea culture', slug: 'tea-plantation-tours' },
+    { name: 'Whale Watching', icon: '🐋', description: 'Witness blue whales and dolphins in their natural habitat', slug: 'whale-watching' }
   ];
   
-  // Tour packages
-  const tourPackages = [
+  // Default tour packages (used as a fallback)
+  const defaultTourPackages = [
     { name: 'North East Tour', duration: '7 days', highlights: ['Trincomalee', 'Batticaloa', 'Arugam Bay'] },
     { name: 'Cultural Triangle', duration: '5 days', highlights: ['Sigiriya', 'Dambulla', 'Polonnaruwa'] },
     { name: 'Hill Country', duration: '6 days', highlights: ['Kandy', 'Nuwara Eliya', 'Ella'] },
     { name: 'Beach Paradise', duration: '8 days', highlights: ['Mirissa', 'Galle', 'Hikkaduwa'] }
   ];
+
+  // Homepage tours loaded from API (/api/packages). Falls back to defaultTourPackages when API fails.
+  const [homeTours, setHomeTours] = useState<any[]>(defaultTourPackages);
+  const [homeToursLoading, setHomeToursLoading] = useState<boolean>(false);
+
+  useEffect(() => {
+    const fetchHomeTours = async () => {
+      try {
+        setHomeToursLoading(true);
+        const res = await fetch('/api/packages');
+        if (!res.ok) throw new Error('Failed to fetch packages');
+        const packages = await res.json();
+
+        const transformedTours = packages.map((pkg: any) => ({
+          id: pkg.package_id ? parseInt(pkg.package_id.replace('P', '')) || 0 : 0,
+          name: get(`home.tours.${pkg.package_id}.name`, pkg.package_name || pkg.name || 'Tour'),
+          duration: get(`home.tours.${pkg.package_id}.duration`, pkg.duration || 'N/A'),
+          price: pkg.price ? parseFloat(pkg.price) : 0,
+          priceRange: pkg.price ? (pkg.price < 1000 ? 'budget' : pkg.price < 2000 ? 'standard' : 'premium') : 'standard',
+          image: pkg.image || '/tours/default.jpg',
+          highlights: pkg.highlights ? pkg.highlights.split(',').map((h: string) => h.trim()) : (pkg.highlights || []).slice(0,3),
+          description: get(`home.tours.${pkg.package_id}.description`, pkg.description || ''),
+        }));
+
+        if (transformedTours && transformedTours.length > 0) setHomeTours(transformedTours);
+      } catch (err) {
+        console.error('Failed to load home tour packages:', err);
+        // keep fallback
+      } finally {
+        setHomeToursLoading(false);
+      }
+    };
+
+    fetchHomeTours();
+  }, []);
   
   // Handle scroll effect
   useEffect(() => {
@@ -115,20 +195,20 @@ export default function Home() {
   const handleWhatsAppBooking = (service: string) => {
     const message = `Hello Zamzam Tours! I'm interested in booking ${service}. Please provide more details.`;
     const encodedMessage = encodeURIComponent(message);
-    window.open(`https://wa.me/94766135110?text=${encodedMessage}`, '_blank');
+    window.open(`${CONTACT_INFO.whatsappUrl}?text=${encodedMessage}`, '_blank');
   };
   
   return (
     <>
       <Head>
-        <title>Zamzam Tours - Best Travel Experience in Sri Lanka</title>
-        <meta name="description" content="Zamzam Tours offers premium self-drive car rentals, guided tours, and airport transfers across Sri Lanka. Experience the best of Sri Lankan hospitality with our extensive fleet and professional services." />
-        <meta name="keywords" content="Sri Lanka tours, car rental Sri Lanka, airport transfer, self-drive, guided tours, hotel booking, things to do in Sri Lanka" />
-        <meta property="og:title" content="Zamzam Tours - Best Travel Experience in Sri Lanka" />
-        <meta property="og:description" content="Premium travel services including self-drive car rentals, guided tours, and airport transfers across Sri Lanka." />
-        <meta property="og:image" content="/images/og-image.jpg" />
-        <meta property="og:url" content="https://zamzamtours.com" />
-        <meta name="twitter:card" content="summary_large_image" />
+  <title>{get('home.title', 'Zamzam Tours - Best Travel Experience in Sri Lanka')}</title>
+  <meta name="description" content={get('home.metaDescription', 'Zamzam Tours offers premium self-drive car rentals, guided tours, and airport transfers across Sri Lanka. Experience the best of Sri Lankan hospitality with our extensive fleet and professional services.')} />
+  <meta name="keywords" content={get('home.metaKeywords', 'Sri Lanka tours, car rental Sri Lanka, airport transfer, self-drive, guided tours, hotel booking, things to do in Sri Lanka')} />
+  <meta property="og:title" content={get('home.og.title', 'Zamzam Tours - Best Travel Experience in Sri Lanka')} />
+  <meta property="og:description" content={get('home.og.description', 'Premium travel services including self-drive car rentals, guided tours, and airport transfers across Sri Lanka.')} />
+  <meta property="og:image" content={get('home.og.image', '/images/og-image.jpg')} />
+  <meta property="og:url" content={get('home.og.url', 'https://zamzamtours.com')} />
+  <meta name="twitter:card" content={get('home.og.twitterCard', 'summary_large_image')} />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       
@@ -211,10 +291,10 @@ export default function Home() {
                 textShadow: '2px 2px 8px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 0, 0, 0.5)',
                 color: '#ffffff'
               }}>
-                Discover the Wonders of <span style={{ 
+                {get('home.hero.title.prefix', 'Discover the Wonders of ')}<span style={{ 
                   color: '#f8b500',
                   textShadow: '2px 2px 8px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 0, 0, 0.5)'
-                }}>Sri Lanka</span>
+                }}>{get('home.hero.title.highlight', 'Sri Lanka')}</span>
               </h1>
             </motion.div>
             
@@ -226,7 +306,7 @@ export default function Home() {
                 textShadow: '1px 1px 6px rgba(0, 0, 0, 0.9), 0 0 15px rgba(0, 0, 0, 0.6)',
                 color: '#ffffff'
               }}>
-                Premium self-drive car rentals, guided tours, and airport transfers across the island
+                {get('home.hero.subtitle', 'Premium self-drive car rentals, guided tours, and airport transfers across the island')}
               </p>
             </motion.div>
             
@@ -259,7 +339,7 @@ export default function Home() {
                     e.currentTarget.style.boxShadow = '0 6px 20px rgba(248, 181, 0, 0.4), 0 0 30px rgba(0, 0, 0, 0.5)';
                   }}
                 >
-                  Book a Tour
+                  {get('home.hero.cta.bookTour', 'Book a Tour')}
                 </button>
                 <button 
                   className="btn btn-secondary"
@@ -289,7 +369,7 @@ export default function Home() {
                     e.currentTarget.style.boxShadow = '0 6px 20px rgba(255, 255, 255, 0.3), 0 0 30px rgba(0, 0, 0, 0.5)';
                   }}
                 >
-                  Rent a Vehicle
+                  {get('home.hero.cta.rentVehicle', 'Rent a Vehicle')}
                 </button>
               </div>
             </motion.div>
@@ -303,7 +383,7 @@ export default function Home() {
           transition={{ delay: 1, duration: 0.8, repeat: Infinity, repeatType: 'reverse' }}
         >
           <div className="scroll-indicator">
-            <span>Scroll to explore</span>
+            <span>{get('home.hero.scrollIndicator', 'Scroll to explore')}</span>
             <div className="arrow-down"></div>
           </div>
         </motion.div>
@@ -313,7 +393,7 @@ export default function Home() {
       <section className="services">
         <div className="container">
           <AnimatedSection animation="fadeInUp">
-            <h2 className="section-title">Our Services</h2>
+            <h2 className="section-title">{get('home.services.title', 'Our Services')}</h2>
           </AnimatedSection>
           
           <AnimatedSection animation="fadeInUp" delay={0.2}>
@@ -322,19 +402,19 @@ export default function Home() {
                 className={`tab ${activeTab === 'vehicles' ? 'active' : ''}`}
                 onClick={() => setActiveTab('vehicles')}
               >
-                Vehicle Rentals
+                {get('home.services.tabs.vehicles', 'Vehicle Rentals')}
               </button>
               <button 
                 className={`tab ${activeTab === 'tours' ? 'active' : ''}`}
                 onClick={() => setActiveTab('tours')}
               >
-                Guided Tours
+                {get('home.services.tabs.tours', 'Guided Tours')}
               </button>
               <button 
                 className={`tab ${activeTab === 'transfer' ? 'active' : ''}`}
                 onClick={() => setActiveTab('transfer')}
               >
-                Airport Transfers
+                {get('home.services.tabs.transfer', 'Airport Transfers')}
               </button>
             </div>
           </AnimatedSection>
@@ -343,8 +423,9 @@ export default function Home() {
             {activeTab === 'vehicles' && (
               <div className="service-details">
                 <AnimatedSection animation="fadeInUp">
-                  <h3>Flexible Vehicle Rentals</h3>
-                  <p>Choose from our extensive fleet with both self-drive and with-driver options. All vehicles are well-maintained and fully insured for your safety and comfort.</p>
+                    <h3>{get('home.vehicles.sectionTitle', 'Flexible Vehicle Rentals')}</h3>
+                    <p>{get('home.vehicles.sectionDesc', 'Choose from our extensive fleet with both self-drive and with-driver options. All vehicles are well-maintained and fully insured for your safety and comfort.')}</p>
+                  <div style={{ height: '1rem' }} />
                 </AnimatedSection>
                 
                 <div className="vehicle-grid">
@@ -364,14 +445,14 @@ export default function Home() {
                           />
                         </div>
                         <div className="vehicle-info">
-                          <h4>{vehicle.name}</h4>
-                          <p>Capacity: {vehicle.capacity} passengers</p>
-                          <p className="vehicle-desc">{vehicle.description}</p>
+                          <h4>{get(`home.vehicles.${vehicle.name}.name`, vehicle.name)}</h4>
+                          <p>{get('home.vehicles.capacityLabel', 'Capacity:')} {vehicle.capacity} {get('home.vehicles.passengers', 'passengers')}</p>
+                          <p className="vehicle-desc">{get(`home.vehicles.${vehicle.name}.description`, vehicle.description)}</p>
                           <button 
                             className="btn btn-small"
                             onClick={() => handleWhatsAppBooking(`a ${vehicle.name}`)}
                           >
-                            Check Rates
+                            {get('home.vehicles.checkRates', 'Check Rates')}
                           </button>
                         </div>
                       </div>
@@ -384,71 +465,77 @@ export default function Home() {
             {activeTab === 'tours' && (
               <div className="service-details">
                 <AnimatedSection animation="fadeInUp">
-                  <h3>Curated Tour Experiences</h3>
-                  <p>Explore Sri Lanka's rich culture, stunning landscapes, and pristine beaches with our expert guides.</p>
+                    <h3>{get('home.tours.sectionTitle', 'Curated Tour Experiences')}</h3>
+                    <p>{get('home.tours.sectionDesc', 'Explore Sri Lanka\'s rich culture, stunning landscapes, and pristine beaches with our expert guides.')}</p>
+                  <div style={{ height: '1rem' }} />
                 </AnimatedSection>
                 
-                <div className="tour-grid">
-                  {tourPackages.map((tour, index) => (
-                    <AnimatedSection 
-                      key={index} 
-                      animation="fadeInUp" 
-                      delay={index * 0.15}
-                    >
-                      <div className="tour-card">
-                        <h4>{tour.name}</h4>
-                        <p className="duration">{tour.duration}</p>
-                        <ul>
-                          {tour.highlights.map((highlight, i) => (
-                            <li key={i}>{highlight}</li>
-                          ))}
-                        </ul>
-                        <button 
-                          className="btn btn-small"
-                          onClick={() => handleWhatsAppBooking(`the ${tour.name} package`)}
+                    <div className="tour-grid">
+                      {homeTours.map((tour, index) => (
+                        <AnimatedSection
+                          key={index}
+                          animation="fadeInUp"
+                          delay={index * 0.12}
                         >
-                          Book This Tour
-                        </button>
-                      </div>
-                    </AnimatedSection>
-                  ))}
-                </div>
+                          <div className="tour-card">
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12 }}>
+                              <div>
+                                <h4 style={{ margin: '0 0 6px' }}>{get(`home.tours.${tour.id}.name`, tour.name)}</h4>
+                                <p className="duration" style={{ margin: '0 0 8px' }}>{get(`home.tours.${tour.id}.duration`, tour.duration)}</p>
+                                <p style={{ margin: 0 }}><strong>{get('home.tours.highlightsLabel', 'Highlights:')}</strong> {Array.isArray(tour.highlights) ? tour.highlights.join(', ') : tour.highlights}</p>
+                              </div>
+                              <div style={{ textAlign: 'right' }}>
+                                <p style={{ margin: 0, fontWeight: 700 }}>{get('home.tours.fromPrice', 'From $—')}</p>
+                                <p className="muted" style={{ margin: '6px 0 0' }}>{get('home.tours.startingPriceNote', 'Starting price depends on group size')}</p>
+                              </div>
+                            </div>
+
+                            <div style={{ marginTop: 12, display: 'flex', gap: 8 }}>
+                              <button
+                                className="btn btn-small"
+                                onClick={() => handleWhatsAppBooking(`the ${tour.name} package`)}
+                              >
+                                {get('home.tours.bookThis', 'Book This Tour')}
+                              </button>
+                              <Link href={`/tours`} className="btn btn-secondary">{get('home.tours.viewDetails', 'View details')}</Link>
+                            </div>
+                          </div>
+                        </AnimatedSection>
+                      ))}
+                    </div>
               </div>
             )}
             
             {activeTab === 'transfer' && (
               <div className="service-details">
                 <AnimatedSection animation="fadeInUp">
-                  <h3>Seamless Airport Transfers</h3>
-                  <p>Enjoy hassle-free airport pickups and drop-offs with our meet & greet service. We monitor your flight for any delays.</p>
+                  <h3>{get('home.transfer.sectionTitle', 'Seamless Airport Transfers')}</h3>
+                    <p>{get('home.transfer.sectionDesc', 'Enjoy hassle-free airport pickups and drop-offs with our meet & greet service. We monitor your flight for any delays.')}</p>
+                  <div style={{ height: '1rem' }} />
                 </AnimatedSection>
                 
                 <div className="transfer-options">
-                  <AnimatedSection animation="fadeInLeft" delay={0.2}>
-                    <div className="transfer-card">
-                      <h4>Standard Transfer</h4>
-                      <p>Direct transfer from airport to your destination</p>
-                      <button 
-                        className="btn btn-small"
-                        onClick={() => handleWhatsAppBooking('an airport transfer')}
-                      >
-                        Book Transfer
-                      </button>
-                    </div>
-                  </AnimatedSection>
-                  
-                  <AnimatedSection animation="fadeInRight" delay={0.2}>
-                    <div className="transfer-card">
-                      <h4>Premium Transfer</h4>
-                      <p>Includes meet & greet, refreshments, and assistance with luggage</p>
-                      <button 
-                        className="btn btn-small"
-                        onClick={() => handleWhatsAppBooking('a premium airport transfer')}
-                      >
-                        Book Premium
-                      </button>
-                    </div>
-                  </AnimatedSection>
+                  {[
+                    { key: 'one-way', title: 'One-way Transfer', desc: 'Airport → Hotel (single trip). Ideal for arrivals.', price: 'From $25' },
+                    { key: 'round-trip', title: 'Round-trip (Two-way)', desc: 'Airport pickup and return transfer. Best for return flights.', price: 'From $45' }
+                  ].map((t, idx) => (
+                    <AnimatedSection key={t.key} animation={idx % 2 === 0 ? 'fadeInLeft' : 'fadeInRight'} delay={0.15 * idx}>
+                      <div className="transfer-card">
+                        <h4>{get(`home.transfer.options.${t.key}.title`, t.title)}</h4>
+                        <p>{get(`home.transfer.options.${t.key}.desc`, t.desc)}</p>
+                        <p style={{ fontWeight: 700, marginTop: 6 }}>{get(`home.transfer.options.${t.key}.price`, t.price)}</p>
+                        <div style={{ marginTop: 10, display: 'flex', gap: 8 }}>
+                          <button
+                            className="btn btn-small"
+                            onClick={() => handleWhatsAppBooking(t.title)}
+                          >
+                            {get('home.transfer.bookBtn', 'Book')}
+                          </button>
+                          <Link href={`/airport-transfer?type=${t.key}`} className="btn btn-secondary">{get('home.transfer.detailsBtn', 'Details')}</Link>
+                        </div>
+                      </div>
+                    </AnimatedSection>
+                  ))}
                 </div>
               </div>
             )}
@@ -456,12 +543,14 @@ export default function Home() {
         </div>
       </section>
       
+      {/* Contact topic removed per request */}
+
       {/* Destinations Section */}
       <section className="destinations">
         <div className="container">
           <AnimatedSection animation="fadeInUp">
-            <h2 className="section-title">Popular Destinations</h2>
-            <p className="section-subtitle">Explore the diverse beauty of Sri Lanka</p>
+            <h2 className="section-title">{get('home.destinations.title', 'Popular Destinations')}</h2>
+            <p className="section-subtitle">{get('home.destinations.subtitle', 'Explore the diverse beauty of Sri Lanka')}</p>
           </AnimatedSection>
           
           <div className="destinations-grid">
@@ -483,7 +572,7 @@ export default function Home() {
                       <h3>{destination.name}</h3>
                       <p>{destination.description}</p>
                       <Link href={`/destinations/${destination.slug}`} className="btn btn-small">
-                        Explore
+                        {get('home.destinations.exploreBtn', 'Explore')}
                       </Link>
                     </div>
                   </div>
@@ -502,21 +591,56 @@ export default function Home() {
         </div>
       </section>
       
+      {/* Activities / Things to Do Section */}
+      <section className="activities-section">
+        <div className="container">
+          <AnimatedSection animation="fadeInUp">
+            <h2 className="section-title">{get('home.activities.title', 'Things to Do')}</h2>
+            <p className="section-subtitle">{get('home.activities.subtitle', 'Popular activities and experiences you can book')}</p>
+          </AnimatedSection>
+
+          <div className="destinations-grid">
+            {activities.map((act, index) => (
+              <AnimatedSection key={act.slug} animation="fadeInUp" delay={index * 0.08}>
+                <div className="destination-card">
+                  {/* emoji header instead of photo */}
+                  <div style={{ height: '120px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg, rgba(5,59,60,0.04), rgba(248,181,0,0.04))' }}>
+                    <div style={{ fontSize: '3rem' }}>{act.icon}</div>
+                  </div>
+
+                  <div style={{ padding: '1rem' }}>
+                    <h3 style={{ margin: '0 0 0.5rem' }}>{act.name}</h3>
+                    <p style={{ color: '#666', margin: '0 0 0.8rem' }}>{act.description}</p>
+                    <Link href={`/activities/${act.slug}`} className="btn btn-small">{get('home.activities.exploreBtn', 'Explore')}</Link>
+                  </div>
+                </div>
+              </AnimatedSection>
+            ))}
+          </div>
+
+          <AnimatedSection animation="fadeInUp" delay={0.2}>
+            <div className="section-cta">
+              <Link href="/activities" className="btn btn-primary">View All Activities</Link>
+            </div>
+          </AnimatedSection>
+        </div>
+      </section>
+
       {/* Testimonials Section */}
       <section className="testimonials">
         <div className="container">
           <AnimatedSection animation="fadeInUp">
-            <h2 className="section-title">What Our Customers Say</h2>
+            <h2 className="section-title">{get('home.testimonials.title', 'What Our Customers Say')}</h2>
           </AnimatedSection>
           
           <div className="testimonials-slider">
             <AnimatedSection animation="fadeInLeft" delay={0.2}>
               <div className="testimonial">
                 <div className="testimonial-content">
-                  <p>"Zamzam Tours made our Sri Lanka trip unforgettable. The self-drive car was in perfect condition, and their recommendations for accommodations were spot on!"</p>
+                  <p>{get('home.testimonials.1.text', '"Zamzam Tours made our Sri Lanka trip unforgettable. The self-drive car was in perfect condition, and their recommendations for accommodations were spot on!"')}</p>
                   <div className="testimonial-author">
-                    <strong>Sarah Johnson</strong>
-                    <span>United Kingdom</span>
+                    <strong>{get('home.testimonials.1.author', 'Sarah Johnson')}</strong>
+                    <span>{get('home.testimonials.1.location', 'United Kingdom')}</span>
                   </div>
                 </div>
               </div>
@@ -525,10 +649,10 @@ export default function Home() {
             <AnimatedSection animation="fadeInUp" delay={0.3}>
               <div className="testimonial">
                 <div className="testimonial-content">
-                  <p>"The North East tour was incredible! Our guide was knowledgeable and friendly. The entire experience was seamless from start to finish."</p>
+                  <p>{get('home.testimonials.2.text', '"The North East tour was incredible! Our guide was knowledgeable and friendly. The entire experience was seamless from start to finish."')}</p>
                   <div className="testimonial-author">
-                    <strong>Michael Schmidt</strong>
-                    <span>Germany</span>
+                    <strong>{get('home.testimonials.2.author', 'Michael Schmidt')}</strong>
+                    <span>{get('home.testimonials.2.location', 'Germany')}</span>
                   </div>
                 </div>
               </div>
@@ -537,10 +661,10 @@ export default function Home() {
             <AnimatedSection animation="fadeInRight" delay={0.4}>
               <div className="testimonial">
                 <div className="testimonial-content">
-                  <p>"Airport transfer with meet & greet service was excellent. They were waiting for us even though our flight was delayed. Highly recommended!"</p>
+                  <p>{get('home.testimonials.3.text', '"Airport transfer with meet & greet service was excellent. They were waiting for us even though our flight was delayed. Highly recommended!"')}</p>
                   <div className="testimonial-author">
-                    <strong>Isabelle Moreau</strong>
-                    <span>France</span>
+                    <strong>{get('home.testimonials.3.author', 'Isabelle Moreau')}</strong>
+                    <span>{get('home.testimonials.3.location', 'France')}</span>
                   </div>
                 </div>
               </div>
@@ -554,17 +678,17 @@ export default function Home() {
         <div className="container">
           <AnimatedSection animation="fadeInUp">
             <div className="cta-content">
-              <h2>Ready to Explore Sri Lanka?</h2>
-              <p>Contact us now to plan your perfect Sri Lankan adventure</p>
+              <h2>{get('home.cta.title', 'Ready to Explore Sri Lanka?')}</h2>
+              <p>{get('home.cta.subtitle', 'Contact us now to plan your perfect Sri Lankan adventure')}</p>
               <div className="cta-buttons">
                 <button 
                   className="btn btn-primary"
                   onClick={() => handleWhatsAppBooking('more information')}
                 >
-                  Contact via WhatsApp
+                  {get('home.cta.primary', 'Contact via WhatsApp')}
                 </button>
                 <Link href="/contact" className="btn btn-secondary">
-                  Other Contact Methods
+                  {get('home.cta.secondary', 'Other Contact Methods')}
                 </Link>
               </div>
             </div>
@@ -572,82 +696,7 @@ export default function Home() {
         </div>
       </section>
       
-      {/* Footer */}
-      <footer className="footer">
-        <div className="container">
-          <div className="footer-content">
-            <div className="footer-section">
-              <div className="footer-logo">
-                <Image src="/logo.png" alt="Zamzam Tours" width={150} height={60} />
-              </div>
-              <p>Your trusted partner for premium travel experiences in Sri Lanka since 2010.</p>
-              <div className="social-links">
-                <a href="#" aria-label="Facebook">FB</a>
-                <a href="#" aria-label="Instagram">IG</a>
-                <a href="#" aria-label="Twitter">TW</a>
-                <a href="#" aria-label="YouTube">YT</a>
-              </div>
-            </div>
-            
-            <div className="footer-section">
-              <h3>Services</h3>
-              <ul>
-                <li><Link href="/self-drive">Self-Drive Rentals</Link></li>
-                <li><Link href="/tours">Guided Tours</Link></li>
-                <li><Link href="/airport-transfer">Airport Transfers</Link></li>
-                <li><Link href="/hotels">Hotel Booking</Link></li>
-                <li><Link href="/activities">Activities</Link></li>
-              </ul>
-            </div>
-            
-            <div className="footer-section">
-              <h3>Company</h3>
-              <ul>
-                <li><Link href="/about">About Us</Link></li>
-                <li><Link href="/gallery">Gallery</Link></li>
-                <li><Link href="/testimonials">Testimonials</Link></li>
-                <li><Link href="/blog">Blog</Link></li>
-                <li><Link href="/careers">Careers</Link></li>
-              </ul>
-            </div>
-            
-            <div className="footer-section">
-              <h3>Support</h3>
-              <ul>
-                <li><Link href="/contact">Contact Us</Link></li>
-                <li><Link href="/faq">FAQ</Link></li>
-                <li><Link href="/terms">Terms & Conditions</Link></li>
-                <li><Link href="/privacy">Privacy Policy</Link></li>
-                <li><Link href="/cancellation">Cancellation Policy</Link></li>
-              </ul>
-            </div>
-            
-            <div className="footer-section">
-              <h3>Contact Info</h3>
-              <ul className="contact-info">
-                <li>📍 123 Galle Road, Colombo, Sri Lanka</li>
-                <li>📞 +94 77 123 4567</li>
-                <li>📧 info@zamzamtours.com</li>
-                <li>🕒 Open 24/7</li>
-              </ul>
-            </div>
-          </div>
-          
-          <div className="footer-bottom">
-            <p>&copy; {new Date().getFullYear()} Zamzam Tours. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
       
-      {/* WhatsApp Floating Button */}
-      <div className="whatsapp-float">
-        <button 
-          onClick={() => handleWhatsAppBooking('assistance')}
-          aria-label="Contact via WhatsApp"
-        >
-          <Image src="/whatsapp-icon.svg" alt="WhatsApp" width={30} height={30} />
-        </button>
-      </div>
 
       <Footer />
     </>

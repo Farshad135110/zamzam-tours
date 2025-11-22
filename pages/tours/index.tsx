@@ -6,8 +6,11 @@ import Image from 'next/image';
 import { motion } from 'framer-motion';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
+import { CONTACT_INFO } from '../../src/constants/config';
 import AnimatedSection from '../../components/AnimatedSection';
+import { CldImage } from 'next-cloudinary';
 import { fadeInUp } from '../../src/utils/animations';
+import useTranslation from '../../src/i18n/useTranslation';
 
 interface Tour {
   id: number;
@@ -30,6 +33,11 @@ interface Tour {
 }
 
 export default function Tours() {
+  const { t } = useTranslation();
+  const get = (key: string, fallback: string) => {
+    const val = t(key);
+    return val === key ? fallback : val;
+  };
   const [activeCategory, setActiveCategory] = useState('all');
   const [selectedDuration, setSelectedDuration] = useState('all');
   const [selectedPriceRange, setSelectedPriceRange] = useState('all');
@@ -40,6 +48,7 @@ export default function Tours() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [tours, setTours] = useState<Tour[]>([]);
   const [loading, setLoading] = useState(true);
+  const [portraitMap, setPortraitMap] = useState<Record<string, boolean>>({});
   
   // Video hero refs
   const heroRef = useRef(null);
@@ -65,24 +74,26 @@ export default function Tours() {
         const packages = await response.json();
         
         // Transform database packages to Tour format
+        // Use locale-backed fallbacks: if a translation key exists for the package (tours.packages.<package_id>.*)
+        // the localized string will be used, otherwise the backend-provided text is used.
         const transformedTours = packages.map((pkg: any) => ({
           id: parseInt(pkg.package_id.replace('P', '')) || 0,
-          name: pkg.package_name,
+          name: get(`tours.packages.${pkg.package_id}.name`, pkg.package_name),
           category: 'cultural', // Default category
-          duration: '7 days', // Default duration
+          duration: pkg.duration || '7 days', // prefer backend duration when available
           priceRange: pkg.price ? (pkg.price < 1000 ? 'budget' : pkg.price < 2000 ? 'standard' : 'premium') : 'standard',
           price: pkg.price ? parseFloat(pkg.price) : 0,
           image: pkg.image || '/tours/default.jpg',
           highlights: pkg.highlights ? pkg.highlights.split(',').map((h: string) => h.trim()) : [],
-          description: pkg.description || '',
+          description: get(`tours.packages.${pkg.package_id}.description`, pkg.description || ''),
           includes: pkg.includings ? pkg.includings.split(',').map((i: string) => i.trim()) : [],
-          difficulty: 'Moderate',
-          groupSize: '2-12 people',
-          season: 'Year-round',
-          rating: 4.5,
-          reviews: 0,
+          difficulty: pkg.difficulty || 'Moderate',
+          groupSize: pkg.group_size || '2-12 people',
+          season: pkg.season || 'Year-round',
+          rating: pkg.rating ? Number(pkg.rating) : 4.5,
+          reviews: pkg.reviews ? Number(pkg.reviews) : 0,
           included: pkg.includings ? pkg.includings.split(',').map((i: string) => i.trim()) : [],
-          itinerary: []
+          itinerary: pkg.itinerary || []
         }));
         
         setTours(transformedTours);
@@ -113,7 +124,17 @@ export default function Tours() {
         console.log('Video autoplay failed:', error);
       });
     }
+    // pre-check images currently in the page (popular destinations and initial tours)
+    popularDestinations.forEach(d => checkImageOrientation(d.image));
+    tours.forEach(t => checkImageOrientation(t.image));
   }, []);
+
+  // When tours load, check their image orientations
+  useEffect(() => {
+    if (tours && tours.length > 0) {
+      tours.forEach(t => checkImageOrientation(t.image));
+    }
+  }, [tours]);
   
   // Handle video end - switch to other player
   const handleVideo1End = () => {
@@ -140,74 +161,71 @@ export default function Tours() {
     }
   };
 
+  // Detect image orientation (client-side) and mark portrait images so we can adjust objectPosition
+  const checkImageOrientation = (src: string) => {
+    if (!src || portraitMap[src] !== undefined) return;
+    if (typeof window === 'undefined') return;
+    const img = new window.Image();
+    img.src = src;
+    img.onload = () => {
+      const isPortrait = img.naturalHeight > img.naturalWidth;
+      setPortraitMap(prev => ({ ...prev, [src]: isPortrait }));
+    };
+    img.onerror = () => setPortraitMap(prev => ({ ...prev, [src]: false }));
+  };
+
   // Tour categories
   const categories = [
-    { id: 'all', name: 'All Tours' },
-    { id: 'cultural', name: 'Cultural' },
-    { id: 'adventure', name: 'Adventure' },
-    { id: 'beach', name: 'Beach & Relaxation' },
-    { id: 'wildlife', name: 'Wildlife' },
-    { id: 'north-east', name: 'North East' },
-    { id: 'hill-country', name: 'Hill Country' },
-    { id: 'historical', name: 'Historical' }
+    { id: 'all', name: get('tours.filters.categories.all', 'All Tours') },
+    { id: 'cultural', name: get('tours.filters.categories.cultural', 'Cultural') },
+    { id: 'adventure', name: get('tours.filters.categories.adventure', 'Adventure') },
+    { id: 'beach', name: get('tours.filters.categories.beach', 'Beach & Relaxation') },
+    { id: 'wildlife', name: get('tours.filters.categories.wildlife', 'Wildlife') },
+    { id: 'north-east', name: get('tours.filters.categories.northeast', 'North East') },
+    { id: 'hill-country', name: get('tours.filters.categories.hillCountry', 'Hill Country') },
+    { id: 'historical', name: get('tours.filters.categories.historical', 'Historical') }
   ];
 
   // Duration filters
   const durations = [
-    { id: 'all', name: 'Any Duration' },
-    { id: '1-3', name: '1-3 Days' },
-    { id: '4-7', name: '4-7 Days' },
-    { id: '8-14', name: '8-14 Days' },
-    { id: '15+', name: '15+ Days' }
+    { id: 'all', name: get('tours.filters.durations.any', 'Any Duration') },
+    { id: '1-3', name: get('tours.filters.durations.1-3', '1-3 Days') },
+    { id: '4-7', name: get('tours.filters.durations.4-7', '4-7 Days') },
+    { id: '8-14', name: get('tours.filters.durations.8-14', '8-14 Days') },
+    { id: '15+', name: get('tours.filters.durations.15', '15+ Days') }
   ];
 
   // Price ranges
   const priceRanges = [
-    { id: 'all', name: 'Any Price' },
-    { id: 'budget', name: 'Budget ($500-$1000)' },
-    { id: 'standard', name: 'Standard ($1000-$2000)' },
-    { id: 'premium', name: 'Premium ($2000-$4000)' },
-    { id: 'luxury', name: 'Luxury ($4000+)' }
+    { id: 'all', name: get('tours.filters.prices.any', 'Any Price') },
+    { id: 'budget', name: get('tours.filters.prices.budget', 'Budget ($500-$1000)') },
+    { id: 'standard', name: get('tours.filters.prices.standard', 'Standard ($1000-$2000)') },
+    { id: 'premium', name: get('tours.filters.prices.premium', 'Premium ($2000-$4000)') },
+    { id: 'luxury', name: get('tours.filters.prices.luxury', 'Luxury ($4000+)') }
   ];
 
   // Popular destinations in Sri Lanka
   const popularDestinations = [
-    {
-      name: 'Sigiriya',
-      image: '/destinations/sigiriya.jpg',
-      description: 'Ancient rock fortress with stunning frescoes and water gardens',
-      tours: 15
-    },
-    {
-      name: 'Ella',
-      image: '/destinations/ella.jpg',
-      description: 'Mountain town with hiking trails and panoramic views',
-      tours: 12
-    },
-    {
-      name: 'Galle',
-      image: '/destinations/galle.jpg',
-      description: 'Historic Dutch fort with boutique shops and cafes',
-      tours: 18
-    },
-    {
-      name: 'Kandy',
-      image: '/destinations/kandy.jpg',
-      description: 'Cultural capital with the Temple of the Sacred Tooth',
-      tours: 20
-    },
-    {
-      name: 'Yala',
-      image: '/destinations/yala.jpg',
-      description: 'Famous national park for leopard and elephant spotting',
-      tours: 8
-    },
-    {
-      name: 'Arugam Bay',
-      image: '/destinations/arugam-bay.jpg',
-      description: 'Surfing paradise on the East Coast',
-      tours: 6
-    }
+    { name: 'Sigiriya', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453704/dylan-shaw-smUAKwMT8XA-unsplash_qhenhx.jpg', description: 'Ancient rock fortress - UNESCO World Heritage Site with stunning frescoes', category: 'Cultural', slug: 'sigiriya' },
+    { name: 'Kandy', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762454466/chathura-anuradha-subasinghe-40uQmE9Zq8g-unsplash_tvflxt.jpg', description: 'Sacred city with Temple of the Tooth Relic and cultural performances', category: 'Cultural', slug: 'kandy' },
+    { name: 'Ella', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453781/adam-vandermeer-Dw9dWTzzsUE-unsplash_l49hhe.jpg', description: 'Mountain paradise with tea plantations, Nine Arch Bridge, and hiking trails', category: 'Nature', slug: 'ella' },
+    { name: 'Galle', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453796/chathura-indika-LAj-XlHP6Rs-unsplash_o7mzbc.jpg', description: 'Historic Dutch fort city by the ocean - UNESCO World Heritage Site', category: 'Cultural', slug: 'galle' },
+    { name: 'Yala', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453757/gemmmm-FRTpkBIi-1Y-unsplash_iggwsm.jpg', description: 'Premier wildlife sanctuary with highest leopard density in the world', category: 'Wildlife', slug: 'yala' },
+    { name: 'Nuwara Eliya', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453797/anton-lecock-TPtaNsBOW9Q-unsplash_g0htag.jpg', description: 'Little England - Cool climate hill station with tea plantations', category: 'Nature', slug: 'nuwara-eliya' },
+    { name: 'Mirissa', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762454382/siarhei-palishchuk-hgiby6qxvpc-unsplash_prnosl.jpg', description: 'Whale watching capital with pristine beaches and tropical vibes', category: 'Beach', slug: 'mirissa' },
+    { name: 'Anuradhapura', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762454366/andrea-zanenga-U2-9JKq3Sv8-unsplash_ykmenj.jpg', description: 'Ancient capital with sacred Buddhist sites and massive stupas', category: 'Cultural', slug: 'anuradhapura' },
+    { name: 'Polonnaruwa', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762454341/birendra-padmaperuma-jB7TbGrC1xM-unsplash_qcpkau.jpg', description: 'Medieval capital with Gal Vihara rock sculptures', category: 'Cultural', slug: 'polonnaruwa' },
+    { name: 'Udawalawe', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1761861324/sachindra-chalaka-ERIYlk3Hppo-unsplash_n41n9c.jpg', description: 'Elephant paradise with guaranteed sightings of wild elephant herds', category: 'Wildlife', slug: 'udawalawe' },
+    { name: 'Trincomalee', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453771/claus-giering-YmcSXWcmh6w-unsplash_zw66ck.jpg', description: 'Pristine east coast beaches, diving spots, and historic temples', category: 'Beach', slug: 'trincomalee' },
+    { name: 'Arugam Bay', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453785/udara-karunarathna-LfUJO4whcSU-unsplash_xnxl7h.jpg', description: 'World-famous surfing destination on the southeast coast', category: 'Beach', slug: 'arugam-bay' },
+    { name: 'Bentota', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453760/ivani-de-silva-p4CkGihlKeI-unsplash_faup7y.jpg', description: 'Golden beaches and water sports paradise on the southwest coast', category: 'Beach', slug: 'bentota' },
+    { name: 'Hikkaduwa', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453918/croyde-bay-qw6f1CIXOqQ-unsplash_heu61d.jpg', description: 'Coral reefs, sea turtles, and vibrant beach town atmosphere', category: 'Beach', slug: 'hikkaduwa' },
+    { name: 'Dambulla', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1761861700/agnieszka-stankiewicz-OMgi4DfiO3c-unsplash_dfa3pd.jpg', description: 'Golden Temple with cave shrines and 150+ Buddha statues', category: 'Cultural', slug: 'dambulla' },
+    { name: 'Horton Plains', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1761861681/anupa-uthsara-Prg6PmMQdK4-unsplash_rfz6fv.jpg', description: "World's End cliff with dramatic 880m drop and cloud forests", category: 'Nature', slug: 'horton-plains' },
+    { name: 'Unawatuna', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453914/eirik-skarstein-7CsKioF9O6g-unsplash_gb7eow.jpg', description: "Crescent bay paradise voted one of world's best beaches", category: 'Beach', slug: 'unawatuna' },
+    { name: 'Wilpattu', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453910/udara-karunarathna-PPGM2ZpCrzc-unsplash_vchneo.jpg', description: 'Largest national park with unique villus (lakes) and leopards', category: 'Wildlife', slug: 'wilpattu' },
+    { name: 'Jaffna', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1761861565/ajai-s-A4amRej5Hes-unsplash_ofpmmw.jpg', description: 'Northern Tamil cultural capital with unique heritage and islands', category: 'Cultural', slug: 'jaffna' },
+    { name: "Adam's Peak", image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453906/manoj-dharmarathne-sznpwfFhfrU-unsplash_hnkhcg.jpg', description: 'Sacred mountain pilgrimage with spectacular sunrise views', category: 'Nature', slug: 'adams-peak' }
   ];
 
   // Activities available
@@ -215,32 +233,162 @@ export default function Tours() {
     {
       name: 'Wildlife Safaris',
       icon: '🦁',
-      description: 'Elephant, leopard and bird watching in national parks'
+      description: 'Elephant, leopard and bird watching in national parks',
+      category: 'Wildlife',
+      slug: 'wildlife-safaris',
+      image: 'zamzam-tours/activities/wildlife-safari'
     },
     {
       name: 'Hiking & Trekking',
       icon: '🥾',
-      description: 'Mountain trails and nature walks'
+      description: 'Mountain trails and nature walks through stunning landscapes',
+      category: 'Adventure',
+      slug: 'hiking-trekking',
+      image: 'zamzam-tours/activities/hiking'
     },
     {
-      name: 'Cultural Sites',
+      name: 'Cultural Tours',
       icon: '🏛️',
-      description: 'Ancient temples, forts and historical monuments'
+      description: 'Ancient temples, forts and historical monuments',
+      category: 'Cultural',
+      slug: 'cultural-tours',
+      image: 'zamzam-tours/activities/cultural-tours'
     },
     {
       name: 'Beach Activities',
       icon: '🏖️',
-      description: 'Swimming, surfing, snorkeling and relaxation'
+      description: 'Swimming, surfing, snorkeling and beach relaxation',
+      category: 'Beach',
+      slug: 'beach-activities',
+      image: 'zamzam-tours/activities/beach'
     },
     {
-      name: 'Tea Experiences',
+      name: 'Tea Plantation Tours',
       icon: '🍵',
-      description: 'Tea plantation tours and tasting sessions'
+      description: 'Visit tea estates and experience Ceylon tea culture',
+      category: 'Cultural',
+      slug: 'tea-plantation-tours',
+      image: 'zamzam-tours/activities/tea-plantation'
     },
     {
-      name: 'Adventure Sports',
-      icon: '🚵',
-      description: 'White water rafting, cycling and more'
+      name: 'Whale Watching',
+      icon: '🐋',
+      description: 'Witness blue whales and dolphins in their natural habitat',
+      category: 'Wildlife',
+      slug: 'whale-watching',
+      image: 'zamzam-tours/activities/whale-watching'
+    },
+    {
+      name: 'Surfing',
+      icon: '�',
+      description: 'World-class surf breaks for all skill levels',
+      category: 'Adventure',
+      slug: 'surfing',
+      image: 'zamzam-tours/activities/surfing'
+    },
+    {
+      name: 'Scuba Diving',
+      icon: '🤿',
+      description: 'Explore vibrant coral reefs and underwater shipwrecks',
+      category: 'Adventure',
+      slug: 'scuba-diving',
+      image: 'zamzam-tours/activities/scuba-diving'
+    },
+    {
+      name: 'Train Journeys',
+      icon: '🚂',
+      description: 'Scenic train rides through tea country and hill stations',
+      category: 'Cultural',
+      slug: 'train-journeys',
+      image: 'zamzam-tours/activities/train-journey'
+    },
+    {
+      name: 'Bird Watching',
+      icon: '🦜',
+      description: 'Spot endemic and migratory bird species',
+      category: 'Wildlife',
+      slug: 'bird-watching',
+      image: 'zamzam-tours/activities/bird-watching'
+    },
+    {
+      name: 'White Water Rafting',
+      icon: '🚣',
+      description: 'Thrilling rapids on Kelani River and other waterways',
+      category: 'Adventure',
+      slug: 'white-water-rafting',
+      image: 'zamzam-tours/activities/rafting'
+    },
+    {
+      name: 'Ayurvedic Spa',
+      icon: '💆',
+      description: 'Traditional healing treatments and wellness therapies',
+      category: 'Wellness',
+      slug: 'ayurvedic-spa',
+      image: 'zamzam-tours/activities/ayurveda'
+    },
+    {
+      name: 'Cooking Classes',
+      icon: '�‍🍳',
+      description: 'Learn authentic Sri Lankan cuisine and spices',
+      category: 'Cultural',
+      slug: 'cooking-classes',
+      image: 'zamzam-tours/activities/cooking'
+    },
+    {
+      name: 'Photography Tours',
+      icon: '📸',
+      description: 'Capture stunning landscapes and wildlife',
+      category: 'Cultural',
+      slug: 'photography-tours',
+      image: 'zamzam-tours/activities/photography'
+    },
+    {
+      name: 'Cycling Tours',
+      icon: '🚴',
+      description: 'Bike through villages, rice paddies and coastal roads',
+      category: 'Adventure',
+      slug: 'cycling-tours',
+      image: 'zamzam-tours/activities/cycling'
+    },
+    {
+      name: 'Rock Climbing',
+      icon: '🧗',
+      description: 'Scale ancient rock formations and mountain cliffs',
+      category: 'Adventure',
+      slug: 'rock-climbing',
+      image: 'zamzam-tours/activities/rock-climbing'
+    },
+    {
+      name: 'Snorkeling',
+      icon: '🤿',
+      description: 'Discover colorful marine life in crystal clear waters',
+      category: 'Beach',
+      slug: 'snorkeling',
+      image: 'zamzam-tours/activities/snorkeling'
+    },
+    {
+      name: 'Temple Visits',
+      icon: '🛕',
+      description: 'Experience sacred Buddhist and Hindu temples',
+      category: 'Cultural',
+      slug: 'temple-visits',
+      image: 'zamzam-tours/activities/temples'
+    },
+    {
+      name: 'Camping',
+      icon: '⛺',
+      description: 'Overnight camping in national parks and wilderness',
+      category: 'Adventure',
+      slug: 'camping',
+      image: 'zamzam-tours/activities/camping'
+    },
+    {
+      name: 'Zip-lining',
+      icon: '🪂',
+      description: 'Soar through forest canopies and mountain valleys',
+      category: 'Adventure',
+      slug: 'zip-lining',
+      image: 'zamzam-tours/activities/ziplining'
     }
   ];
 
@@ -262,9 +410,10 @@ export default function Tours() {
 
   // Handle WhatsApp booking
   const handleWhatsAppBooking = (tour: any) => {
-    const message = `Hello Zamzam Tours! I'm interested in booking the "${tour.name}" tour. Please provide more details and availability.`;
+    const template = get('tours.messages.whatsappTemplate', 'Hello Zamzam Tours! I\'m interested in booking the "{tour}" tour. Please provide more details and availability.');
+    const message = template.replace('{tour}', tour.name);
     const encodedMessage = encodeURIComponent(message);
-    window.open(`https://wa.me/94766135110?text=${encodedMessage}`, '_blank');
+    window.open(`${CONTACT_INFO.whatsappUrl}?text=${encodedMessage}`, '_blank');
   };
 
   // Open booking form
@@ -276,9 +425,9 @@ export default function Tours() {
   return (
     <>
       <Head>
-        <title>Sri Lanka Tour Packages | Zamzam Tours</title>
-        <meta name="description" content="Discover amazing Sri Lanka tour packages with Zamzam Tours. Cultural, adventure, beach, wildlife, and North East tours with expert guides and best prices." />
-        <meta name="keywords" content="Sri Lanka tours, cultural tours, adventure tours, beach tours, wildlife safari, North East Sri Lanka, tour packages" />
+        <title>{get('tours.pageTitle', 'Sri Lanka Tour Packages | Zamzam Tours')}</title>
+        <meta name="description" content={get('tours.metaDescription', 'Discover amazing Sri Lanka tour packages with Zamzam Tours. Cultural, adventure, beach, wildlife, and North East tours with expert guides and best prices.')} />
+        <meta name="keywords" content={get('tours.metaKeywords', 'Sri Lanka tours, cultural tours, adventure tours, beach tours, wildlife safari, North East Sri Lanka, tour packages')} />
       </Head>
 
       <Navbar />
@@ -360,7 +509,7 @@ export default function Tours() {
                 textShadow: '2px 2px 8px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 0, 0, 0.5)',
                 color: '#ffffff'
               }}>
-                Discover <span style={{ color: '#f8b500' }}>Sri Lanka</span> with Expert Guides
+                {get('tours.hero.title', 'Discover ')}<span style={{ color: '#f8b500' }}>{get('tours.hero.title.highlight', 'Sri Lanka')}</span>{get('tours.hero.title.suffix', ' with Expert Guides')}
               </h1>
             </motion.div>
             
@@ -372,7 +521,7 @@ export default function Tours() {
                 textShadow: '1px 1px 6px rgba(0, 0, 0, 0.9), 0 0 15px rgba(0, 0, 0, 0.6)',
                 color: '#ffffff'
               }}>
-                Curated tour packages showcasing the best of Sri Lankan culture, nature, and adventure
+                {get('tours.hero.subtitle', 'Curated tour packages showcasing the best of Sri Lankan culture, nature, and adventure')}
               </p>
             </motion.div>
             
@@ -383,7 +532,7 @@ export default function Tours() {
               <div className="hero-search">
                 <input
                   type="text"
-                  placeholder="Search tours by name, destination, or activity..."
+                  placeholder={get('tours.hero.searchPlaceholder', 'Search tours by name, destination, or activity...')}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="search-input"
@@ -435,7 +584,7 @@ export default function Tours() {
               fontSize: '14px',
               fontWeight: '500',
               textShadow: '1px 1px 4px rgba(0, 0, 0, 0.8)'
-            }}>Scroll to explore</span>
+            }}>{get('tours.hero.scrollIndicator', 'Scroll to explore')}</span>
             <div className="arrow-down" style={{
               width: '30px',
               height: '30px',
@@ -457,7 +606,7 @@ export default function Tours() {
             <div className="filters-grid">
               {/* Category Filter */}
               <div className="filter-group">
-                <label>Tour Category</label>
+                <label>{get('tours.filters.categoryLabel', 'Tour Category')}</label>
                 <div className="filter-buttons">
                   {categories.map(category => (
                     <button
@@ -473,7 +622,7 @@ export default function Tours() {
 
               {/* Duration Filter */}
               <div className="filter-group">
-                <label>Duration</label>
+                <label>{get('tours.filters.durationLabel', 'Duration')}</label>
                 <select 
                   value={selectedDuration}
                   onChange={(e) => setSelectedDuration(e.target.value)}
@@ -489,7 +638,7 @@ export default function Tours() {
 
               {/* Price Filter */}
               <div className="filter-group">
-                <label>Price Range</label>
+                <label>{get('tours.filters.priceLabel', 'Price Range')}</label>
                 <select 
                   value={selectedPriceRange}
                   onChange={(e) => setSelectedPriceRange(e.target.value)}
@@ -508,14 +657,14 @@ export default function Tours() {
           {/* Tours Grid */}
           <section className="tours-grid-section">
             <div className="section-header">
-              <h2>Featured Tour Packages</h2>
-              <p>Handpicked experiences for every type of traveler</p>
+              <h2>{get('tours.featured.title', 'Featured Tour Packages')}</h2>
+              <p>{get('tours.featured.subtitle', 'Handpicked experiences for every type of traveler')}</p>
             </div>
 
             {loading ? (
               <div className="loading-state">
-                <h3>Loading tour packages...</h3>
-                <p>Please wait while we fetch the best tours for you</p>
+                <h3>{get('tours.loading.title', 'Loading tour packages...')}</h3>
+                <p>{get('tours.loading.subtitle', 'Please wait while we fetch the best tours for you')}</p>
               </div>
             ) : filteredTours.length > 0 ? (
               <div className="tours-grid">
@@ -527,7 +676,7 @@ export default function Tours() {
                         alt={tour.name}
                         width={400}
                         height={250}
-                        objectFit="cover"
+                        style={{ objectFit: 'cover', objectPosition: portraitMap[tour.image] ? 'bottom center' : 'center', width: '100%', height: '100%' }}
                       />
                       <div className="tour-badge">{tour.category.replace('-', ' ')}</div>
                       <div className="tour-rating">
@@ -547,7 +696,7 @@ export default function Tours() {
                       <p className="tour-description">{tour.description}</p>
 
                       <div className="tour-highlights">
-                        <h4>Highlights:</h4>
+                        <h4>{get('tours.card.highlightsTitle', 'Highlights:')}</h4>
                         <ul>
                           {tour.highlights.slice(0, 3).map((highlight, index) => (
                             <li key={index}>✓ {highlight}</li>
@@ -556,27 +705,27 @@ export default function Tours() {
                       </div>
 
                       <div className="tour-includes">
-                        <h4>Includes:</h4>
+                        <h4>{get('tours.card.includesTitle', 'Includes:')}</h4>
                         <p>{tour.includes?.join(', ') || tour.included.join(', ')}</p>
                       </div>
 
                       <div className="tour-footer">
                         <div className="tour-price">
                           <span className="price">${tour.price}</span>
-                          <span className="per-person">per person</span>
+                          <span className="per-person">{get('tours.card.perPerson', 'per person')}</span>
                         </div>
                         <div className="tour-actions">
                           <button 
                             className="btn-secondary"
                             onClick={() => openBookingForm(tour)}
                           >
-                            View Details
+                            {get('tours.card.viewDetails', 'View Details')}
                           </button>
                           <button 
                             className="btn-primary"
                             onClick={() => handleWhatsAppBooking(tour)}
                           >
-                            Book Now
+                            {get('tours.card.bookNow', 'Book Now')}
                           </button>
                         </div>
                       </div>
@@ -586,8 +735,8 @@ export default function Tours() {
               </div>
             ) : (
               <div className="no-results">
-                <h3>No tours found matching your criteria</h3>
-                <p>Try adjusting your filters or search terms</p>
+                <h3>{get('tours.noResults.title', 'No tours found matching your criteria')}</h3>
+                <p>{get('tours.noResults.subtitle', 'Try adjusting your filters or search terms')}</p>
                 <button 
                   className="btn-primary"
                   onClick={() => {
@@ -597,7 +746,7 @@ export default function Tours() {
                     setSearchQuery('');
                   }}
                 >
-                  Reset Filters
+                  {get('tours.noResults.resetFilters', 'Reset Filters')}
                 </button>
               </div>
             )}
@@ -606,31 +755,29 @@ export default function Tours() {
           {/* Popular Destinations */}
           <section className="destinations-section">
             <div className="section-header">
-              <h2>Popular Destinations in Sri Lanka</h2>
-              <p>Explore the most sought-after locations across the island</p>
+              <h2>{get('tours.destinations.title', 'Popular Destinations in Sri Lanka')}</h2>
+              <p>{get('tours.destinations.subtitle', 'Explore 20 amazing destinations across the island')}</p>
             </div>
 
             <div className="destinations-grid">
               {popularDestinations.map((destination, index) => (
-                <div key={index} className="destination-card">
+                <Link key={index} href={`/destinations/${destination.slug}`} className="destination-card">
                   <div className="destination-image">
-                    <Image 
+                    <CldImage 
                       src={destination.image} 
                       alt={destination.name}
                       width={300}
                       height={200}
-                      objectFit="cover"
+                      style={{ objectFit: 'cover', objectPosition: portraitMap[destination.image] ? 'bottom center' : 'center', width: '100%', height: '100%' }}
                     />
                     <div className="destination-overlay">
+                      <span className="destination-category">{destination.category}</span>
                       <h3>{destination.name}</h3>
                       <p>{destination.description}</p>
-                      <span className="tour-count">{destination.tours} tours available</span>
-                      <Link href={`/destinations/${destination.name.toLowerCase().replace(' ', '-')}`} className="btn-small">
-                        Explore
-                      </Link>
+                      <span className="btn-small">{get('tours.destinations.learnMore', 'Learn More →')}</span>
                     </div>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           </section>
@@ -638,73 +785,49 @@ export default function Tours() {
           {/* Activities Section */}
           <section className="activities-section">
             <div className="section-header">
-              <h2>Things to Do in Sri Lanka</h2>
-              <p>Experience diverse activities across the island</p>
+              <h2>{get('tours.activities.title', 'Things to Do in Sri Lanka')}</h2>
+              <p>{get('tours.activities.subtitle', 'Experience diverse activities across the island')}</p>
             </div>
 
             <div className="activities-grid">
               {activities.map((activity, index) => (
-                <div key={index} className="activity-card">
+                <Link 
+                  href={`/activities/${activity.slug}`} 
+                  key={index} 
+                  className="activity-card"
+                >
                   <div className="activity-icon">{activity.icon}</div>
                   <h3>{activity.name}</h3>
                   <p>{activity.description}</p>
-                  <Link href={`/activities/${activity.name.toLowerCase().replace(' ', '-')}`} className="link-arrow">
-                    Find Tours →
-                  </Link>
-                </div>
+                  <span className="link-arrow">
+                    {get('tours.activities.learnMore', 'Learn More →')}
+                  </span>
+                </Link>
               ))}
             </div>
           </section>
 
-          {/* Special Offers */}
-          <section className="offers-section">
-            <div className="offer-banner">
-              <div className="offer-content">
-                <h2>Special Offer: North East Tour Package</h2>
-                <p>Book our exclusive North East cultural tour and get 15% off with free airport transfer</p>
-                <div className="offer-details">
-                  <span className="original-price">$1250</span>
-                  <span className="discounted-price">$1062</span>
-                  <span className="discount-badge">Save 15%</span>
-                </div>
-                <button 
-                  className="btn-primary"
-                  onClick={() => handleWhatsAppBooking(tours[0])}
-                >
-                  Grab This Offer
-                </button>
-              </div>
-              <div className="offer-image">
-                <Image 
-                  src="/tours/special-offer.jpg" 
-                  alt="Special Offer"
-                  width={400}
-                  height={250}
-                  objectFit="cover"
-                />
-              </div>
-            </div>
-          </section>
+          {/* Special Offers removed per request */}
 
           {/* Cancellation Policy */}
           <section className="policy-section">
             <div className="policy-card">
-              <h2>Flexible Cancellation Policy</h2>
+              <h2>{get('tours.policy.title', 'Flexible Cancellation Policy')}</h2>
               <div className="policy-details">
                 <div className="policy-item">
-                  <h3>✅ 14+ Days Notice</h3>
-                  <p>50% refund of tour cost</p>
+                  <h3>{get('tours.policy.noticeTitle', '✅ 14+ Days Notice')}</h3>
+                  <p>{get('tours.policy.noticeDetail', '50% refund of tour cost')}</p>
                 </div>
                 <div className="policy-item">
-                  <h3>❌ Less than 14 Days</h3>
-                  <p>No refund available</p>
+                  <h3>{get('tours.policy.lessTitle', '❌ Less than 14 Days')}</h3>
+                  <p>{get('tours.policy.lessDetail', 'No refund available')}</p>
                 </div>
                 <div className="policy-item">
-                  <h3>🔄 Rescheduling</h3>
-                  <p>Free rescheduling up to 7 days before tour</p>
+                  <h3>{get('tours.policy.rescheduleTitle', '🔄 Rescheduling')}</h3>
+                  <p>{get('tours.policy.rescheduleDetail', 'Free rescheduling up to 7 days before tour')}</p>
                 </div>
               </div>
-              <p className="policy-note">* Some special tours may have different cancellation policies</p>
+              <p className="policy-note">{get('tours.policy.note', '* Some special tours may have different cancellation policies')}</p>
             </div>
           </section>
         </div>
@@ -721,63 +844,63 @@ export default function Tours() {
               ×
             </button>
             
-            <h2>Book {selectedTour.name}</h2>
+            <h2>{`${get('tours.modal.bookPrefix', 'Book')} ${selectedTour.name}`}</h2>
             
             <div className="tour-summary">
               <div className="summary-item">
-                <span>Duration:</span>
+                <span>{get('tours.modal.summary.duration', 'Duration:')}</span>
                 <span>{selectedTour.duration}</span>
               </div>
               <div className="summary-item">
-                <span>Price:</span>
-                <span>${selectedTour.price} per person</span>
+                <span>{get('tours.modal.summary.price', 'Price:')}</span>
+                <span>{`${selectedTour.price} ${get('tours.modal.summary.perPerson', 'per person')}`}</span>
               </div>
               <div className="summary-item">
-                <span>Difficulty:</span>
+                <span>{get('tours.modal.summary.difficulty', 'Difficulty:')}</span>
                 <span>{selectedTour.difficulty}</span>
               </div>
               <div className="summary-item">
-                <span>Best Season:</span>
+                <span>{get('tours.modal.summary.season', 'Best Season:')}</span>
                 <span>{selectedTour.season}</span>
               </div>
             </div>
 
             <form className="booking-form">
               <div className="form-group">
-                <label>Full Name *</label>
+                <label>{get('tours.form.label.fullName', 'Full Name *')}</label>
                 <input type="text" required />
               </div>
               
               <div className="form-row">
                 <div className="form-group">
-                  <label>Email *</label>
+                  <label>{get('tours.form.label.email', 'Email *')}</label>
                   <input type="email" required />
                 </div>
                 <div className="form-group">
-                  <label>Phone *</label>
+                  <label>{get('tours.form.label.phone', 'Phone *')}</label>
                   <input type="tel" required />
                 </div>
               </div>
 
               <div className="form-row">
                 <div className="form-group">
-                  <label>Number of Travelers *</label>
+                  <label>{get('tours.form.label.travelers', 'Number of Travelers *')}</label>
                   <select required>
-                    <option value="">Select</option>
+                    <option value="">{get('tours.form.select.placeholder', 'Select')}</option>
                     {[1,2,3,4,5,6,7,8,9,10].map(num => (
-                      <option key={num} value={num}>{num} {num === 1 ? 'person' : 'people'}</option>
+                      <option key={num} value={num}>{num} {num === 1 ? get('tours.form.person', 'person') : get('tours.form.people', 'people')}</option>
                     ))}
                   </select>
                 </div>
                 <div className="form-group">
-                  <label>Preferred Start Date *</label>
+                  <label>{get('tours.form.label.startDate', 'Preferred Start Date *')}</label>
                   <input type="date" required />
                 </div>
               </div>
 
               <div className="form-group">
-                <label>Special Requirements</label>
-                <textarea rows={3} placeholder="Dietary restrictions, accessibility needs, etc."></textarea>
+                <label>{get('tours.form.label.requirements', 'Special Requirements')}</label>
+                <textarea rows={3} placeholder={get('tours.form.placeholder.requirements', 'Dietary restrictions, accessibility needs, etc.')}></textarea>
               </div>
 
               <div className="form-actions">
@@ -786,14 +909,14 @@ export default function Tours() {
                   className="btn-secondary"
                   onClick={() => setShowBookingForm(false)}
                 >
-                  Cancel
+                  {get('tours.form.actions.cancel', 'Cancel')}
                 </button>
                 <button 
                   type="button"
                   className="btn-primary"
                   onClick={() => handleWhatsAppBooking(selectedTour)}
                 >
-                  Proceed to WhatsApp Booking
+                  {get('tours.form.actions.proceedWhatsApp', 'Proceed to WhatsApp Booking')}
                 </button>
               </div>
             </form>
@@ -991,6 +1114,33 @@ export default function Tours() {
           position: relative;
           height: 250px;
           overflow: hidden;
+          border-top-left-radius: 10px;
+          border-top-right-radius: 10px;
+          background: linear-gradient(180deg, #f0f3f4 0%, #eef2f3 100%);
+        }
+
+        .tour-image img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          display: block;
+          transition: transform 0.6s cubic-bezier(.2,.8,.2,1), filter 0.35s ease;
+          will-change: transform;
+        }
+
+        .tour-image:hover img {
+          transform: scale(1.06) translateZ(0);
+        }
+
+        .tour-image::after {
+          content: '';
+          position: absolute;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          height: 40%;
+          background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.35) 100%);
+          pointer-events: none;
         }
 
         .tour-badge {
@@ -1157,6 +1307,35 @@ export default function Tours() {
           gap: 2rem;
         }
 
+
+        .destination-image {
+          position: relative;
+          height: 180px;
+          overflow: hidden;
+          border-radius: 8px;
+          background: #f6f7f8;
+        }
+
+        .destination-image img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          transition: transform 0.45s cubic-bezier(.2,.8,.2,1);
+        }
+
+        .destination-card:hover .destination-image img {
+          transform: scale(1.03);
+        }
+
+        .destination-overlay {
+          position: absolute;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          padding: 1rem;
+          color: white;
+          background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.45) 100%);
+        }
         .destination-card {
           border-radius: 10px;
           overflow: hidden;
@@ -1215,7 +1394,7 @@ export default function Tours() {
 
         /* Activities Section */
         .activities-section {
-          margin-bottom: 4rem;
+          margin-bottom: 0 rem;
         }
 
         .activities-grid {
@@ -1265,68 +1444,13 @@ export default function Tours() {
           color: var(--primary-light);
         }
 
-        /* Offers Section */
-        .offers-section {
-          margin-bottom: 4rem;
-        }
+       
 
-        .offer-banner {
-          background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
-          border-radius: 15px;
-          padding: 3rem;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          color: white;
-        }
-
-        .offer-content {
-          flex: 1;
-          max-width: 500px;
-        }
-
-        .offer-content h2 {
-          font-size: 2rem;
-          margin-bottom: 1rem;
-        }
-
-        .offer-content p {
-          margin-bottom: 1.5rem;
-          opacity: 0.9;
-        }
-
-        .offer-details {
-          display: flex;
-          align-items: center;
-          gap: 1rem;
-          margin-bottom: 2rem;
-        }
-
-        .original-price {
-          text-decoration: line-through;
-          opacity: 0.7;
-        }
-
-        .discounted-price {
-          font-size: 1.5rem;
-          font-weight: 700;
-        }
-
-        .discount-badge {
-          background: var(--secondary-color);
-          color: var(--text-color);
-          padding: 5px 10px;
-          border-radius: 15px;
-          font-weight: 600;
-        }
-
-        .offer-image {
-          flex: 0 0 300px;
-        }
+       
 
         /* Policy Section */
         .policy-section {
-          margin-bottom: 4rem;
+          margin-bottom: 0 rem;
         }
 
         .policy-card {

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useI18n } from '../src/i18n/I18nContext'
+import { CONTACT_INFO } from '../src/constants/config'
 
 export default function BookingForm(){
   const { t } = useI18n()
@@ -11,7 +12,7 @@ export default function BookingForm(){
   function handleSubmit(e: React.FormEvent){
     e.preventDefault()
     const message = `Hi ZamZam Tours,%0A%0AI would like to book:%0A- Service: ${service}%0A- Name: ${name}%0A- Contact: ${phone}%0A- Details: ${details}%0A%0AThanks!`
-    const url = `https://wa.me/94766135110?text=${message}`
+    const url = `${CONTACT_INFO.whatsappUrl}?text=${message}`
     window.open(url, '_blank')
   }
 

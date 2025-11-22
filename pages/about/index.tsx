@@ -5,9 +5,11 @@ import Image from 'next/image';
 import Link from 'next/link';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
+import { CONTACT_INFO } from '../../src/constants/config';
+import useTranslation from '../../src/i18n/useTranslation'
 
 export default function About() {
-  const [activeTab, setActiveTab] = useState('story');
+  const [activeTab, setActiveTab] = useState('mission');
   const [counterValues, setCounterValues] = useState({
     travelers: 0,
     tours: 0,
@@ -16,48 +18,17 @@ export default function About() {
   });
   const [isVisible, setIsVisible] = useState(false);
   const counterRef = useRef(null);
+  const { t } = useTranslation()
 
-  // Company milestones
-  const milestones = [
-    {
-      year: '2010',
-      title: 'Humble Beginnings',
-      description: 'Started with just 2 vehicles and a dream to showcase Sri Lanka\'s beauty',
-      icon: '🚗'
-    },
-    {
-      year: '2012',
-      title: 'First International Clients',
-      description: 'Welcomed our first European tour groups, specializing in cultural experiences',
-      icon: '🌍'
-    },
-    {
-      year: '2015',
-      title: 'Fleet Expansion',
-      description: 'Expanded our vehicle fleet to include luxury vans and buses for larger groups',
-      icon: '🚐'
-    },
-    {
-      year: '2018',
-      title: 'Award Recognition',
-      description: 'Received "Best Tour Operator" award from Sri Lanka Tourism Development Authority',
-      icon: '🏆'
-    },
-    {
-      year: '2020',
-      title: 'Digital Transformation',
-      description: 'Launched comprehensive online booking system and mobile-friendly services',
-      icon: '📱'
-    },
-    {
-      year: '2023',
-      title: 'Sustainable Tourism',
-      description: 'Partnered with local communities for eco-friendly and responsible tourism',
-      icon: '🌱'
-    }
-  ];
+  // helper to return fallback when a translation key is missing
+  const get = (key: string, fallback: string) => {
+    const val = t(key)
+    return val === key ? fallback : val
+  }
 
-  // Team members
+  // (timeline removed per request)
+
+  // Team members — only founder kept per request
   const teamMembers = [
     {
       name: 'Mohamed Zamzam',
@@ -67,33 +38,6 @@ export default function About() {
       image: '/team/zamzam-founder.jpg',
       quote: 'Our mission is to create unforgettable Sri Lankan experiences that connect people with our rich culture and natural beauty.',
       social: { linkedin: '#', email: 'zamzam@zamzamtours.com' }
-    },
-    {
-      name: 'Sarah Perera',
-      position: 'Head of European Operations',
-      experience: '12 years in hospitality',
-      specialization: 'European Market & Luxury Travel',
-      image: '/team/sarah-operations.jpg',
-      quote: 'We understand European travelers\' expectations and deliver exceptional service that exceeds them.',
-      social: { linkedin: '#', email: 'sarah@zamzamtours.com' }
-    },
-    {
-      name: 'James Fernando',
-      position: 'Tour Experience Manager',
-      experience: '10 years as tour guide',
-      specialization: 'Adventure & Wildlife Tours',
-      image: '/team/james-tours.jpg',
-      quote: 'Every tour is crafted to provide authentic experiences while ensuring comfort and safety.',
-      social: { linkedin: '#', email: 'james@zamzamtours.com' }
-    },
-    {
-      name: 'Lisa Chen',
-      position: 'Customer Relations Manager',
-      experience: '8 years in customer service',
-      specialization: 'Client Satisfaction & Support',
-      image: '/team/lisa-customer.jpg',
-      quote: 'We treat every client like family, ensuring their journey with us is seamless from start to finish.',
-      social: { linkedin: '#', email: 'lisa@zamzamtours.com' }
     }
   ];
 
@@ -131,33 +75,7 @@ export default function About() {
     }
   ];
 
-  // Certifications and awards
-  const certifications = [
-    {
-      name: 'SLTDA Registered',
-      issuer: 'Sri Lanka Tourism Development Authority',
-      year: '2010',
-      image: '/certifications/sltda.png'
-    },
-    {
-      name: 'Best Tour Operator 2022',
-      issuer: 'Sri Lanka Tourism Awards',
-      year: '2022',
-      image: '/certifications/tourism-award.png'
-    },
-    {
-      name: 'Sustainable Tourism Partner',
-      issuer: 'Green Globe Certification',
-      year: '2021',
-      image: '/certifications/green-globe.png'
-    },
-    {
-      name: 'Quality Service Excellence',
-      issuer: 'Sri Lanka Chamber of Tourism',
-      year: '2023',
-      image: '/certifications/quality-service.png'
-    }
-  ];
+  // certifications removed per request
 
   // Counter animation
   useEffect(() => {
@@ -211,14 +129,14 @@ export default function About() {
   return (
     <>
       <Head>
-        <title>About Zamzam Tours | Sri Lanka's Premier Tour Operator Since 2010</title>
-        <meta name="description" content="Learn about Zamzam Tours' journey, team, values, and commitment to providing exceptional travel experiences in Sri Lanka since 2010." />
+        <title>{t('about.pageTitle')}</title>
+        <meta name="description" content={t('about.metaDescription')} />
       </Head>
 
-      <Navbar />
+  <Navbar />
 
-      {/* Hero Section */}
-      <section className="about-hero" style={{ marginTop: '80px' }}>
+  {/* Hero Section */}
+  <section className="about-hero">
         <div className="hero-background">
           <Image 
             src="/about/hero-about.jpg" 
@@ -230,24 +148,24 @@ export default function About() {
           <div className="hero-overlay"></div>
         </div>
         
-        <div className="hero-content">
+  <div className="hero-content">
           <div className="hero-text">
-            <h1>Creating Unforgettable Sri Lankan Journeys Since 2010</h1>
-            <p>From humble beginnings to becoming Sri Lanka's trusted travel partner, we've been crafting authentic experiences that connect travelers with the soul of our beautiful island.</p>
+            <h1 className="hero-title">{t('about.hero.title.prefix')} <span style={{ color: 'var(--secondary-color)' }}>{t('about.hero.title.highlight')}</span> {t('about.hero.title.suffix')}</h1>
+            <p className="hero-subtitle">{t('about.hero.subtitle')}</p>
           </div>
-          
+
           <div className="hero-stats-preview">
             <div className="stat-preview">
               <span className="number">13+</span>
-              <span className="label">Years Experience</span>
+              <span className="label">{t('about.stats.yearsLabel')}</span>
             </div>
             <div className="stat-preview">
               <span className="number">12.5K+</span>
-              <span className="label">Happy Travelers</span>
+              <span className="label">{t('about.stats.travelersLabel')}</span>
             </div>
             <div className="stat-preview">
               <span className="number">48</span>
-              <span className="label">Destinations</span>
+              <span className="label">{t('about.stats.destinationsLabel')}</span>
             </div>
           </div>
         </div>
@@ -258,94 +176,42 @@ export default function About() {
         <div className="container">
           <div className="section-tabs">
             <button 
-              className={`tab ${activeTab === 'story' ? 'active' : ''}`}
-              onClick={() => setActiveTab('story')}
-            >
-              Our Story
-            </button>
-            <button 
               className={`tab ${activeTab === 'mission' ? 'active' : ''}`}
               onClick={() => setActiveTab('mission')}
             >
-              Mission & Vision
+              {t('about.tabs.mission')}
             </button>
             <button 
               className={`tab ${activeTab === 'approach' ? 'active' : ''}`}
               onClick={() => setActiveTab('approach')}
             >
-              Our Approach
+              {t('about.tabs.approach')}
             </button>
           </div>
 
           <div className="tab-content">
-            {activeTab === 'story' && (
-              <div className="content-story">
-                <div className="story-text">
-                  <h2>From Local Passion to Premier Tour Operator</h2>
-                  <p>
-                    Founded in 2010 by Mohamed Zamzam, our journey began with a simple Toyota car and a big dream: 
-                    to share the authentic beauty of Sri Lanka with the world. What started as a small transfer service 
-                    has grown into a comprehensive tour operation trusted by thousands of international travelers.
-                  </p>
-                  <p>
-                    We've remained true to our roots while expanding our services. Our deep local knowledge, combined 
-                    with understanding international travelers' needs, allows us to create experiences that are both 
-                    authentic and comfortable.
-                  </p>
-                  <div className="story-highlights">
-                    <div className="highlight">
-                      <span className="icon">🚗</span>
-                      <span>Started with just 2 vehicles</span>
-                    </div>
-                    <div className="highlight">
-                      <span className="icon">🌍</span>
-                      <span>Now serving travelers from 30+ countries</span>
-                    </div>
-                    <div className="highlight">
-                      <span className="icon">⭐</span>
-                      <span>98% customer satisfaction rate</span>
-                    </div>
-                  </div>
-                </div>
-                <div className="story-image">
-                  <Image 
-                    src="/about/founder-story.jpg" 
-                    alt="Founder Story" 
-                    width={500}
-                    height={400}
-                    objectFit="cover"
-                  />
-                </div>
-              </div>
-            )}
 
             {activeTab === 'mission' && (
               <div className="content-mission">
                 <div className="mission-cards">
                   <div className="mission-card">
-                    <h3>Our Mission</h3>
-                    <p>
-                      To provide exceptional, personalized travel experiences that showcase the true essence of Sri Lanka 
-                      while maintaining the highest standards of service, safety, and sustainability.
-                    </p>
-                  </div>
-                  <div className="mission-card">
-                    <h3>Our Vision</h3>
-                    <p>
-                      To be Sri Lanka's most trusted and innovative tour operator, recognized for creating meaningful 
-                      connections between travelers and local culture while driving positive impact in our communities.
-                    </p>
-                  </div>
+                      <h3>{t('about.mission.ourMission.title')}</h3>
+                      <p>{t('about.mission.ourMission.paragraph')}</p>
+                    </div>
+                    <div className="mission-card">
+                      <h3>{t('about.mission.ourVision.title')}</h3>
+                      <p>{t('about.mission.ourVision.paragraph')}</p>
+                    </div>
                 </div>
                 <div className="mission-values">
-                  <h3>What Drives Us</h3>
-                  <ul>
-                    <li>✅ Authentic cultural experiences</li>
-                    <li>✅ Uncompromising safety standards</li>
-                    <li>✅ Sustainable tourism practices</li>
-                    <li>✅ Personalized service excellence</li>
-                    <li>✅ Local community empowerment</li>
-                  </ul>
+                    <h3>{t('about.mission.valuesTitle')}</h3>
+                    <ul>
+                      <li>{t('about.mission.values.item1')}</li>
+                      <li>{t('about.mission.values.item2')}</li>
+                      <li>{t('about.mission.values.item3')}</li>
+                      <li>{t('about.mission.values.item4')}</li>
+                      <li>{t('about.mission.values.item5')}</li>
+                    </ul>
                 </div>
               </div>
             )}
@@ -356,29 +222,29 @@ export default function About() {
                   <div className="step">
                     <div className="step-number">1</div>
                     <div className="step-content">
-                      <h4>Personalized Planning</h4>
-                      <p>We listen to your preferences and craft custom itineraries that match your travel style</p>
+                      <h4>{t('about.approach.step1.title')}</h4>
+                      <p>{t('about.approach.step1.text')}</p>
                     </div>
                   </div>
                   <div className="step">
                     <div className="step-number">2</div>
                     <div className="step-content">
-                      <h4>Local Expertise</h4>
-                      <p>Our deep local knowledge ensures you experience authentic Sri Lanka beyond the tourist trails</p>
+                      <h4>{t('about.approach.step2.title')}</h4>
+                      <p>{t('about.approach.step2.text')}</p>
                     </div>
                   </div>
                   <div className="step">
                     <div className="step-number">3</div>
                     <div className="step-content">
-                      <h4>Seamless Execution</h4>
-                      <p>From airport pickup to departure, every detail is managed for a hassle-free experience</p>
+                      <h4>{t('about.approach.step3.title')}</h4>
+                      <p>{t('about.approach.step3.text')}</p>
                     </div>
                   </div>
                   <div className="step">
                     <div className="step-number">4</div>
                     <div className="step-content">
-                      <h4>Continuous Support</h4>
-                      <p>24/7 assistance throughout your journey ensures peace of mind and immediate problem-solving</p>
+                      <h4>{t('about.approach.step4.title')}</h4>
+                      <p>{t('about.approach.step4.text')}</p>
                     </div>
                   </div>
                 </div>
@@ -394,19 +260,19 @@ export default function About() {
           <div className="counters-grid">
             <div className="counter-item">
               <span className="counter-number">{counterValues.travelers}+</span>
-              <span className="counter-label">Happy Travelers</span>
+              <span className="counter-label">{t('about.stats.travelersLabel')}</span>
             </div>
             <div className="counter-item">
               <span className="counter-number">{counterValues.tours}+</span>
-              <span className="counter-label">Tours Completed</span>
+              <span className="counter-label">{t('about.stats.toursLabel') /* fallback: Tours Completed */}</span>
             </div>
             <div className="counter-item">
               <span className="counter-number">{counterValues.destinations}</span>
-              <span className="counter-label">Destinations</span>
+              <span className="counter-label">{t('about.stats.destinationsLabel')}</span>
             </div>
             <div className="counter-item">
               <span className="counter-number">{counterValues.years}+</span>
-              <span className="counter-label">Years Experience</span>
+              <span className="counter-label">{t('about.stats.yearsLabel')}</span>
             </div>
           </div>
         </div>
@@ -416,16 +282,16 @@ export default function About() {
       <section className="values-section">
         <div className="container">
           <div className="section-header">
-            <h2>Our Values & Principles</h2>
-            <p>The foundation of everything we do at Zamzam Tours</p>
+            <h2>{t('about.values.title')}</h2>
+            <p>{t('about.values.subtitle')}</p>
           </div>
 
           <div className="values-grid">
             {values.map((value, index) => (
               <div key={index} className="value-card">
                 <div className="value-icon">{value.icon}</div>
-                <h3>{value.title}</h3>
-                <p>{value.description}</p>
+                <h3>{t(`about.values.items.${index}.title`)}</h3>
+                <p>{t(`about.values.items.${index}.description`)}</p>
               </div>
             ))}
           </div>
@@ -436,8 +302,8 @@ export default function About() {
       <section className="team-section">
         <div className="container">
           <div className="section-header">
-            <h2>Meet Our Expert Team</h2>
-            <p>Passionate professionals dedicated to making your Sri Lankan journey unforgettable</p>
+            <h2>{t('about.team.title')}</h2>
+            <p>{t('about.team.subtitle')}</p>
           </div>
 
           <div className="team-grid">
@@ -449,7 +315,7 @@ export default function About() {
                     alt={member.name}
                     width={300}
                     height={350}
-                    objectFit="cover"
+                    style={{ objectFit: 'cover', width: '100%', height: '100%' }}
                   />
                   <div className="member-overlay">
                     <div className="social-links">
@@ -460,10 +326,10 @@ export default function About() {
                 </div>
                 <div className="member-info">
                   <h3>{member.name}</h3>
-                  <p className="position">{member.position}</p>
-                  <p className="experience">{member.experience}</p>
-                  <p className="specialization">{member.specialization}</p>
-                  <p className="quote">"{member.quote}"</p>
+                  <p className="position">{get('about.team.members.0.position', member.position)}</p>
+                  <p className="experience">{get('about.team.members.0.experience', member.experience)}</p>
+                  <p className="specialization">{get('about.team.members.0.specialization', member.specialization)}</p>
+                  <p className="quote">"{get('about.team.members.0.quote', member.quote)}"</p>
                 </div>
               </div>
             ))}
@@ -471,79 +337,31 @@ export default function About() {
         </div>
       </section>
 
-      {/* Timeline Section */}
-      <section className="timeline-section">
-        <div className="container">
-          <div className="section-header">
-            <h2>Our Journey Through the Years</h2>
-            <p>Milestones that shaped Zamzam Tours into Sri Lanka's trusted travel partner</p>
-          </div>
-
-          <div className="timeline">
-            {milestones.map((milestone, index) => (
-              <div key={index} className={`timeline-item ${index % 2 === 0 ? 'left' : 'right'}`}>
-                <div className="timeline-content">
-                  <div className="timeline-year">{milestone.year}</div>
-                  <div className="timeline-icon">{milestone.icon}</div>
-                  <h3>{milestone.title}</h3>
-                  <p>{milestone.description}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Certifications Section */}
-      <section className="certifications-section">
-        <div className="container">
-          <div className="section-header">
-            <h2>Certifications & Recognition</h2>
-            <p>Official recognition of our commitment to quality and excellence</p>
-          </div>
-
-          <div className="certifications-grid">
-            {certifications.map((cert, index) => (
-              <div key={index} className="certification-card">
-                <div className="cert-image">
-                  <Image 
-                    src={cert.image} 
-                    alt={cert.name}
-                    width={100}
-                    height={100}
-                    objectFit="contain"
-                  />
-                </div>
-                <div className="cert-info">
-                  <h3>{cert.name}</h3>
-                  <p className="issuer">{cert.issuer}</p>
-                  <p className="year">{cert.year}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* Timeline and Certifications removed per request */}
 
       {/* CTA Section */}
       <section className="about-cta">
         <div className="container">
           <div className="cta-content">
-            <h2>Ready to Experience Sri Lanka with Us?</h2>
-            <p>Join thousands of satisfied travelers who have discovered the magic of Sri Lanka through our expert guidance</p>
+            <h2>{t('about.cta.title')}</h2>
+            <p>{t('about.cta.subtitle')}</p>
             <div className="cta-buttons">
-              <Link href="/contact" className="btn-primary">
-                Start Planning Your Trip
+              <Link
+                href="/contact"
+                className="btn btn-primary"
+                style={{ backgroundColor: 'var(--secondary-color)', color: 'var(--text-color)' }}
+              >
+                {t('about.cta.startPlanning')}
               </Link>
               <button 
-                className="btn-secondary"
+                className="btn btn-secondary"
                 onClick={() => {
-                  const message = "Hello Zamzam Tours! I'd like to learn more about your company and services.";
+                  const message = "Hello ZamZam Tours! I'd like to learn more about your company and services.";
                   const encodedMessage = encodeURIComponent(message);
-                  window.open(`https://wa.me/94766135110?text=${encodedMessage}`, '_blank');
+                  window.open(`${CONTACT_INFO.whatsappUrl}?text=${encodedMessage}`, '_blank');
                 }}
               >
-                Chat with Our Team
+                {t('about.cta.chat')}
               </button>
             </div>
           </div>
@@ -552,14 +370,17 @@ export default function About() {
 
       <style jsx>{`
         /* About Page Specific Styles */
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 1rem; }
         .about-hero {
           position: relative;
-          height: 70vh;
-          min-height: 500px;
+          height: 72vh;
+          min-height: 520px;
           display: flex;
           align-items: center;
+          justify-content: center; /* center horizontally like homepage */
           color: white;
           overflow: hidden;
+          padding-top: 72px; /* leave gap from fixed navbar */
         }
 
         .hero-background {
@@ -581,54 +402,60 @@ export default function About() {
         }
 
         .hero-content {
-          max-width: 1200px;
+          max-width: 800px;
           margin: 0 auto;
-          padding: 0 2rem;
+          padding: 0 20px; /* match homepage hero container */
           width: 100%;
           display: grid;
-          grid-template-columns: 2fr 1fr;
-          gap: 3rem;
+          grid-template-columns: 1fr;
+          gap: 0.6rem;
           align-items: center;
+          text-align: center; /* center text like homepage */
         }
 
-        .hero-text h1 {
-          font-size: 3.5rem;
-          font-weight: 700;
-          margin-bottom: 1.5rem;
-          line-height: 1.1;
+        /* make sure hero heading matches homepage scale and spacing */
+        .hero-title {
+          margin: 0 auto 0.6rem auto;
+          line-height: 1.06; /* reduce big gap between heading lines */
         }
 
-        .hero-text p {
-          font-size: 1.3rem;
-          opacity: 0.9;
-          line-height: 1.6;
+        .hero-subtitle {
+          margin: 0 auto;
+          opacity: 0.95;
         }
+
+        /* use global .hero-title and .hero-subtitle for consistent sizing */
 
         .hero-stats-preview {
           display: flex;
-          flex-direction: column;
-          gap: 2rem;
+          flex-direction: row;
+          gap: 1rem;
+          align-items: center;
+          justify-content: center; /* center the stat blocks under the hero */
+          flex-wrap: wrap;
+          margin-top: 0.8rem;
         }
 
         .stat-preview {
           text-align: center;
-          padding: 1.5rem;
-          background: rgba(255, 255, 255, 0.1);
-          backdrop-filter: blur(10px);
-          border-radius: 15px;
-          border: 1px solid rgba(255, 255, 255, 0.2);
+          padding: 0.8rem 1rem;
+          background: rgba(255, 255, 255, 0.07);
+          backdrop-filter: blur(6px);
+          border-radius: 12px;
+          border: 1px solid rgba(255, 255, 255, 0.12);
+          min-width: 100px;
         }
 
         .stat-preview .number {
           display: block;
-          font-size: 2.5rem;
+          font-size: 1.25rem;
           font-weight: 700;
           color: var(--secondary-color);
-          margin-bottom: 0.5rem;
+          margin-bottom: 0.25rem;
         }
 
         .stat-preview .label {
-          font-size: 1rem;
+          font-size: 0.85rem;
           opacity: 0.9;
         }
 
@@ -636,6 +463,25 @@ export default function About() {
         .story-mission {
           padding: 5rem 0;
           background: var(--section-bg);
+        }
+
+        /* Section Headers - match other pages */
+        .section-header {
+          text-align: center;
+          margin-bottom: 3rem;
+        }
+
+        .section-header h2 {
+          font-size: 2.5rem;
+          color: var(--primary-color);
+          margin-bottom: 1rem;
+        }
+
+        .section-header p {
+          font-size: 1.1rem;
+          color: var(--text-light);
+          max-width: 600px;
+          margin: 0 auto;
         }
 
         .section-tabs {
@@ -880,10 +726,13 @@ export default function About() {
         }
 
         .team-grid {
-          display: grid;
-          grid-template-columns: repeat(2, 1fr);
+          /* center a single card and keep consistent size */
+          display: flex;
+          justify-content: center;
+          align-items: flex-start;
           gap: 2rem;
           margin-top: 3rem;
+          flex-wrap: wrap;
         }
 
         .team-card {
@@ -892,6 +741,9 @@ export default function About() {
           overflow: hidden;
           box-shadow: 0 5px 15px rgba(0,0,0,0.08);
           transition: transform 0.3s ease;
+          width: 360px; /* fixed block size so it stays consistent and centered */
+          max-width: 100%;
+          margin: 0 auto;
         }
 
         .team-card:hover {
@@ -902,6 +754,9 @@ export default function About() {
           position: relative;
           height: 300px;
           overflow: hidden;
+          margin: 0 auto; /* center image container */
+          width: 100%;
+          max-width: 320px;
         }
 
         .member-overlay {
@@ -947,6 +802,7 @@ export default function About() {
 
         .member-info {
           padding: 2rem;
+          text-align: center; /* center member text */
         }
 
         .member-info h3 {
@@ -1125,6 +981,27 @@ export default function About() {
           flex-wrap: wrap;
         }
 
+        /* Match homepage CTA colors: gold primary, white-outline secondary */
+        .about-cta .btn-primary {
+          background-color: var(--secondary-color);
+          color: var(--text-color);
+        }
+
+        .about-cta .btn-primary:hover {
+          background-color: #e6a500;
+        }
+
+        .about-cta .btn-secondary {
+          border-color: white;
+          color: white;
+          background-color: transparent;
+        }
+
+        .about-cta .btn-secondary:hover {
+          background-color: white;
+          color: var(--primary-color);
+        }
+
         /* Responsive Design */
         @media (max-width: 992px) {
           .hero-content {
@@ -1160,7 +1037,7 @@ export default function About() {
         }
 
         @media (max-width: 768px) {
-          .hero-text h1 {
+          .hero-title {
             font-size: 2.5rem;
           }
 
@@ -1199,7 +1076,7 @@ export default function About() {
         }
 
         @media (max-width: 576px) {
-          .hero-text h1 {
+          .hero-title {
             font-size: 2rem;
           }
 
