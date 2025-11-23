@@ -276,7 +276,7 @@ export default function Hotels() {
   const additionalServices = [
     {
       id: 'airport-transfer',
-      name: get('hotels.services.airportTransfer.name', 'Airport Transfer'),
+      name: get('hotels.services.airportTransfer.name', 'Airport & All-Island Transfer'),
       description: get('hotels.services.airportTransfer.description', 'Hassle-free pickup from airport to hotel'),
       price: 25,
       types: ['standard', 'premium'],
@@ -305,12 +305,12 @@ export default function Hotels() {
     {
       id: 'beach-paradise',
       name: get('hotels.packages.beachParadise.name', 'Beach Paradise Package'),
-      description: get('hotels.packages.beachParadise.description', '7 nights beachfront accommodation + airport transfers + daily beach tours'),
+      description: get('hotels.packages.beachParadise.description', '7 nights beachfront accommodation + airport & island transfers + daily beach tours'),
       originalPrice: 1200,
       discountedPrice: 999,
       includes: [
         get('hotels.packages.includes.7nights', '7 nights hotel'),
-        get('hotels.packages.includes.airportTransfers', 'Airport transfers'),
+        get('hotels.packages.includes.airportTransfers', 'Airport & island transfers'),
         get('hotels.packages.includes.3beachTours', '3 beach tours'),
         get('hotels.packages.includes.breakfastIncluded', 'Breakfast included')
       ],
@@ -319,7 +319,7 @@ export default function Hotels() {
     {
       id: 'cultural-journey',
       name: get('hotels.packages.culturalJourney.name', 'Cultural Journey Package'),
-      description: get('hotels.packages.culturalJourney.description', '5 nights heritage hotels + cultural triangle tours + airport transfers'),
+      description: get('hotels.packages.culturalJourney.description', '5 nights heritage hotels + cultural triangle tours + airport & island transfers'),
       originalPrice: 800,
       discountedPrice: 650,
       includes: [
@@ -395,7 +395,7 @@ export default function Hotels() {
     }
 
     message += `🚗 ${get('hotels.messages.additionalServicesBadge','*Additional Services:*')}\n`;
-    if (selectedPackages.airportTransfer) message += `• ${get('hotels.services.airportTransfer.name','Airport Transfer')}: ${get('hotels.messages.yes','Yes')}\n`;
+    if (selectedPackages.airportTransfer) message += `• ${get('hotels.services.airportTransfer.name','Airport & All-Island Transfer')}: ${get('hotels.messages.yes','Yes')}\n`;
     if (selectedPackages.dailyTours) message += `• ${get('hotels.services.dailyTours.name','Daily Tours')}: ${get('hotels.messages.yes','Yes')}\n`;
     if (selectedPackages.rentalCar) message += `• ${get('hotels.services.rentalCar.name','Car Rental')}: ${get('hotels.messages.yes','Yes')}\n\n`;
 
@@ -538,7 +538,7 @@ export default function Hotels() {
                   color: 'white'
                 }}>
                   <span style={{ fontSize: '2.5rem' }}>🚗</span>
-                  <span style={{ fontSize: '1rem', fontWeight: '600', textShadow: '1px 1px 4px rgba(0,0,0,0.8)' }}>{get('hotels.feature.airportTransfers', 'Airport Transfers')}</span>
+                  <span style={{ fontSize: '1rem', fontWeight: '600', textShadow: '1px 1px 4px rgba(0,0,0,0.8)' }}>{get('hotels.feature.airportTransfers', 'Airport & All-Island Transfers')}</span>
                 </div>
                 <div className="feature-item" style={{
                   display: 'flex',
@@ -778,7 +778,7 @@ export default function Hotels() {
                   >
                     <div className="service-compact-icon">✈️</div>
                     <div className="service-compact-content">
-                      <h4>{get('hotels.services.airportTransfer.name', 'Airport Transfer')}</h4>
+                      <h4>{get('hotels.services.airportTransfer.name', 'Airport & All-Island Transfer')}</h4>
                       <p>{get('hotels.services.airportTransfer.description', 'Hassle-free pickup from airport to hotel')}</p>
                     </div>
                     <div className="service-compact-check">
@@ -1201,7 +1201,7 @@ export default function Hotels() {
                     
                     {selectedPackages.airportTransfer && (
                       <div className="summary-row-modern">
-                        <span>✈️ {get('hotels.services.airportTransfer.name','Airport Transfer')}</span>
+                        <span>✈️ {get('hotels.services.airportTransfer.name','Airport & All-Island Transfer')}</span>
                         <span className="summary-price">+${additionalServices.find(s => s.id === 'airport-transfer')?.price}</span>
                       </div>
                     )}

@@ -40,7 +40,7 @@ export default function Footer() {
             <ul className="services-list">
               <li><Link href="/self-drive">Self-Drive Rentals</Link></li>
               <li><Link href="/tours">Guided Tours</Link></li>
-              <li><Link href="/airport-transfer">Airport Transfers</Link></li>
+              <li><Link href="/transfers">Airport & All-Island Transfers</Link></li>
               <li><Link href="/hotels">Hotel Booking</Link></li>
               <li><Link href="/activities">Activities</Link></li>
             </ul>

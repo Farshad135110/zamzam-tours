@@ -204,10 +204,10 @@ export default function Home() {
     <>
       <Head>
   <title>{get('home.title', 'Zamzam Tours - Best Travel Experience in Sri Lanka')}</title>
-  <meta name="description" content={get('home.metaDescription', 'Zamzam Tours offers premium self-drive car rentals, guided tours, and airport transfers across Sri Lanka. Experience the best of Sri Lankan hospitality with our extensive fleet and professional services.')} />
-  <meta name="keywords" content={get('home.metaKeywords', 'Sri Lanka tours, car rental Sri Lanka, airport transfer, self-drive, guided tours, hotel booking, things to do in Sri Lanka')} />
+  <meta name="description" content={get('home.metaDescription', 'Zamzam Tours offers premium self-drive car rentals, guided tours, and airport & all-island transfers across Sri Lanka. Experience the best of Sri Lankan hospitality with our extensive fleet and professional services.')} />
+  <meta name="keywords" content={get('home.metaKeywords', 'Sri Lanka tours, car rental Sri Lanka, airport & all-island transfers, self-drive, guided tours, hotel booking, things to do in Sri Lanka')} />
   <meta property="og:title" content={get('home.og.title', 'Zamzam Tours - Best Travel Experience in Sri Lanka')} />
-  <meta property="og:description" content={get('home.og.description', 'Premium travel services including self-drive car rentals, guided tours, and airport transfers across Sri Lanka.')} />
+  <meta property="og:description" content={get('home.og.description', 'Premium travel services including self-drive car rentals, guided tours, and airport & all-island transfers across Sri Lanka.')} />
   <meta property="og:image" content={get('home.og.image', '/images/og-image.jpg')} />
   <meta property="og:url" content={get('home.og.url', 'https://zamzamtours.com')} />
   <meta name="twitter:card" content={get('home.og.twitterCard', 'summary_large_image')} />
@@ -308,7 +308,7 @@ export default function Home() {
                 textShadow: '1px 1px 6px rgba(0, 0, 0, 0.9), 0 0 15px rgba(0, 0, 0, 0.6)',
                 color: '#ffffff'
               }}>
-                {get('home.hero.subtitle', 'Premium self-drive car rentals, guided tours, and airport transfers across the island')}
+                {get('home.hero.subtitle', 'Premium self-drive car rentals, guided tours, airport & all-island transfers across Sri Lanka')}
               </p>
             </motion.div>
             
@@ -416,7 +416,7 @@ export default function Home() {
                 className={`tab ${activeTab === 'transfer' ? 'active' : ''}`}
                 onClick={() => setActiveTab('transfer')}
               >
-                {get('home.services.tabs.transfer', 'Airport Transfers')}
+                {get('home.services.tabs.transfer', 'Airport & All-Island Transfers')}
               </button>
             </div>
           </AnimatedSection>
@@ -511,33 +511,41 @@ export default function Home() {
             {activeTab === 'transfer' && (
               <div className="service-details">
                 <AnimatedSection animation="fadeInUp">
-                  <h3>{get('home.transfer.sectionTitle', 'Seamless Airport Transfers')}</h3>
-                    <p>{get('home.transfer.sectionDesc', 'Enjoy hassle-free airport pickups and drop-offs with our meet & greet service. We monitor your flight for any delays.')}</p>
+                  <h3>{get('home.transfer.sectionTitle', 'Airport & All-Island Transfers')}</h3>
+                    <p>{get('home.transfer.sectionDesc', 'Travel anywhere in Sri Lanka with our professional transfer service. From airport pickups to island-wide journeys, we offer comfortable vehicles and experienced drivers.')}</p>
                   <div style={{ height: '1rem' }} />
                 </AnimatedSection>
                 
                 <div className="transfer-options">
-                  {[
-                    { key: 'one-way', title: 'One-way Transfer', desc: 'Airport → Hotel (single trip). Ideal for arrivals.', price: 'From $25' },
-                    { key: 'round-trip', title: 'Round-trip (Two-way)', desc: 'Airport pickup and return transfer. Best for return flights.', price: 'From $45' }
-                  ].map((t, idx) => (
-                    <AnimatedSection key={t.key} animation={idx % 2 === 0 ? 'fadeInLeft' : 'fadeInRight'} delay={0.15 * idx}>
-                      <div className="transfer-card">
-                        <h4>{get(`home.transfer.options.${t.key}.title`, t.title)}</h4>
-                        <p>{get(`home.transfer.options.${t.key}.desc`, t.desc)}</p>
-                        <p style={{ fontWeight: 700, marginTop: 6 }}>{get(`home.transfer.options.${t.key}.price`, t.price)}</p>
-                        <div style={{ marginTop: 10, display: 'flex', gap: 8 }}>
-                          <button
-                            className="btn btn-small"
-                            onClick={() => handleWhatsAppBooking(t.title)}
-                          >
-                            {get('home.transfer.bookBtn', 'Book')}
-                          </button>
-                          <Link href={`/airport-transfer?type=${t.key}`} className="btn btn-secondary">{get('home.transfer.detailsBtn', 'Details')}</Link>
-                        </div>
+                  <AnimatedSection animation="fadeInUp" delay={0.15}>
+                    <div className="transfer-info-grid">
+                      <div className="transfer-info-card">
+                        <div className="info-icon">✈️</div>
+                        <h4>{get('home.transfer.features.airports', 'All Airports Covered')}</h4>
+                        <p>{get('home.transfer.features.airportsDesc', 'CMB Colombo, HRI Hambantota, RML Ratmalana - we cover all airports')}</p>
                       </div>
-                    </AnimatedSection>
-                  ))}
+                      <div className="transfer-info-card">
+                        <div className="info-icon">🗺️</div>
+                        <h4>{get('home.transfer.features.islandWide', 'Island-Wide Service')}</h4>
+                        <p>{get('home.transfer.features.islandWideDesc', 'Travel to any district or destination across Sri Lanka')}</p>
+                      </div>
+                      <div className="transfer-info-card">
+                        <div className="info-icon">🚗</div>
+                        <h4>{get('home.transfer.features.fleet', 'Comfortable Fleet')}</h4>
+                        <p>{get('home.transfer.features.fleetDesc', 'From cars to luxury vans - vehicles for 1 to 14 passengers')}</p>
+                      </div>
+                      <div className="transfer-info-card">
+                        <div className="info-icon">🛑</div>
+                        <h4>{get('home.transfer.features.stops', 'Additional Stops')}</h4>
+                        <p>{get('home.transfer.features.stopsDesc', 'Request stops at temples, attractions, or restaurants along the way')}</p>
+                      </div>
+                    </div>
+                    <div style={{ marginTop: '1.5rem', textAlign: 'center' }}>
+                      <Link href="/transfers" className="btn btn-primary">
+                        {get('home.transfer.bookNow', 'Book Your Transfer Now')}
+                      </Link>
+                    </div>
+                  </AnimatedSection>
                 </div>
               </div>
             )}
@@ -663,7 +671,7 @@ export default function Home() {
             <AnimatedSection animation="fadeInRight" delay={0.4}>
               <div className="testimonial">
                 <div className="testimonial-content">
-                  <p>{get('home.testimonials.3.text', '"Airport transfer with meet & greet service was excellent. They were waiting for us even though our flight was delayed. Highly recommended!"')}</p>
+                  <p>{get('home.testimonials.3.text', '"Airport & all-island transfer with meet & greet service was excellent. They were waiting for us even though our flight was delayed. Highly recommended!"')}</p>
                   <div className="testimonial-author">
                     <strong>{get('home.testimonials.3.author', 'Isabelle Moreau')}</strong>
                     <span>{get('home.testimonials.3.location', 'France')}</span>

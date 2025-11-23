@@ -476,9 +476,46 @@ body {
 }
 
 .transfer-options {
+  display: block;
+  width: 100%;
+}
+
+.transfer-info-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.transfer-info-card {
+  background: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.transfer-info-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.transfer-info-card .info-icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.transfer-info-card h4 {
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+  color: var(--primary-color);
+}
+
+.transfer-info-card p {
+  margin: 0;
+  color: var(--text-light);
+  font-size: 0.9rem;
 }
 
 .transfer-card {

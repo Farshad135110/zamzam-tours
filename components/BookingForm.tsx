@@ -32,7 +32,7 @@ export default function BookingForm(){
           <option>Tour</option>
           <option>Vehicle Rental (Self-drive)</option>
           <option>Vehicle Rental (With driver)</option>
-          <option>Airport Transfer</option>
+          <option>Airport & All-Island Transfer</option>
         </select>
       </div>
       <div>

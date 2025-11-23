@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import AdminSidebar from '../../components/AdminSidebar';
+import CloudinaryUpload from '../../components/CloudinaryUpload';
 
 interface Vehicle {
   vehicle_id: string;
@@ -852,25 +853,12 @@ export default function AdminVehicles() {
                 </div>
               </div>
 
-              <div style={{ marginBottom: '30px' }}>
-                <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '6px' }}>
-                  Image URL
-                </label>
-                <input
-                  type="url"
-                  value={formData.image}
-                  onChange={(e) => setFormData({...formData, image: e.target.value})}
-                  style={{
-                    width: '100%',
-                    padding: '10px 12px',
-                    border: '1px solid #d1d5db',
-                    borderRadius: '6px',
-                    fontSize: '14px',
-                    outline: 'none',
-                    transition: 'all 0.2s ease'
-                  }}
-                />
-              </div>
+              <CloudinaryUpload
+                currentImageUrl={formData.image}
+                onUploadSuccess={(url) => setFormData({...formData, image: url})}
+                folder="zamzam-tours/vehicles"
+                label="Vehicle Image"
+              />
 
               <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
                 <button

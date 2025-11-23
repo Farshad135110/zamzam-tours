@@ -11,7 +11,7 @@ export const CONTACT_INFO = {
 export const SITE_INFO = {
   name: 'ZamZam Tours',
   tagline: 'Best Travel Experience in Sri Lanka',
-  description: 'Premium travel services including self-drive car rentals, guided tours, and airport transfers across Sri Lanka.',
+  description: 'Premium travel services including self-drive car rentals, guided tours, and airport & all-island transfers across Sri Lanka.',
   url: 'https://zamzamtours.com',
   logo: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1763663535/Project_Luvi_-_Gemstones_ce9h12.png'
 };

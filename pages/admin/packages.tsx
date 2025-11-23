@@ -1,6 +1,7 @@
 import React, { useState, useEffect, FormEvent, MouseEvent } from 'react';
 import AdminSidebar from '../../components/AdminSidebar';
 import Link from 'next/link';
+import CloudinaryUpload from '../../components/CloudinaryUpload';
 
 interface Package {
   package_id: string;
@@ -641,33 +642,12 @@ export default function AdminPackages() {
                 />
               </div>
 
-              <div style={{ marginBottom: '20px' }}>
-                <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '6px' }}>
-                  Image URL
-                </label>
-                <input
-                  type="url"
-                  value={formData.image}
-                  onChange={(e) => setFormData({...formData, image: e.target.value})}
-                  style={{
-                    width: '100%',
-                    padding: '10px 12px',
-                    border: '1px solid #d1d5db',
-                    borderRadius: '6px',
-                    fontSize: '14px',
-                    outline: 'none',
-                    transition: 'all 0.2s ease'
-                  }}
-                  onFocus={(e) => {
-                    e.target.style.borderColor = '#053b3c';
-                    e.target.style.boxShadow = '0 0 0 3px rgba(5, 59, 60, 0.1)';
-                  }}
-                  onBlur={(e) => {
-                    e.target.style.borderColor = '#d1d5db';
-                    e.target.style.boxShadow = 'none';
-                  }}
-                />
-              </div>
+              <CloudinaryUpload
+                currentImageUrl={formData.image}
+                onUploadSuccess={(url) => setFormData({...formData, image: url})}
+                folder="zamzam-tours/packages"
+                label="Package Image"
+              />
 
               <div style={{ marginBottom: '20px' }}>
                 <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '6px' }}>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import AdminSidebar from '../../components/AdminSidebar';
+import CloudinaryUpload from '../../components/CloudinaryUpload';
 
 interface Hotel {
   hotel_id: string;
@@ -618,48 +619,12 @@ export default function AdminHotels() {
                 </select>
               </div>
 
-              <div style={{ marginBottom: '20px' }}>
-                <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '6px' }}>
-                  Image URL
-                </label>
-                <input
-                  type="url"
-                  value={formData.image}
-                  onChange={(e) => setFormData({...formData, image: e.target.value})}
-                  style={{
-                    width: '100%',
-                    padding: '10px 12px',
-                    border: '1px solid #d1d5db',
-                    borderRadius: '6px',
-                    fontSize: '14px',
-                    outline: 'none',
-                    transition: 'all 0.2s ease'
-                  }}
-                  onFocus={(e) => {
-                    const input = e.target as HTMLInputElement;
-                    input.style.borderColor = '#053b3c';
-                    input.style.boxShadow = '0 0 0 3px rgba(5, 59, 60, 0.1)';
-                  }}
-                  onBlur={(e) => {
-                    const input = e.target as HTMLInputElement;
-                    input.style.borderColor = '#d1d5db';
-                    input.style.boxShadow = 'none';
-                  }}
-                />
-                {formData.image && (
-                  <div style={{ marginTop: '8px', borderRadius: '6px', overflow: 'hidden', maxWidth: '200px' }}>
-                    <img 
-                      src={formData.image} 
-                      alt="Preview" 
-                      style={{ width: '100%', height: 'auto', display: 'block' }}
-                      onError={(e) => {
-                        const img = e.target as HTMLImageElement;
-                        img.style.display = 'none';
-                      }}
-                    />
-                  </div>
-                )}
-              </div>
+              <CloudinaryUpload
+                currentImageUrl={formData.image}
+                onUploadSuccess={(url) => setFormData({...formData, image: url})}
+                folder="zamzam-tours/hotels"
+                label="Hotel Image"
+              />
 
               <div style={{ marginBottom: '30px' }}>
                 <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '6px' }}>
