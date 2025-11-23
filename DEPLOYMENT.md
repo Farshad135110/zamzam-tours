@@ -48,5 +48,26 @@ This file lists the minimal steps and environment variables required to deploy t
 6) If you want me to automate these repo edits
    - I can add a `.env.example` with placeholder keys, remove any tracked env files, and create a small PR.
 
+   7) Cloudinary Upload Preset (recommended for admin uploads)
+
+      If you want uploads from the admin panel to go into a specific preset/folder and be signed, create an Upload Preset in your Cloudinary console with these settings:
+
+      - Preset name: `uploadfromsite`
+      - Signed: true
+      - Overwrite: true
+      - Use filename: false
+      - Unique filename: false
+      - Use filename as display name: true
+      - Use asset folder as public id prefix: false
+      - Type: upload
+      - Asset folder: `zamzam-tours/uploads`
+
+      Then set the following environment variables in Vercel (or your host):
+
+      - `NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET=uploadfromsite`
+      - Ensure `CLOUDINARY_API_SECRET` is configured in the server environment (do NOT expose this value to the browser).
+
+      The app includes a server endpoint at `/api/cloudinary/sign` that generates signatures for the Cloudinary Upload Widget. Signed uploads will POST `paramsToSign` to that endpoint to obtain the signature.
+
 --
 Committed changes: removed tracked `.env.local` and added this deployment checklist (non-sensitive). If you want a separate example env file or a short PR description for rotation steps, tell me and I'll add it.
