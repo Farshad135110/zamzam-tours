@@ -1,4 +1,4 @@
-// pages/hotels/index.js - Hotel Booking & Integrated Services
+﻿// pages/hotels/index.js - Hotel Booking & Integrated Services
 import { useState, useEffect, useRef } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
@@ -6,7 +6,6 @@ import Image from 'next/image';
 import { motion } from 'framer-motion';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
-import { CONTACT_INFO } from '../../src/constants/config';
 import { fadeInUp } from '../../src/utils/animations';
 import useTranslation from '../../src/i18n/useTranslation'
 
@@ -404,7 +403,7 @@ export default function Hotels() {
     message += get('hotels.messages.pleaseProvide','Please provide availability and complete booking details.');
 
     const encodedMessage = encodeURIComponent(message);
-    window.open(`${CONTACT_INFO.whatsappUrl}?text=${encodedMessage}`, '_blank');
+    window.open(`https://wa.me/94766135110?text=${encodedMessage}`, '_blank');
   };
 
   // Open hotel details and booking
@@ -861,7 +860,7 @@ export default function Hotels() {
                   message += '_Please share available hotels and packages_';
                   
                   const encodedMessage = encodeURIComponent(message);
-                  window.open(`${CONTACT_INFO.whatsappUrl}?text=${encodedMessage}`, '_blank');
+                  window.open(`https://wa.me/94766135110?text=${encodedMessage}`, '_blank');
                 }}
               >
                 {get('hotels.search.sendWhatsApp', '📱 Send Inquiry via WhatsApp')}
@@ -914,6 +913,7 @@ export default function Hotels() {
                       </div>
                     </div>
                   )}
+                  
                   
 
                   <div className="hotel-footer">
@@ -1017,7 +1017,7 @@ export default function Hotels() {
                 onClick={() => {
                   const message = `Hello Zamzam Tours! I want to book a complete travel package including hotel, transfers, and tours. Please help me plan my trip.`;
                   const encodedMessage = encodeURIComponent(message);
-                  window.open(`${CONTACT_INFO.whatsappUrl}?text=${encodedMessage}`, '_blank');
+                  window.open(`https://wa.me/94766135110?text=${encodedMessage}`, '_blank');
                 }}
               >
                 {get('hotels.integrated.cta', '💬 Plan My Complete Trip on WhatsApp')}
@@ -1341,1936 +1341,1284 @@ export default function Hotels() {
           box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
         }
 
-        /* (rest of styles unchanged) */
-      `}</style>
+        .search-form .form-row {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+          gap: 1rem;
+          margin-bottom: 2rem;
+        }
+
+        .form-group label {
+          display: block;
+          margin-bottom: 0.5rem;
+          font-weight: 600;
+          color: var(--primary-color);
+        }
+
+        .form-group select,
+        .form-group input {
+          width: 100%;
+          padding: 10px 15px;
+          border: 1px solid var(--border-color);
+          border-radius: 5px;
+          font-size: 1rem;
+        }
+
+        .advanced-filters {
+          border-top: 1px solid var(--border-color);
+          padding-top: 2rem;
+          margin-bottom: 2rem;
+        }
+
+        .filter-group {
+          margin-bottom: 1.5rem;
+        }
+
+        .filter-group label {
+          display: block;
+          margin-bottom: 1rem;
+          font-weight: 600;
+          color: var(--primary-color);
+        }
+
+        .price-slider {
+          width: 100%;
+          height: 5px;
+          border-radius: 5px;
+          background: var(--border-color);
+          outline: none;
+        }
+
+        .rating-filters {
+          display: flex;
+          gap: 0.5rem;
+          flex-wrap: wrap;
+        }
+
+        .rating-btn {
+          padding: 8px 16px;
+          border: 1px solid var(--border-color);
+          background: white;
+          border-radius: 20px;
+          cursor: pointer;
+          transition: all 0.3s ease;
+        }
+
+        .rating-btn.active {
+          background: var(--primary-color);
+          color: white;
+          border-color: var(--primary-color);
+        }
+
+        .amenities-filters {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+          gap: 0.5rem;
+        }
+
+        .amenity-checkbox {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          cursor: pointer;
+        }
+
+        .amenity-checkbox input {
+          width: auto;
+        }
+
+        .search-btn {
+          width: 100%;
+          padding: 15px;
+          font-size: 1.1rem;
+        }
+
+        /* Compact Services Inside Form */
+        .services-compact {
+          margin-top: 2rem;
+          padding-top: 1.5rem;
+          border-top: 2px solid #f0f0f0;
+        }
+
+        .services-compact-label {
+          display: block;
+          font-size: 1rem;
+          font-weight: 600;
+          color: var(--text-color);
+          margin-bottom: 1rem;
+        }
+
+        .services-compact-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+          gap: 1rem;
+          margin-bottom: 1.5rem;
+        }
+
+        .service-compact-card {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+          padding: 0.875rem;
+          background: #f8f9fa;
+          border: 2px solid transparent;
+          border-radius: 10px;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          position: relative;
+        }
+
+        .service-compact-card:hover {
+          background: #ffffff;
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .service-compact-card.selected {
+          background: linear-gradient(135deg, #fff8f0 0%, #ffffff 100%);
+          border-color: var(--primary-color);
+          box-shadow: 0 4px 12px rgba(255,108,0,0.15);
+        }
+
+        .service-compact-icon {
+          font-size: 1.5rem;
+          flex-shrink: 0;
+        }
+
+        .service-compact-content {
+          flex: 1;
+          min-width: 0;
+        }
+
+        .service-compact-content h4 {
+          font-size: 0.9rem;
+          font-weight: 600;
+          color: var(--text-color);
+          margin: 0 0 0.25rem 0;
+          line-height: 1.2;
+        }
+
+        .service-compact-content p {
+          font-size: 0.75rem;
+          color: var(--text-light);
+          margin: 0;
+          line-height: 1.3;
+        }
+
+        .service-compact-check {
+          width: 24px;
+          height: 24px;
+          border: 2px solid #ddd;
+          border-radius: 6px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 1rem;
+          color: white;
+          background: white;
+          transition: all 0.3s ease;
+          flex-shrink: 0;
+        }
+
+        .service-compact-card.selected .service-compact-check {
+          background: var(--primary-color);
+          border-color: var(--primary-color);
+        }
+
+        /* Modern Modal Styles */
+        .modal-overlay-modern {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: rgba(0, 0, 0, 0.65);
+          backdrop-filter: blur(4px);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 10000;
+          padding: 1rem;
+          animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+
+        .modal-content-modern {
+          background: white;
+          border-radius: 12px;
+          max-width: 700px;
+          width: 100%;
+          max-height: 90vh;
+          overflow-y: auto;
+          box-shadow: 0 15px 40px rgba(0,0,0,0.25);
+          animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        .modal-header-modern {
+          display: flex;
+          align-items: flex-start;
+          justify-content: space-between;
+          padding: 1.25rem 1.5rem 1rem;
+          border-bottom: 2px solid #f0f0f0;
+          background: linear-gradient(135deg, #fff8f0 0%, #ffffff 100%);
+        }
+
+        .modal-title-section h2 {
+          margin: 0 0 0.25rem 0;
+          font-size: 1.4rem;
+          color: var(--text-color);
+        }
+
+        .modal-subtitle {
+          margin: 0;
+          font-size: 0.95rem;
+          color: var(--primary-color);
+          font-weight: 600;
+        }
+
+        .modal-close-modern {
+          background: rgba(0,0,0,0.05);
+          border: none;
+          width: 32px;
+          height: 32px;
+          border-radius: 50%;
+          font-size: 1.3rem;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #666;
+          transition: all 0.3s ease;
+          flex-shrink: 0;
+        }
+
+        .modal-close-modern:hover {
+          background: rgba(0,0,0,0.1);
+          color: var(--text-color);
+          transform: rotate(90deg);
+        }
+
+        .booking-tabs-modern {
+          display: flex;
+          gap: 0.4rem;
+          padding: 1rem 1.5rem;
+          background: #f8f9fa;
+          border-bottom: 2px solid #e9ecef;
+        }
+
+        .tab-modern {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 0.3rem;
+          padding: 0.65rem 0.5rem;
+          background: white;
+          border: 1.5px solid #dee2e6;
+          border-radius: 8px;
+          cursor: pointer;
+          transition: all 0.3s ease;
+        }
+
+        .tab-modern:hover {
+          border-color: var(--primary-color);
+          transform: translateY(-1px);
+        }
+
+        .tab-modern.active {
+          background: linear-gradient(135deg, #fff8f0 0%, #ffffff 100%);
+          border-color: var(--primary-color);
+          box-shadow: 0 2px 8px rgba(255,108,0,0.12);
+        }
+
+        .tab-icon {
+          font-size: 1.2rem;
+        }
+
+        .tab-label {
+          font-size: 0.75rem;
+          font-weight: 600;
+          color: var(--text-color);
+        }
+
+        .booking-content-modern {
+          padding: 1.5rem;
+        }
+
+        .hotel-summary-modern {
+          display: flex;
+          gap: 1rem;
+          padding: 1rem;
+          background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+          border-radius: 10px;
+          margin-bottom: 1.25rem;
+          border: 1.5px solid #e9ecef;
+        }
+
+        .hotel-image-modern {
+          flex-shrink: 0;
+        }
+
+        .hotel-details-modern h3 {
+          margin: 0 0 0.65rem 0;
+          font-size: 1.1rem;
+          color: var(--text-color);
+        }
+
+        .hotel-meta-modern {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.75rem;
+        }
+
+        .meta-item {
+          display: flex;
+          align-items: center;
+          gap: 0.35rem;
+          font-size: 0.8rem;
+          color: var(--text-light);
+        }
+
+        .meta-icon {
+          font-size: 0.9rem;
+        }
+
+        .booking-form-modern {
+          display: flex;
+          flex-direction: column;
+          gap: 1.25rem;
+        }
+
+        .form-section-modern {
+          background: white;
+          border: 1.5px solid #f0f0f0;
+          border-radius: 10px;
+          padding: 1rem;
+        }
+
+        .section-heading-modern {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          margin: 0 0 1rem 0;
+          font-size: 1rem;
+          color: var(--text-color);
+        }
+
+        .heading-icon {
+          font-size: 1.1rem;
+        }
+
+        .form-row-modern {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+          gap: 0.75rem;
+          margin-bottom: 0.75rem;
+        }
+
+        .form-row-modern:last-child {
+          margin-bottom: 0;
+        }
+
+        .form-group-modern {
+          display: flex;
+          flex-direction: column;
+        }
+
+        .form-group-modern label {
+          margin-bottom: 0.4rem;
+          font-weight: 600;
+          color: var(--text-color);
+          font-size: 0.8rem;
+        }
+
+        .form-group-modern input,
+        .form-group-modern select {
+          padding: 0.65rem;
+          border: 1.5px solid #e9ecef;
+          border-radius: 6px;
+          font-size: 0.9rem;
+          transition: all 0.3s ease;
+        }
+
+        .form-group-modern input:focus,
+        .form-group-modern select:focus {
+          outline: none;
+          border-color: var(--primary-color);
+          box-shadow: 0 0 0 2px rgba(255,108,0,0.08);
+        }
+
+        .services-selection-modern {
+          display: flex;
+          flex-direction: column;
+          gap: 0.65rem;
+        }
+
+        .service-checkbox-modern {
+          display: flex;
+          align-items: flex-start;
+          gap: 0.75rem;
+          padding: 0.75rem;
+          background: #f8f9fa;
+          border: 1.5px solid transparent;
+          border-radius: 8px;
+          cursor: pointer;
+          transition: all 0.3s ease;
+        }
+
+        .service-checkbox-modern:hover {
+          background: white;
+          border-color: #dee2e6;
+        }
+
+        .service-checkbox-modern input[type="checkbox"] {
+          width: 18px;
+          height: 18px;
+          cursor: pointer;
+          accent-color: var(--primary-color);
+          margin-top: 1px;
+        }
+
+        .service-info-modern {
+          flex: 1;
+        }
+
+        .service-header-modern {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 0.3rem;
+        }
+
+        .service-name {
+          font-weight: 600;
+          color: var(--text-color);
+          font-size: 0.9rem;
+        }
+
+        .service-price-modern {
+          font-weight: 700;
+          color: var(--primary-color);
+          font-size: 0.9rem;
+        }
+
+        .service-desc-modern {
+          font-size: 0.75rem;
+          color: var(--text-light);
+          line-height: 1.3;
+        }
+
+        .price-summary-modern {
+          display: flex;
+          flex-direction: column;
+          gap: 0.6rem;
+        }
+
+        .summary-row-modern {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 0.5rem 0;
+          font-size: 0.85rem;
+        }
+
+        .summary-price {
+          font-weight: 600;
+          color: var(--text-color);
+        }
+
+        .summary-divider-modern {
+          height: 1.5px;
+          background: linear-gradient(90deg, transparent, #e9ecef, transparent);
+          margin: 0.4rem 0;
+        }
+
+        .summary-row-modern.total-modern {
+          padding: 0.75rem 0 0 0;
+          font-size: 1rem;
+          font-weight: 700;
+        }
+
+        .summary-total-price {
+          font-size: 1.3rem;
+          color: var(--primary-color);
+          font-weight: 700;
+        }
+
+        .form-actions-modern {
+          display: flex;
+          gap: 0.75rem;
+          padding-top: 0.75rem;
+        }
+
+        .btn-cancel-modern,
+        .btn-confirm-modern {
+          flex: 1;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.5rem;
+          padding: 0.75rem 1.5rem;
+          border: none;
+          border-radius: 8px;
+          font-size: 0.9rem;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.3s ease;
+        }
+
+        .btn-cancel-modern {
+          background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+          color: var(--text-color);
+          border: 2px solid #dee2e6;
+        }
+
+        .btn-cancel-modern:hover {
+          background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .btn-confirm-modern {
+          background: linear-gradient(135deg, var(--primary-color) 0%, #d96200 100%);
+          color: white;
+        }
+
+        .btn-confirm-modern:hover {
+          background: linear-gradient(135deg, #d96200 0%, var(--primary-color) 100%);
+          transform: translateY(-1px);
+          box-shadow: 0 4px 12px rgba(255,108,0,0.25);
+        }
+
+        /* Packages Section */
+        .packages-section {
+          padding: 4rem 0;
+        }
+
+        .packages-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+          gap: 2rem;
+        }
+
+        .package-card {
+          background: white;
+          border-radius: 10px;
+          overflow: hidden;
+          box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+          transition: transform 0.3s ease;
+        }
+
+        .package-card:hover {
+          transform: translateY(-5px);
+        }
+
+        .package-image {
+          position: relative;
+          height: 200px;
+        }
+
+        .package-badge {
+          position: absolute;
+          top: 15px;
+          left: 15px;
+          background: var(--secondary-color);
+          color: var(--text-color);
+          padding: 5px 10px;
+          border-radius: 15px;
+          font-size: 0.8rem;
+          font-weight: 600;
+        }
+
+        .package-content {
+          padding: 1.5rem;
+        }
+
+        .package-content h3 {
+          color: var(--primary-color);
+          margin-bottom: 0.5rem;
+        }
+
+        .package-content p {
+          color: var(--text-light);
+          margin-bottom: 1rem;
+          font-size: 0.9rem;
+        }
+
+        .package-includes {
+          margin-bottom: 1.5rem;
+        }
+
+        .package-includes h4 {
+          color: var(--primary-color);
+          margin-bottom: 0.5rem;
+          font-size: 1rem;
+        }
+
+        .package-includes ul {
+          list-style: none;
+          padding: 0;
+        }
+
+        .package-includes li {
+          margin-bottom: 0.3rem;
+          font-size: 0.9rem;
+          color: var(--text-light);
+        }
+
+        .package-pricing {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+          margin-bottom: 1.5rem;
+          flex-wrap: wrap;
+        }
+
+        .price-original {
+          text-decoration: line-through;
+          color: var(--text-light);
+          font-size: 1.1rem;
+        }
+
+        .price-discounted {
+          font-size: 1.5rem;
+          font-weight: 700;
+          color: var(--primary-color);
+        }
+
+        .price-save {
+          background: #053b3c;
+          color: white;
+          padding: 3px 8px;
+          border-radius: 12px;
+          font-size: 0.8rem;
+          font-weight: 600;
+        }
+
+        /* Hotels Grid */
+        .hotels-grid-section {
+          padding: 4rem 0;
+          background: var(--section-bg);
+        }
+
+        .hotels-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+          gap: 2rem;
+        }
+
+        .hotel-card {
+          background: white;
+          border-radius: 10px;
+          overflow: hidden;
+          box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+          transition: transform 0.3s ease;
+        }
+
+        .hotel-card:hover {
+          transform: translateY(-5px);
+        }
+
+        .hotel-image {
+          position: relative;
+          height: 200px;
+        }
+
+        .hotel-rating {
+          position: absolute;
+          top: 15px;
+          right: 15px;
+          background: rgba(255, 255, 255, 0.9);
+          padding: 5px 10px;
+          border-radius: 15px;
+          font-size: 0.8rem;
+          font-weight: 600;
+        }
+
+        .hotel-location {
+          position: absolute;
+          bottom: 15px;
+          left: 15px;
+          background: var(--primary-color);
+          color: white;
+          padding: 5px 10px;
+          border-radius: 15px;
+          font-size: 0.8rem;
+          font-weight: 600;
+        }
+
+        .hotel-content {
+          padding: 1.5rem;
+        }
+
+        .hotel-content h3 {
+          color: var(--primary-color);
+          margin-bottom: 0.5rem;
+        }
+
+        .hotel-description {
+          color: var(--text-light);
+          margin-bottom: 1rem;
+          font-size: 0.9rem;
+        }
+
+        .hotel-amenities {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.5rem;
+          margin-bottom: 1rem;
+        }
+
+        .amenity-tag {
+          background: var(--section-bg);
+          padding: 3px 8px;
+          border-radius: 10px;
+          font-size: 0.7rem;
+          color: var(--text-light);
+        }
+
+        .amenity-more {
+          background: var(--primary-light);
+          color: white;
+          padding: 3px 8px;
+          border-radius: 10px;
+          font-size: 0.7rem;
+          font-weight: 600;
+        }
+
+        /* Facilities (from DB) */
+        .hotel-facilities {
+          margin-bottom: 1rem;
+        }
+
+        .facility-tags {
+          display: flex;
+          gap: 0.5rem;
+          flex-wrap: wrap;
+          margin-top: 0.5rem;
+        }
+
+        .facility-tag {
+          background: var(--section-bg);
+          padding: 3px 8px;
+          border-radius: 10px;
+          font-size: 0.75rem;
+          color: var(--text-light);
+        }
+
+        .hotel-popular {
+          margin-bottom: 1.5rem;
+        }
+
+        .hotel-popular span {
+          font-size: 0.8rem;
+          color: var(--text-light);
+          margin-bottom: 0.5rem;
+          display: block;
+        }
+
+        .popular-tags {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.3rem;
+        }
+
+        .popular-tag {
+          background: var(--secondary-color);
+          color: var(--text-color);
+          padding: 2px 6px;
+          border-radius: 8px;
+          font-size: 0.7rem;
+          font-weight: 600;
+          text-transform: capitalize;
+        }
+
+        .hotel-footer {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding-top: 1rem;
+          border-top: 1px solid var(--border-color);
+        }
+
+        .hotel-price .price {
+          font-size: 1.3rem;
+          font-weight: 700;
+          color: var(--primary-color);
+        }
+
+        .hotel-price .period {
+          display: block;
+          font-size: 0.8rem;
+          color: var(--text-light);
+        }
+
+        .hotel-actions {
+          display: flex;
+          gap: 0.5rem;
+        }
+
+        .btn-view-details,
+        .btn-book-now {
+          flex: 1;
+          padding: 0.65rem 1rem;
+          border: none;
+          border-radius: 5px;
+          font-size: 0.85rem;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.3s ease;
+        }
+
+        .btn-view-details {
+          background: white;
+          color: var(--text-color);
+          border: 1px solid var(--border-color);
+        }
+
+        .btn-view-details:hover {
+          background: var(--primary-color);
+          color: white;
+          border-color: var(--primary-color);
+        }
+
+        .btn-book-now {
+          background: var(--primary-color);
+          color: white;
+        }
+
+        .btn-book-now:hover {
+          background: #d96200;
+          transform: translateY(-1px);
+          box-shadow: 0 4px 8px rgba(255,108,0,0.2);
+        }
+
+        /* Services Section */
+        .services-section {
+          padding: 4rem 0;
+        }
+
+        .services-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+          gap: 2rem;
+        }
+
+        .service-card {
+          background: white;
+          border-radius: 10px;
+          overflow: hidden;
+          box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+          position: relative;
+          transition: all 0.3s ease;
+          border: 3px solid transparent;
+        }
+
+        .service-card:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .service-card.selected {
+          border-color: var(--primary-color);
+          box-shadow: 0 8px 25px rgba(5, 59, 60, 0.3);
+        }
+
+        .service-checkbox-wrapper {
+          position: absolute;
+          top: 15px;
+          right: 15px;
+          z-index: 10;
+          background: white;
+          border-radius: 50%;
+          padding: 5px;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .service-checkbox-input {
+          width: 24px;
+          height: 24px;
+          cursor: pointer;
+          accent-color: var(--primary-color);
+        }
+
+        .service-image {
+          height: 150px;
+        }
+
+        .service-content {
+          padding: 1.5rem;
+        }
+
+        .service-content h3 {
+          color: var(--primary-color);
+          margin-bottom: 0.5rem;
+        }
+
+        .service-content p {
+          color: var(--text-light);
+          margin-bottom: 1rem;
+          font-size: 0.9rem;
+        }
+
+        .service-types {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.3rem;
+          margin-bottom: 1rem;
+        }
+
+        .type-tag {
+          background: var(--section-bg);
+          padding: 3px 8px;
+          border-radius: 10px;
+          font-size: 0.7rem;
+          color: var(--text-light);
+          text-transform: capitalize;
+        }
+
+        .service-price {
+          font-weight: 600;
+          color: var(--primary-color);
+          margin-bottom: 1rem;
+        }
+
+        /* Integrated Banner */
+        .integrated-banner {
+          padding: 4rem 0;
+          background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+          color: white;
+        }
+
+        .banner-content h2 {
+          text-align: center;
+          margin-bottom: 1rem;
+          font-size: 2.5rem;
+        }
+
+        .banner-content > p {
+          text-align: center;
+          margin-bottom: 3rem;
+          font-size: 1.2rem;
+          opacity: 0.9;
+        }
+
+        .banner-steps {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+          gap: 2rem;
+          margin-bottom: 3rem;
+        }
+
+        .step {
+          display: flex;
+          gap: 1rem;
+          align-items: flex-start;
+        }
+
+        .step-icon {
+          font-size: 2.5rem;
+          flex-shrink: 0;
+        }
+
+        .step-text h4 {
+          margin-bottom: 0.5rem;
+          font-size: 1.2rem;
+        }
+
+        .step-text p {
+          opacity: 0.9;
+          font-size: 0.9rem;
+        }
+
+        .banner-cta {
+          text-align: center;
+        }
+
+        .btn-primary.large {
+          padding: 15px 30px;
+          font-size: 1.1rem;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: rgba(0, 0, 0, 0.7);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 1000;
+          padding: 20px;
+        }
+
+        .modal-content.large {
+          max-width: 800px;
+          max-height: 90vh;
+          overflow-y: auto;
+        }
+
+        .modal-close {
+          position: absolute;
+          top: 15px;
+          right: 15px;
+          background: none;
+          border: none;
+          font-size: 1.5rem;
+          cursor: pointer;
+          color: var(--text-light);
+        }
+
+        .modal-content h2 {
+          color: var(--primary-color);
+          margin-bottom: 1.5rem;
+        }
+
+        .booking-tabs {
+          display: flex;
+          border-bottom: 1px solid var(--border-color);
+          margin-bottom: 2rem;
+        }
+
+        .booking-tabs .tab {
+          flex: 1;
+          padding: 1rem;
+          background: none;
+          border: none;
+          border-bottom: 3px solid transparent;
+          cursor: pointer;
+          transition: all 0.3s ease;
+        }
+
+        .booking-tabs .tab.active {
+          border-bottom-color: var(--primary-color);
+          color: var(--primary-color);
+          font-weight: 600;
+        }
+
+        .hotel-summary {
+          display: flex;
+          gap: 1.5rem;
+          background: var(--section-bg);
+          padding: 1.5rem;
+          border-radius: 10px;
+          margin-bottom: 2rem;
+        }
+
+        .hotel-image {
+          flex: 0 0 200px;
+        }
+
+        .hotel-details h3 {
+          color: var(--primary-color);
+          margin-bottom: 1rem;
+        }
+
+        .hotel-meta {
+          display: flex;
+          flex-direction: column;
+          gap: 0.5rem;
+          color: var(--text-light);
+        }
+
+        .services-selection {
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
+        }
+
+        .service-checkbox {
+          display: flex;
+          align-items: flex-start;
+          gap: 1rem;
+          padding: 1rem;
+          border: 1px solid var(--border-color);
+          border-radius: 8px;
+          cursor: pointer;
+          transition: all 0.3s ease;
+        }
+
+        .service-checkbox:hover {
+          border-color: var(--primary-color);
+        }
+
+        .service-checkbox input {
+          margin-top: 0.3rem;
+        }
+
+        .service-info {
+          flex: 1;
+        }
+
+        .service-name {
+          display: block;
+          font-weight: 600;
+          color: var(--primary-color);
+          margin-bottom: 0.3rem;
+        }
+
+        .service-desc {
+          display: block;
+          color: var(--text-light);
+          font-size: 0.9rem;
+          margin-bottom: 0.3rem;
+        }
+
+        .service-price {
+          display: block;
+          font-weight: 600;
+          color: var(--primary-color);
+        }
+
+        .price-summary {
+          background: var(--section-bg);
+          padding: 1.5rem;
+          border-radius: 10px;
+        }
+
+        .summary-row {
+          display: flex;
+          justify-content: space-between;
+          margin-bottom: 0.8rem;
+          padding-bottom: 0.8rem;
+          border-bottom: 1px solid var(--border-color);
+        }
+
+        .summary-row:last-child {
+          border-bottom: none;
+        }
+
+        .summary-row.total {
+          font-weight: 700;
+          font-size: 1.1rem;
+          color: var(--primary-color);
+        }
+
+        .form-actions {
+          display: flex;
+          gap: 1rem;
+          justify-content: flex-end;
+          margin-top: 2rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+          .search-form .form-row {
+            grid-template-columns: 1fr 1fr;
+          }
+
+          .amenities-filters {
+            grid-template-columns: 1fr 1fr;
+          }
+
+          .banner-steps {
+            grid-template-columns: 1fr;
+          }
+
+          .hotel-summary {
+            flex-direction: column;
+          }
+
+          .hero-content h1 {
+            font-size: 2.8rem;
+          }
+
+          .hero-content p {
+            font-size: 1.2rem;
+          }
+
+          .section-header h2 {
+            font-size: 2rem;
+          }
+        }
+
+        @media (max-width: 768px) {
+          .hero-content h1 {
+            font-size: 2.2rem;
+          }
+
+          .hero-content p {
+            font-size: 1.1rem;
+          }
+
+          .section-header h2 {
+            font-size: 1.8rem;
+          }
+
+          .search-form .form-row {
+            grid-template-columns: 1fr;
+          }
+
+          .packages-grid {
+            grid-template-columns: 1fr;
+          }
+
+          .hotels-grid {
+            grid-template-columns: 1fr;
+          }
+
+          .services-grid {
+            grid-template-columns: 1fr;
+          }
+
+          .booking-tabs {
+            flex-direction: column;
+          }
+
+          .form-actions {
+            flex-direction: column;
+          }
+        }
+
+        @media (max-width: 576px) {
+          .hero {
+            min-height: 80vh;
+          }
+
+          .hero-content h1 {
+            font-size: 1.8rem;
+          }
+
+          .hero-content p {
+            font-size: 1rem;
+          }
+
+          .section-header h2 {
+            font-size: 1.5rem;
+          }
+
+          .search-card {
+            padding: 1.5rem;
+          }
+
+          .amenities-filters {
+            grid-template-columns: 1fr;
+          }
+
+          .modal-content.large {
+            padding: 1rem;
+          }
+        }`}</style>
 
       <Footer />
     </>
   );
 }
-                                                                                                                ))}
-                                                                                                              </select>
-                                                                                                            </div>
-                                                                                                          </div>
-
-                                                                                                          <div className="advanced-filters">
-                                                                                                            <div className="filter-group">
-                                                                                                              <label>{get('hotels.filters.priceRange', 'Price Range:')} ${searchParams.priceRange[0]} - ${searchParams.priceRange[1]}</label>
-                                                                                                              <input 
-                                                                                                                type="range" 
-                                                                                                                min="0"
-                                                                                                                max="1000"
-                                                                                                                step="50"
-                                                                                                                value={searchParams.priceRange[1]}
-                                                                                                                onChange={(e) => setSearchParams({
-                                                                                                                  ...searchParams, 
-                                                                                                                  priceRange: [searchParams.priceRange[0], parseInt(e.target.value)]
-                                                                                                                })}
-                                                                                                                className="price-slider"
-                                                                                                              />
-                                                                                                            </div>
-
-                                                                                                            <div className="filter-group">
-                                                                                                              <label>{get('hotels.filters.minimumRating', 'Minimum Rating')}</label>
-                                                                                                              <div className="rating-filters">
-                                                                                                                {[4.5, 4, 3.5, 3, 0].map(rating => (
-                                                                                                                  <button
-                                                                                                                    key={rating}
-                                                                                                                    className={`rating-btn ${searchParams.rating === rating ? 'active' : ''}`}
-                                                                                                                    onClick={() => setSearchParams({...searchParams, rating})}
-                                                                                                                  >
-                                                                                                                    {rating === 0 ? get('hotels.filters.any', 'Any') : `${rating}+`} ⭐
-                                                                                                                  </button>
-                                                                                                                ))}
-                                                                                                              </div>
-                                                                                                            </div>
-
-                                                                                                            <div className="filter-group">
-                                                                                                              <label>{get('hotels.filters.amenities', 'Amenities')}</label>
-                                                                                                              <div className="amenities-filters">
-                                                                                                                {amenitiesList.map(amenity => (
-                                                                                                                  <label key={amenity.id} className="amenity-checkbox">
-                                                                                                                    <input
-                                                                                                                      type="checkbox"
-                                                                                                                      checked={searchParams.amenities.includes(amenity.id)}
-                                                                                                                      onChange={(e) => {
-                                                                                                                        if (e.target.checked) {
-                                                                                                                          setSearchParams({
-                                                                                                                            ...searchParams,
-                                                                                                                            amenities: [...searchParams.amenities, amenity.id]
-                                                                                                                          });
-                                                                                                                        } else {
-                                                                                                                          setSearchParams({
-                                                                                                                            ...searchParams,
-                                                                                                                            amenities: searchParams.amenities.filter(a => a !== amenity.id)
-                                                                                                                          });
-                                                                                                                        }
-                                                                                                                      }}
-                                                                                                                    />
-                                                                                                                    <span>{amenity.name}</span>
-                                                                                                                  </label>
-                                                                                                                ))}
-                                                                                                              </div>
-                                                                                                            </div>
-                                                                                                          </div>
-
-                                                                                                          {/* Additional Services - Compact Design */}
-                                                                                                          <div className="services-compact">
-                                                                                                            <label className="services-compact-label">{get('hotels.services.compactLabel', 'Additional Services (Optional)')}</label>
-                                                                                                            <div className="services-compact-grid">
-                                                                                                              <div 
-                                                                                                                className={`service-compact-card ${selectedAdditionalServices.includes('airport-transfer') ? 'selected' : ''}`}
-                                                                                                                onClick={() => {
-                                                                                                                  if (selectedAdditionalServices.includes('airport-transfer')) {
-                                                                                                                    setSelectedAdditionalServices(selectedAdditionalServices.filter(id => id !== 'airport-transfer'));
-                                                                                                                  } else {
-                                                                                                                    setSelectedAdditionalServices([...selectedAdditionalServices, 'airport-transfer']);
-                                                                                                                  }
-                                                                                                                }}
-                                                                                                              >
-                                                                                                                <div className="service-compact-icon">✈️</div>
-                                                                                                                <div className="service-compact-content">
-                                                                                                                  <h4>{get('hotels.services.airportTransfer.name', 'Airport Transfer')}</h4>
-                                                                                                                  <p>{get('hotels.services.airportTransfer.description', 'Hassle-free pickup from airport to hotel')}</p>
-                                                                                                                </div>
-                                                                                                                <div className="service-compact-check">
-                                                                                                                  {selectedAdditionalServices.includes('airport-transfer') && '✓'}
-                                                                                                                </div>
-                                                                                                              </div>
-
-                                                                                                              <div 
-                                                                                                                className={`service-compact-card ${selectedAdditionalServices.includes('daily-tours') ? 'selected' : ''}`}
-                                                                                                                onClick={() => {
-                                                                                                                  if (selectedAdditionalServices.includes('daily-tours')) {
-                                                                                                                    setSelectedAdditionalServices(selectedAdditionalServices.filter(id => id !== 'daily-tours'));
-                                                                                                                  } else {
-                                                                                                                    setSelectedAdditionalServices([...selectedAdditionalServices, 'daily-tours']);
-                                                                                                                  }
-                                                                                                                }}
-                                                                                                              >
-                                                                                                                <div className="service-compact-icon">🗺️</div>
-                                                                                                                <div className="service-compact-content">
-                                                                                                                  <h4>{get('hotels.services.dailyTours.name', 'Daily Tours')}</h4>
-                                                                                                                  <p>{get('hotels.services.dailyTours.description', 'Guided tours from your hotel location')}</p>
-                                                                                                                </div>
-                                                                                                                <div className="service-compact-check">
-                                                                                                                  {selectedAdditionalServices.includes('daily-tours') && '✓'}
-                                                                                                                </div>
-                                                                                                              </div>
-
-                                                                                                              <div 
-                                                                                                                className={`service-compact-card ${selectedAdditionalServices.includes('rental-car') ? 'selected' : ''}`}
-                                                                                                                onClick={() => {
-                                                                                                                  if (selectedAdditionalServices.includes('rental-car')) {
-                                                                                                                    setSelectedAdditionalServices(selectedAdditionalServices.filter(id => id !== 'rental-car'));
-                                                                                                                  } else {
-                                                                                                                    setSelectedAdditionalServices([...selectedAdditionalServices, 'rental-car']);
-                                                                                                                  }
-                                                                                                                }}
-                                                                                                              >
-                                                                                                                <div className="service-compact-icon">🚗</div>
-                                                                                                                <div className="service-compact-content">
-                                                                                                                  <h4>{get('hotels.services.rentalCar.name', 'Car Rental')}</h4>
-                                                                                                                  <p>{get('hotels.services.rentalCar.description', 'Self-drive or with driver vehicle rental')}</p>
-                                                                                                                </div>
-                                                                                                                <div className="service-compact-check">
-                                                                                                                  {selectedAdditionalServices.includes('rental-car') && '✓'}
-                                                                                                                </div>
-                                                                                                              </div>
-                                                                                                            </div>
-                                                                                                          </div>
-
-                                                                                                          <button 
-                                                                                                            className="btn-primary search-btn"
-                                                                                                            onClick={() => {
-                                                                                                              let message = `${get('hotels.messages.inquiryBadge','🏨 *HOTEL INQUIRY*')}\n`;
-                                                                                                              message += `${get('hotels.messages.lineSeparator','━━━━━━━━━━━━━━━━━━━━━━━━')}\n\n`;
-                                                                                                              if (searchParams.name) message += `👤 ${get('hotels.messages.nameLabel','*Name:*')} ${searchParams.name}\n`;
-                                                                                                              if (searchParams.email) message += `📧 ${get('hotels.messages.emailLabel','*Email:*')} ${searchParams.email}\n\n`;
-                                                                                                              message += `📍 ${get('hotels.messages.destinationLabel','*Destination:*')} ${locations.find(l => l.id === searchParams.location)?.name}\n`;
-                                                                                                              if (searchParams.checkIn) message += `📅 ${get('hotels.messages.checkInLabel','*Check-in:*')} ${searchParams.checkIn}\n`;
-                                                                                                              if (searchParams.checkOut) message += `📅 ${get('hotels.messages.checkOutLabel','*Check-out:*')} ${searchParams.checkOut}\n`;
-                                                                                                              message += `👥 ${get('hotels.messages.guestsLabel','*Guests:*')} ${searchParams.guests}\n`;
-                                                                                                              message += `🛏️ ${get('hotels.messages.roomsLabel','*Rooms:*')} ${searchParams.rooms}\n`;
-                                                                                                              message += `💰 ${get('hotels.messages.budgetLabel','*Budget:*')} $${searchParams.priceRange[0]} - $${searchParams.priceRange[1]} ${get('hotels.price.perNight','per night')}\n`;
-                                                                                                              if (searchParams.rating > 0) message += `⭐ ${get('hotels.messages.minimumRatingLabel','*Minimum Rating:*')} ${searchParams.rating}+\n`;
-                                                                                                              if (searchParams.amenities.length > 0) {
-                                                                                                                message += `🎯 ${get('hotels.messages.preferredAmenitiesLabel','*Preferred Amenities:*')} ${searchParams.amenities.map(a => amenitiesList.find(am => am.id === a)?.name).join(', ')}\n`;
-                                                                                                              }
-                                                                                                              
-                                                                                                              if (selectedAdditionalServices.length > 0) {
-                                                                                                                message += '\n*ADDITIONAL SERVICES:*\n';
-                                                                                                                selectedAdditionalServices.forEach(serviceId => {
-                                                                                                                  const service = additionalServices.find(s => s.id === serviceId);
-                                                                                                                  if (service) {
-                                                                                                                    message += `✓ ${service.name}\n`;
-                                                                                                                  }
-                                                                                                                });
-                                                                                                              }
-                                                                                                              
-                                                                                                              message += '\n━━━━━━━━━━━━━━━━━━━━━━━━\n';
-                                                                                                              message += '_Please share available hotels and packages_';
-                                                                                                              
-                                                                                                              const encodedMessage = encodeURIComponent(message);
-                                                                                                              window.open(`${CONTACT_INFO.whatsappUrl}?text=${encodedMessage}`, '_blank');
-                                                                                                            }}
-                                                                                                          >
-                                                                                                            {get('hotels.search.sendWhatsApp', '📱 Send Inquiry via WhatsApp')}
-                                                                                                          </button>
-                                                                                                        </div>
-                                                                                                      </div>
-                                                                                                    </div>
-                                                                                                  </section>
-
-                                                                                                  {/* Hotels Grid */}
-                                                                                                  <section className="hotels-grid-section">
-                                                                                                    <div className="container">
-                                                                                                      <div className="section-header">
-                                                                                                        <h2>{get('hotels.grid.title', 'Featured Hotels & Resorts')}</h2>
-                                                                                                        <p>{get('hotels.grid.subtitle', 'Curated selection of the best accommodations across Sri Lanka')}</p>
-                                                                                                      </div>
-
-                                                                                                      <div className="hotels-grid">
-                                                                                                        {filteredHotels.map(hotel => (
-                                                                                                          <div key={hotel.id} className="hotel-card">
-                                                                                                            <div className="hotel-image">
-                                                                                                              <Image 
-                                                                                                                src={hotel.image} 
-                                                                                                                alt={hotel.name}
-                                                                                                                width={400}
-                                                                                                                height={250}
-                                                                                                                objectFit="cover"
-                                                                                                              />
-                                                                                                              <div className="hotel-rating">
-                                                                                                                <span>⭐ {hotel.rating}</span>
-                                                                                                                <span>({hotel.reviews})</span>
-                                                                                                              </div>
-                                                                                                              <div className="hotel-location">
-                                                                                                                {locations.find(l => l.id === hotel.location)?.name}
-                                                                                                              </div>
-                                                                                                            </div>
-
-                                                                                                            <div className="hotel-content">
-                                                                                                              <h3>{hotel.name}</h3>
-                                                                                                              <p className="hotel-description">{hotel.description}</p>
-
-                                                                                                              {/* Facilities list (from DB 'facilities' column). Show full list as tags or comma list */}
-                                                                                                              {hotel.facilities && hotel.facilities.length > 0 && (
-                                                                                                                <div className="hotel-facilities">
-                                                                                                                  <strong>{get('hotels.facilities.label', 'Facilities:')}</strong>
-                                                                                                                  <div className="facility-tags">
-                                                                                                                    {hotel.facilities.map((f: string) => (
-                                                                                                                      <span key={f} className="facility-tag">{f.trim()}</span>
-                                                                                                                    ))}
-                                                                                                                  </div>
-                                                                                                                </div>
-                                                                                                              )}
-                                                                                                              
-                                                                                                              
-
-                                                                                                              <div className="hotel-footer">
-                                                                                                                <div className="hotel-price">
-                                                                                                                  <span className="price">{get('hotels.price.from', 'From')} ${hotel.price}</span>
-                                                                                                                  <span className="period">{get('hotels.price.perNight', 'per night')}</span>
-                                                                                                                </div>
-                                                                                                                <div className="hotel-actions">
-                                                                                                                  <button 
-                                                                                                                    className="btn-view-details"
-                                                                                                                    onClick={() => openHotelBooking(hotel)}
-                                                                                                                  >
-                                                                                                                    {get('hotels.buttons.viewDetails', 'View Details')}
-                                                                                                                  </button>
-                                                                                                                  <button 
-                                                                                                                    className="btn-book-now"
-                                                                                                                    onClick={() => {
-                                                                                                                      setSelectedHotel(hotel);
-                                                                                                                      setShowBookingForm(true);
-                                                                                                                    }}
-                                                                                                                  >
-                                                                                                                    {get('hotels.buttons.bookNow', 'Book Now')}
-                                                                                                                  </button>
-                                                                                                                </div>
-                                                                                                              </div>
-                                                                                                            </div>
-                                                                                                          </div>
-                                                                                                        ))}
-                                                                                                      </div>
-
-                                                                                                      {filteredHotels.length === 0 && (
-                                                                                                        <div className="no-results">
-                                                                                                          <h3>{get('hotels.noResults.title', 'No hotels found matching your criteria')}</h3>
-                                                                                                            <p>{get('hotels.noResults.subtitle', 'Try adjusting your filters or search parameters')}</p>
-                                                                                                            <button 
-                                                                                                              className="btn-primary"
-                                                                                                              onClick={() => setSearchParams({
-                                                                                                              name: '',
-                                                                                                              email: '',
-                                                                                                              location: 'all',
-                                                                                                              checkIn: '',
-                                                                                                              checkOut: '',
-                                                                                                              guests: 2,
-                                                                                                              rooms: 1,
-                                                                                                              priceRange: [0, 1000],
-                                                                                                              rating: 0,
-                                                                                                              amenities: []
-                                                                                                            })}
-                                                                                                          >
-                                                                                                              {get('hotels.buttons.resetFilters', 'Reset Filters')}
-                                                                                                          </button>
-                                                                                                        </div>
-                                                                                                      )}
-                                                                                                    </div>
-                                                                                                  </section>
-
-                                                                                                  {/* Integrated Services Banner */}
-                                                                                                  <section className="integrated-banner">
-                                                                                                    <div className="container">
-                                                                                                      <div className="banner-content">
-                                                                                                        <h2>{get('hotels.integrated.title', 'One Booking, Complete Journey')}</h2>
-                                                                                                        <p>{get('hotels.integrated.subtitle', 'From airport pickup to hotel stay, daily tours, and departure - we handle everything')}</p>
-                                                                                                        
-                                                                                                        <div className="banner-steps">
-                                                                                                          <div className="step">
-                                                                                                            <div className="step-icon">🛬</div>
-                                                                                                            <div className="step-text">
-                                                                                                              <h4>{get('hotels.integrated.steps.airportPickup.title', 'Airport Pickup')}</h4>
-                                                                                                              <p>{get('hotels.integrated.steps.airportPickup.description', 'Meet & greet service with comfortable transfer to hotel')}</p>
-                                                                                                            </div>
-                                                                                                          </div>
-                                                                                                          
-                                                                                                          <div className="step">
-                                                                                                            <div className="step-icon">🏨</div>
-                                                                                                            <div className="step-text">
-                                                                                                              <h4>{get('hotels.integrated.steps.hotelStay.title', 'Hotel Stay')}</h4>
-                                                                                                              <p>{get('hotels.integrated.steps.hotelStay.description', 'Luxury accommodation with best locations and amenities')}</p>
-                                                                                                            </div>
-                                                                                                          </div>
-                                                                                                          
-                                                                                                          <div className="step">
-                                                                                                            <div className="step-icon">🚗</div>
-                                                                                                            <div className="step-text">
-                                                                                                              <h4>{get('hotels.integrated.steps.dailyTours.title', 'Daily Tours')}</h4>
-                                                                                                              <p>{get('hotels.integrated.steps.dailyTours.description', 'Guided excursions from your hotel to major attractions')}</p>
-                                                                                                            </div>
-                                                                                                          </div>
-                                                                                                          
-                                                                                                          <div className="step">
-                                                                                                            <div className="step-icon">✈️</div>
-                                                                                                            <div className="step-text">
-                                                                                                              <h4>{get('hotels.integrated.steps.departure.title', 'Departure Transfer')}</h4>
-                                                                                                              <p>{get('hotels.integrated.steps.departure.description', 'Timely pickup from hotel to airport for your flight')}</p>
-                                                                                                            </div>
-                                                                                                          </div>
-                                                                                                        </div>
-
-                                                                                                        <div className="banner-cta">
-                                                                                                          <button 
-                                                                                                            className="btn-primary large"
-                                                                                                            onClick={() => {
-                                                                                                              const message = `Hello Zamzam Tours! I want to book a complete travel package including hotel, transfers, and tours. Please help me plan my trip.`;
-                                                                                                              const encodedMessage = encodeURIComponent(message);
-                                                                                                              window.open(`${CONTACT_INFO.whatsappUrl}?text=${encodedMessage}`, '_blank');
-                                                                                                            }}
-                                                                                                          >
-                                                                                                            {get('hotels.integrated.cta', '💬 Plan My Complete Trip on WhatsApp')}
-                                                                                                          </button>
-                                                                                                        </div>
-                                                                                                      </div>
-                                                                                                    </div>
-                                                                                                  </section>
-
-                                                                                                  {/* Booking Form Modal */}
-                                                                                                  {showBookingForm && selectedHotel && (
-                                                                                                    <div className="modal-overlay-modern" onClick={() => setShowBookingForm(false)}>
-                                                                                                      <div className="modal-content-modern" onClick={(e) => e.stopPropagation()}>
-                                                                                                        <div className="modal-header-modern">
-                                                                                                          <div className="modal-title-section">
-                                                                                                            <h2>{get('hotels.modal.title', 'Book Your Stay')}</h2>
-                                                                                                            <p className="modal-subtitle">{selectedHotel.name}</p>
-                                                                                                          </div>
-                                                                                                          <button 
-                                                                                                            className="modal-close-modern"
-                                                                                                            onClick={() => setShowBookingForm(false)}
-                                                                                                          >
-                                                                                                            ✕
-                                                                                                          </button>
-                                                                                                        </div>
-                                                                                                        
-                                                                                                        <div className="booking-tabs-modern">
-                                                                                                          <button 
-                                                                                                            className={`tab-modern ${bookingType === 'hotel-only' ? 'active' : ''}`}
-                                                                                                            onClick={() => setBookingType('hotel-only')}
-                                                                                                          >
-                                                                                                            <span className="tab-icon">🏨</span>
-                                                                                                            <span className="tab-label">{get('hotels.modal.tab.hotelOnly', 'Hotel Only')}</span>
-                                                                                                          </button>
-                                                                                                          <button 
-                                                                                                            className={`tab-modern ${bookingType === 'with-services' ? 'active' : ''}`}
-                                                                                                            onClick={() => setBookingType('with-services')}
-                                                                                                          >
-                                                                                                            <span className="tab-icon">🎯</span>
-                                                                                                            <span className="tab-label">{get('hotels.modal.tab.hotelPlusServices', 'Hotel + Services')}</span>
-                                                                                                          </button>
-                                                                                                          <button 
-                                                                                                            className={`tab-modern ${bookingType === 'complete-package' ? 'active' : ''}`}
-                                                                                                            onClick={() => setBookingType('complete-package')}
-                                                                                                          >
-                                                                                                            <span className="tab-icon">⭐</span>
-                                                                                                            <span className="tab-label">{get('hotels.modal.tab.completePackage', 'Complete Package')}</span>
-                                                                                                          </button>
-                                                                                                        </div>
-
-                                                                                                        <div className="booking-content-modern">
-                                                                                                          {/* Hotel Summary */}
-                                                                                                          <div className="hotel-summary-modern">
-                                                                                                            <div className="hotel-image-modern">
-                                                                                                              <Image 
-                                                                                                                src={selectedHotel.image} 
-                                                                                                                alt={selectedHotel.name}
-                                                                                                                width={200}
-                                                                                                                height={150}
-                                                                                                                objectFit="cover"
-                                                                                                                style={{ borderRadius: '12px' }}
-                                                                                                              />
-                                                                                                            </div>
-                                                                                                            <div className="hotel-details-modern">
-                                                                                                              <h3>{selectedHotel.name}</h3>
-                                                                                                              <div className="hotel-meta-modern">
-                                                                                                                <span className="meta-item">
-                                                                                                                  <span className="meta-icon">⭐</span>
-                                                                                                                  <span>{selectedHotel.rating} ({selectedHotel.reviews})</span>
-                                                                                                                </span>
-                                                                                                                <span className="meta-item">
-                                                                                                                  <span className="meta-icon">📍</span>
-                                                                                                                  <span>{locations.find(l => l.id === selectedHotel.location)?.name}</span>
-                                                                                                                </span>
-                                                                                                                <span className="meta-item">
-                                                                                                                  <span className="meta-icon">💰</span>
-                                                                                                                  <span>${selectedHotel.price}/night</span>
-                                                                                                                </span>
-                                                                                                              </div>
-                                                                                                            </div>
-                                                                                                          </div>
-
-                                                                                                          {/* Booking Form */}
-                                                                                                          <form className="booking-form-modern">
-                                                                                                            <div className="form-section-modern">
-                                                                                                              <h3 className="section-heading-modern">
-                                                                                                                <span className="heading-icon">📅</span>
-                                                                                                                {get('hotels.modal.bookingDetails.title', 'Booking Details')}
-                                                                                                              </h3>
-                                                                                                              <div className="form-row-modern">
-                                                                                                                <div className="form-group-modern">
-                                                                                                                  <label>{get('hotels.form.label.checkInRequired', 'Check-in Date *')}</label>
-                                                                                                                  <input 
-                                                                                                                    type="date" 
-                                                                                                                    value={searchParams.checkIn}
-                                                                                                                    onChange={(e) => setSearchParams({...searchParams, checkIn: e.target.value})}
-                                                                                                                    required
-                                                                                                                  />
-                                                                                                                </div>
-                                                                                                                <div className="form-group-modern">
-                                                                                                                  <label>{get('hotels.form.label.checkOutRequired', 'Check-out Date *')}</label>
-                                                                                                                  <input 
-                                                                                                                    type="date" 
-                                                                                                                    value={searchParams.checkOut}
-                                                                                                                    onChange={(e) => setSearchParams({...searchParams, checkOut: e.target.value})}
-                                                                                                                    required
-                                                                                                                  />
-                                                                                                                </div>
-                                                                                                              </div>
-
-                                                                                                              <div className="form-row-modern">
-                                                                                                                <div className="form-group-modern">
-                                                                                                                  <label>{get('hotels.form.label.guestsRequired', 'Guests *')}</label>
-                                                                                                                  <select 
-                                                                                                                    value={searchParams.guests}
-                                                                                                                    onChange={(e) => setSearchParams({...searchParams, guests: parseInt(e.target.value)})}
-                                                                                                                    required
-                                                                                                                  >
-                                                                                                                      {[1,2,3,4,5,6].map(num => (
-                                                                                                                      <option key={num} value={num}>{num} {num === 1 ? get('hotels.form.guestSingular','Guest') : get('hotels.form.guestPlural','Guests')}</option>
-                                                                                                                    ))}
-                                                                                                                  </select>
-                                                                                                                </div>
-                                                                                                                <div className="form-group-modern">
-                                                                                                                  <label>{get('hotels.form.label.roomsRequired', 'Rooms *')}</label>
-                                                                                                                  <select 
-                                                                                                                    value={searchParams.rooms}
-                                                                                                                    onChange={(e) => setSearchParams({...searchParams, rooms: parseInt(e.target.value)})}
-                                                                                                                    required
-                                                                                                                  >
-                                                                                                                      {[1,2,3,4].map(num => (
-                                                                                                                      <option key={num} value={num}>{num} {num === 1 ? get('hotels.form.roomSingular','Room') : get('hotels.form.roomPlural','Rooms')}</option>
-                                                                                                                    ))}
-                                                                                                                  </select>
-                                                                                                                </div>
-                                                                                                              </div>
-                                                                                                            </div>
-
-                                                                                                            {/* Additional Services */}
-                                                                                                            {bookingType !== 'hotel-only' && (
-                                                                                                              <div className="form-section-modern">
-                                                                                                                <h3 className="section-heading-modern">
-                                                                                                                  <span className="heading-icon">🎯</span>
-                                                                                                                  {get('hotels.modal.additionalServices.title', 'Additional Services')}
-                                                                                                                </h3>
-                                                                                                                <div className="services-selection-modern">
-                                                                                                                  {additionalServices.map(service => (
-                                                                                                                    <label key={service.id} className="service-checkbox-modern">
-                                                                                                                      <input
-                                                                                                                        type="checkbox"
-                                                                                                                        checked={selectedPackages[service.id]}
-                                                                                                                        onChange={(e) => setSelectedPackages({
-                                                                                                                          ...selectedPackages,
-                                                                                                                          [service.id]: e.target.checked
-                                                                                                                        })}
-                                                                                                                      />
-                                                                                                                      <div className="service-info-modern">
-                                                                                                                        <div className="service-header-modern">
-                                                                                                                          <span className="service-name">{service.name}</span>
-                                                                                                                          <span className="service-price-modern">+${service.price}</span>
-                                                                                                                        </div>
-                                                                                                                        <span className="service-desc-modern">{service.description}</span>
-                                                                                                                      </div>
-                                                                                                                    </label>
-                                                                                                                  ))}
-                                                                                                                </div>
-                                                                                                              </div>
-                                                                                                            )}
-
-                                                                                                            {/* Price Summary */}
-                                                                                                            <div className="form-section-modern">
-                                                                                                              <h3 className="section-heading-modern">
-                                                                                                                <span className="heading-icon">💰</span>
-                                                                                                                {get('hotels.modal.priceSummary.title', 'Price Summary')}
-                                                                                                              </h3>
-                                                                                                              <div className="price-summary-modern">
-                                                                                                                <div className="summary-row-modern">
-                                                                                                                  <span>{get('hotels.modal.priceSummary.hotelLabel', 'Hotel')} ({searchParams.rooms} {get('hotels.modal.priceSummary.roomsLabel','rooms')})</span>
-                                                                                                                  <span className="summary-price">${selectedHotel.price * searchParams.rooms}</span>
-                                                                                                                </div>
-                                                                                                                
-                                                                                                                {selectedPackages.airportTransfer && (
-                                                                                                                  <div className="summary-row-modern">
-                                                                                                                    <span>✈️ {get('hotels.services.airportTransfer.name','Airport Transfer')}</span>
-                                                                                                                    <span className="summary-price">+${additionalServices.find(s => s.id === 'airport-transfer')?.price}</span>
-                                                                                                                  </div>
-                                                                                                                )}
-                                                                                                                
-                                                                                                                {selectedPackages.dailyTours && (
-                                                                                                                  <div className="summary-row-modern">
-                                                                                                                    <span>🗺️ {get('hotels.services.dailyTours.name','Daily Tours')}</span>
-                                                                                                                    <span className="summary-price">+${additionalServices.find(s => s.id === 'daily-tours')?.price}</span>
-                                                                                                                  </div>
-                                                                                                                )}
-                                                                                                                
-                                                                                                                {selectedPackages.rentalCar && (
-                                                                                                                  <div className="summary-row-modern">
-                                                                                                                    <span>🚗 {get('hotels.services.rentalCar.name','Car Rental')}</span>
-                                                                                                                    <span className="summary-price">+${additionalServices.find(s => s.id === 'rental-car')?.price}</span>
-                                                                                                                  </div>
-                                                                                                                )}
-
-                                                                                                                <div className="summary-divider-modern"></div>
-                                                                                                                <div className="summary-row-modern total-modern">
-                                                                                                                  <span>{get('hotels.modal.priceSummary.totalLabel','Total Amount')}</span>
-                                                                                                                  <span className="summary-total-price">${calculateTotalPrice()}</span>
-                                                                                                                </div>
-                                                                                                              </div>
-                                                                                                            </div>
-
-                                                                                                            <div className="form-actions-modern">
-                                                                                                              <button 
-                                                                                                                type="button"
-                                                                                                                className="btn-cancel-modern"
-                                                                                                                onClick={() => setShowBookingForm(false)}
-                                                                                                              >
-                                                                                                                <span className="btn-icon">✕</span>
-                                                                                                                <span className="btn-text">{get('hotels.buttons.cancel','Cancel')}</span>
-                                                                                                              </button>
-                                                                                                              <button 
-                                                                                                                type="button"
-                                                                                                                className="btn-confirm-modern"
-                                                                                                                onClick={handleWhatsAppBooking}
-                                                                                                              >
-                                                                                                                <span className="btn-icon">💬</span>
-                                                                                                                <span className="btn-text">{get('hotels.buttons.confirmAndBook','Confirm & Book via WhatsApp')}</span>
-                                                                                                              </button>
-                                                                                                            </div>
-                                                                                                          </form>
-                                                                                                        </div>
-                                                                                                      </div>
-                                                                                                    </div>
-                                                                                                  )}
-
-                                                                                                  <style jsx>{`
-                                                                                                    /* Hotels Page Specific Styles */
-                                                                                                    .hero {
-                                                                                                      position: relative;
-                                                                                                      min-height: 100vh;
-                                                                                                      display: flex;
-                                                                                                      align-items: center;
-                                                                                                      justify-content: center;
-                                                                                                      text-align: center;
-                                                                                                      color: white;
-                                                                                                      overflow: hidden;
-                                                                                                      margin-top: 80px;
-                                                                                                    }
-
-                                                                                                    .hero-overlay {
-                                                                                                      position: absolute;
-                                                                                                      top: 0;
-                                                                                                      left: 0;
-                                                                                                      width: 100%;
-                                                                                                      height: 100%;
-                                                                                                      background: linear-gradient(135deg, rgba(5, 59, 60, 0.6), rgba(10, 92, 94, 0.5));
-                                                                                                    }
-
-                                                                                                    .hero-content {
-                                                                                                      position: relative;
-                                                                                                      z-index: 2;
-                                                                                                      width: 100%;
-                                                                                                      max-width: 1200px;
-                                                                                                      padding: 0 2rem;
-                                                                                                      text-align: center;
-                                                                                                    }
-
-                                                                                                    .hero-content h1 {
-                                                                                                      font-size: 3.5rem;
-                                                                                                      margin-bottom: 1.5rem;
-                                                                                                      font-weight: 700;
-                                                                                                      text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.9), 0 0 25px rgba(0, 0, 0, 0.6);
-                                                                                                      color: #ffffff;
-                                                                                                    }
-
-                                                                                                    .hero-content p {
-                                                                                                      font-size: 1.4rem;
-                                                                                                      margin-bottom: 2.5rem;
-                                                                                                      opacity: 0.98;
-                                                                                                      text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.9), 0 0 20px rgba(0, 0, 0, 0.7);
-                                                                                                      color: #ffffff;
-                                                                                                    }
-
-                                                                                                    .scroll-indicator {
-                                                                                                      position: absolute;
-                                                                                                      bottom: 30px;
-                                                                                                      left: 50%;
-                                                                                                      transform: translateX(-50%);
-                                                                                                      text-align: center;
-                                                                                                      color: #ffffff;
-                                                                                                    }
-
-                                                                                                    /* Search Section */
-                                                                                                    .search-section {
-                                                                                                      padding: 4rem 0;
-                                                                                                      background: var(--section-bg);
-                                                                                                    }
-
-                                                                                                    .section-header {
-                                                                                                      text-align: center;
-                                                                                                      margin-bottom: 3rem;
-                                                                                                    }
-
-                                                                                                    .section-header h2 {
-                                                                                                      font-size: 2.5rem;
-                                                                                                      color: var(--primary-color);
-                                                                                                      margin-bottom: 1rem;
-                                                                                                      font-weight: 700;
-                                                                                                    }
-
-                                                                                                    .section-header p {
-                                                                                                      font-size: 1.1rem;
-                                                                                                      color: var(--text-light);
-                                                                                                      max-width: 600px;
-                                                                                                      margin: 0 auto;
-                                                                                                    }
-
-                                                                                                    .search-card {
-                                                                                                      background: white;
-                                                                                                      padding: 2.5rem;
-                                                                                                      border-radius: 15px;
-                                                                                                      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-                                                                                                    }
-
-                                                                                                    .search-form .form-row {
-                                                                                                      display: grid;
-                                                                                                      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-                                                                                                      gap: 1rem;
-                                                                                                      margin-bottom: 2rem;
-                                                                                                    }
-
-                                                                                                    .form-group label {
-                                                                                                      display: block;
-                                                                                                      margin-bottom: 0.5rem;
-                                                                                                      font-weight: 600;
-                                                                                                      color: var(--primary-color);
-                                                                                                    }
-
-                                                                                                    .form-group select,
-                                                                                                    .form-group input {
-                                                                                                      width: 100%;
-                                                                                                      padding: 10px 15px;
-                                                                                                      border: 1px solid var(--border-color);
-                                                                                                      border-radius: 5px;
-                                                                                                      font-size: 1rem;
-                                                                                                    }
-
-                                                                                                    .advanced-filters {
-                                                                                                      border-top: 1px solid var(--border-color);
-                                                                                                      padding-top: 2rem;
-                                                                                                      margin-bottom: 2rem;
-                                                                                                    }
-
-                                                                                                    .filter-group {
-                                                                                                      margin-bottom: 1.5rem;
-                                                                                                    }
-
-                                                                                                    .filter-group label {
-                                                                                                      display: block;
-                                                                                                      margin-bottom: 1rem;
-                                                                                                      font-weight: 600;
-                                                                                                      color: var(--primary-color);
-                                                                                                    }
-
-                                                                                                    .price-slider {
-                                                                                                      width: 100%;
-                                                                                                      height: 5px;
-                                                                                                      border-radius: 5px;
-                                                                                                      background: var(--border-color);
-                                                                                                      outline: none;
-                                                                                                    }
-
-                                                                                                    .rating-filters {
-                                                                                                      display: flex;
-                                                                                                      gap: 0.5rem;
-                                                                                                      flex-wrap: wrap;
-                                                                                                    }
-
-                                                                                                    .rating-btn {
-                                                                                                      padding: 8px 16px;
-                                                                                                      border: 1px solid var(--border-color);
-                                                                                                      background: white;
-                                                                                                      border-radius: 20px;
-                                                                                                      cursor: pointer;
-                                                                                                      transition: all 0.3s ease;
-                                                                                                    }
-
-                                                                                                    .rating-btn.active {
-                                                                                                      background: var(--primary-color);
-                                                                                                      color: white;
-                                                                                                      border-color: var(--primary-color);
-                                                                                                    }
-
-                                                                                                    .amenities-filters {
-                                                                                                      display: grid;
-                                                                                                      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-                                                                                                      gap: 0.5rem;
-                                                                                                    }
-
-                                                                                                    .amenity-checkbox {
-                                                                                                      display: flex;
-                                                                                                      align-items: center;
-                                                                                                      gap: 0.5rem;
-                                                                                                      cursor: pointer;
-                                                                                                    }
-
-                                                                                                    .amenity-checkbox input {
-                                                                                                      width: auto;
-                                                                                                    }
-
-                                                                                                    .search-btn {
-                                                                                                      width: 100%;
-                                                                                                      padding: 15px;
-                                                                                                      font-size: 1.1rem;
-                                                                                                    }
-
-                                                                                                    /* Compact Services Inside Form */
-                                                                                                    .services-compact {
-                                                                                                      margin-top: 2rem;
-                                                                                                      padding-top: 1.5rem;
-                                                                                                      border-top: 2px solid #f0f0f0;
-                                                                                                    }
-
-                                                                                                    .services-compact-label {
-                                                                                                      display: block;
-                                                                                                      font-size: 1rem;
-                                                                                                      font-weight: 600;
-                                                                                                      color: var(--text-color);
-                                                                                                      margin-bottom: 1rem;
-                                                                                                    }
-
-                                                                                                    .services-compact-grid {
-                                                                                                      display: grid;
-                                                                                                      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-                                                                                                      gap: 1rem;
-                                                                                                      margin-bottom: 1.5rem;
-                                                                                                    }
-
-                                                                                                    .service-compact-card {
-                                                                                                      display: flex;
-                                                                                                      align-items: center;
-                                                                                                      gap: 0.75rem;
-                                                                                                      padding: 0.875rem;
-                                                                                                      background: #f8f9fa;
-                                                                                                      border: 2px solid transparent;
-                                                                                                      border-radius: 10px;
-                                                                                                      cursor: pointer;
-                                                                                                      transition: all 0.3s ease;
-                                                                                                      position: relative;
-                                                                                                    }
-
-                                                                                                    .service-compact-card:hover {
-                                                                                                      background: #ffffff;
-                                                                                                      transform: translateY(-2px);
-                                                                                                      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-                                                                                                    }
-
-                                                                                                    .service-compact-card.selected {
-                                                                                                      background: linear-gradient(135deg, #fff8f0 0%, #ffffff 100%);
-                                                                                                      border-color: var(--primary-color);
-                                                                                                      box-shadow: 0 4px 12px rgba(255,108,0,0.15);
-                                                                                                    }
-
-                                                                                                    .service-compact-icon {
-                                                                                                      font-size: 1.5rem;
-                                                                                                      flex-shrink: 0;
-                                                                                                    }
-
-                                                                                                    .service-compact-content {
-                                                                                                      flex: 1;
-                                                                                                      min-width: 0;
-                                                                                                    }
-
-                                                                                                    .service-compact-content h4 {
-                                                                                                      font-size: 0.9rem;
-                                                                                                      font-weight: 600;
-                                                                                                      color: var(--text-color);
-                                                                                                      margin: 0 0 0.25rem 0;
-                                                                                                      line-height: 1.2;
-                                                                                                    }
-
-                                                                                                    .service-compact-content p {
-                                                                                                      font-size: 0.75rem;
-                                                                                                      color: var(--text-light);
-                                                                                                      margin: 0;
-                                                                                                      line-height: 1.3;
-                                                                                                    }
-
-                                                                                                    .service-compact-check {
-                                                                                                      width: 24px;
-                                                                                                      height: 24px;
-                                                                                                      border: 2px solid #ddd;
-                                                                                                      border-radius: 6px;
-                                                                                                      display: flex;
-                                                                                                      align-items: center;
-                                                                                                      justify-content: center;
-                                                                                                      font-size: 1rem;
-                                                                                                      color: white;
-                                                                                                      background: white;
-                                                                                                      transition: all 0.3s ease;
-                                                                                                      flex-shrink: 0;
-                                                                                                    }
-
-                                                                                                    .service-compact-card.selected .service-compact-check {
-                                                                                                      background: var(--primary-color);
-                                                                                                      border-color: var(--primary-color);
-                                                                                                    }
-
-                                                                                                    /* Modern Modal Styles */
-                                                                                                    .modal-overlay-modern {
-                                                                                                      position: fixed;
-                                                                                                      top: 0;
-                                                                                                      left: 0;
-                                                                                                      right: 0;
-                                                                                                      bottom: 0;
-                                                                                                      background: rgba(0, 0, 0, 0.65);
-                                                                                                      backdrop-filter: blur(4px);
-                                                                                                      display: flex;
-                                                                                                      align-items: center;
-                                                                                                      justify-content: center;
-                                                                                                      z-index: 10000;
-                                                                                                      padding: 1rem;
-                                                                                                      animation: fadeIn 0.3s ease;
-                                                                                                    }
-
-                                                                                                    @keyframes fadeIn {
-                                                                                                      from { opacity: 0; }
-                                                                                                      to { opacity: 1; }
-                                                                                                    }
-
-                                                                                                    .modal-content-modern {
-                                                                                                      background: white;
-                                                                                                      border-radius: 12px;
-                                                                                                      max-width: 700px;
-                                                                                                      width: 100%;
-                                                                                                      max-height: 90vh;
-                                                                                                      overflow-y: auto;
-                                                                                                      box-shadow: 0 15px 40px rgba(0,0,0,0.25);
-                                                                                                      animation: slideUp 0.3s ease;
-                                                                                                    }
-
-                                                                                                    @keyframes slideUp {
-                                                                                                      from {
-                                                                                                        opacity: 0;
-                                                                                                        transform: translateY(20px);
-                                                                                                      }
-                                                                                                      to {
-                                                                                                        opacity: 1;
-                                                                                                        transform: translateY(0);
-                                                                                                      }
-                                                                                                    }
-
-                                                                                                    .modal-header-modern {
-                                                                                                      display: flex;
-                                                                                                      align-items: flex-start;
-                                                                                                      justify-content: space-between;
-                                                                                                      padding: 1.25rem 1.5rem 1rem;
-                                                                                                      border-bottom: 2px solid #f0f0f0;
-                                                                                                      background: linear-gradient(135deg, #fff8f0 0%, #ffffff 100%);
-                                                                                                    }
-
-                                                                                                    .modal-title-section h2 {
-                                                                                                      margin: 0 0 0.25rem 0;
-                                                                                                      font-size: 1.4rem;
-                                                                                                      color: var(--text-color);
-                                                                                                    }
-
-                                                                                                    .modal-subtitle {
-                                                                                                      margin: 0;
-                                                                                                      font-size: 0.95rem;
-                                                                                                      color: var(--primary-color);
-                                                                                                      font-weight: 600;
-                                                                                                    }
-
-                                                                                                    .modal-close-modern {
-                                                                                                      background: rgba(0,0,0,0.05);
-                                                                                                      border: none;
-                                                                                                      width: 32px;
-                                                                                                      height: 32px;
-                                                                                                      border-radius: 50%;
-                                                                                                      font-size: 1.3rem;
-                                                                                                      cursor: pointer;
-                                                                                                      display: flex;
-                                                                                                      align-items: center;
-                                                                                                      justify-content: center;
-                                                                                                      color: #666;
-                                                                                                      transition: all 0.3s ease;
-                                                                                                      flex-shrink: 0;
-                                                                                                    }
-
-                                                                                                    .modal-close-modern:hover {
-                                                                                                      background: rgba(0,0,0,0.1);
-                                                                                                      color: var(--text-color);
-                                                                                                      transform: rotate(90deg);
-                                                                                                    }
-
-                                                                                                    .booking-tabs-modern {
-                                                                                                      display: flex;
-                                                                                                      gap: 0.4rem;
-                                                                                                      padding: 1rem 1.5rem;
-                                                                                                      background: #f8f9fa;
-                                                                                                      border-bottom: 2px solid #e9ecef;
-                                                                                                    }
-
-                                                                                                    .tab-modern {
-                                                                                                      flex: 1;
-                                                                                                      display: flex;
-                                                                                                      flex-direction: column;
-                                                                                                      align-items: center;
-                                                                                                      gap: 0.3rem;
-                                                                                                      padding: 0.65rem 0.5rem;
-                                                                                                      background: white;
-                                                                                                      border: 1.5px solid #dee2e6;
-                                                                                                      border-radius: 8px;
-                                                                                                      cursor: pointer;
-                                                                                                      transition: all 0.3s ease;
-                                                                                                    }
-
-                                                                                                    .tab-modern:hover {
-                                                                                                      border-color: var(--primary-color);
-                                                                                                      transform: translateY(-1px);
-                                                                                                    }
-
-                                                                                                    .tab-modern.active {
-                                                                                                      background: linear-gradient(135deg, #fff8f0 0%, #ffffff 100%);
-                                                                                                      border-color: var(--primary-color);
-                                                                                                      box-shadow: 0 2px 8px rgba(255,108,0,0.12);
-                                                                                                    }
-
-                                                                                                    .tab-icon {
-                                                                                                      font-size: 1.2rem;
-                                                                                                    }
-
-                                                                                                    .tab-label {
-                                                                                                      font-size: 0.75rem;
-                                                                                                      font-weight: 600;
-                                                                                                      color: var(--text-color);
-                                                                                                    }
-
-                                                                                                    .booking-content-modern {
-                                                                                                      padding: 1.5rem;
-                                                                                                    }
-
-                                                                                                    .hotel-summary-modern {
-                                                                                                      display: flex;
-                                                                                                      gap: 1rem;
-                                                                                                      padding: 1rem;
-                                                                                                      background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
-                                                                                                      border-radius: 10px;
-                                                                                                      margin-bottom: 1.25rem;
-                                                                                                      border: 1.5px solid #e9ecef;
-                                                                                                    }
-
-                                                                                                    .hotel-image-modern {
-                                                                                                      flex-shrink: 0;
-                                                                                                    }
-
-                                                                                                    .hotel-details-modern h3 {
-                                                                                                      margin: 0 0 0.65rem 0;
-                                                                                                      font-size: 1.1rem;
-                                                                                                      color: var(--text-color);
-                                                                                                    }
-
-                                                                                                    .hotel-meta-modern {
-                                                                                                      display: flex;
-                                                                                                      flex-wrap: wrap;
-                                                                                                      gap: 0.75rem;
-                                                                                                    }
-
-                                                                                                    .meta-item {
-                                                                                                      display: flex;
-                                                                                                      align-items: center;
-                                                                                                      gap: 0.35rem;
-                                                                                                      font-size: 0.8rem;
-                                                                                                      color: var(--text-light);
-                                                                                                    }
-
-                                                                                                    .meta-icon {
-                                                                                                      font-size: 0.9rem;
-                                                                                                    }
-
-                                                                                                    .booking-form-modern {
-                                                                                                      display: flex;
-                                                                                                      flex-direction: column;
-                                                                                                      gap: 1.25rem;
-                                                                                                    }
-
-                                                                                                    .form-section-modern {
-                                                                                                      background: white;
-                                                                                                      border: 1.5px solid #f0f0f0;
-                                                                                                      border-radius: 10px;
-                                                                                                      padding: 1rem;
-                                                                                                    }
-
-                                                                                                    .section-heading-modern {
-                                                                                                      display: flex;
-                                                                                                      align-items: center;
-                                                                                                      gap: 0.5rem;
-                                                                                                      margin: 0 0 1rem 0;
-                                                                                                      font-size: 1rem;
-                                                                                                      color: var(--text-color);
-                                                                                                    }
-
-                                                                                                    .heading-icon {
-                                                                                                      font-size: 1.1rem;
-                                                                                                    }
-
-                                                                                                    .form-row-modern {
-                                                                                                      display: grid;
-                                                                                                      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-                                                                                                      gap: 0.75rem;
-                                                                                                      margin-bottom: 0.75rem;
-                                                                                                    }
-
-                                                                                                    .form-row-modern:last-child {
-                                                                                                      margin-bottom: 0;
-                                                                                                    }
-
-                                                                                                    .form-group-modern {
-                                                                                                      display: flex;
-                                                                                                      flex-direction: column;
-                                                                                                    }
-
-                                                                                                    .form-group-modern label {
-                                                                                                      margin-bottom: 0.4rem;
-                                                                                                      font-weight: 600;
-                                                                                                      color: var(--text-color);
-                                                                                                      font-size: 0.8rem;
-                                                                                                    }
-
-                                                                                                    .form-group-modern input,
-                                                                                                    .form-group-modern select {
-                                                                                                      padding: 0.65rem;
-                                                                                                      border: 1.5px solid #e9ecef;
-                                                                                                      border-radius: 6px;
-                                                                                                      font-size: 0.9rem;
-                                                                                                      transition: all 0.3s ease;
-                                                                                                    }
-
-                                                                                                    .form-group-modern input:focus,
-                                                                                                    .form-group-modern select:focus {
-                                                                                                      outline: none;
-                                                                                                      border-color: var(--primary-color);
-                                                                                                      box-shadow: 0 0 0 2px rgba(255,108,0,0.08);
-                                                                                                    }
-
-                                                                                                    .services-selection-modern {
-                                                                                                      display: flex;
-                                                                                                      flex-direction: column;
-                                                                                                      gap: 0.65rem;
-                                                                                                    }
-
-                                                                                                    .service-checkbox-modern {
-                                                                                                      display: flex;
-                                                                                                      align-items: flex-start;
-                                                                                                      gap: 0.75rem;
-                                                                                                      padding: 0.75rem;
-                                                                                                      background: #f8f9fa;
-                                                                                                      border: 1.5px solid transparent;
-                                                                                                      border-radius: 8px;
-                                                                                                      cursor: pointer;
-                                                                                                      transition: all 0.3s ease;
-                                                                                                    }
-
-                                                                                                    .service-checkbox-modern:hover {
-                                                                                                      background: white;
-                                                                                                      border-color: #dee2e6;
-                                                                                                    }
-
-                                                                                                    .service-checkbox-modern input[type="checkbox"] {
-                                                                                                      width: 18px;
-                                                                                                      height: 18px;
-                                                                                                      cursor: pointer;
-                                                                                                      accent-color: var(--primary-color);
-                                                                                                      margin-top: 1px;
-                                                                                                    }
-
-                                                                                                    .service-info-modern {
-                                                                                                      flex: 1;
-                                                                                                    }
-
-                                                                                                    .service-header-modern {
-                                                                                                      display: flex;
-                                                                                                      justify-content: space-between;
-                                                                                                      align-items: center;
-                                                                                                      margin-bottom: 0.3rem;
-                                                                                                    }
-
-                                                                                                    .service-name {
-                                                                                                      font-weight: 600;
-                                                                                                      color: var(--text-color);
-                                                                                                      font-size: 0.9rem;
-                                                                                                    }
-
-                                                                                                    .service-price-modern {
-                                                                                                      font-weight: 700;
-                                                                                                      color: var(--primary-color);
-                                                                                                      font-size: 0.9rem;
-                                                                                                    }
-
-                                                                                                    .service-desc-modern {
-                                                                                                      font-size: 0.75rem;
-                                                                                                      color: var(--text-light);
-                                                                                                      line-height: 1.3;
-                                                                                                    }
-
-                                                                                                    .price-summary-modern {
-                                                                                                      display: flex;
-                                                                                                      flex-direction: column;
-                                                                                                      gap: 0.6rem;
-                                                                                                    }
-
-                                                                                                    .summary-row-modern {
-                                                                                                      display: flex;
-                                                                                                      justify-content: space-between;
-                                                                                                      align-items: center;
-                                                                                                      padding: 0.5rem 0;
-                                                                                                      font-size: 0.85rem;
-                                                                                                    }
-
-                                                                                                    .summary-price {
-                                                                                                      font-weight: 600;
-                                                                                                      color: var(--text-color);
-                                                                                                    }
-
-                                                                                                    .summary-divider-modern {
-                                                                                                      height: 1.5px;
-                                                                                                      background: linear-gradient(90deg, transparent, #e9ecef, transparent);
-                                                                                                      margin: 0.4rem 0;
-                                                                                                    }
-
-                                                                                                    .summary-row-modern.total-modern {
-                                                                                                      padding: 0.75rem 0 0 0;
-                                                                                                      font-size: 1rem;
-                                                                                                      font-weight: 700;
-                                                                                                    }
-
-                                                                                                    .summary-total-price {
-                                                                                                      font-size: 1.3rem;
-                                                                                                      color: var(--primary-color);
-                                                                                                      font-weight: 700;
-                                                                                                    }
-
-                                                                                                    .form-actions-modern {
-                                                                                                      display: flex;
-                                                                                                      gap: 0.75rem;
-                                                                                                      padding-top: 0.75rem;
-                                                                                                    }
-
-                                                                                                    .btn-cancel-modern,
-                                                                                                    .btn-confirm-modern {
-                                                                                                      flex: 1;
-                                                                                                      display: flex;
-                                                                                                      align-items: center;
-                                                                                                      justify-content: center;
-                                                                                                      gap: 0.5rem;
-                                                                                                      padding: 0.75rem 1.5rem;
-                                                                                                      border: none;
-                                                                                                      border-radius: 8px;
-                                                                                                      font-size: 0.9rem;
-                                                                                                      font-weight: 600;
-                                                                                                      cursor: pointer;
-                                                                                                      transition: all 0.3s ease;
-                                                                                                    }
-
-                                                                                                    .btn-cancel-modern {
-                                                                                                      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-                                                                                                      color: var(--text-color);
-                                                                                                      border: 2px solid #dee2e6;
-                                                                                                    }
-
-                                                                                                    .btn-cancel-modern:hover {
-                                                                                                      background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
-                                                                                                      transform: translateY(-2px);
-                                                                                                      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-                                                                                                    }
-
-                                                                                                    .btn-confirm-modern {
-                                                                                                      background: linear-gradient(135deg, var(--primary-color) 0%, #d96200 100%);
-                                                                                                      color: white;
-                                                                                                    }
-
-                                                                                                    .btn-confirm-modern:hover {
-                                                                                                      background: linear-gradient(135deg, #d96200 0%, var(--primary-color) 100%);
-                                                                                                      transform: translateY(-1px);
-                                                                                                      box-shadow: 0 4px 12px rgba(255,108,0,0.25);
-                                                                                                    }
-
-                                                                                                    /* Packages Section */
-                                                                                                    .packages-section {
-                                                                                                      padding: 4rem 0;
-                                                                                                    }
-
-                                                                                                    .packages-grid {
-                                                                                                      display: grid;
-                                                                                                      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-                                                                                                      gap: 2rem;
-                                                                                                    }
-
-                                                                                                    .package-card {
-                                                                                                      background: white;
-                                                                                                      border-radius: 10px;
-                                                                                                      overflow: hidden;
-                                                                                                      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-                                                                                                      transition: transform 0.3s ease;
-                                                                                                    }
-
-                                                                                                    .package-card:hover {
-                                                                                                      transform: translateY(-5px);
-                                                                                                    }
-
-                                                                                                    .package-image {
-                                                                                                      position: relative;
-                                                                                                      height: 200px;
-                                                                                                    }
-
-                                                                                                    .package-badge {
-                                                                                                      position: absolute;
-                                                                                                      top: 15px;
-                                                                                                      left: 15px;
-                                                                                                      background: var(--secondary-color);
-                                                                                                      color: var(--text-color);
-                                                                                                      padding: 5px 10px;
-                                                                                                      border-radius: 15px;
-                                                                                                      font-size: 0.8rem;
-                                                                                                      font-weight: 600;
-                                                                                                    }
-
-                                                                                                    .package-content {
-                                                                                                      padding: 1.5rem;
-                                                                                                    }
-
-                                                                                                    .package-content h3 {
-                                                                                                      color: var(--primary-color);
-                                                                                                      margin-bottom: 0.5rem;
-                                                                                                    }
-
-                                                                                                    .package-content p {
-                                                                                                      color: var(--text-light);
-                                                                                                      margin-bottom: 1rem;
-                                                                                                      font-size: 0.9rem;
-                                                                                                    }
-
-                                                                                                    .package-includes {
-                                                                                                      margin-bottom: 1.5rem;
-                                                                                                    }
-
-                                                                                                    .package-includes h4 {
-                                                                                                      color: var(--primary-color);
-                                                                                                      margin-bottom: 0.5rem;
-                                                                                                      font-size: 1rem;
-                                                                                                    }
-
-                                                                                                    .package-includes ul {
-                                                                                                      list-style: none;
-                                                                                                      padding: 0;
-                                                                                                    }
-
-                                                                                                    .package-includes li {
-                                                                                                      margin-bottom: 0.3rem;
-                                                                                                      font-size: 0.9rem;
-                                                                                                      color: var(--text-light);
-                                                                                                    }
-
-                                                                                                    .package-pricing {
-                                                                                                      display: flex;
-                                                                                                      align-items: center;
-                                                                                                      gap: 1rem;
-                                                                                                      margin-bottom: 1.5rem;
-                                                                                                      flex-wrap: wrap;
-                                                                                                    }
-
-                                                                                                    .price-original {
-                                                                                                      text-decoration: line-through;
-                                                                                                      color: var(--text-light);
-                                                                                                      font-size: 1.1rem;
-                                                                                                    }
-
-                                                                                                    .price-discounted {
-                                                                                                      font-size: 1.5rem;
-                                                                                                      font-weight: 700;
-                                                                                                      color: var(--primary-color);
-                                                                                                    }
-
-                                                                                                    .price-save {
-                                                                                                      background: #053b3c;
-                                                                                                      color: white;
-                                                                                                      padding: 3px 8px;
-                                                                                                      border-radius: 12px;
-                                                                                                      font-size: 0.8rem;
-                                                                                                      font-weight: 600;
-                                                                                                    }
-
-                                                                                                    /* Hotels Grid */
-                                                                                                    .hotels-grid-section {
-                                                                                                      padding: 4rem 0;
-                                                                                                      background: var(--section-bg);
-                                                                                                    }
-
-                                                                                                    .hotels-grid {
-                                                                                                      display: grid;
-                                                                                                      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-                                                                                                      gap: 2rem;
-                                                                                                    }
-
-                                                                                                    .hotel-card {
-                                                                                                      background: white;
-                                                                                                      border-radius: 10px;
-                                                                                                      overflow: hidden;
-                                                                                                      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-                                                                                                      transition: transform 0.3s ease;
-                                                                                                    }
-
-                                                                                                    .hotel-card:hover {
-                                                                                                      transform: translateY(-5px);
-                                                                                                    }
-
-                                                                                                    .hotel-image {
-                                                                                                      position: relative;
-                                                                                                      height: 200px;
-                                                                                                    }
-
-                                                                                                    .hotel-rating {
-                                                                                                      position: absolute;
-                                                                                                      top: 15px;
-                                                                                                      right: 15px;
-                                                                                                      background: rgba(255, 255, 255, 0.9);
-                                                                                                      padding: 5px 10px;
-                                                                                                      border-radius: 15px;
-                                                                                                      font-size: 0.8rem;
-                                                                                                      font-weight: 600;
-                                                                                                    }
-
-                                                                                                    .hotel-location {
-                                                                                                      position: absolute;
-                                                                                                      bottom: 15px;
-                                                                                                      left: 15px;
-                                                                                                      background: var(--primary-color);
-                                                                                                      color: white;
-                                                                                                      padding: 5px 10px;
-                                                                                                      border-radius: 15px;
-                                                                                                      font-size: 0.8rem;
-                                                                                                      font-weight: 600;
-                                                                                                    }
-
-                                                                                                    .hotel-content {
-                                                                                                      padding: 1.5rem;
-                                                                                                    }
-
-                                                                                                    .hotel-content h3 {
-                                                                                                      color: var(--primary-color);
-                                                                                                      margin-bottom: 0.5rem;
-                                                                                                    }
-
-                                                                                                    .hotel-description {
-                                                                                                      color: var(--text-light);
-                                                                                                      margin-bottom: 1rem;
-                                                                                                      font-size: 0.9rem;
-                                                                                                    }
-
-                                                                                                    .hotel-amenities {
-                                                                                                      display: flex;
-                                                                                                      flex-wrap: wrap;
-                                                                                                      gap: 0.5rem;
-                                                                                                      margin-bottom: 1rem;
-                                                                                                    }
-
-                                                                                                    .amenity-tag {
-                                                                                                      background: var(--section-bg);
-                                                                                                      padding: 3px 8px;
-                                                                                                      border-radius: 10px;
-                                                                                                      font-size: 0.7rem;
-                                                                                                      color: var(--text-light);
-                                                                                                    }
-
-                                                                                                    .amenity-more {
-                                                                                                      background: var(--primary-light);
-                                                                                                      color: white;
-                                                                                                      padding: 3px 8px;
-                                                                                                      border-radius: 10px;
-                                                                                                      font-size: 0.7rem;
-                                                                                                      font-weight: 600;
-                                                                                                    }
-
-                                                                                                    /* Facilities (from DB) */
-                                                                                                    .hotel-facilities {
-                                                                                                      margin-bottom: 1rem;
-                                                                                                    }
-
-                                                                                                    .facility-tags {
-                                                                                                      display: flex;
-                                                                                                      gap: 0.5rem;
-                                                                                                      flex-wrap: wrap;
-                                                                                                      margin-top: 0.5rem;
-                                                                                                    }
-
-                                                                                                    .facility-tag {
-                                                                                                      background: var(--section-bg);
-                                                                                                      padding: 3px 8px;
-                                                                                                      border-radius: 10px;
-                                                                                                      font-size: 0.75rem;
-                                                                                                      color: var(--text-light);
-                                                                                                    }
-
-                                                                                                    .hotel-popular {
-                                                                                                      margin-bottom: 1.5rem;
-                                                                                                    }
-
-                                                                                                    .hotel-popular span {
-                                                                                                      font-size: 0.8rem;
-                                                                                                      color: var(--text-light);
-                                                                                                      margin-bottom: 0.5rem;
-                                                                                                      display: block;
-                                                                                                    }
-
-                                                                                                    .popular-tags {
-                                                                                                      display: flex;
-                                                                                                      flex-wrap: wrap;
-                                                                                                      gap: 0.3rem;
-                                                                                                    }
-
-                                                                                                    .popular-tag {
-                                                                                                      background: var(--secondary-color);
-                                                                                                      color: var(--text-color);
-                                                                                                      padding: 2px 6px;
-                                                                                                      border-radius: 8px;
-                                                                                                      font-size: 0.7rem;
-                                                                                                      font-weight: 600;
-                                                                                                      text-transform: capitalize;
-                                                                                                    }
-
-                                                                                                    .hotel-footer {
-                                                                                                      display: flex;
-                                                                                                      justify-content: space-between;
-                                                                                                      align-items: center;
-                                                                                                      padding-top: 1rem;
-                                                                                                      border-top: 1px solid var(--border-color);
-                                                                                                    }
-
-                                                                                                    .hotel-price .price {
-                                                                                                      font-size: 1.3rem;
-                                                                                                      font-weight: 700;
-                                                                                                      color: var(--primary-color);
-                                                                                                    }
-
-                                                                                                    .hotel-price .period {
-                                                                                                      display: block;
-                                                                                                      font-size: 0.8rem;
-                                                                                                      color: var(--text-light);
-                                                                                                    }
-
-                                                                                                    .hotel-actions {
-                                                                                                      display: flex;
-                                                                                                      gap: 0.5rem;
-                                                                                                    }
-
-                                                                                                    .btn-view-details,
-                                                                                                    .btn-book-now {
-                                                                                                      flex: 1;
-                                                                                                      padding: 0.65rem 1rem;
-                                                                                                      border: none;
-                                                                                                      border-radius: 5px;
-                                                                                                      font-size: 0.85rem;
-                                                                                                      font-weight: 600;
-                                                                                                      cursor: pointer;
-                                                                                                      transition: all 0.3s ease;
-                                                                                                    }
-
-                                                                                                    .btn-view-details {
-                                                                                                      background: white;
-                                                                                                      color: var(--text-color);
-                                                                                                      border: 1px solid var(--border-color);
-                                                                                                    }
-
-                                                                                                    .btn-view-details:hover {
-                                                                                                      background: var(--primary-color);
-                                                                                                      color: white;
-                                                                                                      border-color: var(--primary-color);
-                                                                                                    }
-
-                                                                                                    .btn-book-now {
-                                                                                                      background: var(--primary-color);
-                                                                                                      color: white;
-                                                                                                    }
-
-                                                                                                    .btn-book-now:hover {
-                                                                                                      background: #d96200;
-                                                                                                      transform: translateY(-1px);
-                                                                                                      box-shadow: 0 4px 8px rgba(255,108,0,0.2);
-                                                                                                    }
-
-                                                                                                    /* Services Section */
-                                                                                                    .services-section {
-                                                                                                      padding: 4rem 0;
-                                                                                                    }
-
-                                                                                                    .services-grid {
-                                                                                                      display: grid;
-                                                                                                      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-                                                                                                      gap: 2rem;
-                                                                                                    }
-
-                                                                                                    .service-card {
-                                                                                                      background: white;
-                                                                                                      border-radius: 10px;
-                                                                                                      overflow: hidden;
-                                                                                                      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-                                                                                                      position: relative;
-                                                                                                      transition: all 0.3s ease;
-                                                                                                      border: 3px solid transparent;
-                                                                                                    }
-
-                                                                                                    .service-card:hover {
-                                                                                                      transform: translateY(-5px);
-                                                                                                      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-                                                                                                    }
-
-                                                                                                    .service-card.selected {
-                                                                                                      border-color: var(--primary-color);
-                                                                                                      box-shadow: 0 8px 25px rgba(5, 59, 60, 0.3);
-                                                                                                    }
-
-                                                                                                    .service-checkbox-wrapper {
-                                                                                                      position: absolute;
-                                                                                                      top: 15px;
-                                                                                                      right: 15px;
-                                                                                                      z-index: 10;
-                                                                                                      background: white;
-                                                                                                      border-radius: 50%;
-                                                                                                      padding: 5px;
-                                                                                                      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-                                                                                                    }
-
-                                                                                                    .service-checkbox-input {
-                                                                                                      width: 24px;
-                                                                                                      height: 24px;
-                                                                                                      cursor: pointer;
-                                                                                                      accent-color: var(--primary-color);
-                                                                                                    }
-
-                                                                                                    .service-image {
-                                                                                                      height: 150px;
-                                                                                                    }
-
-                                                                                                    .service-content {
-                                                                                                      padding: 1.5rem;
-                                                                                                    }
-
-                                                                                                    .service-content h3 {
-                                                                                                      color: var(--primary-color);
-                                                                                                      margin-bottom: 0.5rem;
-                                                                                                    }
-
-                                                                                                    .service-content p {
-                                                                                                      color: var(--text-light);
-                                                                                                      margin-bottom: 1rem;
-                                                                                                      font-size: 0.9rem;
-                                                                                                    }
-
-                                                                                                    .service-types {
-                                                                                                      display: flex;
-                                                                                                      flex-wrap: wrap;
-                                                                                                      gap: 0.3rem;
-                                                                                                      margin-bottom: 1rem;
-                                                                                                    }
-
-                                                                                                    .type-tag {
-                                                                                                      background: var(--section-bg);
-                                                                                                      padding: 3px 8px;
-                                                                                                      border-radius: 10px;
-                                                                                                      font-size: 0.7rem;
-                                                                                                      color: var(--text-light);
-                                                                                                      text-transform: capitalize;
-                                                                                                    }
-
-                                                                                                    .service-price {
-                                                                                                      font-weight: 600;
-                                                                                                      color: var(--primary-color);
-                                                                                                      margin-bottom: 1rem;
-                                                                                                    }
-
-                                                                                                    /* Integrated Banner */
-                                                                                                    .integrated-banner {
-                                                                                                      padding: 4rem 0;
-                                                                                                      background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
-                                                                                                      color: white;
-                                                                                                    }
-
-                                                                                                    .banner-content h2 {
-                                                                                                      text-align: center;
-                                                                                                      margin-bottom: 1rem;
-                                                                                                      font-size: 2.5rem;
-                                                                                                    }
-
-                                                                                                    .banner-content > p {
-                                                                                                      text-align: center;
-                                                                                                      margin-bottom: 3rem;
-                                                                                                      font-size: 1.2rem;
-                                                                                                      opacity: 0.9;
-                                                                                                    }
-
-                                                                                                    .banner-steps {
-                                                                                                      display: grid;
-                                                                                                      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-                                                                                                      gap: 2rem;
-                                                                                                      margin-bottom: 3rem;
-                                                                                                    }
-
-                                                                                                    .step {
-                                                                                                      display: flex;
-                                                                                                      gap: 1rem;
-                                                                                                      align-items: flex-start;
-                                                                                                    }
-
-                                                                                                    .step-icon {
-                                                                                                      font-size: 2.5rem;
-                                                                                                      flex-shrink: 0;
-                                                                                                    }
-
-                                                                                                    .step-text h4 {
-                                                                                                      margin-bottom: 0.5rem;
-                                                                                                      font-size: 1.2rem;
-                                                                                                    }
-
-                                                                                                    .step-text p {
-                                                                                                      opacity: 0.9;
-                                                                                                      font-size: 0.9rem;
-                                                                                                    }
-
-                                                                                                    .banner-cta {
-                                                                                                      text-align: center;
-                                                                                                    }
-
-                                                                                                    .btn-primary.large {
-                                                                                                      padding: 15px 30px;
-                                                                                                      font-size: 1.1rem;
-                                                                                                    }
-
-                                                                                                    /* Modal Styles */
-                                                                                                    .modal-overlay {
-                                                                                                      position: fixed;
-                                                                                                      top: 0;
-                                                                                                      left: 0;
-                                                                                                      width: 100%;
-                                                                                                      height: 100%;
-                                                                                                      background: rgba(0, 0, 0, 0.7);
-                                                                                                      display: flex;
-                                                                                                      align-items: center;
-                                                                                                      justify-content: center;
-                                                                                                      z-index: 1000;
-                                                                                                      padding: 20px;
-                                                                                                    }
-
-                                                                                                    .modal-content.large {
-                                                                                                      max-width: 800px;
-                                                                                                      max-height: 90vh;
-                                                                                                      overflow-y: auto;
-                                                                                                    }
-
-                                                                                                    .modal-close {
-                                                                                                      position: absolute;
-                                                                                                      top: 15px;
-                                                                                                      right: 15px;
-                                                                                                      background: none;
-                                                                                                      border: none;
-                                                                                                      font-size: 1.5rem;
-                                                                                                      cursor: pointer;
-                                                                                                      color: var(--text-light);
-                                                                                                    }
-
-                                                                                                    .modal-content h2 {
-                                                                                                      color: var(--primary-color);
-                                                                                                      margin-bottom: 1.5rem;
-                                                                                                    }
-
-                                                                                                    .booking-tabs {
-                                                                                                      display: flex;
-                                                                                                      border-bottom: 1px solid var(--border-color);
-                                                                                                      margin-bottom: 2rem;
-                                                                                                    }
-
-                                                                                                    .booking-tabs .tab {
-                                                                                                      flex: 1;
-                                                                                                      padding: 1rem;
-                                                                                                      background: none;
-                                                                                                      border: none;
-                                                                                                      border-bottom: 3px solid transparent;
-                                                                                                      cursor: pointer;
-                                                                                                      transition: all 0.3s ease;
-                                                                                                    }
-
-                                                                                                    .booking-tabs .tab.active {
-                                                                                                      border-bottom-color: var(--primary-color);
-                                                                                                      color: var(--primary-color);
-                                                                                                      font-weight: 600;
-                                                                                                    }
-
-                                                                                                    .hotel-summary {
-                                                                                                      display: flex;
-                                                                                                      gap: 1.5rem;
-                                                                                                      background: var(--section-bg);
-                                                                                                      padding: 1.5rem;
-                                                                                                      border-radius: 10px;
-                                                                                                      margin-bottom: 2rem;
-                                                                                                    }
-
-                                                                                                    .hotel-image {
-                                                                                                      flex: 0 0 200px;
-                                                                                                    }
-
-                                                                                                    .hotel-details h3 {
-                                                                                                      color: var(--primary-color);
-                                                                                                      margin-bottom: 1rem;
-                                                                                                    }
-
-                                                                                                    .hotel-meta {
-                                                                                                      display: flex;
-                                                                                                      flex-direction: column;
-                                                                                                      gap: 0.5rem;
-                                                                                                      color: var(--text-light);
-                                                                                                    }
-
-                                                                                                    .services-selection {
-                                                                                                      display: flex;
-                                                                                                      flex-direction: column;
-                                                                                                      gap: 1rem;
-                                                                                                    }
-
-                                                                                                    .service-checkbox {
-                                                                                                      display: flex;
-                                                                                                      align-items: flex-start;
-                                                                                                      gap: 1rem;
-                                                                                                      padding: 1rem;
-                                                                                                      border: 1px solid var(--border-color);
-                                                                                                      border-radius: 8px;
-                                                                                                      cursor: pointer;
-                                                                                                      transition: all 0.3s ease;
-                                                                                                    }
-
-                                                                                                    .service-checkbox:hover {
-                                                                                                      border-color: var(--primary-color);
-                                                                                                    }
-
-                                                                                                    .service-checkbox input {
-                                                                                                      margin-top: 0.3rem;
-                                                                                                    }
-
-                                                                                                    .service-info {
-                                                                                                      flex: 1;
-                                                                                                    }
-
-                                                                                                    .service-name {
-                                                                                                      display: block;
-                                                                                                      font-weight: 600;
-                                                                                                      color: var(--primary-color);
-                                                                                                      margin-bottom: 0.3rem;
-                                                                                                    }
-
-                                                                                                    .service-desc {
-                                                                                                      display: block;
-                                                                                                      color: var(--text-light);
-                                                                                                      font-size: 0.9rem;
-                                                                                                      margin-bottom: 0.3rem;
-                                                                                                    }
-
-                                                                                                    .service-price {
-                                                                                                      display: block;
-                                                                                                      font-weight: 600;
-                                                                                                      color: var(--primary-color);
-                                                                                                    }
-
-                                                                                                    .price-summary {
-                                                                                                      background: var(--section-bg);
-                                                                                                      padding: 1.5rem;
-                                                                                                      border-radius: 10px;
-                                                                                                    }
-
-                                                                                                    .summary-row {
-                                                                                                      display: flex;
-                                                                                                      justify-content: space-between;
-                                                                                                      margin-bottom: 0.8rem;
-                                                                                                      padding-bottom: 0.8rem;
-                                                                                                      border-bottom: 1px solid var(--border-color);
-                                                                                                    }
-
-                                                                                                    .summary-row:last-child {
-                                                                                                      border-bottom: none;
-                                                                                                    }
-
-                                                                                                    .summary-row.total {
-                                                                                                      font-weight: 700;
-                                                                                                      font-size: 1.1rem;
-                                                                                                      color: var(--primary-color);
-                                                                                                    }
-
-                                                                                                    .form-actions {
-                                                                                                      display: flex;
-                                                                                                      gap: 1rem;
-                                                                                                      justify-content: flex-end;
-                                                                                                      margin-top: 2rem;
-                                                                                                    }
-
-                                                                                                    /* Responsive Design */
-                                                                                                    @media (max-width: 992px) {
-                                                                                                      .search-form .form-row {
-                                                                                                        grid-template-columns: 1fr 1fr;
-                                                                                                      }
-
-                                                                                                      .amenities-filters {
-                                                                                                        grid-template-columns: 1fr 1fr;
-                                                                                                      }
-
-                                                                                                      .banner-steps {
-                                                                                                        grid-template-columns: 1fr;
-                                                                                                      }
-
-                                                                                                      .hotel-summary {
-                                                                                                        flex-direction: column;
-                                                                                                      }
-
-                                                                                                      .hero-content h1 {
-                                                                                                        font-size: 2.8rem;
-                                                                                                      }
-
-                                                                                                      .hero-content p {
-                                                                                                        font-size: 1.2rem;
-                                                                                                      }
-
-                                                                                                      .section-header h2 {
-                                                                                                        font-size: 2rem;
-                                                                                                      }
-                                                                                                    }
-
-                                                                                                    @media (max-width: 768px) {
-                                                                                                      .hero-content h1 {
-                                                                                                        font-size: 2.2rem;
-                                                                                                      }
-
-                                                                                                      .hero-content p {
-                                                                                                        font-size: 1.1rem;
-                                                                                                      }
-
-                                                                                                      .section-header h2 {
-                                                                                                        font-size: 1.8rem;
-                                                                                                      }
-
-                                                                                                      .search-form .form-row {
-                                                                                                        grid-template-columns: 1fr;
-                                                                                                      }
-
-                                                                                                      .packages-grid {
-                                                                                                        grid-template-columns: 1fr;
-                                                                                                      }
-
-                                                                                                      .hotels-grid {
-                                                                                                        grid-template-columns: 1fr;
-                                                                                                      }
-
-                                                                                                      .services-grid {
-                                                                                                        grid-template-columns: 1fr;
-                                                                                                      }
-
-                                                                                                      .booking-tabs {
-                                                                                                        flex-direction: column;
-                                                                                                      }
-
-                                                                                                      .form-actions {
-                                                                                                        flex-direction: column;
-                                                                                                      }
-                                                                                                    }
-
-                                                                                                    @media (max-width: 576px) {
-                                                                                                      .hero {
-                                                                                                        min-height: 80vh;
-                                                                                                      }
-
-                                                                                                      .hero-content h1 {
-                                                                                                        font-size: 1.8rem;
-                                                                                                      }
-
-                                                                                                      .hero-content p {
-                                                                                                        font-size: 1rem;
-                                                                                                      }
-
-                                                                                                      .section-header h2 {
-                                                                                                        font-size: 1.5rem;
-                                                                                                      }
-
-                                                                                                      .search-card {
-                                                                                                        padding: 1.5rem;
-                                                                                                      }
-
-                                                                                                      .amenities-filters {
-                                                                                                        grid-template-columns: 1fr;
-                                                                                                      }
-
-                                                                                                      .modal-content.large {
-                                                                                                        padding: 1rem;
-                                                                                                      }
-                                                                                                    }`}</style>
-
-                                                                                                  <Footer />
-                                                                                                </>
-                                                                                              );
-                                                                                            }
