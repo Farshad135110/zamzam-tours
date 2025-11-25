@@ -1,26 +1,36 @@
 import React, { useState } from 'react';
 import AdminSidebar from '../../components/AdminSidebar';
+import { CONTACT_INFO, SITE_INFO, SOCIAL_MEDIA } from '../../src/constants/config';
 
 export default function AdminSettings() {
   const [activeTab, setActiveTab] = useState('general');
   const [settings, setSettings] = useState({
     // General Settings
-    siteTitle: 'Zamzam Lanka Tours',
-    contactEmail: 'admin@zamzamtours.com',
-    phoneNumber: '+966 12 345 6789',
-    address: 'Makkah, Saudi Arabia',
-    currency: 'SAR',
-    timezone: 'Asia/Riyadh',
+    siteTitle: SITE_INFO.name,
+    contactEmail: CONTACT_INFO.email,
+    phoneNumber: CONTACT_INFO.phone,
+    whatsappNumber: CONTACT_INFO.whatsapp,
+    address: CONTACT_INFO.address,
+    currency: 'LKR',
+    timezone: 'Asia/Colombo',
     
     // Business Settings
-    companyName: 'Zamzam Lanka Tours & Travel',
-    taxRate: 15,
+    companyName: SITE_INFO.name,
+    tagline: SITE_INFO.tagline,
+    description: SITE_INFO.description,
+    website: SITE_INFO.url,
+    taxRate: 0,
     bookingConfirmation: true,
     autoApproveBookings: false,
+    
+    // Social Media
+    facebook: SOCIAL_MEDIA.facebook,
+    instagram: SOCIAL_MEDIA.instagram,
     
     // Notification Settings
     emailNotifications: true,
     smsNotifications: false,
+    whatsappNotifications: true,
     bookingAlerts: true,
     paymentAlerts: true,
     
@@ -30,9 +40,9 @@ export default function AdminSettings() {
     passwordExpiry: 90,
     
     // Payment Settings
-    paymentGateway: 'stripe',
-    testMode: true,
-    currencySymbol: '﷼'
+    paymentGateway: 'bank',
+    testMode: false,
+    currencySymbol: 'Rs.'
   });
 
   const handleSettingChange = (key: string, value: any) => {
@@ -56,14 +66,16 @@ export default function AdminSettings() {
   ];
 
   const currencies = [
-    { code: 'SAR', name: 'Saudi Riyal', symbol: '﷼' },
+    { code: 'LKR', name: 'Sri Lankan Rupee', symbol: 'Rs.' },
     { code: 'USD', name: 'US Dollar', symbol: '$' },
     { code: 'EUR', name: 'Euro', symbol: '€' },
     { code: 'GBP', name: 'British Pound', symbol: '£' },
-    { code: 'AED', name: 'UAE Dirham', symbol: 'د.إ' }
+    { code: 'AED', name: 'UAE Dirham', symbol: 'د.إ' },
+    { code: 'SAR', name: 'Saudi Riyal', symbol: '﷼' }
   ];
 
   const timezones = [
+    'Asia/Colombo',
     'Asia/Riyadh',
     'Asia/Dubai',
     'Europe/London',
@@ -73,18 +85,25 @@ export default function AdminSettings() {
   ];
 
   const paymentGateways = [
+    { id: 'bank', name: 'Bank Transfer' },
+    { id: 'cash', name: 'Cash Payment' },
     { id: 'stripe', name: 'Stripe' },
-    { id: 'paypal', name: 'PayPal' },
-    { id: 'moyasar', name: 'Moyasar' },
-    { id: 'bank', name: 'Bank Transfer' }
+    { id: 'paypal', name: 'PayPal' }
   ];
 
   return (
-    <div style={{ fontFamily: 'Poppins, sans-serif', backgroundColor: '#f8fafc', minHeight: '100vh', display: 'flex' }}>
+    <div style={{ fontFamily: 'Poppins, sans-serif', backgroundColor: '#f8fafc', minHeight: '100vh' }}>
       <AdminSidebar active="settings" />
 
       {/* Main Content */}
-      <div style={{ flex: 1, padding: '30px' }}>
+      <div style={{ marginLeft: '280px', padding: '30px' }}>
+        <style jsx global>{`
+          @media (max-width: 900px) {
+            body > div > div:last-child {
+              margin-left: 0 !important;
+            }
+          }
+        `}</style>
         {/* Header */}
         <div style={{ marginBottom: '30px' }}>
           <h1 style={{ fontSize: '28px', fontWeight: 700, color: '#053b3c', margin: 0 }}>Settings</h1>
@@ -199,6 +218,29 @@ export default function AdminSettings() {
                   </div>
                   <div>
                     <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '6px' }}>
+                      WhatsApp Number
+                    </label>
+                    <input
+                      type="tel"
+                      value={settings.whatsappNumber}
+                      onChange={(e) => handleSettingChange('whatsappNumber', e.target.value)}
+                      placeholder="94701888993"
+                      style={{
+                        width: '100%',
+                        padding: '10px 12px',
+                        border: '1px solid #d1d5db',
+                        borderRadius: '6px',
+                        fontSize: '14px',
+                        outline: 'none',
+                        transition: 'all 0.2s ease'
+                      }}
+                    />
+                  </div>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '6px' }}>
                       Currency
                     </label>
                     <select
@@ -305,6 +347,111 @@ export default function AdminSettings() {
                       max="100"
                       value={settings.taxRate}
                       onChange={(e) => handleSettingChange('taxRate', parseInt(e.target.value))}
+                      style={{
+                        width: '100%',
+                        padding: '10px 12px',
+                        border: '1px solid #d1d5db',
+                        borderRadius: '6px',
+                        fontSize: '14px',
+                        outline: 'none',
+                        transition: 'all 0.2s ease'
+                      }}
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '6px' }}>
+                    Tagline
+                  </label>
+                  <input
+                    type="text"
+                    value={settings.tagline}
+                    onChange={(e) => handleSettingChange('tagline', e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '10px 12px',
+                      border: '1px solid #d1d5db',
+                      borderRadius: '6px',
+                      fontSize: '14px',
+                      outline: 'none',
+                      transition: 'all 0.2s ease'
+                    }}
+                  />
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '6px' }}>
+                    Description
+                  </label>
+                  <textarea
+                    value={settings.description}
+                    onChange={(e) => handleSettingChange('description', e.target.value)}
+                    rows={3}
+                    style={{
+                      width: '100%',
+                      padding: '10px 12px',
+                      border: '1px solid #d1d5db',
+                      borderRadius: '6px',
+                      fontSize: '14px',
+                      outline: 'none',
+                      transition: 'all 0.2s ease',
+                      fontFamily: 'Poppins, sans-serif',
+                      resize: 'vertical'
+                    }}
+                  />
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '6px' }}>
+                    Website URL
+                  </label>
+                  <input
+                    type="url"
+                    value={settings.website}
+                    onChange={(e) => handleSettingChange('website', e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '10px 12px',
+                      border: '1px solid #d1d5db',
+                      borderRadius: '6px',
+                      fontSize: '14px',
+                      outline: 'none',
+                      transition: 'all 0.2s ease'
+                    }}
+                  />
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '6px' }}>
+                      Facebook URL
+                    </label>
+                    <input
+                      type="url"
+                      value={settings.facebook}
+                      onChange={(e) => handleSettingChange('facebook', e.target.value)}
+                      placeholder="https://facebook.com/..."
+                      style={{
+                        width: '100%',
+                        padding: '10px 12px',
+                        border: '1px solid #d1d5db',
+                        borderRadius: '6px',
+                        fontSize: '14px',
+                        outline: 'none',
+                        transition: 'all 0.2s ease'
+                      }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '6px' }}>
+                      Instagram URL
+                    </label>
+                    <input
+                      type="url"
+                      value={settings.instagram}
+                      onChange={(e) => handleSettingChange('instagram', e.target.value)}
+                      placeholder="https://instagram.com/..."
                       style={{
                         width: '100%',
                         padding: '10px 12px',

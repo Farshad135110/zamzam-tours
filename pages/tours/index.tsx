@@ -41,6 +41,7 @@ export default function Tours() {
   const [selectedPriceRange, setSelectedPriceRange] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [showBookingForm, setShowBookingForm] = useState(false);
+  const [showTourDetails, setShowTourDetails] = useState(false);
   const [selectedTour, setSelectedTour] = useState<Tour | null>(null);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -78,7 +79,7 @@ export default function Tours() {
           id: parseInt(pkg.package_id.replace('P', '')) || 0,
           name: get(`tours.packages.${pkg.package_id}.name`, pkg.package_name),
           category: 'cultural', // Default category
-          duration: pkg.duration || '7 days', // prefer backend duration when available
+          duration: pkg.days ? `${pkg.days} ${pkg.days === 1 ? 'day' : 'days'}` : '7 days',
           priceRange: pkg.price ? (pkg.price < 1000 ? 'budget' : pkg.price < 2000 ? 'standard' : 'premium') : 'standard',
           price: pkg.price ? parseFloat(pkg.price) : 0,
           image: pkg.image || '/tours/default.jpg',
@@ -419,6 +420,11 @@ export default function Tours() {
     setShowBookingForm(true);
   };
 
+  const openTourDetails = (tour: any) => {
+    setSelectedTour(tour);
+    setShowTourDetails(true);
+  };
+
   return (
     <>
       <Head>
@@ -711,7 +717,7 @@ export default function Tours() {
                         <div className="tour-actions">
                           <button 
                             className="btn btn-secondary"
-                            onClick={() => openBookingForm(tour)}
+                            onClick={() => openTourDetails(tour)}
                           >
                             {get('tours.card.viewDetails', 'View Details')}
                           </button>
@@ -820,6 +826,262 @@ export default function Tours() {
           </section>
         </div>
       </main>
+
+      {/* Tour Details Modal */}
+      {showTourDetails && selectedTour && (
+        <div className="modal-overlay" onClick={() => setShowTourDetails(false)}>
+          <div className="modal-content modal-large" onClick={(e) => e.stopPropagation()}>
+            <button 
+              className="modal-close"
+              onClick={() => setShowTourDetails(false)}
+            >
+              ×
+            </button>
+            
+            <h2>{selectedTour.name}</h2>
+            
+            <div className="tour-detail-header">
+              <div className="detail-image">
+                <Image 
+                  src={selectedTour.image} 
+                  alt={selectedTour.name}
+                  width={600}
+                  height={400}
+                  style={{ objectFit: 'cover', width: '100%', height: '100%', borderRadius: '8px' }}
+                />
+              </div>
+              
+              <div className="detail-summary">
+                <div className="summary-item">
+                  <span className="label">Duration:</span>
+                  <span className="value">{selectedTour.duration}</span>
+                </div>
+                <div className="summary-item">
+                  <span className="label">Price:</span>
+                  <span className="value">${selectedTour.price} per person</span>
+                </div>
+                <div className="summary-item">
+                  <span className="label">Difficulty:</span>
+                  <span className="value">{selectedTour.difficulty}</span>
+                </div>
+                <div className="summary-item">
+                  <span className="label">Best Season:</span>
+                  <span className="value">{selectedTour.season}</span>
+                </div>
+                <div className="summary-item">
+                  <span className="label">Group Size:</span>
+                  <span className="value">{selectedTour.groupSize}</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="tour-detail-description">
+              <h3>About This Tour</h3>
+              <p>{selectedTour.description}</p>
+            </div>
+
+            <div className="tour-detail-highlights">
+              <h3>Highlights</h3>
+              <ul>
+                {selectedTour.highlights.map((highlight, index) => (
+                  <li key={index}>✓ {highlight}</li>
+                ))}
+              </ul>
+            </div>
+
+            {selectedTour.itinerary && typeof selectedTour.itinerary === 'string' && (
+              <div className="tour-detail-itinerary">
+                <h3>Day-by-Day Itinerary</h3>
+                {(() => {
+                  try {
+                    const itineraryData = JSON.parse(selectedTour.itinerary);
+                    return (
+                      <div className="itinerary-days">
+                        {itineraryData.map((day: any, index: number) => (
+                          <div key={index} className="itinerary-day">
+                            <div className="day-header">
+                              <span className="day-number">Day {day.day}</span>
+                              <h4>{day.title}</h4>
+                            </div>
+                            <p className="day-description">{day.description}</p>
+                            {day.activities && (
+                              <div className="day-activities">
+                                <strong>Activities:</strong>
+                                <ul>
+                                  {day.activities.split('\n').filter((a: string) => a.trim()).map((activity: string, idx: number) => (
+                                    <li key={idx}>{activity.trim()}</li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    );
+                  } catch (e) {
+                    return <p>Itinerary information not available</p>;
+                  }
+                })()}
+              </div>
+            )}
+
+            <div className="tour-detail-includes">
+              <h3>What's Included</h3>
+              <ul>
+                {(selectedTour.includes || selectedTour.included).map((item, index) => (
+                  <li key={index}>✓ {item}</li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="detail-actions">
+              <button 
+                className="btn btn-primary btn-large"
+                onClick={() => {
+                  setShowTourDetails(false);
+                  setShowBookingForm(true);
+                }}
+              >
+                Book This Tour
+              </button>
+              <button 
+                className="btn btn-secondary btn-large"
+                onClick={() => handleWhatsAppBooking(selectedTour)}
+              >
+                Inquire via WhatsApp
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Tour Details Modal */}
+      {showTourDetails && selectedTour && (
+        <div className="modal-overlay" onClick={() => setShowTourDetails(false)}>
+          <div className="modal-content modal-large" onClick={(e) => e.stopPropagation()}>
+            <button 
+              className="modal-close"
+              onClick={() => setShowTourDetails(false)}
+            >
+              ×
+            </button>
+            
+            <h2>{selectedTour.name}</h2>
+            
+            <div className="tour-detail-header">
+              <div className="detail-image">
+                <Image 
+                  src={selectedTour.image} 
+                  alt={selectedTour.name}
+                  width={600}
+                  height={400}
+                  style={{ objectFit: 'cover', width: '100%', height: '100%', borderRadius: '8px' }}
+                />
+              </div>
+              
+              <div className="detail-summary">
+                <div className="summary-item">
+                  <span className="label">Duration:</span>
+                  <span className="value">{selectedTour.duration}</span>
+                </div>
+                <div className="summary-item">
+                  <span className="label">Price:</span>
+                  <span className="value">${selectedTour.price} per person</span>
+                </div>
+                <div className="summary-item">
+                  <span className="label">Difficulty:</span>
+                  <span className="value">{selectedTour.difficulty}</span>
+                </div>
+                <div className="summary-item">
+                  <span className="label">Best Season:</span>
+                  <span className="value">{selectedTour.season}</span>
+                </div>
+                <div className="summary-item">
+                  <span className="label">Group Size:</span>
+                  <span className="value">{selectedTour.groupSize}</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="tour-detail-description">
+              <h3>About This Tour</h3>
+              <p>{selectedTour.description}</p>
+            </div>
+
+            <div className="tour-detail-highlights">
+              <h3>Highlights</h3>
+              <ul>
+                {selectedTour.highlights.map((highlight, index) => (
+                  <li key={index}>✓ {highlight}</li>
+                ))}
+              </ul>
+            </div>
+
+            {selectedTour.itinerary && typeof selectedTour.itinerary === 'string' && (
+              <div className="tour-detail-itinerary">
+                <h3>Day-by-Day Itinerary</h3>
+                {(() => {
+                  try {
+                    const itineraryData = JSON.parse(selectedTour.itinerary);
+                    return (
+                      <div className="itinerary-days">
+                        {itineraryData.map((day: any, index: number) => (
+                          <div key={index} className="itinerary-day">
+                            <div className="day-header">
+                              <span className="day-number">Day {day.day}</span>
+                              <h4>{day.title}</h4>
+                            </div>
+                            <p className="day-description">{day.description}</p>
+                            {day.activities && (
+                              <div className="day-activities">
+                                <strong>Activities:</strong>
+                                <ul>
+                                  {day.activities.split('\n').filter((a: string) => a.trim()).map((activity: string, idx: number) => (
+                                    <li key={idx}>{activity.trim()}</li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    );
+                  } catch (e) {
+                    return <p>Itinerary information not available</p>;
+                  }
+                })()}
+              </div>
+            )}
+
+            <div className="tour-detail-includes">
+              <h3>What's Included</h3>
+              <ul>
+                {(selectedTour.includes || selectedTour.included).map((item, index) => (
+                  <li key={index}>✓ {item}</li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="detail-actions">
+              <button 
+                className="btn btn-primary btn-large"
+                onClick={() => {
+                  setShowTourDetails(false);
+                  setShowBookingForm(true);
+                }}
+              >
+                Book This Tour
+              </button>
+              <button 
+                className="btn btn-secondary btn-large"
+                onClick={() => handleWhatsAppBooking(selectedTour)}
+              >
+                Inquire via WhatsApp
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Booking Form Modal */}
       {showBookingForm && selectedTour && (
@@ -1492,6 +1754,174 @@ export default function Tours() {
           position: relative;
         }
 
+        .modal-large {
+          max-width: 900px;
+        }
+
+        .tour-detail-header {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 2rem;
+          margin-bottom: 2rem;
+        }
+
+        .detail-image {
+          border-radius: 8px;
+          overflow: hidden;
+        }
+
+        .detail-summary {
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
+        }
+
+        .detail-summary .summary-item {
+          display: flex;
+          justify-content: space-between;
+          padding: 0.75rem;
+          background: var(--section-bg);
+          border-radius: 8px;
+        }
+
+        .detail-summary .label {
+          font-weight: 600;
+          color: var(--primary-color);
+        }
+
+        .detail-summary .value {
+          color: var(--text-color);
+        }
+
+        .tour-detail-description,
+        .tour-detail-highlights,
+        .tour-detail-itinerary,
+        .tour-detail-includes {
+          margin-bottom: 2rem;
+        }
+
+        .tour-detail-description h3,
+        .tour-detail-highlights h3,
+        .tour-detail-itinerary h3,
+        .tour-detail-includes h3 {
+          color: var(--primary-color);
+          margin-bottom: 1rem;
+          font-size: 1.3rem;
+        }
+
+        .tour-detail-highlights ul,
+        .tour-detail-includes ul {
+          list-style: none;
+          padding: 0;
+        }
+
+        .tour-detail-highlights li,
+        .tour-detail-includes li {
+          padding: 0.5rem 0;
+          border-bottom: 1px solid var(--border-color);
+        }
+
+        .tour-detail-highlights li:last-child,
+        .tour-detail-includes li:last-child {
+          border-bottom: none;
+        }
+
+        .itinerary-days {
+          display: flex;
+          flex-direction: column;
+          gap: 1.5rem;
+        }
+
+        .itinerary-day {
+          background: var(--section-bg);
+          padding: 1.5rem;
+          border-radius: 10px;
+          border-left: 4px solid var(--primary-color);
+        }
+
+        .day-header {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+          margin-bottom: 1rem;
+        }
+
+        .day-number {
+          background: var(--primary-color);
+          color: white;
+          padding: 0.5rem 1rem;
+          border-radius: 20px;
+          font-weight: 600;
+          font-size: 0.9rem;
+        }
+
+        .day-header h4 {
+          color: var(--primary-color);
+          margin: 0;
+          font-size: 1.2rem;
+        }
+
+        .day-description {
+          color: var(--text-color);
+          margin-bottom: 1rem;
+          line-height: 1.6;
+        }
+
+        .day-activities {
+          background: white;
+          padding: 1rem;
+          border-radius: 8px;
+        }
+
+        .day-activities strong {
+          color: var(--primary-color);
+          display: block;
+          margin-bottom: 0.5rem;
+        }
+
+        .day-activities ul {
+          list-style: none;
+          padding: 0;
+          margin: 0;
+        }
+
+        .day-activities li {
+          padding: 0.3rem 0;
+          padding-left: 1.5rem;
+          position: relative;
+        }
+
+        .day-activities li:before {
+          content: "→";
+          position: absolute;
+          left: 0;
+          color: var(--primary-color);
+        }
+
+        .detail-actions {
+          display: flex;
+          gap: 1rem;
+          margin-top: 2rem;
+          padding-top: 2rem;
+          border-top: 2px solid var(--border-color);
+        }
+
+        .btn-large {
+          flex: 1;
+          padding: 1rem 2rem;
+          font-size: 1.1rem;
+        }
+
+        @media (max-width: 768px) {
+          .tour-detail-header {
+            grid-template-columns: 1fr;
+          }
+
+          .detail-actions {
+            flex-direction: column;
+          }
+        }
+
         .modal-close {
           position: absolute;
           top: 15px;
@@ -1557,6 +1987,47 @@ export default function Tours() {
           gap: 1rem;
           justify-content: flex-end;
           margin-top: 2rem;
+        }
+
+        .form-actions .btn-secondary,
+        .form-actions .btn-primary {
+          padding: 0.875rem 2rem;
+          border-radius: 8px;
+          font-size: 1rem;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          border: none;
+          min-width: 150px;
+        }
+
+        .form-actions .btn-secondary {
+          background: #f3f4f6;
+          color: #374151;
+          border: 2px solid #e5e7eb;
+        }
+
+        .form-actions .btn-secondary:hover {
+          background: #e5e7eb;
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-actions .btn-primary {
+          background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+          color: white;
+          box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
+        }
+
+        .form-actions .btn-primary:hover {
+          background: linear-gradient(135deg, #128C7E 0%, #075E54 100%);
+          transform: translateY(-2px);
+          box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4);
+        }
+
+        .form-actions .btn-primary::before {
+          content: "📱 ";
+          margin-right: 0.5rem;
         }
 
         /* Responsive Design */

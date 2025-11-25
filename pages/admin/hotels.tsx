@@ -64,7 +64,10 @@ export default function AdminHotels() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(formData)
           });
-          if (!res.ok) throw new Error('Failed to update');
+          if (!res.ok) {
+            const errorData = await res.json();
+            throw new Error(errorData.error || 'Failed to update');
+          }
           const updated = await res.json();
           setHotels(prev => prev.map(h => h.hotel_id === updated.hotel_id ? updated : h));
         } else {
@@ -73,13 +76,18 @@ export default function AdminHotels() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(formData)
           });
-          if (!res.ok) throw new Error('Failed to create');
+          if (!res.ok) {
+            const errorData = await res.json();
+            throw new Error(errorData.error || 'Failed to create');
+          }
           const created = await res.json();
           setHotels(prev => [...prev, created]);
         }
-      } catch (err) {
-        console.error(err);
-        alert('Error saving hotel');
+      } catch (err: any) {
+        console.error('Error saving hotel:', err);
+        const errorMessage = err.response?.data?.error || err.message || 'Failed to save hotel';
+        const errorDetails = err.response?.data?.details || '';
+        alert(`Error saving hotel: ${errorMessage}${errorDetails ? '\n' + errorDetails : ''}`);
       } finally {
         setShowModal(false);
         resetForm();
@@ -158,11 +166,18 @@ export default function AdminHotels() {
   };
 
     return (
-    <div style={{ fontFamily: 'Poppins, sans-serif', backgroundColor: '#f8fafc', minHeight: '100vh', display: 'flex' }}>
+    <div style={{ fontFamily: 'Poppins, sans-serif', backgroundColor: '#f8fafc', minHeight: '100vh' }}>
       <AdminSidebar active="hotels" />
 
       {/* Main Content */}
-      <div style={{ flex: 1, padding: '30px' }}>
+      <div style={{ marginLeft: '280px', padding: '30px', minHeight: '100vh' }}>
+        <style jsx global>{`
+          @media (max-width: 900px) {
+            body > div > div:last-child {
+              margin-left: 0 !important;
+            }
+          }
+        `}</style>
         {/* Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
           <div>

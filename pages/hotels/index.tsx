@@ -104,8 +104,11 @@ export default function Hotels() {
       rating: 4.8,
       reviews: 1247,
       price: 180,
+      class: '5-star',
+      hotelClass: 'Luxury',
       image: '/hotels/cinnamon-grand.jpg',
       amenities: ['pool', 'spa', 'gym', 'wifi', 'breakfast', 'restaurant', 'bar'],
+      facilities: ['Swimming Pool', 'Spa & Wellness', 'Fitness Center', 'Free WiFi', 'Breakfast Included', 'Fine Dining Restaurant', 'Cocktail Bar', '24/7 Room Service', 'Business Center', 'Concierge'],
       description: 'Luxury 5-star hotel in the heart of Colombo with world-class amenities',
       coordinates: { lat: 6.9271, lng: 79.8612 },
       popularPackages: ['airport-transfer', 'city-tour']
@@ -117,8 +120,11 @@ export default function Hotels() {
       rating: 4.9,
       reviews: 892,
       price: 220,
+      class: '5-star',
+      hotelClass: 'Luxury Resort',
       image: '/hotels/kandalama.jpg',
       amenities: ['pool', 'spa', 'wifi', 'breakfast', 'restaurant', 'bar'],
+      facilities: ['Infinity Pool', 'Ayurvedic Spa', 'Free WiFi', 'Breakfast Buffet', 'Multi-Cuisine Restaurant', 'Bar & Lounge', 'Nature Trails', 'Bird Watching', 'Lake View Rooms'],
       description: 'Architectural masterpiece nestled between jungle and lake',
       coordinates: { lat: 7.8731, lng: 80.7718 },
       popularPackages: ['airport-transfer', 'cultural-tour']
@@ -130,8 +136,11 @@ export default function Hotels() {
       rating: 4.7,
       reviews: 567,
       price: 150,
+      class: '4-star',
+      hotelClass: 'Boutique',
       image: '/hotels/fortaleza.jpg',
       amenities: ['pool', 'wifi', 'breakfast', 'restaurant', 'bar'],
+      facilities: ['Rooftop Pool', 'Free WiFi', 'Continental Breakfast', 'Restaurant', 'Bar', 'Colonial Architecture', 'Fort Views', 'Walking Distance to Beach'],
       description: 'Boutique hotel within Galle Fort with colonial charm',
       coordinates: { lat: 6.0320, lng: 80.2160 },
       popularPackages: ['airport-transfer', 'beach-tour']
@@ -143,8 +152,11 @@ export default function Hotels() {
       rating: 4.6,
       reviews: 734,
       price: 120,
+      class: '4-star',
+      hotelClass: 'Beach Resort',
       image: '/hotels/jetwing-beach.jpg',
       amenities: ['pool', 'spa', 'wifi', 'breakfast', 'beach', 'restaurant', 'bar'],
+      facilities: ['Beachfront Pool', 'Spa Services', 'Free WiFi', 'Breakfast Buffet', 'Private Beach Access', 'Seafood Restaurant', 'Beach Bar', 'Water Sports', 'Sunset Views'],
       description: 'Beachfront paradise perfect for relaxation and water sports',
       coordinates: { lat: 7.2080, lng: 79.8450 },
       popularPackages: ['airport-transfer', 'beach-tour']
@@ -156,8 +168,11 @@ export default function Hotels() {
       rating: 4.9,
       reviews: 423,
       price: 350,
+      class: '5-star',
+      hotelClass: 'Luxury Bungalow',
       image: '/hotels/tea-trails.jpg',
       amenities: ['pool', 'spa', 'wifi', 'breakfast', 'restaurant', 'bar'],
+      facilities: ['Private Bungalow', 'Butler Service', 'Spa Treatments', 'Free WiFi', 'Gourmet Dining', 'Tea Tasting', 'Plantation Tours', 'Mountain Views', 'Private Pool'],
       description: 'Luxury bungalow experience in Sri Lankan tea country',
       coordinates: { lat: 6.9497, lng: 80.7891 },
       popularPackages: ['tea-tour', 'hill-country-tour']
@@ -169,8 +184,11 @@ export default function Hotels() {
       rating: 4.8,
       reviews: 389,
       price: 280,
+      class: '5-star',
+      hotelClass: 'Luxury Safari Camp',
       image: '/hotels/wild-coast.jpg',
       amenities: ['pool', 'wifi', 'breakfast', 'restaurant', 'bar'],
+      facilities: ['Luxury Tents', 'Pool with View', 'Free WiFi', 'All Meals Included', 'Safari Experiences', 'Wildlife Viewing', 'Bar & Lounge', 'Nature Integration', 'Private Decks'],
       description: 'Luxury tented safari camp near Yala National Park',
       coordinates: { lat: 6.3733, lng: 81.5011 },
       popularPackages: ['safari-tour', 'wildlife-tour']
@@ -894,13 +912,23 @@ export default function Hotels() {
                     <span>⭐ {hotel.rating}</span>
                     <span>({hotel.reviews})</span>
                   </div>
+                  {hotel.class && (
+                    <div className="hotel-class-badge">
+                      {hotel.class}
+                    </div>
+                  )}
                   <div className="hotel-location">
                     {locations.find(l => l.id === hotel.location)?.name}
                   </div>
                 </div>
 
                 <div className="hotel-content">
-                  <h3>{hotel.name}</h3>
+                  <div className="hotel-title-row">
+                    <h3>{hotel.name}</h3>
+                    {hotel.hotelClass && (
+                      <span className="hotel-type-badge">{hotel.hotelClass}</span>
+                    )}
+                  </div>
                   <p className="hotel-description">{hotel.description}</p>
 
                   {/* Facilities list (from DB 'facilities' column). Show full list as tags or comma list */}
@@ -908,9 +936,12 @@ export default function Hotels() {
                     <div className="hotel-facilities">
                       <strong>{get('hotels.facilities.label', 'Facilities:')}</strong>
                       <div className="facility-tags">
-                        {hotel.facilities.map((f: string) => (
-                          <span key={f} className="facility-tag">{f.trim()}</span>
+                        {hotel.facilities.slice(0, 6).map((f: string, idx: number) => (
+                          <span key={idx} className="facility-tag">✓ {f.trim()}</span>
                         ))}
+                        {hotel.facilities.length > 6 && (
+                          <span className="facility-more">+{hotel.facilities.length - 6} more</span>
+                        )}
                       </div>
                     </div>
                   )}
@@ -2269,6 +2300,21 @@ export default function Hotels() {
           font-weight: 600;
         }
 
+        .hotel-class-badge {
+          position: absolute;
+          top: 15px;
+          left: 15px;
+          background: linear-gradient(135deg, #f8b500 0%, #ff8c00 100%);
+          color: white;
+          padding: 5px 12px;
+          border-radius: 15px;
+          font-size: 0.75rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          box-shadow: 0 2px 8px rgba(248, 181, 0, 0.4);
+          letter-spacing: 0.5px;
+        }
+
         .hotel-location {
           position: absolute;
           bottom: 15px;
@@ -2291,6 +2337,31 @@ export default function Hotels() {
         .hotel-content h3 {
           color: var(--primary-color);
           margin-bottom: 0.5rem;
+        }
+
+        .hotel-title-row {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          margin-bottom: 0.5rem;
+          flex-wrap: wrap;
+        }
+
+        .hotel-title-row h3 {
+          margin: 0;
+          flex: 0 1 auto;
+        }
+
+        .hotel-type-badge {
+          background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+          color: white;
+          padding: 4px 12px;
+          border-radius: 12px;
+          font-size: 0.7rem;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.3px;
+          white-space: nowrap;
         }
 
         .hotel-description {
@@ -2341,6 +2412,16 @@ export default function Hotels() {
           border-radius: 10px;
           font-size: 0.75rem;
           color: var(--text-light);
+        }
+
+        .facility-more {
+          background: linear-gradient(135deg, var(--primary-color) 0%, #d96200 100%);
+          color: white;
+          padding: 3px 10px;
+          border-radius: 10px;
+          font-size: 0.7rem;
+          font-weight: 600;
+          cursor: default;
         }
 
         .hotel-popular {

@@ -4,7 +4,7 @@ export const CONTACT_INFO = {
   whatsapp: '94701888993',
   whatsappUrl: 'https://wa.me/94701888993',
   phone: '+94 70 188 8993',
-  email: 'reservation@zamzamtours.com',
+  email: 'reservation@zamzamlankatours.com',
   address: '112/13 Morris Road, Milidduwa, Galle.'
 };
 
@@ -12,7 +12,7 @@ export const SITE_INFO = {
   name: 'Zamzam Lanka Tours',
   tagline: 'Best Travel Experience in Sri Lanka',
   description: 'Premium travel services including self-drive car rentals, guided tours, and airport & all-island transfers across Sri Lanka.',
-  url: 'https://zamzamtours.com',
+  url: 'https://zamzamlankatours.com',
   logo: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1763663535/Project_Luvi_-_Gemstones_ce9h12.png'
 };
 

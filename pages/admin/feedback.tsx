@@ -150,11 +150,18 @@ export default function AdminFeedback() {
   }, []);
 
   return (
-    <div style={{ fontFamily: 'Poppins, sans-serif', backgroundColor: '#f8fafc', minHeight: '100vh', display: 'flex' }}>
+    <div style={{ fontFamily: 'Poppins, sans-serif', backgroundColor: '#f8fafc', minHeight: '100vh' }}>
       <AdminSidebar active="feedback" />
 
       {/* Main Content */}
-      <div style={{ flex: 1, padding: '30px' }}>
+      <div style={{ marginLeft: '280px', padding: '30px' }}>
+        <style jsx global>{`
+          @media (max-width: 900px) {
+            body > div > div:last-child {
+              margin-left: 0 !important;
+            }
+          }
+        `}</style>
         {/* Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
           <div>

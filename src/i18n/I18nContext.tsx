@@ -1,13 +1,15 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
+import enTranslations from '../../locales/en.json'
+import deTranslations from '../../locales/de.json'
 
 const locales = ['en', 'de'] as const
 
 type Locale = typeof locales[number]
 
 const translations: Record<Locale, Record<string, string>> = {
-  en: require('../../locales/en.json'),
-  de: require('../../locales/de.json')
+  en: enTranslations,
+  de: deTranslations
 }
 
 const I18nContext = createContext<any>(null)

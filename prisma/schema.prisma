@@ -56,6 +56,8 @@ model Renamedpackage {
   image        String?        @db.VarChar(255)
   highlights   String?
   includings   String?
+  days         Int?
+  itinerary    String?
   tour_booking tour_booking[]
 
   @@map("package")
