@@ -940,6 +940,49 @@ export default function Hotels() {
                     </div>
                   </div>
                 </div>
+
+                {/* Hover overlay with details on gradient */}
+                <div className="hotel-overlay">
+                  <div className="overlay-content">
+                    <h3>{hotel.name}</h3>
+                    <div className="overlay-location">
+                      📍 {locations.find(l => l.id === hotel.location)?.name}
+                    </div>
+                    <p className="overlay-description">{hotel.description}</p>
+                    
+                    {hotel.facilities && hotel.facilities.length > 0 && (
+                      <div className="overlay-facilities">
+                        {hotel.facilities.slice(0, 6).map((f: string) => (
+                          <span key={f} className="overlay-facility-tag">✓ {f.trim()}</span>
+                        ))}
+                      </div>
+                    )}
+
+                    <div className="overlay-price">
+                      <span className="overlay-price-label">{get('hotels.price.from', 'From')}</span>
+                      <span className="overlay-price-amount">${hotel.price}</span>
+                      <span className="overlay-price-period">/{get('hotels.price.perNight', 'night')}</span>
+                    </div>
+
+                    <div className="overlay-actions">
+                      <button 
+                        className="overlay-btn-view"
+                        onClick={() => openHotelBooking(hotel)}
+                      >
+                        {get('hotels.buttons.viewDetails', 'View Details')}
+                      </button>
+                      <button 
+                        className="overlay-btn-book"
+                        onClick={() => {
+                          setSelectedHotel(hotel);
+                          setShowBookingForm(true);
+                        }}
+                      >
+                        {get('hotels.buttons.bookNow', 'Book Now')}
+                      </button>
+                    </div>
+                  </div>
+                </div>
               </div>
             ))}
           </div>
@@ -2030,11 +2073,17 @@ export default function Hotels() {
           transition: all 0.3s ease;
           display: flex;
           flex-direction: column;
+          position: relative;
         }
 
         .hotel-card:hover {
           transform: translateY(-5px);
           box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .hotel-card:hover .hotel-overlay {
+          opacity: 1;
+          pointer-events: auto;
         }
 
         .hotel-image {
@@ -2053,6 +2102,156 @@ export default function Hotels() {
         }
 
         .hotel-card:hover .hotel-image img {
+          transform: scale(1.05);
+        }
+
+        /* Overlay that covers entire card on hover */
+        .hotel-overlay {
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          opacity: 0;
+          pointer-events: none;
+          transition: opacity 0.3s ease;
+          z-index: 10;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 2rem;
+          overflow-y: auto;
+        }
+
+        .hotel-overlay::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.8) 50%, rgba(0,0,0,0.95) 100%);
+          z-index: 1;
+        }
+
+        .hotel-card:hover .hotel-image {
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          height: 100%;
+          z-index: 5;
+        }
+
+        .overlay-content {
+          color: white;
+          text-align: center;
+          width: 100%;
+          max-height: 100%;
+          overflow-y: auto;
+          position: relative;
+          z-index: 2;
+        }
+
+        .overlay-content h3 {
+          color: white;
+          font-size: 1.5rem;
+          margin-bottom: 0.5rem;
+          text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .overlay-location {
+          color: #f8b500;
+          font-size: 0.9rem;
+          margin-bottom: 1rem;
+          font-weight: 600;
+        }
+
+        .overlay-description {
+          color: rgba(255,255,255,0.9);
+          font-size: 0.9rem;
+          margin-bottom: 1rem;
+          line-height: 1.5;
+        }
+
+        .overlay-facilities {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 0.5rem;
+          margin-bottom: 1.5rem;
+        }
+
+        .overlay-facility-tag {
+          background: rgba(255,255,255,0.15);
+          padding: 0.3rem 0.6rem;
+          border-radius: 5px;
+          font-size: 0.75rem;
+          color: white;
+          backdrop-filter: blur(5px);
+          text-align: left;
+        }
+
+        .overlay-price {
+          margin-bottom: 1.5rem;
+          display: flex;
+          align-items: baseline;
+          justify-content: center;
+          gap: 0.3rem;
+        }
+
+        .overlay-price-label {
+          color: rgba(255,255,255,0.8);
+          font-size: 0.9rem;
+        }
+
+        .overlay-price-amount {
+          color: #f8b500;
+          font-size: 2rem;
+          font-weight: 700;
+        }
+
+        .overlay-price-period {
+          color: rgba(255,255,255,0.8);
+          font-size: 0.9rem;
+        }
+
+        .overlay-actions {
+          display: flex;
+          gap: 1rem;
+          justify-content: center;
+        }
+
+        .overlay-btn-view,
+        .overlay-btn-book {
+          padding: 0.7rem 1.5rem;
+          border-radius: 5px;
+          border: none;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          font-size: 0.9rem;
+        }
+
+        .overlay-btn-view {
+          background: rgba(255,255,255,0.2);
+          color: white;
+          border: 2px solid white;
+          backdrop-filter: blur(10px);
+        }
+
+        .overlay-btn-view:hover {
+          background: white;
+          color: var(--primary-color);
+        }
+
+        .overlay-btn-book {
+          background: #f8b500;
+          color: white;
+        }
+
+        .overlay-btn-book:hover {
+          background: #e5a600;
           transform: scale(1.05);
         }
 
