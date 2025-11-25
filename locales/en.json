@@ -1123,8 +1123,8 @@
   "hotels.amenities.restaurant": "Restaurant",
   "hotels.amenities.bar": "Bar",
 
-  "hotels.services.airportTransfer.name": "Airport Transfer",
-  "hotels.services.airportTransfer.description": "Hassle-free pickup from airport to hotel",
+  "hotels.services.airportTransfer.name": "Airport & All-Island Transfer",
+  "hotels.services.airportTransfer.description": "Hassle-free pickup and island-wide transfers",
   "hotels.services.dailyTours.name": "Daily Tours",
   "hotels.services.dailyTours.description": "Guided tours from your hotel location",
   "hotels.services.rentalCar.name": "Car Rental",
@@ -1673,21 +1673,21 @@
   "gallery.cta.button": "Start Your Journey",
   "gallery.cta.waMessage": "Hello Zamzam Lanka Tours! I saw your beautiful gallery and would like to plan a trip to Sri Lanka.",
 
-  "airportTransfer.pageTitle": "Airport Transfers Sri Lanka | Meet & Greet Service | Zamzam Lanka Tours",
-  "airportTransfer.metaDescription": "Hassle-free airport transfers in Sri Lanka with meet & greet service. Professional drivers and comfortable vehicles from Colombo Airport.",
-  "airportTransfer.metaKeywords": "Sri Lanka airport transfer, Colombo airport pickup, meet and greet, CMB airport, taxi service, airport taxi Sri Lanka",
+  "airportTransfer.pageTitle": "Airport & All-Island Transfers Sri Lanka | Meet & Greet Service | Zamzam Lanka Tours",
+  "airportTransfer.metaDescription": "Professional airport and all-island transfers in Sri Lanka with meet & greet service. Travel anywhere with our comfortable vehicles and professional drivers.",
+  "airportTransfer.metaKeywords": "Sri Lanka airport transfer, all island transfers, Colombo airport pickup, Sri Lanka taxi service, island-wide transport",
 
   "airportTransfer.hero.titlePrefix": "Stress-Free",
-  "airportTransfer.hero.titleHighlight": "Airport Transfers",
+  "airportTransfer.hero.titleHighlight": "Airport & All-Island Transfers",
   "airportTransfer.hero.titleSuffix": "in Sri Lanka",
-  "airportTransfer.hero.subtitle": "Professional meet & greet service with comfortable vehicles",
+  "airportTransfer.hero.subtitle": "Airport pickups with meet & greet service and island-wide transfers with professional drivers",
   "airportTransfer.hero.feature.meetAndGreet": "Meet & Greet",
   "airportTransfer.hero.feature.professionalDrivers": "Professional Drivers",
   "airportTransfer.hero.feature.twentyFourSeven": "24/7 Service",
   "airportTransfer.hero.feature.noHiddenCosts": "No Hidden Costs",
   "airportTransfer.hero.scroll": "Scroll to explore",
 
-  "airportTransfer.booking.title": "Book Your Airport Transfer",
+  "airportTransfer.booking.title": "Book Your Transfer",
   "airportTransfer.tripType.oneWay": "One Way",
   "airportTransfer.tripType.roundTrip": "Two Way (Round Trip)",
 
@@ -1988,8 +1988,8 @@
 
 "home.services.title": "Our Services",
 "home.services.tabs.vehicles": "Vehicle Rentals",
-"home.services.tabs.tours": "Guided Tours",
-"home.services.tabs.transfer": "Airport Transfers",
+"home.services.tabs.tours": "Tour Packages",
+"home.services.tabs.transfer": "Airport & All-Island Transfers",
 
 "home.vehicles.sectionTitle": "Flexible Vehicle Rentals",
 "home.vehicles.sectionDesc": "Choose from our extensive fleet with both self-drive and with-driver options. All vehicles are well-maintained and fully insured for your safety and comfort.",

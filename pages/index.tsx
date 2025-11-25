@@ -21,7 +21,7 @@ export default function Home() {
     return val === key ? fallback : val;
   };
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState('vehicles');
+  const [activeTab, setActiveTab] = useState('tours');
   const [activeLanguage, setActiveLanguage] = useState('en');
   const [isScrolled, setIsScrolled] = useState(false);
   const heroRef = useRef(null);
@@ -103,7 +103,8 @@ export default function Home() {
     { name: 'Cultural Tours', icon: '🏛️', description: 'Ancient temples, forts and historical monuments', slug: 'cultural-tours' },
     { name: 'Beach Activities', icon: '🏖️', description: 'Swimming, surfing, snorkeling and beach relaxation', slug: 'beach-activities' },
     { name: 'Tea Plantation Tours', icon: '🍵', description: 'Visit tea estates and experience Ceylon tea culture', slug: 'tea-plantation-tours' },
-    { name: 'Whale Watching', icon: '🐋', description: 'Witness blue whales and dolphins in their natural habitat', slug: 'whale-watching' }
+    { name: 'Whale Watching', icon: '🐋', description: 'Witness blue whales and dolphins in their natural habitat', slug: 'whale-watching' },
+    { name: 'Cooking Classes', icon: '👨‍🍳', description: 'Learn authentic Sri Lankan cuisine with hands-on cooking experiences', slug: 'cooking-classes' }
   ];
   
   // Default tour packages (used as a fallback)
@@ -401,16 +402,16 @@ export default function Home() {
           <AnimatedSection animation="fadeInUp" delay={0.2}>
             <div className="services-tabs">
               <button 
+                className={`tab ${activeTab === 'tours' ? 'active' : ''}`}
+                onClick={() => setActiveTab('tours')}
+              >
+                {get('home.services.tabs.tours', 'Tour Packages')}
+              </button>
+              <button 
                 className={`tab ${activeTab === 'vehicles' ? 'active' : ''}`}
                 onClick={() => setActiveTab('vehicles')}
               >
                 {get('home.services.tabs.vehicles', 'Vehicle Rentals')}
-              </button>
-              <button 
-                className={`tab ${activeTab === 'tours' ? 'active' : ''}`}
-                onClick={() => setActiveTab('tours')}
-              >
-                {get('home.services.tabs.tours', 'Guided Tours')}
               </button>
               <button 
                 className={`tab ${activeTab === 'transfer' ? 'active' : ''}`}
@@ -479,27 +480,48 @@ export default function Home() {
                           animation="fadeInUp"
                           delay={index * 0.12}
                         >
-                          <div className="tour-card">
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12 }}>
-                              <div>
-                                <h4 style={{ margin: '0 0 6px' }}>{get(`home.tours.${tour.id}.name`, tour.name)}</h4>
-                                <p className="duration" style={{ margin: '0 0 8px' }}>{get(`home.tours.${tour.id}.duration`, tour.duration)}</p>
-                                <p style={{ margin: 0 }}><strong>{get('home.tours.highlightsLabel', 'Highlights:')}</strong> {Array.isArray(tour.highlights) ? tour.highlights.join(', ') : tour.highlights}</p>
-                              </div>
-                              <div style={{ textAlign: 'right' }}>
-                                <p style={{ margin: 0, fontWeight: 700 }}>{get('home.tours.fromPrice', 'From $—')}</p>
-                                <p className="muted" style={{ margin: '6px 0 0' }}>{get('home.tours.startingPriceNote', 'Starting price depends on group size')}</p>
-                              </div>
+                          <div className="tour-card-home">
+                            <div className="tour-image-home">
+                              <Image 
+                                src={tour.image || '/placeholder.jpg'} 
+                                alt={tour.name}
+                                width={400}
+                                height={250}
+                                style={{ objectFit: 'cover', width: '100%', height: '100%' }}
+                              />
+                              <div className="tour-badge-home">{tour.duration}</div>
                             </div>
+                            
+                            <div className="tour-content-home">
+                              <h4>{get(`home.tours.${tour.id}.name`, tour.name)}</h4>
+                              <p className="tour-description-home">{get(`home.tours.${tour.id}.description`, tour.description)}</p>
+                              
+                              <div className="tour-highlights-home">
+                                <strong>{get('home.tours.highlightsLabel', 'Highlights:')}</strong>
+                                <div className="highlights-tags">
+                                  {(Array.isArray(tour.highlights) ? tour.highlights : (tour.highlights || '').split(',')).slice(0, 3).map((highlight, i) => (
+                                    <span key={i} className="highlight-tag">✓ {highlight.trim()}</span>
+                                  ))}
+                                </div>
+                              </div>
 
-                            <div style={{ marginTop: 12, display: 'flex', gap: 8 }}>
-                              <button
-                                className="btn btn-small"
-                                onClick={() => handleWhatsAppBooking(`the ${tour.name} package`)}
-                              >
-                                {get('home.tours.bookThis', 'Book This Tour')}
-                              </button>
-                              <Link href={`/tours`} className="btn btn-secondary">{get('home.tours.viewDetails', 'View details')}</Link>
+                              <div className="tour-footer-home" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem' }}>
+                                <div className="tour-price-home">
+                                  <span className="price-label">{get('home.tours.fromPrice', 'From')}</span>
+                                  <span className="price-amount">${tour.price || '—'}</span>
+                                </div>
+                                <div style={{ display: 'flex', gap: 8 }}>
+                                  <button
+                                    className="btn btn-primary-small"
+                                    onClick={() => handleWhatsAppBooking(`the ${tour.name} package`)}
+                                  >
+                                    {get('home.tours.bookNow', 'Book Now')}
+                                  </button>
+                                  <Link href="/tours" className="btn btn-secondary-small">
+                                    {get('home.tours.viewDetails', 'Details')}
+                                  </Link>
+                                </div>
+                              </div>
                             </div>
                           </div>
                         </AnimatedSection>
@@ -511,8 +533,8 @@ export default function Home() {
             {activeTab === 'transfer' && (
               <div className="service-details">
                 <AnimatedSection animation="fadeInUp">
-                  <h3>{get('home.transfer.sectionTitle', 'Airport & All-Island Transfers')}</h3>
-                    <p>{get('home.transfer.sectionDesc', 'Travel anywhere in Sri Lanka with our professional transfer service. From airport pickups to island-wide journeys, we offer comfortable vehicles and experienced drivers.')}</p>
+                  <h3>{get('home.transfer.sectionTitle', 'Seamless Airport & All-Island Transfers')}</h3>
+                    <p>{get('home.transfer.sectionDesc', 'Enjoy hassle-free airport pickups and drop-offs with our meet & greet service, or travel anywhere across Sri Lanka. We monitor your flight for any delays and provide comfortable, reliable transportation island-wide.')}</p>
                   <div style={{ height: '1rem' }} />
                 </AnimatedSection>
                 
@@ -522,22 +544,22 @@ export default function Home() {
                       <div className="transfer-info-card">
                         <div className="info-icon">✈️</div>
                         <h4>{get('home.transfer.features.airports', 'All Airports Covered')}</h4>
-                        <p>{get('home.transfer.features.airportsDesc', 'CMB Colombo, HRI Hambantota, RML Ratmalana - we cover all airports')}</p>
+                        <p>{get('home.transfer.features.airportsDesc', 'CMB Colombo, HRI Hambantota, RML Ratmalana - we cover all airports with meet & greet service')}</p>
                       </div>
                       <div className="transfer-info-card">
                         <div className="info-icon">🗺️</div>
-                        <h4>{get('home.transfer.features.islandWide', 'Island-Wide Service')}</h4>
-                        <p>{get('home.transfer.features.islandWideDesc', 'Travel to any district or destination across Sri Lanka')}</p>
+                        <h4>{get('home.transfer.features.islandWide', 'All-Island Transfers')}</h4>
+                        <p>{get('home.transfer.features.islandWideDesc', 'Travel to any district, city, or destination across Sri Lanka with our professional drivers')}</p>
                       </div>
                       <div className="transfer-info-card">
                         <div className="info-icon">🚗</div>
                         <h4>{get('home.transfer.features.fleet', 'Comfortable Fleet')}</h4>
-                        <p>{get('home.transfer.features.fleetDesc', 'From cars to luxury vans - vehicles for 1 to 14 passengers')}</p>
+                        <p>{get('home.transfer.features.fleetDesc', 'From cars to luxury vans - well-maintained vehicles for 1 to 14 passengers')}</p>
                       </div>
                       <div className="transfer-info-card">
                         <div className="info-icon">🛑</div>
-                        <h4>{get('home.transfer.features.stops', 'Additional Stops')}</h4>
-                        <p>{get('home.transfer.features.stopsDesc', 'Request stops at temples, attractions, or restaurants along the way')}</p>
+                        <h4>{get('home.transfer.features.stops', 'Flexible Stops')}</h4>
+                        <p>{get('home.transfer.features.stopsDesc', 'Request additional stops at temples, attractions, restaurants, or shopping centers along your route')}</p>
                       </div>
                     </div>
                     <div style={{ marginTop: '1.5rem', textAlign: 'center' }}>

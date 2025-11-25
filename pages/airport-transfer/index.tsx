@@ -151,7 +151,7 @@ export default function AirportTransfer() {
     message += `\n${get('airportTransfer.messages.lineSeparator','\u2501'.repeat(24))}`;
     message += `\n${get('airportTransfer.messages.confirmNote','_Please confirm availability and pricing_')} \u{1F4AC}`;
 
-    const whatsappNumber = '+94766135110';
+    const whatsappNumber = CONTACT_INFO.whatsapp;
     const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
   };

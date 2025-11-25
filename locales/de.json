@@ -1679,9 +1679,9 @@
   "airportTransfer.metaKeywords": "Sri Lanka Flughafentransfer, Colombo Flughafen Abholung, Meet & Greet, CMB Flughafen, Taxi Service, Flughafentaxi Sri Lanka",
 
   "airportTransfer.hero.titlePrefix": "Stressfrei",
-  "airportTransfer.hero.titleHighlight": "Flughafentransfers",
+  "airportTransfer.hero.titleHighlight": "Flughafen- & Inselweite Transfers",
   "airportTransfer.hero.titleSuffix": "in Sri Lanka",
-  "airportTransfer.hero.subtitle": "Professioneller Meet & Greet-Service mit komfortablen Fahrzeugen",
+  "airportTransfer.hero.subtitle": "Flughafen-Abholung mit Meet & Greet-Service und inselweite Transfers mit professionellen Fahrern",
   "airportTransfer.hero.feature.meetAndGreet": "Meet & Greet",
   "airportTransfer.hero.feature.professionalDrivers": "Professionelle Fahrer",
   "airportTransfer.hero.feature.twentyFourSeven": "24/7 Service",
@@ -1897,8 +1897,8 @@
 
   "home.services.title": "Unsere Dienstleistungen",
   "home.services.tabs.vehicles": "Fahrzeugvermietung",
-  "home.services.tabs.tours": "Geführte Touren",
-  "home.services.tabs.transfer": "Flughafentransfers",
+  "home.services.tabs.tours": "Tourpakete",
+  "home.services.tabs.transfer": "Flughafen- und Inseltransfers",
 
   "home.vehicles.sectionTitle": "Flexible Fahrzeugvermietungen",
   "home.vehicles.sectionDesc": "Wählen Sie aus unserer umfangreichen Flotte mit Optionen für Selbstfahrer und Fahrer. Alle Fahrzeuge sind gut gewartet und vollständig versichert für Ihre Sicherheit und Ihren Komfort.",

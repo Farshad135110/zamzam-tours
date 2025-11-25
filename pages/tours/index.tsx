@@ -882,7 +882,7 @@ export default function Tours() {
                 </div>
                 <div className="form-group">
                   <label>{get('tours.form.label.startDate', 'Preferred Start Date *')}</label>
-                  <input type="date" required />
+                  <input type="date" min={new Date().toISOString().split('T')[0]} required />
                 </div>
               </div>
 
