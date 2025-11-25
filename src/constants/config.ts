@@ -1,4 +1,4 @@
-// Global configuration constants for ZamZam Tours
+// Global configuration constants for Zamzam Lanka Tours
 
 export const CONTACT_INFO = {
   whatsapp: '94701888993',
@@ -9,7 +9,7 @@ export const CONTACT_INFO = {
 };
 
 export const SITE_INFO = {
-  name: 'ZamZam Tours',
+  name: 'Zamzam Lanka Tours',
   tagline: 'Best Travel Experience in Sri Lanka',
   description: 'Premium travel services including self-drive car rentals, guided tours, and airport & all-island transfers across Sri Lanka.',
   url: 'https://zamzamtours.com',

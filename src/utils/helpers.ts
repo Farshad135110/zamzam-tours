@@ -1,4 +1,4 @@
-// Utility functions for ZamZam Tours
+// Utility functions for Zamzam Lanka Tours
 
 import { CONTACT_INFO } from '../constants/config';
 
@@ -17,7 +17,7 @@ export const generateBookingMessage = (
   service: string,
   details?: Record<string, any>
 ) => {
-  let message = `Hello ZamZam Tours! I'm interested in booking ${service}.\n\n`;
+  let message = `Hello Zamzam Lanka Tours! I'm interested in booking ${service}.\n\n`;
   
   if (details) {
     Object.entries(details).forEach(([key, value]) => {

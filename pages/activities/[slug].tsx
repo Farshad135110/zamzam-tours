@@ -1117,7 +1117,7 @@ const ActivityDetailPage = () => {
             Ready for an Adventure?
           </h2>
           <p style={{ fontSize: '1.1rem', color: '#fff', marginBottom: '1.5rem', opacity: 0.9 }}>
-            Book your {activity.name} experience with ZamZam Tours today!
+            Book your {activity.name} experience with Zamzam Lanka Tours today!
           </p>
           <button 
             onClick={handleWhatsAppBooking}

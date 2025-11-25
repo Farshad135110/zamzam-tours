@@ -407,7 +407,7 @@ export default function Tours() {
 
   // Handle WhatsApp booking
   const handleWhatsAppBooking = (tour: any) => {
-    const template = get('tours.messages.whatsappTemplate', 'Hello Zamzam Tours! I\'m interested in booking the "{tour}" tour. Please provide more details and availability.');
+    const template = get('tours.messages.whatsappTemplate', 'Hello Zamzam Lanka Tours! I\'m interested in booking the "{tour}" tour. Please provide more details and availability.');
     const message = template.replace('{tour}', tour.name);
     const encodedMessage = encodeURIComponent(message);
     window.open(`${CONTACT_INFO.whatsappUrl}?text=${encodedMessage}`, '_blank');
@@ -422,8 +422,8 @@ export default function Tours() {
   return (
     <>
       <Head>
-        <title>{get('tours.pageTitle', 'Sri Lanka Tour Packages | Zamzam Tours')}</title>
-        <meta name="description" content={get('tours.metaDescription', 'Discover amazing Sri Lanka tour packages with Zamzam Tours. Cultural, adventure, beach, wildlife, and North East tours with expert guides and best prices.')} />
+        <title>{get('tours.pageTitle', 'Sri Lanka Tour Packages | Zamzam Lanka Tours')}</title>
+        <meta name="description" content={get('tours.metaDescription', 'Discover amazing Sri Lanka tour packages with Zamzam Lanka Tours. Cultural, adventure, beach, wildlife, and North East tours with expert guides and best prices.')} />
         <meta name="keywords" content={get('tours.metaKeywords', 'Sri Lanka tours, cultural tours, adventure tours, beach tours, wildlife safari, North East Sri Lanka, tour packages')} />
       </Head>
 

@@ -99,7 +99,7 @@ export default function SelfDrive() {
             .split(',')
             .map((s: string) => s.trim())
             .filter(Boolean)
-            .map((t: string) => t.replace(/\s+/g, '-'));
+            .map((t: string) => t.replace(/[_\s]+/g, '-')); // Normalize underscores and spaces to hyphens
           const availableFor = typesArr.length ? typesArr.join(', ') : 'self-drive, with-driver';
 
           return {
@@ -170,17 +170,22 @@ export default function SelfDrive() {
 
   // Filter vehicles based on rental type
   const filteredVehicles = vehicles.filter(vehicle => {
+    // The type field contains comma-separated values like "self-drive, with-driver"
+    const vehicleTypes = vehicle.type.toLowerCase().split(',').map(t => t.trim());
+    
     if (rentalType === 'self-drive') {
-      return vehicle.type.includes('self-drive');
+      return vehicleTypes.includes('self-drive') || vehicleTypes.includes('self_drive');
+    } else if (rentalType === 'with-driver') {
+      return vehicleTypes.includes('with-driver') || vehicleTypes.includes('with_driver');
     }
-    return true; // Show all vehicles for with-driver
+    return true;
   });
 
   // Handle WhatsApp booking
   const handleWhatsAppBooking = (vehicle: Vehicle, customMessage: string = '') => {
     let message = customMessage;
     if (!customMessage) {
-      message = `Hello Zamzam Tours! I'm interested in renting a ${vehicle.name} (${rentalType}) for ${customerType}. `;
+      message = `Hello Zamzam Lanka Tours! I'm interested in renting a ${vehicle.name} (${rentalType}) for ${customerType}. `;
       if (pickupDate && returnDate) {
         message += `From ${pickupDate} to ${returnDate}. `;
       }
@@ -208,8 +213,8 @@ export default function SelfDrive() {
   return (
     <>
       <Head>
-        <title>{get('carRental.pageTitle', 'Vehicle Rentals in Sri Lanka | Self-Drive & With Driver | Zamzam Tours')}</title>
-        <meta name="description" content={get('carRental.metaDescription', 'Rent vehicles in Sri Lanka with ZamZam Tours. Self-drive and with-driver options for tourists and locals. Best prices for Prius, Aqua, Vans, Buses and more.')} />
+        <title>{get('carRental.pageTitle', 'Vehicle Rentals in Sri Lanka | Self-Drive & With Driver | Zamzam Lanka Tours')}</title>
+        <meta name="description" content={get('carRental.metaDescription', 'Rent vehicles in Sri Lanka with Zamzam Lanka Tours. Self-drive and with-driver options for tourists and locals. Best prices for Prius, Aqua, Vans, Buses and more.')} />
         <meta name="keywords" content={get('carRental.metaKeywords', 'Sri Lanka car rental, self-drive, with driver, vehicle hire, tourist rental, local rental, Prius, Aqua, van rental, bus rental')} />
       </Head>
 

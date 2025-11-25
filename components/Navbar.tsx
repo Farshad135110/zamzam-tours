@@ -22,7 +22,7 @@ export default function Navbar() {
   }, []);
 
   const handleWhatsAppContact = () => {
-    openWhatsApp('Hello ZamZam Tours! I would like to inquire about your services.');
+    openWhatsApp('Hello Zamzam Lanka Tours! I would like to inquire about your services.');
   };
 
   const navLinks = [

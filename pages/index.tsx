@@ -195,7 +195,7 @@ export default function Home() {
   
   // Handle WhatsApp booking
   const handleWhatsAppBooking = (service: string) => {
-    const message = `Hello Zamzam Tours! I'm interested in booking ${service}. Please provide more details.`;
+    const message = `Hello Zamzam Lanka Tours! I'm interested in booking ${service}. Please provide more details.`;
     const encodedMessage = encodeURIComponent(message);
     window.open(`${CONTACT_INFO.whatsappUrl}?text=${encodedMessage}`, '_blank');
   };
@@ -203,10 +203,10 @@ export default function Home() {
   return (
     <>
       <Head>
-  <title>{get('home.title', 'Zamzam Tours - Best Travel Experience in Sri Lanka')}</title>
-  <meta name="description" content={get('home.metaDescription', 'Zamzam Tours offers premium self-drive car rentals, guided tours, and airport & all-island transfers across Sri Lanka. Experience the best of Sri Lankan hospitality with our extensive fleet and professional services.')} />
+  <title>{get('home.title', 'Zamzam Lanka Tours - Best Travel Experience in Sri Lanka')}</title>
+  <meta name="description" content={get('home.metaDescription', 'Zamzam Lanka Tours offers premium self-drive car rentals, guided tours, and airport & all-island transfers across Sri Lanka. Experience the best of Sri Lankan hospitality with our extensive fleet and professional services.')} />
   <meta name="keywords" content={get('home.metaKeywords', 'Sri Lanka tours, car rental Sri Lanka, airport & all-island transfers, self-drive, guided tours, hotel booking, things to do in Sri Lanka')} />
-  <meta property="og:title" content={get('home.og.title', 'Zamzam Tours - Best Travel Experience in Sri Lanka')} />
+  <meta property="og:title" content={get('home.og.title', 'Zamzam Lanka Tours - Best Travel Experience in Sri Lanka')} />
   <meta property="og:description" content={get('home.og.description', 'Premium travel services including self-drive car rentals, guided tours, and airport & all-island transfers across Sri Lanka.')} />
   <meta property="og:image" content={get('home.og.image', '/images/og-image.jpg')} />
   <meta property="og:url" content={get('home.og.url', 'https://zamzamtours.com')} />
@@ -647,7 +647,7 @@ export default function Home() {
             <AnimatedSection animation="fadeInLeft" delay={0.2}>
               <div className="testimonial">
                 <div className="testimonial-content">
-                  <p>{get('home.testimonials.1.text', '"Zamzam Tours made our Sri Lanka trip unforgettable. The self-drive car was in perfect condition, and their recommendations for accommodations were spot on!"')}</p>
+                  <p>{get('home.testimonials.1.text', '"Zamzam Lanka Tours made our Sri Lanka trip unforgettable. The self-drive car was in perfect condition, and their recommendations for accommodations were spot on!"')}</p>
                   <div className="testimonial-author">
                     <strong>{get('home.testimonials.1.author', 'Sarah Johnson')}</strong>
                     <span>{get('home.testimonials.1.location', 'United Kingdom')}</span>

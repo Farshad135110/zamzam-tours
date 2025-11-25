@@ -194,7 +194,7 @@ export default function SimpleGallery() {
             <button 
               className="cta-button"
               onClick={() => {
-                  const message = get('gallery.cta.waMessage', "Hello ZamZam Tours! I saw your beautiful gallery and would like to plan a trip to Sri Lanka.");
+                  const message = get('gallery.cta.waMessage', "Hello Zamzam Lanka Tours! I saw your beautiful gallery and would like to plan a trip to Sri Lanka.");
                   window.open(`${CONTACT_INFO.whatsappUrl}?text=${encodeURIComponent(message)}`, '_blank');
                 }}
             >

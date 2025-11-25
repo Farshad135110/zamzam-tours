@@ -381,7 +381,7 @@ export default function Hotels() {
 
   // Handle WhatsApp booking
   const handleWhatsAppBooking = () => {
-    let message = `${get('hotels.messages.greeting','Hello Zamzam Tours! I would like to book accommodation and services:')}\n\n`;
+    let message = `${get('hotels.messages.greeting','Hello Zamzam Lanka Tours! I would like to book accommodation and services:')}\n\n`;
     
     if (selectedHotel) {
       message += `🏨 ${get('hotels.messages.hotelBookingBadge','*Hotel Booking:*')}\n`;
@@ -1015,7 +1015,7 @@ export default function Hotels() {
               <button 
                 className="btn-primary large"
                 onClick={() => {
-                  const message = `Hello Zamzam Tours! I want to book a complete travel package including hotel, transfers, and tours. Please help me plan my trip.`;
+                  const message = `Hello Zamzam Lanka Tours! I want to book a complete travel package including hotel, transfers, and tours. Please help me plan my trip.`;
                   const encodedMessage = encodeURIComponent(message);
                   window.open(`https://wa.me/94766135110?text=${encodedMessage}`, '_blank');
                 }}
@@ -2027,16 +2027,33 @@ export default function Hotels() {
           border-radius: 10px;
           overflow: hidden;
           box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-          transition: transform 0.3s ease;
+          transition: all 0.3s ease;
+          display: flex;
+          flex-direction: column;
         }
 
         .hotel-card:hover {
           transform: translateY(-5px);
+          box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
         }
 
         .hotel-image {
           position: relative;
           height: 200px;
+          width: 100%;
+          overflow: hidden;
+          flex-shrink: 0;
+        }
+
+        .hotel-image img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          transition: transform 0.3s ease;
+        }
+
+        .hotel-card:hover .hotel-image img {
+          transform: scale(1.05);
         }
 
         .hotel-rating {
@@ -2064,6 +2081,9 @@ export default function Hotels() {
 
         .hotel-content {
           padding: 1.5rem;
+          display: flex;
+          flex-direction: column;
+          flex-grow: 1;
         }
 
         .hotel-content h3 {

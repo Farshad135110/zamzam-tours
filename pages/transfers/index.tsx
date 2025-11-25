@@ -159,7 +159,7 @@ export default function AirportTransfer() {
   return (
     <>
       <Head>
-        <title>{get('airportTransfer.pageTitle', 'Airport & All-Island Transfers Sri Lanka | Zamzam Tours')}</title>
+        <title>{get('airportTransfer.pageTitle', 'Airport & All-Island Transfers Sri Lanka | Zamzam Lanka Tours')}</title>
         <meta name="description" content={get('airportTransfer.metaDescription', 'Professional airport and all-island transfers in Sri Lanka. Travel anywhere with our comfortable vehicles and professional drivers.')} />
         <meta name="keywords" content={get('airportTransfer.metaKeywords', 'Sri Lanka airport transfer, all island transfers, Colombo airport pickup, Sri Lanka taxi service, island-wide transport')} />
       </Head>
@@ -459,7 +459,7 @@ export default function AirportTransfer() {
       <section className="why-choose-section">
         <div className="container">
           <div className="section-header">
-            <h2>{get('airportTransfer.why.title','Why Choose Zamzam Tours?')}</h2>
+            <h2>{get('airportTransfer.why.title','Why Choose Zamzam Lanka Tours?')}</h2>
             <p>{get('airportTransfer.why.subtitle','Reliable, professional, and hassle-free airport & all-island transfer services')}</p>
           </div>
 

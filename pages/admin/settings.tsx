@@ -5,7 +5,7 @@ export default function AdminSettings() {
   const [activeTab, setActiveTab] = useState('general');
   const [settings, setSettings] = useState({
     // General Settings
-    siteTitle: 'ZamZam Tours',
+    siteTitle: 'Zamzam Lanka Tours',
     contactEmail: 'admin@zamzamtours.com',
     phoneNumber: '+966 12 345 6789',
     address: 'Makkah, Saudi Arabia',
@@ -13,7 +13,7 @@ export default function AdminSettings() {
     timezone: 'Asia/Riyadh',
     
     // Business Settings
-    companyName: 'ZamZam Tours & Travel',
+    companyName: 'Zamzam Lanka Tours & Travel',
     taxRate: 15,
     bookingConfirmation: true,
     autoApproveBookings: false,
