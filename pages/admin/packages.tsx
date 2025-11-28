@@ -1,6 +1,14 @@
 import React, { useState, useEffect, FormEvent, MouseEvent } from 'react';
 import AdminSidebar from '../../components/AdminSidebar';
 import Link from 'next/link';
+import CloudinaryUpload from '../../components/CloudinaryUpload';
+
+interface DayItinerary {
+  day: number;
+  title: string;
+  description: string;
+  activities: string;
+}
 
 interface Package {
   package_id: string;
@@ -10,6 +18,8 @@ interface Package {
   image: string;
   highlights: string;
   includings: string;
+  days?: number;
+  itinerary?: string;
 }
 
 interface FormData {
@@ -19,6 +29,7 @@ interface FormData {
   image: string;
   highlights: string;
   includings: string;
+  days: number;
 }
 
 export default function AdminPackages() {
@@ -34,8 +45,16 @@ export default function AdminPackages() {
     price: '',
     image: '',
     highlights: '',
-    includings: ''
+    includings: '',
+    days: 1
   });
+
+  const [dayItineraries, setDayItineraries] = useState<DayItinerary[]>([{
+    day: 1,
+    title: '',
+    description: '',
+    activities: ''
+  }]);
 
   // Fetch packages from backend on mount
   useEffect(() => {
@@ -83,7 +102,9 @@ export default function AdminPackages() {
         price: formData.price ? parseFloat(formData.price) : null,
         image: formData.image,
         highlights: formData.highlights,
-        includings: formData.includings
+        includings: formData.includings,
+        days: formData.days,
+        itinerary: JSON.stringify(dayItineraries)
       };
 
       if (editingPackage) {
@@ -124,8 +145,15 @@ export default function AdminPackages() {
       price: '',
       image: '',
       highlights: '',
-      includings: ''
+      includings: '',
+      days: 1
     });
+    setDayItineraries([{
+      day: 1,
+      title: '',
+      description: '',
+      activities: ''
+    }]);
   };
 
   const handleEdit = (pkg: Package) => {
@@ -135,8 +163,22 @@ export default function AdminPackages() {
       price: pkg.price ? String(pkg.price) : '',
       image: pkg.image,
       highlights: pkg.highlights,
-      includings: pkg.includings
+      includings: pkg.includings,
+      days: pkg.days || 1
     });
+    
+    // Parse itinerary if exists
+    if (pkg.itinerary) {
+      try {
+        const parsedItinerary = JSON.parse(pkg.itinerary);
+        setDayItineraries(parsedItinerary);
+      } catch (e) {
+        setDayItineraries([{ day: 1, title: '', description: '', activities: '' }]);
+      }
+    } else {
+      setDayItineraries([{ day: 1, title: '', description: '', activities: '' }]);
+    }
+    
     setEditingPackage(pkg);
     setShowModal(true);
   };
@@ -154,6 +196,32 @@ export default function AdminPackages() {
     }
   };
 
+  const handleDaysChange = (days: number) => {
+    setFormData({ ...formData, days });
+    
+    // Adjust itinerary array based on days
+    const currentLength = dayItineraries.length;
+    if (days > currentLength) {
+      // Add new days
+      const newDays = Array.from({ length: days - currentLength }, (_, i) => ({
+        day: currentLength + i + 1,
+        title: '',
+        description: '',
+        activities: ''
+      }));
+      setDayItineraries([...dayItineraries, ...newDays]);
+    } else if (days < currentLength) {
+      // Remove extra days
+      setDayItineraries(dayItineraries.slice(0, days));
+    }
+  };
+
+  const updateDayItinerary = (dayIndex: number, field: keyof DayItinerary, value: string | number) => {
+    const updated = [...dayItineraries];
+    updated[dayIndex] = { ...updated[dayIndex], [field]: value };
+    setDayItineraries(updated);
+  };
+
   if (loading) {
     return (
       <div style={{ display: 'flex', minHeight: '100vh' }}>
@@ -166,11 +234,18 @@ export default function AdminPackages() {
   }
 
   return (
-    <div style={{ fontFamily: 'Poppins, sans-serif', backgroundColor: '#f8fafc', minHeight: '100vh', display: 'flex' }}>
+    <div style={{ fontFamily: 'Poppins, sans-serif', backgroundColor: '#f8fafc', minHeight: '100vh' }}>
       <AdminSidebar active="packages" />
 
       {/* Main Content */}
-      <div style={{ flex: 1, padding: '30px' }}>
+      <div style={{ marginLeft: '280px', padding: '30px', minHeight: '100vh' }}>
+        <style jsx global>{`
+          @media (max-width: 900px) {
+            body > div > div:last-child {
+              margin-left: 0 !important;
+            }
+          }
+        `}</style>
         {/* Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
           <div>
@@ -542,9 +617,9 @@ export default function AdminPackages() {
             backgroundColor: 'white',
             borderRadius: '12px',
             padding: '30px',
-            maxWidth: '500px',
+            maxWidth: '700px',
             width: '100%',
-            maxHeight: '80vh',
+            maxHeight: '85vh',
             overflow: 'auto'
           }} onClick={(e) => e.stopPropagation()}>
             <h2 style={{ fontSize: '24px', fontWeight: '600', color: '#053b3c', margin: '0 0 20px 0' }}>
@@ -643,12 +718,15 @@ export default function AdminPackages() {
 
               <div style={{ marginBottom: '20px' }}>
                 <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '6px' }}>
-                  Image URL
+                  Number of Days
                 </label>
                 <input
-                  type="url"
-                  value={formData.image}
-                  onChange={(e) => setFormData({...formData, image: e.target.value})}
+                  type="number"
+                  required
+                  min="1"
+                  max="30"
+                  value={formData.days}
+                  onChange={(e) => handleDaysChange(parseInt(e.target.value) || 1)}
                   style={{
                     width: '100%',
                     padding: '10px 12px',
@@ -669,9 +747,110 @@ export default function AdminPackages() {
                 />
               </div>
 
+              <CloudinaryUpload
+                currentImageUrl={formData.image}
+                onUploadSuccess={(url) => setFormData({...formData, image: url})}
+                folder="zamzam-tours/packages"
+                label="Package Image"
+              />
+
+              {/* Day-by-Day Itinerary */}
+              <div style={{ marginBottom: '20px' }}>
+                <label style={{ display: 'block', fontSize: '14px', fontWeight: '600', color: '#053b3c', marginBottom: '12px' }}>
+                  Day-by-Day Itinerary
+                </label>
+                <div style={{ maxHeight: '400px', overflowY: 'auto', border: '1px solid #e5e7eb', borderRadius: '8px', padding: '15px' }}>
+                  {dayItineraries.map((dayData, index) => (
+                    <div key={index} style={{ 
+                      marginBottom: index < dayItineraries.length - 1 ? '20px' : '0',
+                      paddingBottom: index < dayItineraries.length - 1 ? '20px' : '0',
+                      borderBottom: index < dayItineraries.length - 1 ? '1px solid #e5e7eb' : 'none'
+                    }}>
+                      <div style={{ 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        gap: '8px',
+                        marginBottom: '10px',
+                        backgroundColor: '#f0fdfa',
+                        padding: '8px 12px',
+                        borderRadius: '6px',
+                        border: '1px solid #99f6e4'
+                      }}>
+                        <span style={{ fontWeight: '600', color: '#0d9488', fontSize: '14px' }}>Day {dayData.day}</span>
+                      </div>
+                      
+                      <div style={{ marginBottom: '10px' }}>
+                        <label style={{ display: 'block', fontSize: '13px', fontWeight: '500', color: '#374151', marginBottom: '4px' }}>
+                          Day Title
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          placeholder="e.g., Arrival in Colombo"
+                          value={dayData.title}
+                          onChange={(e) => updateDayItinerary(index, 'title', e.target.value)}
+                          style={{
+                            width: '100%',
+                            padding: '8px 10px',
+                            border: '1px solid #d1d5db',
+                            borderRadius: '4px',
+                            fontSize: '13px',
+                            outline: 'none'
+                          }}
+                        />
+                      </div>
+
+                      <div style={{ marginBottom: '10px' }}>
+                        <label style={{ display: 'block', fontSize: '13px', fontWeight: '500', color: '#374151', marginBottom: '4px' }}>
+                          Description
+                        </label>
+                        <textarea
+                          required
+                          rows={2}
+                          placeholder="Brief overview of the day"
+                          value={dayData.description}
+                          onChange={(e) => updateDayItinerary(index, 'description', e.target.value)}
+                          style={{
+                            width: '100%',
+                            padding: '8px 10px',
+                            border: '1px solid #d1d5db',
+                            borderRadius: '4px',
+                            fontSize: '13px',
+                            outline: 'none',
+                            resize: 'vertical'
+                          }}
+                        />
+                      </div>
+
+                      <div>
+                        <label style={{ display: 'block', fontSize: '13px', fontWeight: '500', color: '#374151', marginBottom: '4px' }}>
+                          Activities (one per line)
+                        </label>
+                        <textarea
+                          required
+                          rows={3}
+                          placeholder="Visit temple\nCity tour\nBeach relaxation"
+                          value={dayData.activities}
+                          onChange={(e) => updateDayItinerary(index, 'activities', e.target.value)}
+                          style={{
+                            width: '100%',
+                            padding: '8px 10px',
+                            border: '1px solid #d1d5db',
+                            borderRadius: '4px',
+                            fontSize: '13px',
+                            outline: 'none',
+                            resize: 'vertical'
+                          }}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
               <div style={{ marginBottom: '20px' }}>
                 <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '6px' }}>
-                  Highlights (one per line)
+                  Highlights (places visited - one per line)
                 </label>
                 <textarea
                   required

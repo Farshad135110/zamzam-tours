@@ -139,11 +139,11 @@ export default function Contact() {
         window.open(`tel:${method.details}`);
         break;
       case 'whatsapp':
-        const whatsappMessage = `Hello Zamzam Tours! I would like to get more information about your services.`;
+        const whatsappMessage = `Hello Zamzam Lanka Tours! I would like to get more information about your services.`;
         window.open(`${CONTACT_INFO.whatsappUrl}?text=${encodeURIComponent(whatsappMessage)}`, '_blank');
         break;
       case 'email':
-        window.open(`mailto:${method.details}?subject=Inquiry from Zamzam Tours Website`);
+        window.open(`mailto:${method.details}?subject=Inquiry from Zamzam Lanka Tours Website`);
         break;
       case 'visit':
         // Scroll to locations section
@@ -165,7 +165,7 @@ export default function Contact() {
       
       // Prepare WhatsApp message
       const whatsappMessage = `
-New Inquiry from Zamzam Tours Website:
+New Inquiry from Zamzam Lanka Tours Website:
 
 Name: ${formData.name}
 Email: ${formData.email}

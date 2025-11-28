@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import AdminSidebar from '../../components/AdminSidebar';
+import CloudinaryUpload from '../../components/CloudinaryUpload';
 
 interface Vehicle {
   vehicle_id: string;
@@ -209,11 +210,18 @@ export default function AdminVehicles() {
   }
 
   return (
-    <div style={{ fontFamily: 'Poppins, sans-serif', backgroundColor: '#f8fafc', minHeight: '100vh', display: 'flex' }}>
+    <div style={{ fontFamily: 'Poppins, sans-serif', backgroundColor: '#f8fafc', minHeight: '100vh' }}>
       <AdminSidebar active="vehicles" />
 
       {/* Main Content */}
-      <div style={{ flex: 1, padding: '30px' }}>
+      <div style={{ marginLeft: '280px', padding: '30px', minHeight: '100vh' }}>
+        <style jsx global>{`
+          @media (max-width: 900px) {
+            body > div > div:last-child {
+              margin-left: 0 !important;
+            }
+          }
+        `}</style>
         {/* Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
           <div>
@@ -852,25 +860,12 @@ export default function AdminVehicles() {
                 </div>
               </div>
 
-              <div style={{ marginBottom: '30px' }}>
-                <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '6px' }}>
-                  Image URL
-                </label>
-                <input
-                  type="url"
-                  value={formData.image}
-                  onChange={(e) => setFormData({...formData, image: e.target.value})}
-                  style={{
-                    width: '100%',
-                    padding: '10px 12px',
-                    border: '1px solid #d1d5db',
-                    borderRadius: '6px',
-                    fontSize: '14px',
-                    outline: 'none',
-                    transition: 'all 0.2s ease'
-                  }}
-                />
-              </div>
+              <CloudinaryUpload
+                currentImageUrl={formData.image}
+                onUploadSuccess={(url) => setFormData({...formData, image: url})}
+                folder="zamzam-tours/vehicles"
+                label="Vehicle Image"
+              />
 
               <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
                 <button

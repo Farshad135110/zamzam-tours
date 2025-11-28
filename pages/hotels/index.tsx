@@ -1,4 +1,4 @@
-// pages/hotels/index.js - Hotel Booking & Integrated Services
+﻿// pages/hotels/index.js - Hotel Booking & Integrated Services
 import { useState, useEffect, useRef } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
@@ -104,8 +104,11 @@ export default function Hotels() {
       rating: 4.8,
       reviews: 1247,
       price: 180,
+      class: '5-star',
+      hotelClass: 'Luxury',
       image: '/hotels/cinnamon-grand.jpg',
       amenities: ['pool', 'spa', 'gym', 'wifi', 'breakfast', 'restaurant', 'bar'],
+      facilities: ['Swimming Pool', 'Spa & Wellness', 'Fitness Center', 'Free WiFi', 'Breakfast Included', 'Fine Dining Restaurant', 'Cocktail Bar', '24/7 Room Service', 'Business Center', 'Concierge'],
       description: 'Luxury 5-star hotel in the heart of Colombo with world-class amenities',
       coordinates: { lat: 6.9271, lng: 79.8612 },
       popularPackages: ['airport-transfer', 'city-tour']
@@ -117,8 +120,11 @@ export default function Hotels() {
       rating: 4.9,
       reviews: 892,
       price: 220,
+      class: '5-star',
+      hotelClass: 'Luxury Resort',
       image: '/hotels/kandalama.jpg',
       amenities: ['pool', 'spa', 'wifi', 'breakfast', 'restaurant', 'bar'],
+      facilities: ['Infinity Pool', 'Ayurvedic Spa', 'Free WiFi', 'Breakfast Buffet', 'Multi-Cuisine Restaurant', 'Bar & Lounge', 'Nature Trails', 'Bird Watching', 'Lake View Rooms'],
       description: 'Architectural masterpiece nestled between jungle and lake',
       coordinates: { lat: 7.8731, lng: 80.7718 },
       popularPackages: ['airport-transfer', 'cultural-tour']
@@ -130,8 +136,11 @@ export default function Hotels() {
       rating: 4.7,
       reviews: 567,
       price: 150,
+      class: '4-star',
+      hotelClass: 'Boutique',
       image: '/hotels/fortaleza.jpg',
       amenities: ['pool', 'wifi', 'breakfast', 'restaurant', 'bar'],
+      facilities: ['Rooftop Pool', 'Free WiFi', 'Continental Breakfast', 'Restaurant', 'Bar', 'Colonial Architecture', 'Fort Views', 'Walking Distance to Beach'],
       description: 'Boutique hotel within Galle Fort with colonial charm',
       coordinates: { lat: 6.0320, lng: 80.2160 },
       popularPackages: ['airport-transfer', 'beach-tour']
@@ -143,8 +152,11 @@ export default function Hotels() {
       rating: 4.6,
       reviews: 734,
       price: 120,
+      class: '4-star',
+      hotelClass: 'Beach Resort',
       image: '/hotels/jetwing-beach.jpg',
       amenities: ['pool', 'spa', 'wifi', 'breakfast', 'beach', 'restaurant', 'bar'],
+      facilities: ['Beachfront Pool', 'Spa Services', 'Free WiFi', 'Breakfast Buffet', 'Private Beach Access', 'Seafood Restaurant', 'Beach Bar', 'Water Sports', 'Sunset Views'],
       description: 'Beachfront paradise perfect for relaxation and water sports',
       coordinates: { lat: 7.2080, lng: 79.8450 },
       popularPackages: ['airport-transfer', 'beach-tour']
@@ -156,8 +168,11 @@ export default function Hotels() {
       rating: 4.9,
       reviews: 423,
       price: 350,
+      class: '5-star',
+      hotelClass: 'Luxury Bungalow',
       image: '/hotels/tea-trails.jpg',
       amenities: ['pool', 'spa', 'wifi', 'breakfast', 'restaurant', 'bar'],
+      facilities: ['Private Bungalow', 'Butler Service', 'Spa Treatments', 'Free WiFi', 'Gourmet Dining', 'Tea Tasting', 'Plantation Tours', 'Mountain Views', 'Private Pool'],
       description: 'Luxury bungalow experience in Sri Lankan tea country',
       coordinates: { lat: 6.9497, lng: 80.7891 },
       popularPackages: ['tea-tour', 'hill-country-tour']
@@ -169,8 +184,11 @@ export default function Hotels() {
       rating: 4.8,
       reviews: 389,
       price: 280,
+      class: '5-star',
+      hotelClass: 'Luxury Safari Camp',
       image: '/hotels/wild-coast.jpg',
       amenities: ['pool', 'wifi', 'breakfast', 'restaurant', 'bar'],
+      facilities: ['Luxury Tents', 'Pool with View', 'Free WiFi', 'All Meals Included', 'Safari Experiences', 'Wildlife Viewing', 'Bar & Lounge', 'Nature Integration', 'Private Decks'],
       description: 'Luxury tented safari camp near Yala National Park',
       coordinates: { lat: 6.3733, lng: 81.5011 },
       popularPackages: ['safari-tour', 'wildlife-tour']
@@ -277,7 +295,7 @@ export default function Hotels() {
   const additionalServices = [
     {
       id: 'airport-transfer',
-      name: get('hotels.services.airportTransfer.name', 'Airport Transfer'),
+      name: get('hotels.services.airportTransfer.name', 'Airport & All-Island Transfer'),
       description: get('hotels.services.airportTransfer.description', 'Hassle-free pickup from airport to hotel'),
       price: 25,
       types: ['standard', 'premium'],
@@ -306,12 +324,12 @@ export default function Hotels() {
     {
       id: 'beach-paradise',
       name: get('hotels.packages.beachParadise.name', 'Beach Paradise Package'),
-      description: get('hotels.packages.beachParadise.description', '7 nights beachfront accommodation + airport transfers + daily beach tours'),
+      description: get('hotels.packages.beachParadise.description', '7 nights beachfront accommodation + airport & island transfers + daily beach tours'),
       originalPrice: 1200,
       discountedPrice: 999,
       includes: [
         get('hotels.packages.includes.7nights', '7 nights hotel'),
-        get('hotels.packages.includes.airportTransfers', 'Airport transfers'),
+        get('hotels.packages.includes.airportTransfers', 'Airport & island transfers'),
         get('hotels.packages.includes.3beachTours', '3 beach tours'),
         get('hotels.packages.includes.breakfastIncluded', 'Breakfast included')
       ],
@@ -320,7 +338,7 @@ export default function Hotels() {
     {
       id: 'cultural-journey',
       name: get('hotels.packages.culturalJourney.name', 'Cultural Journey Package'),
-      description: get('hotels.packages.culturalJourney.description', '5 nights heritage hotels + cultural triangle tours + airport transfers'),
+      description: get('hotels.packages.culturalJourney.description', '5 nights heritage hotels + cultural triangle tours + airport & island transfers'),
       originalPrice: 800,
       discountedPrice: 650,
       includes: [
@@ -382,7 +400,7 @@ export default function Hotels() {
 
   // Handle WhatsApp booking
   const handleWhatsAppBooking = () => {
-    let message = `${get('hotels.messages.greeting','Hello Zamzam Tours! I would like to book accommodation and services:')}\n\n`;
+    let message = `${get('hotels.messages.greeting','Hello Zamzam Lanka Tours! I would like to book accommodation and services:')}\n\n`;
     
     if (selectedHotel) {
       message += `🏨 ${get('hotels.messages.hotelBookingBadge','*Hotel Booking:*')}\n`;
@@ -396,7 +414,7 @@ export default function Hotels() {
     }
 
     message += `🚗 ${get('hotels.messages.additionalServicesBadge','*Additional Services:*')}\n`;
-    if (selectedPackages.airportTransfer) message += `• ${get('hotels.services.airportTransfer.name','Airport Transfer')}: ${get('hotels.messages.yes','Yes')}\n`;
+    if (selectedPackages.airportTransfer) message += `• ${get('hotels.services.airportTransfer.name','Airport & All-Island Transfer')}: ${get('hotels.messages.yes','Yes')}\n`;
     if (selectedPackages.dailyTours) message += `• ${get('hotels.services.dailyTours.name','Daily Tours')}: ${get('hotels.messages.yes','Yes')}\n`;
     if (selectedPackages.rentalCar) message += `• ${get('hotels.services.rentalCar.name','Car Rental')}: ${get('hotels.messages.yes','Yes')}\n\n`;
 
@@ -539,7 +557,7 @@ export default function Hotels() {
                   color: 'white'
                 }}>
                   <span style={{ fontSize: '2.5rem' }}>🚗</span>
-                  <span style={{ fontSize: '1rem', fontWeight: '600', textShadow: '1px 1px 4px rgba(0,0,0,0.8)' }}>{get('hotels.feature.airportTransfers', 'Airport Transfers')}</span>
+                  <span style={{ fontSize: '1rem', fontWeight: '600', textShadow: '1px 1px 4px rgba(0,0,0,0.8)' }}>{get('hotels.feature.airportTransfers', 'Airport & All-Island Transfers')}</span>
                 </div>
                 <div className="feature-item" style={{
                   display: 'flex',
@@ -779,7 +797,7 @@ export default function Hotels() {
                   >
                     <div className="service-compact-icon">✈️</div>
                     <div className="service-compact-content">
-                      <h4>{get('hotels.services.airportTransfer.name', 'Airport Transfer')}</h4>
+                      <h4>{get('hotels.services.airportTransfer.name', 'Airport & All-Island Transfer')}</h4>
                       <p>{get('hotels.services.airportTransfer.description', 'Hassle-free pickup from airport to hotel')}</p>
                     </div>
                     <div className="service-compact-check">
@@ -894,13 +912,23 @@ export default function Hotels() {
                     <span>⭐ {hotel.rating}</span>
                     <span>({hotel.reviews})</span>
                   </div>
+                  {hotel.class && (
+                    <div className="hotel-class-badge">
+                      {hotel.class}
+                    </div>
+                  )}
                   <div className="hotel-location">
                     {locations.find(l => l.id === hotel.location)?.name}
                   </div>
                 </div>
 
                 <div className="hotel-content">
-                  <h3>{hotel.name}</h3>
+                  <div className="hotel-title-row">
+                    <h3>{hotel.name}</h3>
+                    {hotel.hotelClass && (
+                      <span className="hotel-type-badge">{hotel.hotelClass}</span>
+                    )}
+                  </div>
                   <p className="hotel-description">{hotel.description}</p>
 
                   {/* Facilities list (from DB 'facilities' column). Show full list as tags or comma list */}
@@ -908,9 +936,12 @@ export default function Hotels() {
                     <div className="hotel-facilities">
                       <strong>{get('hotels.facilities.label', 'Facilities:')}</strong>
                       <div className="facility-tags">
-                        {hotel.facilities.map((f: string) => (
-                          <span key={f} className="facility-tag">{f.trim()}</span>
+                        {hotel.facilities.slice(0, 6).map((f: string, idx: number) => (
+                          <span key={idx} className="facility-tag">✓ {f.trim()}</span>
                         ))}
+                        {hotel.facilities.length > 6 && (
+                          <span className="facility-more">+{hotel.facilities.length - 6} more</span>
+                        )}
                       </div>
                     </div>
                   )}
@@ -931,6 +962,49 @@ export default function Hotels() {
                       </button>
                       <button 
                         className="btn-book-now"
+                        onClick={() => {
+                          setSelectedHotel(hotel);
+                          setShowBookingForm(true);
+                        }}
+                      >
+                        {get('hotels.buttons.bookNow', 'Book Now')}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Hover overlay with details on gradient */}
+                <div className="hotel-overlay">
+                  <div className="overlay-content">
+                    <h3>{hotel.name}</h3>
+                    <div className="overlay-location">
+                      📍 {locations.find(l => l.id === hotel.location)?.name}
+                    </div>
+                    <p className="overlay-description">{hotel.description}</p>
+                    
+                    {hotel.facilities && hotel.facilities.length > 0 && (
+                      <div className="overlay-facilities">
+                        {hotel.facilities.slice(0, 6).map((f: string) => (
+                          <span key={f} className="overlay-facility-tag">✓ {f.trim()}</span>
+                        ))}
+                      </div>
+                    )}
+
+                    <div className="overlay-price">
+                      <span className="overlay-price-label">{get('hotels.price.from', 'From')}</span>
+                      <span className="overlay-price-amount">${hotel.price}</span>
+                      <span className="overlay-price-period">/{get('hotels.price.perNight', 'night')}</span>
+                    </div>
+
+                    <div className="overlay-actions">
+                      <button 
+                        className="overlay-btn-view"
+                        onClick={() => openHotelBooking(hotel)}
+                      >
+                        {get('hotels.buttons.viewDetails', 'View Details')}
+                      </button>
+                      <button 
+                        className="overlay-btn-book"
                         onClick={() => {
                           setSelectedHotel(hotel);
                           setShowBookingForm(true);
@@ -1016,7 +1090,7 @@ export default function Hotels() {
               <button 
                 className="btn-primary large"
                 onClick={() => {
-                  const message = `Hello Zamzam Tours! I want to book a complete travel package including hotel, transfers, and tours. Please help me plan my trip.`;
+                  const message = `Hello Zamzam Lanka Tours! I want to book a complete travel package including hotel, transfers, and tours. Please help me plan my trip.`;
                   const encodedMessage = encodeURIComponent(message);
                   window.open(`${CONTACT_INFO.whatsappUrl}?text=${encodedMessage}`, '_blank');
                 }}
@@ -1115,6 +1189,7 @@ export default function Hotels() {
                         type="date" 
                         value={searchParams.checkIn}
                         onChange={(e) => setSearchParams({...searchParams, checkIn: e.target.value})}
+                        min={new Date().toISOString().split('T')[0]}
                         required
                       />
                     </div>
@@ -1124,6 +1199,7 @@ export default function Hotels() {
                         type="date" 
                         value={searchParams.checkOut}
                         onChange={(e) => setSearchParams({...searchParams, checkOut: e.target.value})}
+                        min={searchParams.checkIn || new Date().toISOString().split('T')[0]}
                         required
                       />
                     </div>
@@ -1202,7 +1278,7 @@ export default function Hotels() {
                     
                     {selectedPackages.airportTransfer && (
                       <div className="summary-row-modern">
-                        <span>✈️ {get('hotels.services.airportTransfer.name','Airport Transfer')}</span>
+                        <span>✈️ {get('hotels.services.airportTransfer.name','Airport & All-Island Transfer')}</span>
                         <span className="summary-price">+${additionalServices.find(s => s.id === 'airport-transfer')?.price}</span>
                       </div>
                     )}
@@ -2028,16 +2104,189 @@ export default function Hotels() {
           border-radius: 10px;
           overflow: hidden;
           box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-          transition: transform 0.3s ease;
+          transition: all 0.3s ease;
+          display: flex;
+          flex-direction: column;
+          position: relative;
         }
 
         .hotel-card:hover {
           transform: translateY(-5px);
+          box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .hotel-card:hover .hotel-overlay {
+          opacity: 1;
+          pointer-events: auto;
         }
 
         .hotel-image {
           position: relative;
           height: 200px;
+          width: 100%;
+          overflow: hidden;
+          flex-shrink: 0;
+        }
+
+        .hotel-image img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          transition: transform 0.3s ease;
+        }
+
+        .hotel-card:hover .hotel-image img {
+          transform: scale(1.05);
+        }
+
+        /* Overlay that covers entire card on hover */
+        .hotel-overlay {
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          opacity: 0;
+          pointer-events: none;
+          transition: opacity 0.3s ease;
+          z-index: 10;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 2rem;
+          overflow-y: auto;
+        }
+
+        .hotel-overlay::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.8) 50%, rgba(0,0,0,0.95) 100%);
+          z-index: 1;
+        }
+
+        .hotel-card:hover .hotel-image {
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          height: 100%;
+          z-index: 5;
+        }
+
+        .overlay-content {
+          color: white;
+          text-align: center;
+          width: 100%;
+          max-height: 100%;
+          overflow-y: auto;
+          position: relative;
+          z-index: 2;
+        }
+
+        .overlay-content h3 {
+          color: white;
+          font-size: 1.5rem;
+          margin-bottom: 0.5rem;
+          text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .overlay-location {
+          color: #f8b500;
+          font-size: 0.9rem;
+          margin-bottom: 1rem;
+          font-weight: 600;
+        }
+
+        .overlay-description {
+          color: rgba(255,255,255,0.9);
+          font-size: 0.9rem;
+          margin-bottom: 1rem;
+          line-height: 1.5;
+        }
+
+        .overlay-facilities {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 0.5rem;
+          margin-bottom: 1.5rem;
+        }
+
+        .overlay-facility-tag {
+          background: rgba(255,255,255,0.15);
+          padding: 0.3rem 0.6rem;
+          border-radius: 5px;
+          font-size: 0.75rem;
+          color: white;
+          backdrop-filter: blur(5px);
+          text-align: left;
+        }
+
+        .overlay-price {
+          margin-bottom: 1.5rem;
+          display: flex;
+          align-items: baseline;
+          justify-content: center;
+          gap: 0.3rem;
+        }
+
+        .overlay-price-label {
+          color: rgba(255,255,255,0.8);
+          font-size: 0.9rem;
+        }
+
+        .overlay-price-amount {
+          color: #f8b500;
+          font-size: 2rem;
+          font-weight: 700;
+        }
+
+        .overlay-price-period {
+          color: rgba(255,255,255,0.8);
+          font-size: 0.9rem;
+        }
+
+        .overlay-actions {
+          display: flex;
+          gap: 1rem;
+          justify-content: center;
+        }
+
+        .overlay-btn-view,
+        .overlay-btn-book {
+          padding: 0.7rem 1.5rem;
+          border-radius: 5px;
+          border: none;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          font-size: 0.9rem;
+        }
+
+        .overlay-btn-view {
+          background: rgba(255,255,255,0.2);
+          color: white;
+          border: 2px solid white;
+          backdrop-filter: blur(10px);
+        }
+
+        .overlay-btn-view:hover {
+          background: white;
+          color: var(--primary-color);
+        }
+
+        .overlay-btn-book {
+          background: #f8b500;
+          color: white;
+        }
+
+        .overlay-btn-book:hover {
+          background: #e5a600;
+          transform: scale(1.05);
         }
 
         .hotel-rating {
@@ -2049,6 +2298,21 @@ export default function Hotels() {
           border-radius: 15px;
           font-size: 0.8rem;
           font-weight: 600;
+        }
+
+        .hotel-class-badge {
+          position: absolute;
+          top: 15px;
+          left: 15px;
+          background: linear-gradient(135deg, #f8b500 0%, #ff8c00 100%);
+          color: white;
+          padding: 5px 12px;
+          border-radius: 15px;
+          font-size: 0.75rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          box-shadow: 0 2px 8px rgba(248, 181, 0, 0.4);
+          letter-spacing: 0.5px;
         }
 
         .hotel-location {
@@ -2065,11 +2329,39 @@ export default function Hotels() {
 
         .hotel-content {
           padding: 1.5rem;
+          display: flex;
+          flex-direction: column;
+          flex-grow: 1;
         }
 
         .hotel-content h3 {
           color: var(--primary-color);
           margin-bottom: 0.5rem;
+        }
+
+        .hotel-title-row {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          margin-bottom: 0.5rem;
+          flex-wrap: wrap;
+        }
+
+        .hotel-title-row h3 {
+          margin: 0;
+          flex: 0 1 auto;
+        }
+
+        .hotel-type-badge {
+          background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+          color: white;
+          padding: 4px 12px;
+          border-radius: 12px;
+          font-size: 0.7rem;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.3px;
+          white-space: nowrap;
         }
 
         .hotel-description {
@@ -2120,6 +2412,16 @@ export default function Hotels() {
           border-radius: 10px;
           font-size: 0.75rem;
           color: var(--text-light);
+        }
+
+        .facility-more {
+          background: linear-gradient(135deg, var(--primary-color) 0%, #d96200 100%);
+          color: white;
+          padding: 3px 10px;
+          border-radius: 10px;
+          font-size: 0.7rem;
+          font-weight: 600;
+          cursor: default;
         }
 
         .hotel-popular {

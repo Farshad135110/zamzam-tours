@@ -22,6 +22,24 @@ function dbToRecord(dbRecord: any): HotelRecord {
   };
 }
 
+// Generate unique hotel ID (format: HTL0000001, HTL0000002, etc.)
+async function generateHotelId(): Promise<string> {
+  const lastHotel = await prisma.hotel.findFirst({
+    orderBy: {
+      hotel_id: 'desc'
+    }
+  });
+
+  if (!lastHotel) {
+    return 'HTL0000001';
+  }
+
+  // Extract number from last ID and increment
+  const lastNumber = parseInt(lastHotel.hotel_id.replace('HTL', ''), 10);
+  const nextNumber = lastNumber + 1;
+  return `HTL${nextNumber.toString().padStart(7, '0')}`;
+}
+
 export async function getAllHotels(): Promise<HotelRecord[]> {
   const hotels = await prisma.hotel.findMany({
     orderBy: {
@@ -39,8 +57,12 @@ export async function getHotelById(id: string): Promise<HotelRecord | null> {
 }
 
 export async function createHotel(payload: Omit<HotelRecord, 'hotel_id'>): Promise<HotelRecord> {
+  // Generate unique hotel ID
+  const hotel_id = await generateHotelId();
+  
   const created = await prisma.hotel.create({
     data: {
+      hotel_id,
       hotel_name: payload.hotel_name,
       location: payload.location,
       price_range: payload.price_range || null,

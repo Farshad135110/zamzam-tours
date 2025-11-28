@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import AdminSidebar from '../../components/AdminSidebar';
+import CloudinaryUpload from '../../components/CloudinaryUpload';
 
 interface Hotel {
   hotel_id: string;
@@ -63,7 +64,10 @@ export default function AdminHotels() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(formData)
           });
-          if (!res.ok) throw new Error('Failed to update');
+          if (!res.ok) {
+            const errorData = await res.json();
+            throw new Error(errorData.error || 'Failed to update');
+          }
           const updated = await res.json();
           setHotels(prev => prev.map(h => h.hotel_id === updated.hotel_id ? updated : h));
         } else {
@@ -72,13 +76,18 @@ export default function AdminHotels() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(formData)
           });
-          if (!res.ok) throw new Error('Failed to create');
+          if (!res.ok) {
+            const errorData = await res.json();
+            throw new Error(errorData.error || 'Failed to create');
+          }
           const created = await res.json();
           setHotels(prev => [...prev, created]);
         }
-      } catch (err) {
-        console.error(err);
-        alert('Error saving hotel');
+      } catch (err: any) {
+        console.error('Error saving hotel:', err);
+        const errorMessage = err.response?.data?.error || err.message || 'Failed to save hotel';
+        const errorDetails = err.response?.data?.details || '';
+        alert(`Error saving hotel: ${errorMessage}${errorDetails ? '\n' + errorDetails : ''}`);
       } finally {
         setShowModal(false);
         resetForm();
@@ -157,11 +166,18 @@ export default function AdminHotels() {
   };
 
     return (
-    <div style={{ fontFamily: 'Poppins, sans-serif', backgroundColor: '#f8fafc', minHeight: '100vh', display: 'flex' }}>
+    <div style={{ fontFamily: 'Poppins, sans-serif', backgroundColor: '#f8fafc', minHeight: '100vh' }}>
       <AdminSidebar active="hotels" />
 
       {/* Main Content */}
-      <div style={{ flex: 1, padding: '30px' }}>
+      <div style={{ marginLeft: '280px', padding: '30px', minHeight: '100vh' }}>
+        <style jsx global>{`
+          @media (max-width: 900px) {
+            body > div > div:last-child {
+              margin-left: 0 !important;
+            }
+          }
+        `}</style>
         {/* Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
           <div>
@@ -618,48 +634,12 @@ export default function AdminHotels() {
                 </select>
               </div>
 
-              <div style={{ marginBottom: '20px' }}>
-                <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '6px' }}>
-                  Image URL
-                </label>
-                <input
-                  type="url"
-                  value={formData.image}
-                  onChange={(e) => setFormData({...formData, image: e.target.value})}
-                  style={{
-                    width: '100%',
-                    padding: '10px 12px',
-                    border: '1px solid #d1d5db',
-                    borderRadius: '6px',
-                    fontSize: '14px',
-                    outline: 'none',
-                    transition: 'all 0.2s ease'
-                  }}
-                  onFocus={(e) => {
-                    const input = e.target as HTMLInputElement;
-                    input.style.borderColor = '#053b3c';
-                    input.style.boxShadow = '0 0 0 3px rgba(5, 59, 60, 0.1)';
-                  }}
-                  onBlur={(e) => {
-                    const input = e.target as HTMLInputElement;
-                    input.style.borderColor = '#d1d5db';
-                    input.style.boxShadow = 'none';
-                  }}
-                />
-                {formData.image && (
-                  <div style={{ marginTop: '8px', borderRadius: '6px', overflow: 'hidden', maxWidth: '200px' }}>
-                    <img 
-                      src={formData.image} 
-                      alt="Preview" 
-                      style={{ width: '100%', height: 'auto', display: 'block' }}
-                      onError={(e) => {
-                        const img = e.target as HTMLImageElement;
-                        img.style.display = 'none';
-                      }}
-                    />
-                  </div>
-                )}
-              </div>
+              <CloudinaryUpload
+                currentImageUrl={formData.image}
+                onUploadSuccess={(url) => setFormData({...formData, image: url})}
+                folder="zamzam-tours/hotels"
+                label="Hotel Image"
+              />
 
               <div style={{ marginBottom: '30px' }}>
                 <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '6px' }}>

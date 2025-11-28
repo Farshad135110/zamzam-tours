@@ -5,7 +5,7 @@ import Link from 'next/link';
 
 export default function Footer() {
   const handleWhatsAppBooking = (service = 'assistance') => {
-    const message = `Hello Zamzam Tours! I need ${service}`;
+    const message = `Hello Zamzam Lanka Tours! I need ${service}`;
     const encoded = encodeURIComponent(message);
     if (typeof window !== 'undefined') {
       window.open(`${CONTACT_INFO.whatsappUrl}?text=${encoded}`, '_blank');
@@ -40,7 +40,7 @@ export default function Footer() {
             <ul className="services-list">
               <li><Link href="/self-drive">Self-Drive Rentals</Link></li>
               <li><Link href="/tours">Guided Tours</Link></li>
-              <li><Link href="/airport-transfer">Airport Transfers</Link></li>
+              <li><Link href="/transfers">Airport & All-Island Transfers</Link></li>
               <li><Link href="/hotels">Hotel Booking</Link></li>
               <li><Link href="/activities">Activities</Link></li>
             </ul>
@@ -80,14 +80,14 @@ export default function Footer() {
         </div>
 
         <div className="footer-bottom">
-          <p>&copy; {new Date().getFullYear()} Zamzam Tours. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} Zamzam Lanka Tours. All rights reserved.</p>
         </div>
       </div>
 
       {/* WhatsApp Floating Button */}
         <div className="whatsapp-float">
           <button
-            onClick={() => window.open(`${CONTACT_INFO.whatsappUrl}?text=${encodeURIComponent('Hello ZamZam Tours! I need assistance')}`, '_blank')}
+            onClick={() => window.open(`${CONTACT_INFO.whatsappUrl}?text=${encodeURIComponent('Hello Zamzam Lanka Tours! I need assistance')}`, '_blank')}
             aria-label="Contact via WhatsApp"
           >
             <Image src="/whatsapp-icon.svg" alt="WhatsApp" width={30} height={30} />

@@ -154,3 +154,21 @@ After uploading just the hero image:
 4. You should see the hero image immediately!
 
 Then upload vehicles and destinations to see the full effect with smooth animations! 🎉
+
+---
+
+## Admin Upload Preset (recommended)
+
+If you'd like uploads performed from the admin panel to use a dedicated preset/folder with signed uploads, create an Upload Preset in Cloudinary and name it `uploadfromsite` with these exact settings:
+
+- Preset name: `uploadfromsite`
+- Signed: true
+- Overwrite: true
+- Use filename: false
+- Unique filename: false
+- Use filename as display name: true
+- Use asset folder as public id prefix: false
+- Type: upload
+- Asset folder: `zamzam-tours/uploads`
+
+After creating the preset, set `NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET=uploadfromsite` in your deployment environment variables and ensure `CLOUDINARY_API_SECRET` is set on the server. This repo includes a small helper endpoint at `/api/cloudinary/sign` which the upload widget can call to obtain the required signature for signed uploads.

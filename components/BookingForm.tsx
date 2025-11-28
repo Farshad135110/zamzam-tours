@@ -11,7 +11,7 @@ export default function BookingForm(){
 
   function handleSubmit(e: React.FormEvent){
     e.preventDefault()
-    const message = `Hi ZamZam Tours,%0A%0AI would like to book:%0A- Service: ${service}%0A- Name: ${name}%0A- Contact: ${phone}%0A- Details: ${details}%0A%0AThanks!`
+    const message = `Hi Zamzam Lanka Tours,%0A%0AI would like to book:%0A- Service: ${service}%0A- Name: ${name}%0A- Contact: ${phone}%0A- Details: ${details}%0A%0AThanks!`
     const url = `${CONTACT_INFO.whatsappUrl}?text=${message}`
     window.open(url, '_blank')
   }
@@ -32,7 +32,7 @@ export default function BookingForm(){
           <option>Tour</option>
           <option>Vehicle Rental (Self-drive)</option>
           <option>Vehicle Rental (With driver)</option>
-          <option>Airport Transfer</option>
+          <option>Airport & All-Island Transfer</option>
         </select>
       </div>
       <div>

@@ -50,8 +50,8 @@ export default function Destinations() {
   return (
     <>
       <Head>
-        <title>Destinations in Sri Lanka | ZamZam Tours</title>
-        <meta name="description" content="Explore the best destinations in Sri Lanka with ZamZam Tours. From ancient cultural sites to pristine beaches and wildlife sanctuaries." />
+        <title>Destinations in Sri Lanka | Zamzam Lanka Tours</title>
+        <meta name="description" content="Explore the best destinations in Sri Lanka with Zamzam Lanka Tours. From ancient cultural sites to pristine beaches and wildlife sanctuaries." />
         <meta name="keywords" content="Sri Lanka destinations, places to visit Sri Lanka, tourist attractions, cultural sites, beaches, wildlife" />
       </Head>
 

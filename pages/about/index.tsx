@@ -140,7 +140,7 @@ export default function About() {
         <div className="hero-background">
           <Image 
             src="/about/hero-about.jpg" 
-            alt="Zamzam Tours Team" 
+            alt="Zamzam Lanka Tours Team" 
             layout="fill"
             objectFit="cover"
             priority
@@ -356,7 +356,7 @@ export default function About() {
               <button 
                 className="btn btn-secondary"
                 onClick={() => {
-                  const message = "Hello ZamZam Tours! I'd like to learn more about your company and services.";
+                  const message = "Hello Zamzam Lanka Tours! I'd like to learn more about your company and services.";
                   const encodedMessage = encodeURIComponent(message);
                   window.open(`${CONTACT_INFO.whatsappUrl}?text=${encodedMessage}`, '_blank');
                 }}

@@ -8,6 +8,8 @@ export interface PackageRecord {
   image: string;
   highlights: string;
   includings: string;
+  days?: number;
+  itinerary?: string;
 }
 
 // Helper to convert DB model to frontend format
@@ -20,7 +22,9 @@ function dbToRecord(dbRecord: any): PackageRecord {
     price: dbRecord.price !== null && dbRecord.price !== undefined ? Number(dbRecord.price) : null,
     image: dbRecord.image || '',
     highlights: dbRecord.highlights || '',
-    includings: dbRecord.includings || ''
+    includings: dbRecord.includings || '',
+    days: dbRecord.days || undefined,
+    itinerary: dbRecord.itinerary || undefined
   };
 }
 
@@ -32,24 +36,25 @@ function recordToDb(record: Partial<PackageRecord>) {
     price: record.price ?? null,
     image: record.image || '',
     highlights: record.highlights || '',
-    includings: record.includings || ''
+    includings: record.includings || '',
+    days: record.days ?? null,
+    itinerary: record.itinerary ?? null
   };
 }
 
 export async function getAllPackages(): Promise<PackageRecord[]> {
-  const packages = await prisma.renamedpackage.findMany({
-    orderBy: {
-      package_id: 'asc'
-    }
-  });
+  // Use raw SQL to fetch all columns including new ones
+  const packages = await prisma.$queryRaw<any[]>`
+    SELECT * FROM package ORDER BY package_id ASC
+  `;
   return packages.map(dbToRecord);
 }
 
 export async function getPackageById(id: string): Promise<PackageRecord | null> {
-  const pkg = await prisma.renamedpackage.findUnique({
-    where: { package_id: id }
-  });
-  return pkg ? dbToRecord(pkg) : null;
+  const result = await prisma.$queryRaw<any[]>`
+    SELECT * FROM package WHERE package_id = ${id}
+  `;
+  return result.length > 0 ? dbToRecord(result[0]) : null;
 }
 
 export async function createPackage(payload: Omit<PackageRecord, 'package_id'>): Promise<PackageRecord> {
@@ -57,23 +62,35 @@ export async function createPackage(payload: Omit<PackageRecord, 'package_id'>):
   const count = await prisma.renamedpackage.count();
   const nextId = `P${String(count + 1).padStart(3, '0')}`;
   
-  const dbData = recordToDb(payload);
-  const created = await prisma.renamedpackage.create({
-    data: {
-      package_id: nextId,
-      ...dbData
-    }
-  });
-  return dbToRecord(created);
+  // Use raw SQL to insert with new columns
+  const result = await prisma.$queryRaw<any[]>`
+    INSERT INTO package (package_id, package_name, description, price, image, highlights, includings, days, itinerary)
+    VALUES (${nextId}, ${payload.package_name}, ${payload.description}, ${payload.price}, 
+            ${payload.image || ''}, ${payload.highlights || ''}, ${payload.includings || ''}, 
+            ${payload.days || null}, ${payload.itinerary || null})
+    RETURNING *
+  `;
+  
+  return dbToRecord(result[0]);
 }
 
 export async function updatePackage(id: string, payload: Partial<PackageRecord>): Promise<PackageRecord> {
-  const dbData = recordToDb(payload);
-  const updated = await prisma.renamedpackage.update({
-    where: { package_id: id },
-    data: dbData
-  });
-  return dbToRecord(updated);
+  // Use raw SQL to update with new columns
+  const result = await prisma.$queryRaw<any[]>`
+    UPDATE package 
+    SET package_name = COALESCE(${payload.package_name}, package_name),
+        description = COALESCE(${payload.description}, description),
+        price = ${payload.price !== undefined ? payload.price : null},
+        image = COALESCE(${payload.image}, image),
+        highlights = COALESCE(${payload.highlights}, highlights),
+        includings = COALESCE(${payload.includings}, includings),
+        days = ${payload.days !== undefined ? payload.days : null},
+        itinerary = ${payload.itinerary !== undefined ? payload.itinerary : null}
+    WHERE package_id = ${id}
+    RETURNING *
+  `;
+  
+  return dbToRecord(result[0]);
 }
 
 export async function deletePackage(id: string): Promise<void> {

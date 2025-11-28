@@ -1,4 +1,4 @@
-﻿// pages/airport-transfer/index.js - All-Island Transfers Main Page
+﻿// pages/transfers/index.tsx - Airport & All-Island Transfers Main Page
 import { useState, useEffect, useRef } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { motion } from 'framer-motion';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
+import { CONTACT_INFO } from '../../src/constants/config';
 import { fadeInUp } from '../../src/utils/animations';
 import useTranslation from '../../src/i18n/useTranslation'
 
@@ -460,7 +461,7 @@ export default function AirportTransfer() {
         <div className="container">
           <div className="section-header">
             <h2>{get('airportTransfer.why.title','Why Choose Zamzam Lanka Tours?')}</h2>
-            <p>{get('airportTransfer.why.subtitle','Reliable, professional, and hassle-free airport transfer services')}</p>
+            <p>{get('airportTransfer.why.subtitle','Reliable, professional, and hassle-free airport & all-island transfer services')}</p>
           </div>
 
           <div className="features-grid">
@@ -506,7 +507,7 @@ export default function AirportTransfer() {
       <Footer />
 
       <style jsx>{`
-        /* Airport Transfer Specific Styles */
+        /* Airport & All-Island Transfer Styles */
         .transfer-hero {
           position: relative;
           height: 60vh;

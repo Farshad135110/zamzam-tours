@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { CldImage } from 'next-cloudinary';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
+import { CONTACT_INFO } from '../../src/constants/config';
 
 const ActivityDetailPage = () => {
   const router = useRouter();
@@ -507,11 +508,11 @@ const ActivityDetailPage = () => {
       duration: '2-3 hours',
       bestTime: 'Year-round',
       bestLocations: [
+        'Arugam Bay - Beach-side cooking with fresh seafood',
+        'Galle - Traditional coastal cuisine and Dutch influences',
         'Kandy - Traditional hill country cuisine',
-        'Galle - Coastal seafood dishes',
         'Colombo - Modern cooking schools',
-        'Village homes - Authentic experiences',
-        'Resort cooking classes'
+        'Village homes - Authentic rural experiences'
       ],
       highlights: [
         'Visit local markets for fresh ingredients',
@@ -852,7 +853,7 @@ const ActivityDetailPage = () => {
 
   const handleWhatsAppBooking = () => {
     const message = `Hi! I'm interested in booking ${activity.name}. Can you provide more information?`;
-    const whatsappUrl = `https://wa.me/94701080909?text=${encodeURIComponent(message)}`;
+    const whatsappUrl = `${CONTACT_INFO.whatsappUrl}?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
   };
 
@@ -1117,7 +1118,7 @@ const ActivityDetailPage = () => {
             Ready for an Adventure?
           </h2>
           <p style={{ fontSize: '1.1rem', color: '#fff', marginBottom: '1.5rem', opacity: 0.9 }}>
-            Book your {activity.name} experience with ZamZam Tours today!
+            Book your {activity.name} experience with Zamzam Lanka Tours today!
           </p>
           <button 
             onClick={handleWhatsAppBooking}

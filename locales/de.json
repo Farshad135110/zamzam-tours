@@ -1,5 +1,5 @@
 {
-  "hero.title": "Entdecken Sie Sri Lanka mit ZamZam Tours",
+  "hero.title": "Entdecken Sie Sri Lanka mit Zamzam Lanka Tours",
   "hero.subtitle": "Selbstfahrervermietung, Chauffeurdienste, Touren und Flughafentransfers in ganz Sri Lanka.",
   "hero.bookNow": "Jetzt buchen",
   "booking.title": "Schnelle Buchung über WhatsApp",
@@ -17,8 +17,8 @@
   "tours.title": "Touren",
   "tours.heading": "Entdecken Sie unsere Touren",
   "tours.comingSoon": "Detaillierte Touren und Reiserouten werden bald hinzugefügt.",
-  "contact.pageTitle": "Kontakt ZamZam Tours | 24/7 Support in Sri Lanka",
-  "contact.metaDescription": "Kontaktieren Sie ZamZam Tours. Mehrere Kontaktmöglichkeiten, einschließlich Telefon, WhatsApp, E-Mail und Standorte in ganz Sri Lanka.",
+  "contact.pageTitle": "Kontakt Zamzam Lanka Tours | 24/7 Support in Sri Lanka",
+  "contact.metaDescription": "Kontaktieren Sie Zamzam Lanka Tours. Mehrere Kontaktmöglichkeiten, einschließlich Telefon, WhatsApp, E-Mail und Standorte in ganz Sri Lanka.",
   "contact.hero.title": "Wir unterstützen Sie bei Ihrem Sri Lanka Abenteuer",
   "contact.hero.title.prefix": "Wir unterstützen Sie bei Ihrem Sri Lanka",
   "contact.hero.title.highlight": "Abenteuer",
@@ -107,7 +107,7 @@
   "contact.faq.q4.answer": "Ja, Änderungen sind je nach Verfügbarkeit möglich. Kontaktieren Sie uns sofort für Änderungen. Bitte beachten Sie unsere Stornierungsbedingungen.",
   "contact.faq.q5.question": "Haben Sie englischsprachiges Personal?",
   "contact.faq.q5.answer": "Alle unsere Mitarbeiter sprechen fließend Englisch. Wir haben auch Teammitglieder, die Französisch, Deutsch und Chinesisch sprechen, um internationale Reisende zu unterstützen.",
-  "contact.hero.alt": "Kontaktieren Sie ZamZam Tours",
+  "contact.hero.alt": "Kontaktieren Sie Zamzam Lanka Tours",
   "pages/about/index.str1": "",
   "pages/about/index.str2": "",
   "pages/about/index.str3": "",
@@ -1014,7 +1014,7 @@
   "pages/gallery/index.str43": "",
   "pages/gallery/index.str44": "",
   "pages/gallery/index.str45": "",
-  "hotels.pageTitle": "Hotels | ZamZam Tours",
+  "hotels.pageTitle": "Hotels | Zamzam Lanka Tours",
   "hotels.metaDescription": "Finden und buchen Sie Hotels in ganz Sri Lanka mit Transfer-, Tour- und Paketoptionen.",
   "hotels.metaKeywords": "Sri Lanka Hotels, Hotelbuchung, Hotelpakete, Strandresorts, Luxushotels",
   "hotels.hero.titlePrefix": "Luxuriöse",
@@ -1144,7 +1144,7 @@
   "hotels.messages.minimumRatingLabel": "*Mindestbewertung:",
   "hotels.messages.preferredAmenitiesLabel": "*Bevorzugte Ausstattung:",
 
-  "hotels.messages.greeting": "Hallo ZamZam Tours! Ich möchte Unterkunft und Leistungen buchen:",
+  "hotels.messages.greeting": "Hallo Zamzam Lanka Tours! Ich möchte Unterkunft und Leistungen buchen:",
   "hotels.messages.hotelBookingBadge": "🏨 *Hotelbuchung*",
   "hotels.messages.hotelLabel": "Hotel:",
   "hotels.messages.locationLabel": "Ort:",
@@ -1591,13 +1591,13 @@
   "components/navbar.str17": "",
   "components/navbar.str18": "",
 
-  "about.pageTitle": "Über ZamZam Tours | Sri Lankas führender Reiseveranstalter",
-  "about.metaDescription": "Erfahren Sie mehr über ZamZam Tours — unsere Mission, unser Team, Werte und Ansatz für authentische sri-lankische Erlebnisse.",
+  "about.pageTitle": "Über Zamzam Lanka Tours | Sri Lankas führender Reiseveranstalter",
+  "about.metaDescription": "Erfahren Sie mehr über Zamzam Lanka Tours — unsere Mission, unser Team, Werte und Ansatz für authentische sri-lankische Erlebnisse.",
   "about.hero.title.prefix": "Erleben Sie",
   "about.hero.title.highlight": "Sri Lanka",
-  "about.hero.title.suffix": "mit ZamZam Tours",
+  "about.hero.title.suffix": "mit Zamzam Lanka Tours",
   "about.hero.subtitle": "Authentische, nachhaltige Reisen, gestaltet von lokalen Experten, die Sicherheit und bedeutungsvolle Erlebnisse in den Mittelpunkt stellen.",
-  "about.hero.alt": "ZamZam Tours Team in Sri Lanka",
+  "about.hero.alt": "Zamzam Lanka Tours Team in Sri Lanka",
 
   "about.stats.yearsLabel": "Jahre Erfahrung",
   "about.stats.travelersLabel": "Zufriedene Reisende",
@@ -1628,7 +1628,7 @@
   "about.approach.step4.text": "24/7 Unterstützung während Ihrer Reise sorgt für Ruhe und schnelle Problemlösungen.",
 
   "about.values.title": "Unsere Werte & Prinzipien",
-  "about.values.subtitle": "Die Grundlage all dessen, was wir bei ZamZam Tours tun",
+  "about.values.subtitle": "Die Grundlage all dessen, was wir bei Zamzam Lanka Tours tun",
   "about.values.items.0.title": "Vertrauen & Zuverlässigkeit",
   "about.values.items.0.description": "Zuverlässiger Service, transparente Preise und pünktlicher Betrieb.",
   "about.values.items.1.title": "Sicherheit & Fürsorge",
@@ -1656,8 +1656,8 @@
   "about.cta.startPlanning": "Planen Sie Ihre Reise",
   "about.cta.chat": "Chatten Sie mit unserem Team",
 
-  "gallery.pageTitle": "Fotogalerie | Schönes Sri Lanka | ZamZam Tours",
-  "gallery.metaDescription": "Entdecken Sie atemberaubende Fotos von Sri Lankas Landschaften, Tierwelt und kulturellem Erbe in der visuellen Reise von ZamZam Tours.",
+  "gallery.pageTitle": "Fotogalerie | Schönes Sri Lanka | Zamzam Lanka Tours",
+  "gallery.metaDescription": "Entdecken Sie atemberaubende Fotos von Sri Lankas Landschaften, Tierwelt und kulturellem Erbe in der visuellen Reise von Zamzam Lanka Tours.",
 
   "gallery.hero.title": "Visuelle Reise durch Sri Lanka",
   "gallery.hero.subtitle": "Entdecken Sie die Schönheit der Paradiesinsel durch unsere Linse",
@@ -1672,16 +1672,16 @@
   "gallery.cta.title": "Bereit, eigene Erinnerungen zu schaffen?",
   "gallery.cta.subtitle": "Lassen Sie uns Ihnen helfen, diese schönen Orte selbst zu erleben",
   "gallery.cta.button": "Reise starten",
-  "gallery.cta.waMessage": "Hallo ZamZam Tours! Ich habe Ihre schöne Galerie gesehen und möchte eine Reise nach Sri Lanka planen.",
+  "gallery.cta.waMessage": "Hallo Zamzam Lanka Tours! Ich habe Ihre schöne Galerie gesehen und möchte eine Reise nach Sri Lanka planen.",
 
-  "airportTransfer.pageTitle": "Flughafentransfers Sri Lanka | Meet & Greet Service | Zamzam Tours",
+  "airportTransfer.pageTitle": "Flughafentransfers Sri Lanka | Meet & Greet Service | Zamzam Lanka Tours",
   "airportTransfer.metaDescription": "Problemloser Flughafentransfer in Sri Lanka mit Meet & Greet-Service. Professionelle Fahrer und komfortable Fahrzeuge ab Colombo.",
   "airportTransfer.metaKeywords": "Sri Lanka Flughafentransfer, Colombo Flughafen Abholung, Meet & Greet, CMB Flughafen, Taxi Service, Flughafentaxi Sri Lanka",
 
   "airportTransfer.hero.titlePrefix": "Stressfrei",
-  "airportTransfer.hero.titleHighlight": "Flughafentransfers",
+  "airportTransfer.hero.titleHighlight": "Flughafen- & Inselweite Transfers",
   "airportTransfer.hero.titleSuffix": "in Sri Lanka",
-  "airportTransfer.hero.subtitle": "Professioneller Meet & Greet-Service mit komfortablen Fahrzeugen",
+  "airportTransfer.hero.subtitle": "Flughafen-Abholung mit Meet & Greet-Service und inselweite Transfers mit professionellen Fahrern",
   "airportTransfer.hero.feature.meetAndGreet": "Meet & Greet",
   "airportTransfer.hero.feature.professionalDrivers": "Professionelle Fahrer",
   "airportTransfer.hero.feature.twentyFourSeven": "24/7 Service",
@@ -1711,7 +1711,7 @@
   "airportTransfer.pricing.notice": "Preise werden über WhatsApp besprochen",
   "airportTransfer.buttons.sendWhatsApp": "📲 Buchungsanfrage per WhatsApp senden",
 
-  "airportTransfer.why.title": "Warum ZamZam Tours wählen?",
+  "airportTransfer.why.title": "Warum Zamzam Lanka Tours wählen?",
   "airportTransfer.why.subtitle": "Zuverlässiger, professioneller und problemloser Flughafentransfer",
   "airportTransfer.why.professionalDrivers.title": "Professionelle Fahrer",
   "airportTransfer.why.professionalDrivers.desc": "Erfahrene, lizenzierte und englischsprachige Fahrer",
@@ -1788,8 +1788,8 @@
   "airportTransfer.messages.specialRequests": "*SPEZIELLE WÜNSCHE*",
   "airportTransfer.messages.confirmNote": "_Bitte bestätigen Sie Verfügbarkeit und Preis_",
 
-  "carRental.pageTitle": "Fahrzeugvermietung in Sri Lanka | Selbstfahrer & Mit Fahrer | ZamZam Tours",
-  "carRental.metaDescription": "Fahrzeuge in Sri Lanka mieten mit ZamZam Tours. Optionen für Selbstfahrer und mit Fahrer für Touristen und Einheimische.",
+  "carRental.pageTitle": "Fahrzeugvermietung in Sri Lanka | Selbstfahrer & Mit Fahrer | Zamzam Lanka Tours",
+  "carRental.metaDescription": "Fahrzeuge in Sri Lanka mieten mit Zamzam Lanka Tours. Optionen für Selbstfahrer und mit Fahrer für Touristen und Einheimische.",
   "carRental.metaKeywords": "Sri Lanka Autovermietung, Selbstfahrer, mit Fahrer, Fahrzeugvermietung, Van Vermietung, Busvermietung",
 
   "carRental.hero.titlePrefix": "Premium",
@@ -1879,10 +1879,10 @@
   "carRental.locations.other": "Anderer Ort"
 
   ,
-  "home.title": "ZamZam Tours - Bestes Reiseerlebnis in Sri Lanka",
-  "home.metaDescription": "ZamZam Tours bietet erstklassige Selbstfahrer-Autovermietungen, geführte Touren und Flughafentransfers in Sri Lanka. Erleben Sie das Beste der sri-lankischen Gastfreundschaft mit unserer umfangreichen Flotte und professionellen Dienstleistungen.",
+  "home.title": "Zamzam Lanka Tours - Bestes Reiseerlebnis in Sri Lanka",
+  "home.metaDescription": "Zamzam Lanka Tours bietet erstklassige Selbstfahrer-Autovermietungen, geführte Touren und Flughafentransfers in Sri Lanka. Erleben Sie das Beste der sri-lankischen Gastfreundschaft mit unserer umfangreichen Flotte und professionellen Dienstleistungen.",
   "home.metaKeywords": "Sri Lanka Touren, Autovermietung Sri Lanka, Flughafentransfer, Selbstfahrer, geführte Touren, Hotelbuchung, Aktivitäten in Sri Lanka",
-  "home.og.title": "ZamZam Tours - Bestes Reiseerlebnis in Sri Lanka",
+  "home.og.title": "Zamzam Lanka Tours - Bestes Reiseerlebnis in Sri Lanka",
   "home.og.description": "Erstklassige Reisedienstleistungen einschließlich Selbstfahrer-Autovermietungen, geführter Touren und Flughafentransfers in Sri Lanka.",
   "home.og.image": "/images/og-image.jpg",
   "home.og.url": "https://zamzamtours.com",
@@ -1897,8 +1897,8 @@
 
   "home.services.title": "Unsere Dienstleistungen",
   "home.services.tabs.vehicles": "Fahrzeugvermietung",
-  "home.services.tabs.tours": "Geführte Touren",
-  "home.services.tabs.transfer": "Flughafentransfers",
+  "home.services.tabs.tours": "Tourpakete",
+  "home.services.tabs.transfer": "Flughafen- und Inseltransfers",
 
   "home.vehicles.sectionTitle": "Flexible Fahrzeugvermietungen",
   "home.vehicles.sectionDesc": "Wählen Sie aus unserer umfangreichen Flotte mit Optionen für Selbstfahrer und Fahrer. Alle Fahrzeuge sind gut gewartet und vollständig versichert für Ihre Sicherheit und Ihren Komfort.",
@@ -1927,7 +1927,7 @@
   "home.activities.exploreBtn": "Entdecken",
 
   "home.testimonials.title": "Was unsere Kunden sagen",
-  "home.testimonials.1.text": "\"ZamZam Tours hat unsere Sri Lanka Reise unvergesslich gemacht. Das Selbstfahrer-Auto war in perfektem Zustand und ihre Hotel-Empfehlungen waren erstklassig!\"",
+  "home.testimonials.1.text": "\"Zamzam Lanka Tours hat unsere Sri Lanka Reise unvergesslich gemacht. Das Selbstfahrer-Auto war in perfektem Zustand und ihre Hotel-Empfehlungen waren erstklassig!\"",
   "home.testimonials.1.author": "Sarah Johnson",
   "home.testimonials.1.location": "Vereinigtes Königreich",
   "home.testimonials.2.text": "\"Die Nordost-Tour war unglaublich! Unser Guide war kenntnisreich und freundlich. Das ganze Erlebnis war von Anfang bis Ende reibungslos.\"",
@@ -1942,8 +1942,8 @@
   "home.cta.primary": "Kontakt via WhatsApp",
   "home.cta.secondary": "Andere Kontaktmöglichkeiten",
 
-  "tours.pageTitle": "Sri Lanka Tourpakete | ZamZam Tours",
-"tours.metaDescription": "Entdecken Sie fantastische Sri Lanka Tourpakete mit ZamZam Tours. Kultur-, Abenteuer-, Strand-, Wildlife- und Nordost-Touren mit erfahrenen Guides und besten Preisen.",
+  "tours.pageTitle": "Sri Lanka Tourpakete | Zamzam Lanka Tours",
+"tours.metaDescription": "Entdecken Sie fantastische Sri Lanka Tourpakete mit Zamzam Lanka Tours. Kultur-, Abenteuer-, Strand-, Wildlife- und Nordost-Touren mit erfahrenen Guides und besten Preisen.",
 "tours.metaKeywords": "Sri Lanka Touren, Kulturreisen, Abenteuertouren, Strandtouren, Safari, Nordost Sri Lanka, Tourpakete",
 
 "tours.hero.title": "Entdecken Sie ",
@@ -2011,7 +2011,7 @@
 "tours.policy.rescheduleDetail": "Kostenlose Umbuchung bis 7 Tage vor Tour",
 "tours.policy.note": "* Einige spezielle Touren können abweichende Stornierungsbedingungen haben",
 
-"tours.messages.whatsappTemplate": "Hallo Zamzam Tours! Ich interessiere mich für die Buchung der \"{tour}\"-Tour. Bitte senden Sie mir weitere Details und Verfügbarkeiten.",
+"tours.messages.whatsappTemplate": "Hallo Zamzam Lanka Tours! Ich interessiere mich für die Buchung der \"{tour}\"-Tour. Bitte senden Sie mir weitere Details und Verfügbarkeiten.",
 
 "tours.modal.bookPrefix": "Buchen",
 "tours.modal.summary.duration": "Dauer:",

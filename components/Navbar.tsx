@@ -22,7 +22,7 @@ export default function Navbar() {
   }, []);
 
   const handleWhatsAppContact = () => {
-    openWhatsApp('Hello ZamZam Tours! I would like to inquire about your services.');
+    openWhatsApp('Hello Zamzam Lanka Tours! I would like to inquire about your services.');
   };
 
   const navLinks = [
@@ -30,7 +30,7 @@ export default function Navbar() {
     { href: '/tours', label: 'Tours' },
     { href: '/activities', label: 'Things To Do' },
     { href: '/car-rental', label: 'Car Rental' },
-    { href: '/airport-transfer', label: 'Airport Transfer' },
+    { href: '/transfers', label: 'Airport & All-Island Transfers' },
     { href: '/hotels', label: 'Hotels' },
     { href: '/gallery', label: 'Gallery' },
     { href: '/about', label: 'About' },

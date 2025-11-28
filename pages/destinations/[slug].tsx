@@ -828,7 +828,7 @@ export default function DestinationDetail() {
   return (
     <>
       <Head>
-        <title>{destination.name} - Sri Lanka | ZamZam Tours</title>
+        <title>{destination.name} - Sri Lanka | Zamzam Lanka Tours</title>
         <meta name="description" content={destination.description} />
         <meta name="keywords" content={`${destination.name}, Sri Lanka, tourism, travel, ${destination.category}`} />
       </Head>
