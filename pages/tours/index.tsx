@@ -682,36 +682,60 @@ export default function Tours() {
                         style={{ objectFit: 'cover', objectPosition: portraitMap[tour.image] ? 'bottom center' : 'center', width: '100%', height: '100%' }}
                       />
                       <div className="tour-badge">{tour.category.replace('-', ' ')}</div>
-                      {/* ratings removed per request */}
+                      <div className="tour-duration-badge">
+                        <span className="duration-icon">🕐</span>
+                        <span>{tour.duration}</span>
+                      </div>
                     </div>
 
                     <div className="tour-content">
-                      <div className="tour-meta">
-                        <span className="duration">🕐 {tour.duration}</span>
-                        <span className="difficulty">⚡ {tour.difficulty}</span>
-                        <span className="group">👥 {tour.groupSize}</span>
+                      <div className="tour-header">
+                        <h3 className="tour-title">{tour.name}</h3>
+                        <div className="tour-meta-badges">
+                          <span className="meta-badge difficulty">⚡ {tour.difficulty}</span>
+                          <span className="meta-badge group">👥 {tour.groupSize}</span>
+                        </div>
                       </div>
 
-                      <h3>{tour.name}</h3>
                       <p className="tour-description">{tour.description}</p>
 
-                      <div className="tour-highlights">
-                        <h4>{get('tours.card.highlightsTitle', 'Highlights:')}</h4>
-                        <ul>
-                          {tour.highlights.slice(0, 3).map((highlight, index) => (
-                            <li key={index}>✓ {highlight}</li>
+                      <div className="tour-highlights-section">
+                        <div className="section-title">
+                          <span className="title-icon">✨</span>
+                          <span>{get('tours.card.highlightsTitle', 'Tour Highlights')}</span>
+                        </div>
+                        <div className="highlights-bubbles">
+                          {tour.highlights.slice(0, 5).map((highlight, index) => (
+                            <span key={index} className="highlight-bubble">
+                              <span className="bubble-check">✓</span>
+                              {highlight}
+                            </span>
                           ))}
-                        </ul>
+                        </div>
                       </div>
 
-                      <div className="tour-includes">
-                        <h4>{get('tours.card.includesTitle', 'Includes:')}</h4>
-                        <p>{tour.includes?.join(', ') || tour.included.join(', ')}</p>
+                      <div className="tour-includes-section">
+                        <div className="section-title">
+                          <span className="title-icon">📦</span>
+                          <span>{get('tours.card.includesTitle', 'What\'s Included')}</span>
+                        </div>
+                        <div className="includes-list">
+                          {(tour.includes || tour.included).slice(0, 4).map((item, index) => (
+                            <div key={index} className="include-item">
+                              <span className="include-icon">✓</span>
+                              <span>{item}</span>
+                            </div>
+                          ))}
+                        </div>
                       </div>
 
                       <div className="tour-footer">
                         <div className="tour-price">
-                          <span className="price">${tour.price}</span>
+                          <span className="price-label">{get('tours.card.from', 'From')}</span>
+                          <div className="price-wrapper">
+                            <span className="price-currency">$</span>
+                            <span className="price">{tour.price}</span>
+                          </div>
                           <span className="per-person">{get('tours.card.perPerson', 'per person')}</span>
                         </div>
                         <div className="tour-actions">
@@ -1349,23 +1373,23 @@ export default function Tours() {
 
         .tour-card {
           background: white;
-          border-radius: 10px;
+          border-radius: 12px;
           overflow: hidden;
-          box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+          box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
           transition: transform 0.3s ease, box-shadow 0.3s ease;
+          display: flex;
+          flex-direction: column;
         }
 
         .tour-card:hover {
-          transform: translateY(-5px);
-          box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+          transform: translateY(-8px);
+          box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
         }
 
         .tour-image {
           position: relative;
-          height: 250px;
+          height: 280px;
           overflow: hidden;
-          border-top-left-radius: 10px;
-          border-top-right-radius: 10px;
           background: linear-gradient(180deg, #f0f3f4 0%, #eef2f3 100%);
         }
 
@@ -1374,12 +1398,12 @@ export default function Tours() {
           height: 100%;
           object-fit: cover;
           display: block;
-          transition: transform 0.6s cubic-bezier(.2,.8,.2,1), filter 0.35s ease;
+          transition: transform 0.6s cubic-bezier(.2,.8,.2,1);
           will-change: transform;
         }
 
-        .tour-image:hover img {
-          transform: scale(1.06) translateZ(0);
+        .tour-card:hover .tour-image img {
+          transform: scale(1.08) translateZ(0);
         }
 
         .tour-image::after {
@@ -1389,114 +1413,242 @@ export default function Tours() {
           right: 0;
           bottom: 0;
           height: 40%;
-          background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.35) 100%);
+          background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.4) 100%);
           pointer-events: none;
         }
 
         .tour-badge {
           position: absolute;
-          top: 15px;
-          left: 15px;
+          top: 16px;
+          left: 16px;
           background: var(--secondary-color);
           color: var(--text-color);
-          padding: 5px 10px;
-          border-radius: 15px;
+          padding: 6px 14px;
+          border-radius: 20px;
           font-size: 0.8rem;
-          font-weight: 600;
+          font-weight: 700;
           text-transform: capitalize;
+          box-shadow: 0 4px 12px rgba(248, 181, 0, 0.4);
         }
 
-        /* .tour-rating removed: ratings hidden from tour cards */
-
-        .tour-content {
-          padding: 1.5rem;
-        }
-
-        .tour-meta {
-          display: flex;
-          gap: 1rem;
-          margin-bottom: 1rem;
-          font-size: 0.9rem;
-          color: var(--text-light);
-        }
-
-        .tour-meta span {
+        .tour-duration-badge {
+          position: absolute;
+          top: 16px;
+          right: 16px;
+          background: rgba(255, 255, 255, 0.95);
+          color: var(--primary-color);
+          padding: 6px 12px;
+          border-radius: 20px;
+          font-size: 0.85rem;
+          font-weight: 700;
           display: flex;
           align-items: center;
-          gap: 0.3rem;
+          gap: 6px;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+          backdrop-filter: blur(8px);
         }
 
-        .tour-content h3 {
-          font-size: 1.3rem;
-          margin-bottom: 1rem;
+        .duration-icon {
+          font-size: 1rem;
+        }
+
+        .tour-content {
+          padding: 1.75rem;
+          display: flex;
+          flex-direction: column;
+          gap: 1.25rem;
+          flex-grow: 1;
+        }
+
+        .tour-header {
+          display: flex;
+          flex-direction: column;
+          gap: 0.75rem;
+        }
+
+        .tour-title {
+          font-size: 1.4rem;
+          font-weight: 700;
           color: var(--primary-color);
+          line-height: 1.3;
+          margin: 0;
+        }
+
+        .tour-meta-badges {
+          display: flex;
+          gap: 0.75rem;
+          flex-wrap: wrap;
+        }
+
+        .meta-badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 4px;
+          padding: 4px 10px;
+          background: rgba(5, 59, 60, 0.06);
+          border: 1px solid rgba(5, 59, 60, 0.12);
+          border-radius: 15px;
+          font-size: 0.8rem;
+          color: var(--primary-color);
+          font-weight: 600;
         }
 
         .tour-description {
           color: var(--text-light);
-          margin-bottom: 1.5rem;
+          line-height: 1.7;
+          font-size: 0.95rem;
+          display: -webkit-box;
+          -webkit-line-clamp: 3;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+        }
+
+        .tour-highlights-section,
+        .tour-includes-section {
+          display: flex;
+          flex-direction: column;
+          gap: 0.75rem;
+        }
+
+        .section-title {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          font-weight: 700;
+          font-size: 0.95rem;
+          color: var(--primary-color);
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+
+        .title-icon {
+          font-size: 1.1rem;
+        }
+
+        .highlights-bubbles {
+          display: flex;
+          flex-direction: column;
+          gap: 0.5rem;
+        }
+
+        .highlight-bubble {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          padding: 8px 14px;
+          background: linear-gradient(135deg, rgba(46, 213, 115, 0.12), rgba(37, 211, 102, 0.08));
+          border: 1px solid rgba(46, 213, 115, 0.25);
+          border-radius: 20px;
+          font-size: 0.85rem;
+          color: #0d6832;
+          font-weight: 600;
+          transition: all 0.3s ease;
+          width: fit-content;
+        }
+
+        .highlight-bubble:hover {
+          background: linear-gradient(135deg, rgba(46, 213, 115, 0.18), rgba(37, 211, 102, 0.12));
+          border-color: rgba(46, 213, 115, 0.4);
+          transform: translateY(-2px);
+          box-shadow: 0 4px 8px rgba(46, 213, 115, 0.2);
+        }
+
+        .bubble-check {
+          color: #2ed573;
+          font-weight: bold;
+          font-size: 0.9rem;
+        }
+
+        .includes-list {
+          display: flex;
+          flex-direction: column;
+          gap: 0.6rem;
+        }
+
+        .include-item {
+          display: flex;
+          align-items: flex-start;
+          gap: 10px;
+          font-size: 0.9rem;
+          color: var(--text-color);
           line-height: 1.6;
+          padding: 4px 0;
         }
 
-        .tour-highlights {
-          margin-bottom: 1.5rem;
-        }
-
-        .tour-highlights h4 {
-          font-size: 1rem;
-          margin-bottom: 0.5rem;
+        .include-icon {
           color: var(--primary-color);
-        }
-
-        .tour-highlights ul {
-          list-style: none;
-          padding: 0;
-        }
-
-        .tour-highlights li {
-          margin-bottom: 0.3rem;
-          font-size: 0.9rem;
-          color: var(--text-light);
-        }
-
-        .tour-includes {
-          margin-bottom: 1.5rem;
-        }
-
-        .tour-includes h4 {
+          font-weight: bold;
           font-size: 1rem;
-          margin-bottom: 0.5rem;
-          color: var(--primary-color);
-        }
-
-        .tour-includes p {
-          font-size: 0.9rem;
-          color: var(--text-light);
+          flex-shrink: 0;
+          margin-top: 2px;
         }
 
         .tour-footer {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          padding-top: 1rem;
-          border-top: 1px solid var(--border-color);
+          padding-top: 1.25rem;
+          margin-top: auto;
+          border-top: 2px solid rgba(5, 59, 60, 0.08);
+          gap: 1rem;
         }
 
-        .tour-price .price {
-          font-size: 1.5rem;
+        .tour-price {
+          display: flex;
+          flex-direction: column;
+          gap: 0.25rem;
+        }
+
+        .price-label {
+          font-size: 0.75rem;
+          color: var(--text-light);
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          font-weight: 600;
+        }
+
+        .price-wrapper {
+          display: flex;
+          align-items: baseline;
+          gap: 4px;
+        }
+
+        .price-currency {
+          font-size: 1.1rem;
           font-weight: 700;
           color: var(--primary-color);
         }
 
+        .tour-price .price {
+          font-size: 1.8rem;
+          font-weight: 800;
+          color: var(--primary-color);
+          line-height: 1;
+        }
+
         .tour-price .per-person {
           display: block;
-          font-size: 0.8rem;
+          font-size: 0.75rem;
           color: var(--text-light);
         }
 
         .tour-actions {
           display: flex;
           gap: 0.5rem;
+          flex-wrap: wrap;
+        }
+
+        .tour-actions .btn {
+          padding: 10px 18px;
+          font-size: 0.9rem;
+          font-weight: 600;
+          border-radius: 8px;
+          white-space: nowrap;
+          transition: all 0.3s ease;
+        }
+
+        .tour-actions .btn:hover {
+          transform: translateY(-2px);
         }
 
         /* No Results */

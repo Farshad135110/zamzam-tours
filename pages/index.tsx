@@ -474,52 +474,73 @@ export default function Home() {
                   <div style={{ height: '1rem' }} />
                 </AnimatedSection>
                 
-                    <div className="tour-grid">
+                    <div className="tour-packages-grid">
                       {homeTours.map((tour, index) => (
                         <AnimatedSection
                           key={index}
                           animation="fadeInUp"
                           delay={index * 0.12}
                         >
-                          <div className="tour-card-home">
-                            <div className="tour-image-home">
+                          <div className="tour-package-card">
+                            <div className="tour-card-image-wrapper">
                               <Image 
                                 src={tour.image || '/placeholder.jpg'} 
                                 alt={tour.name}
                                 width={400}
-                                height={250}
+                                height={280}
                                 style={{ objectFit: 'cover', width: '100%', height: '100%' }}
                               />
-                              <div className="tour-badge-home">{tour.duration}</div>
+                              <div className="tour-duration-badge">
+                                <span className="duration-icon">🕐</span>
+                                <span>{tour.duration}</span>
+                              </div>
+                              {tour.priceRange && (
+                                <div className={`tour-category-badge ${tour.priceRange}`}>
+                                  {tour.priceRange === 'budget' && '💰 Budget'}
+                                  {tour.priceRange === 'standard' && '⭐ Standard'}
+                                  {tour.priceRange === 'premium' && '👑 Premium'}
+                                </div>
+                              )}
                             </div>
                             
-                            <div className="tour-content-home">
-                              <h4>{get(`home.tours.${tour.id}.name`, tour.name)}</h4>
-                              <p className="tour-description-home">{get(`home.tours.${tour.id}.description`, tour.description)}</p>
+                            <div className="tour-card-body">
+                              <h3 className="tour-card-title">{get(`home.tours.${tour.id}.name`, tour.name)}</h3>
+                              <p className="tour-card-description">{get(`home.tours.${tour.id}.description`, tour.description)}</p>
                               
-                              <div className="tour-highlights-home">
-                                <strong>{get('home.tours.highlightsLabel', 'Highlights:')}</strong>
-                                <div className="highlights-tags">
-                                  {(Array.isArray(tour.highlights) ? tour.highlights : (tour.highlights || '').split(',')).slice(0, 3).map((highlight, i) => (
-                                    <span key={i} className="highlight-tag">✓ {highlight.trim()}</span>
-                                  ))}
+                              <div className="tour-highlights-section">
+                                <div className="highlights-header">
+                                  <span className="highlights-icon">✨</span>
+                                  <span className="highlights-label">{get('home.tours.highlightsLabel', 'Highlights')}</span>
                                 </div>
+                                <ul className="highlights-list">
+                                  {(Array.isArray(tour.highlights) ? tour.highlights : (tour.highlights || '').split(',')).slice(0, 3).map((highlight, i) => (
+                                    <li key={i} className="highlight-item">
+                                      <span className="highlight-check">✓</span>
+                                      <span>{highlight.trim()}</span>
+                                    </li>
+                                  ))}
+                                </ul>
                               </div>
 
-                              <div className="tour-footer-home" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem' }}>
-                                <div className="tour-price-home">
-                                  <span className="price-label">{get('home.tours.fromPrice', 'From')}</span>
-                                  <span className="price-amount">${tour.price || '—'}</span>
+                              <div className="tour-card-footer">
+                                <div className="tour-price-section">
+                                  <span className="price-from">{get('home.tours.fromPrice', 'From')}</span>
+                                  <div className="price-wrapper">
+                                    <span className="price-currency">$</span>
+                                    <span className="price-value">{tour.price || '—'}</span>
+                                    <span className="price-unit">/person</span>
+                                  </div>
                                 </div>
-                                <div style={{ display: 'flex', gap: 8 }}>
+                                <div className="tour-actions">
                                   <button
-                                    className="btn btn-primary-small"
+                                    className="btn-book-now"
                                     onClick={() => handleWhatsAppBooking(`the ${tour.name} package`)}
                                   >
-                                    {get('home.tours.bookNow', 'Book Now')}
+                                    <span className="btn-icon">📱</span>
+                                    <span>{get('home.tours.bookNow', 'Book Now')}</span>
                                   </button>
-                                  <Link href="/tours" className="btn btn-secondary-small">
-                                    {get('home.tours.viewDetails', 'Details')}
+                                  <Link href="/tours" className="btn-view-details">
+                                    {get('home.tours.viewDetails', 'View Details')}
                                   </Link>
                                 </div>
                               </div>
