@@ -8,6 +8,7 @@ interface DayItinerary {
   title: string;
   description: string;
   activities: string;
+  image?: string;
 }
 
 interface Package {
@@ -53,7 +54,8 @@ export default function AdminPackages() {
     day: 1,
     title: '',
     description: '',
-    activities: ''
+    activities: '',
+    image: ''
   }]);
 
   // Fetch packages from backend on mount
@@ -152,7 +154,8 @@ export default function AdminPackages() {
       day: 1,
       title: '',
       description: '',
-      activities: ''
+      activities: '',
+      image: ''
     }]);
   };
 
@@ -176,7 +179,7 @@ export default function AdminPackages() {
         setDayItineraries([{ day: 1, title: '', description: '', activities: '' }]);
       }
     } else {
-      setDayItineraries([{ day: 1, title: '', description: '', activities: '' }]);
+      setDayItineraries([{ day: 1, title: '', description: '', activities: '', image: '' }]);
     }
     
     setEditingPackage(pkg);
@@ -207,7 +210,8 @@ export default function AdminPackages() {
         day: currentLength + i + 1,
         title: '',
         description: '',
-        activities: ''
+        activities: '',
+        image: ''
       }));
       setDayItineraries([...dayItineraries, ...newDays]);
     } else if (days < currentLength) {
@@ -841,6 +845,15 @@ export default function AdminPackages() {
                             outline: 'none',
                             resize: 'vertical'
                           }}
+                        />
+                      </div>
+
+                      <div style={{ marginTop: '10px' }}>
+                        <CloudinaryUpload
+                          currentImageUrl={dayData.image || ''}
+                          onUploadSuccess={(url) => updateDayItinerary(index, 'image', url)}
+                          folder="zamzam-tours/itinerary"
+                          label={`Day ${dayData.day} Image (Optional)`}
                         />
                       </div>
                     </div>

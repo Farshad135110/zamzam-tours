@@ -83,14 +83,14 @@ export default function Tours() {
           priceRange: pkg.price ? (pkg.price < 1000 ? 'budget' : pkg.price < 2000 ? 'standard' : 'premium') : 'standard',
           price: pkg.price ? parseFloat(pkg.price) : 0,
           image: pkg.image || '/tours/default.jpg',
-          highlights: pkg.highlights ? pkg.highlights.split(',').map((h: string) => h.trim()) : [],
+          highlights: pkg.highlights ? pkg.highlights.split(/[,\n]/).map((h: string) => h.trim()).filter(Boolean) : [],
           description: get(`tours.packages.${pkg.package_id}.description`, pkg.description || ''),
-          includes: pkg.includings ? pkg.includings.split(',').map((i: string) => i.trim()) : [],
+          includes: pkg.includings ? pkg.includings.split(/[,\n]/).map((i: string) => i.trim()).filter(Boolean) : [],
           difficulty: pkg.difficulty || 'Moderate',
           groupSize: pkg.group_size || '2-12 people',
           season: pkg.season || 'Year-round',
           // rating and reviews removed from tour packages (display suppressed)
-          included: pkg.includings ? pkg.includings.split(',').map((i: string) => i.trim()) : [],
+          included: pkg.includings ? pkg.includings.split(/[,\n]/).map((i: string) => i.trim()).filter(Boolean) : [],
           itinerary: pkg.itinerary || []
         }));
         
@@ -851,257 +851,191 @@ export default function Tours() {
         </div>
       </main>
 
-      {/* Tour Details Modal */}
+      {/* Tour Details Modal - Full Screen */}
       {showTourDetails && selectedTour && (
-        <div className="modal-overlay" onClick={() => setShowTourDetails(false)}>
-          <div className="modal-content modal-large" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-overlay fullscreen" onClick={() => setShowTourDetails(false)}>
+          <div className="modal-content modal-fullscreen" onClick={(e) => e.stopPropagation()}>
             <button 
-              className="modal-close"
+              className="modal-close-fullscreen"
               onClick={() => setShowTourDetails(false)}
             >
-              ×
+              ✕
             </button>
             
-            <h2>{selectedTour.name}</h2>
-            
-            <div className="tour-detail-header">
-              <div className="detail-image">
-                <Image 
-                  src={selectedTour.image} 
-                  alt={selectedTour.name}
-                  width={600}
-                  height={400}
-                  style={{ objectFit: 'cover', width: '100%', height: '100%', borderRadius: '8px' }}
-                />
-              </div>
-              
-              <div className="detail-summary">
-                <div className="summary-item">
-                  <span className="label">Duration:</span>
-                  <span className="value">{selectedTour.duration}</span>
-                </div>
-                <div className="summary-item">
-                  <span className="label">Price:</span>
-                  <span className="value">${selectedTour.price} per person</span>
-                </div>
-                <div className="summary-item">
-                  <span className="label">Difficulty:</span>
-                  <span className="value">{selectedTour.difficulty}</span>
-                </div>
-                <div className="summary-item">
-                  <span className="label">Best Season:</span>
-                  <span className="value">{selectedTour.season}</span>
-                </div>
-                <div className="summary-item">
-                  <span className="label">Group Size:</span>
-                  <span className="value">{selectedTour.groupSize}</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="tour-detail-description">
-              <h3>About This Tour</h3>
-              <p>{selectedTour.description}</p>
-            </div>
-
-            <div className="tour-detail-highlights">
-              <h3>Highlights</h3>
-              <ul>
-                {selectedTour.highlights.map((highlight, index) => (
-                  <li key={index}>✓ {highlight}</li>
-                ))}
-              </ul>
-            </div>
-
-            {selectedTour.itinerary && typeof selectedTour.itinerary === 'string' && (
-              <div className="tour-detail-itinerary">
-                <h3>Day-by-Day Itinerary</h3>
-                {(() => {
-                  try {
-                    const itineraryData = JSON.parse(selectedTour.itinerary);
-                    return (
-                      <div className="itinerary-days">
-                        {itineraryData.map((day: any, index: number) => (
-                          <div key={index} className="itinerary-day">
-                            <div className="day-header">
-                              <span className="day-number">Day {day.day}</span>
-                              <h4>{day.title}</h4>
-                            </div>
-                            <p className="day-description">{day.description}</p>
-                            {day.activities && (
-                              <div className="day-activities">
-                                <strong>Activities:</strong>
-                                <ul>
-                                  {day.activities.split('\n').filter((a: string) => a.trim()).map((activity: string, idx: number) => (
-                                    <li key={idx}>{activity.trim()}</li>
-                                  ))}
-                                </ul>
-                              </div>
-                            )}
-                          </div>
-                        ))}
+            <div className="fullscreen-content">
+              {/* Hero Section */}
+              <div className="detail-hero">
+                <div className="detail-hero-image">
+                  <Image 
+                    src={selectedTour.image} 
+                    alt={selectedTour.name}
+                    width={1200}
+                    height={500}
+                    style={{ objectFit: 'cover', width: '100%', height: '100%' }}
+                  />
+                  <div className="detail-hero-overlay">
+                    <div className="detail-hero-content">
+                      <div className="tour-category-badge">{selectedTour.category.replace('-', ' ')}</div>
+                      <h1>{selectedTour.name}</h1>
+                      <div className="hero-meta">
+                        <span>🕐 {selectedTour.duration}</span>
+                        <span>⚡ {selectedTour.difficulty}</span>
+                        <span>👥 {selectedTour.groupSize}</span>
+                        <span>🌍 {selectedTour.season}</span>
                       </div>
-                    );
-                  } catch (e) {
-                    return <p>Itinerary information not available</p>;
-                  }
-                })()}
-              </div>
-            )}
-
-            <div className="tour-detail-includes">
-              <h3>What's Included</h3>
-              <ul>
-                {(selectedTour.includes || selectedTour.included).map((item, index) => (
-                  <li key={index}>✓ {item}</li>
-                ))}
-              </ul>
-            </div>
-
-            <div className="detail-actions">
-              <button 
-                className="btn btn-primary btn-large"
-                onClick={() => {
-                  setShowTourDetails(false);
-                  setShowBookingForm(true);
-                }}
-              >
-                Book This Tour
-              </button>
-              <button 
-                className="btn btn-secondary btn-large"
-                onClick={() => handleWhatsAppBooking(selectedTour)}
-              >
-                Inquire via WhatsApp
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Tour Details Modal */}
-      {showTourDetails && selectedTour && (
-        <div className="modal-overlay" onClick={() => setShowTourDetails(false)}>
-          <div className="modal-content modal-large" onClick={(e) => e.stopPropagation()}>
-            <button 
-              className="modal-close"
-              onClick={() => setShowTourDetails(false)}
-            >
-              ×
-            </button>
-            
-            <h2>{selectedTour.name}</h2>
-            
-            <div className="tour-detail-header">
-              <div className="detail-image">
-                <Image 
-                  src={selectedTour.image} 
-                  alt={selectedTour.name}
-                  width={600}
-                  height={400}
-                  style={{ objectFit: 'cover', width: '100%', height: '100%', borderRadius: '8px' }}
-                />
-              </div>
-              
-              <div className="detail-summary">
-                <div className="summary-item">
-                  <span className="label">Duration:</span>
-                  <span className="value">{selectedTour.duration}</span>
-                </div>
-                <div className="summary-item">
-                  <span className="label">Price:</span>
-                  <span className="value">${selectedTour.price} per person</span>
-                </div>
-                <div className="summary-item">
-                  <span className="label">Difficulty:</span>
-                  <span className="value">{selectedTour.difficulty}</span>
-                </div>
-                <div className="summary-item">
-                  <span className="label">Best Season:</span>
-                  <span className="value">{selectedTour.season}</span>
-                </div>
-                <div className="summary-item">
-                  <span className="label">Group Size:</span>
-                  <span className="value">{selectedTour.groupSize}</span>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <div className="tour-detail-description">
-              <h3>About This Tour</h3>
-              <p>{selectedTour.description}</p>
-            </div>
+              {/* Main Content Grid */}
+              <div className="detail-main-content">
+                <div className="detail-left-column">
+                  {/* Overview */}
+                  <section className="detail-section">
+                    <h2 className="detail-section-title">
+                      <span className="section-icon">📖</span>
+                      Tour Overview
+                    </h2>
+                    <p className="detail-text">{selectedTour.description}</p>
+                  </section>
 
-            <div className="tour-detail-highlights">
-              <h3>Highlights</h3>
-              <ul>
-                {selectedTour.highlights.map((highlight, index) => (
-                  <li key={index}>✓ {highlight}</li>
-                ))}
-              </ul>
-            </div>
+                  {/* Highlights */}
+                  <section className="detail-section">
+                    <h2 className="detail-section-title">
+                      <span className="section-icon">✨</span>
+                      Tour Highlights
+                    </h2>
+                    <div className="detail-highlights-grid">
+                      {selectedTour.highlights.map((highlight, index) => (
+                        <div key={index} className="detail-highlight-card">
+                          <span className="highlight-number">{index + 1}</span>
+                          <span className="highlight-text">{highlight}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </section>
 
-            {selectedTour.itinerary && typeof selectedTour.itinerary === 'string' && (
-              <div className="tour-detail-itinerary">
-                <h3>Day-by-Day Itinerary</h3>
-                {(() => {
-                  try {
-                    const itineraryData = JSON.parse(selectedTour.itinerary);
-                    return (
-                      <div className="itinerary-days">
-                        {itineraryData.map((day: any, index: number) => (
-                          <div key={index} className="itinerary-day">
-                            <div className="day-header">
-                              <span className="day-number">Day {day.day}</span>
-                              <h4>{day.title}</h4>
-                            </div>
-                            <p className="day-description">{day.description}</p>
-                            {day.activities && (
-                              <div className="day-activities">
-                                <strong>Activities:</strong>
-                                <ul>
-                                  {day.activities.split('\n').filter((a: string) => a.trim()).map((activity: string, idx: number) => (
-                                    <li key={idx}>{activity.trim()}</li>
-                                  ))}
-                                </ul>
+                  {/* Itinerary */}
+                  {selectedTour.itinerary && typeof selectedTour.itinerary === 'string' && (
+                    <section className="detail-section">
+                      <h2 className="detail-section-title">
+                        <span className="section-icon">🗓️</span>
+                        Day-by-Day Itinerary
+                      </h2>
+                      <div className="detail-itinerary">
+                        {(() => {
+                          try {
+                            const itineraryData = JSON.parse(selectedTour.itinerary);
+                            return itineraryData.map((day: any, index: number) => (
+                              <div key={index} className="itinerary-day-card">
+                                {day.image && (
+                                  <div className="day-image-wrapper">
+                                    <Image 
+                                      src={day.image} 
+                                      alt={day.title}
+                                      width={800}
+                                      height={400}
+                                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                    />
+                                  </div>
+                                )}
+                                <div className="day-header-card">
+                                  <div className="day-number-circle">Day {day.day || index + 1}</div>
+                                  <h3>{day.title}</h3>
+                                </div>
+                                <p className="day-description-text">{day.description}</p>
+                                {day.activities && (
+                                  <div className="day-activities-list">
+                                    <strong>Activities:</strong>
+                                    <ul>
+                                      {(Array.isArray(day.activities) 
+                                        ? day.activities 
+                                        : day.activities.split('\n').filter((a: string) => a.trim())
+                                      ).map((activity: string, actIndex: number) => (
+                                        <li key={actIndex}>{activity.trim ? activity.trim() : activity}</li>
+                                      ))}
+                                    </ul>
+                                  </div>
+                                )}
                               </div>
-                            )}
-                          </div>
-                        ))}
+                            ));
+                          } catch (e) {
+                            return <p className="detail-text">{selectedTour.itinerary}</p>;
+                          }
+                        })()}
                       </div>
-                    );
-                  } catch (e) {
-                    return <p>Itinerary information not available</p>;
-                  }
-                })()}
+                    </section>
+                  )}
+
+                  {/* What's Included */}
+                  <section className="detail-section">
+                    <h2 className="detail-section-title">
+                      <span className="section-icon">📦</span>
+                      What's Included
+                    </h2>
+                    <div className="detail-includes-grid">
+                      {(selectedTour.includes || selectedTour.included).map((item, index) => (
+                        <div key={index} className="detail-include-item">
+                          <span className="include-check-icon">✓</span>
+                          <span>{item}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </section>
+                </div>
+
+                {/* Sidebar - Booking Card */}
+                <div className="detail-right-column">
+                  <div className="booking-sticky-card">
+                    <div className="booking-card-price">
+                      <span className="price-from-label">From</span>
+                      <div className="price-main">
+                        <span className="price-currency">$</span>
+                        <span className="price-amount">{selectedTour.price}</span>
+                      </div>
+                      <span className="price-per-person">per person</span>
+                    </div>
+
+                    <div className="booking-card-info">
+                      <div className="info-row">
+                        <span className="info-label">Duration:</span>
+                        <span className="info-value">{selectedTour.duration}</span>
+                      </div>
+                      <div className="info-row">
+                        <span className="info-label">Group Size:</span>
+                        <span className="info-value">{selectedTour.groupSize}</span>
+                      </div>
+                      <div className="info-row">
+                        <span className="info-label">Difficulty:</span>
+                        <span className="info-value">{selectedTour.difficulty}</span>
+                      </div>
+                      <div className="info-row">
+                        <span className="info-label">Best Season:</span>
+                        <span className="info-value">{selectedTour.season}</span>
+                      </div>
+                    </div>
+
+                    <div className="booking-card-actions">
+                      <button 
+                        className="btn btn-primary btn-large btn-block"
+                        onClick={() => {
+                          setShowTourDetails(false);
+                          setShowBookingForm(true);
+                        }}
+                      >
+                        Book This Tour
+                      </button>
+                      <button 
+                        className="btn btn-secondary btn-large btn-block"
+                        onClick={() => handleWhatsAppBooking(selectedTour)}
+                      >
+                        📱 Inquire via WhatsApp
+                      </button>
+                    </div>
+                  </div>
+                </div>
               </div>
-            )}
-
-            <div className="tour-detail-includes">
-              <h3>What's Included</h3>
-              <ul>
-                {(selectedTour.includes || selectedTour.included).map((item, index) => (
-                  <li key={index}>✓ {item}</li>
-                ))}
-              </ul>
-            </div>
-
-            <div className="detail-actions">
-              <button 
-                className="btn btn-primary btn-large"
-                onClick={() => {
-                  setShowTourDetails(false);
-                  setShowBookingForm(true);
-                }}
-              >
-                Book This Tour
-              </button>
-              <button 
-                className="btn btn-secondary btn-large"
-                onClick={() => handleWhatsAppBooking(selectedTour)}
-              >
-                Inquire via WhatsApp
-              </button>
             </div>
           </div>
         </div>
@@ -1526,8 +1460,8 @@ export default function Tours() {
         }
 
         .highlights-bubbles {
-          display: flex;
-          flex-direction: column;
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
           gap: 0.5rem;
         }
 
@@ -1572,7 +1506,7 @@ export default function Tours() {
           font-size: 0.9rem;
           color: var(--text-color);
           line-height: 1.6;
-          padding: 4px 0;
+          padding: 2px 0;
         }
 
         .include-icon {
@@ -1895,6 +1829,11 @@ export default function Tours() {
           padding: 20px;
         }
 
+        .modal-overlay.fullscreen {
+          padding: 0;
+          background: rgba(0, 0, 0, 0.95);
+        }
+
         .modal-content {
           background: white;
           border-radius: 15px;
@@ -1904,6 +1843,451 @@ export default function Tours() {
           max-height: 90vh;
           overflow-y: auto;
           position: relative;
+        }
+
+        .modal-fullscreen {
+          max-width: 100%;
+          width: 100%;
+          height: 100vh;
+          max-height: 100vh;
+          border-radius: 0;
+          padding: 0;
+          overflow-y: auto;
+          background: #f8f9fa;
+        }
+
+        .modal-close-fullscreen {
+          position: fixed;
+          top: 20px;
+          right: 30px;
+          background: rgba(255, 255, 255, 0.95);
+          border: none;
+          width: 50px;
+          height: 50px;
+          border-radius: 50%;
+          font-size: 1.8rem;
+          cursor: pointer;
+          color: var(--primary-color);
+          z-index: 1001;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+          transition: all 0.3s ease;
+        }
+
+        .modal-close-fullscreen:hover {
+          background: var(--primary-color);
+          color: white;
+          transform: rotate(90deg) scale(1.1);
+        }
+
+        .fullscreen-content {
+          width: 100%;
+        }
+
+        /* Detail Hero */
+        .detail-hero {
+          position: relative;
+          width: 100%;
+          height: 500px;
+          overflow: hidden;
+        }
+
+        .detail-hero-image {
+          width: 100%;
+          height: 100%;
+          position: relative;
+        }
+
+        .detail-hero-overlay {
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(5,59,60,0.85) 100%);
+          display: flex;
+          align-items: flex-end;
+          padding: 3rem;
+        }
+
+        .detail-hero-content {
+          max-width: 1200px;
+          margin: 0 auto;
+          width: 100%;
+          color: white;
+        }
+
+        .tour-category-badge {
+          display: inline-block;
+          background: var(--secondary-color);
+          color: var(--primary-dark);
+          padding: 8px 20px;
+          border-radius: 25px;
+          font-size: 0.9rem;
+          font-weight: 700;
+          margin-bottom: 1rem;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+        }
+
+        .detail-hero-content h1 {
+          font-size: 3.5rem;
+          margin-bottom: 1.5rem;
+          text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+        }
+
+        .hero-meta {
+          display: flex;
+          gap: 2rem;
+          font-size: 1.1rem;
+          flex-wrap: wrap;
+        }
+
+        .hero-meta span {
+          background: rgba(255,255,255,0.15);
+          padding: 8px 16px;
+          border-radius: 20px;
+          backdrop-filter: blur(10px);
+        }
+
+        /* Main Content */
+        .detail-main-content {
+          max-width: 1400px;
+          margin: 0 auto;
+          padding: 4rem 3rem;
+          display: grid;
+          grid-template-columns: 1fr 380px;
+          gap: 4rem;
+        }
+
+        .detail-left-column {
+          display: flex;
+          flex-direction: column;
+          gap: 3rem;
+        }
+
+        .detail-right-column {
+          position: relative;
+        }
+
+        .detail-section {
+          background: white;
+          padding: 2.5rem;
+          border-radius: 15px;
+          box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+        }
+
+        .detail-section-title {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          font-size: 1.8rem;
+          font-weight: 700;
+          color: var(--primary-color);
+          margin-bottom: 1.5rem;
+          padding-bottom: 1rem;
+          border-bottom: 3px solid rgba(5,59,60,0.1);
+        }
+
+        .section-icon {
+          font-size: 2rem;
+        }
+
+        .detail-text {
+          font-size: 1.05rem;
+          line-height: 1.8;
+          color: var(--text-color);
+        }
+
+        /* Highlights Grid */
+        .detail-highlights-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+          gap: 1rem;
+        }
+
+        .detail-highlight-card {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          padding: 1rem;
+          background: linear-gradient(135deg, rgba(46,213,115,0.08) 0%, rgba(37,211,102,0.04) 100%);
+          border: 2px solid rgba(46,213,115,0.2);
+          border-radius: 12px;
+          transition: all 0.3s ease;
+        }
+
+        .detail-highlight-card:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 6px 16px rgba(46,213,115,0.15);
+          border-color: rgba(46,213,115,0.4);
+        }
+
+        .highlight-number {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 32px;
+          height: 32px;
+          background: linear-gradient(135deg, #2ed573 0%, #26d07c 100%);
+          color: white;
+          border-radius: 50%;
+          font-weight: 700;
+          font-size: 0.9rem;
+          flex-shrink: 0;
+        }
+
+        .highlight-text {
+          font-size: 0.95rem;
+          color: var(--text-color);
+          font-weight: 500;
+          line-height: 1.5;
+        }
+
+        /* Itinerary */
+        .detail-itinerary {
+          display: flex;
+          flex-direction: column;
+          gap: 1.5rem;
+        }
+
+        .itinerary-day-card {
+          background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+          border: 2px solid rgba(5,59,60,0.1);
+          border-left: 5px solid var(--primary-color);
+          border-radius: 12px;
+          padding: 0;
+          overflow: hidden;
+          transition: all 0.3s ease;
+        }
+
+        .itinerary-day-card:hover {
+          border-left-color: var(--secondary-color);
+          box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+          transform: translateX(5px);
+        }
+
+        .day-image-wrapper {
+          width: 100%;
+          height: 300px;
+          overflow: hidden;
+          position: relative;
+        }
+
+        .day-image-wrapper img {
+          transition: transform 0.4s ease;
+        }
+
+        .itinerary-day-card:hover .day-image-wrapper img {
+          transform: scale(1.05);
+        }
+
+        .day-header-card {
+          display: flex;
+          align-items: center;
+          gap: 1.5rem;
+          margin-bottom: 1rem;
+          padding: 2rem 2rem 0 2rem;
+        }
+
+        .day-number-circle {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 60px;
+          height: 60px;
+          background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+          color: white;
+          border-radius: 50%;
+          font-weight: 700;
+          font-size: 0.9rem;
+          flex-shrink: 0;
+          box-shadow: 0 4px 12px rgba(5,59,60,0.3);
+        }
+
+        .day-header-card h3 {
+          font-size: 1.4rem;
+          color: var(--primary-color);
+          margin: 0;
+        }
+
+        /* Card without image needs padding at top */
+        .itinerary-day-card > .day-header-card:first-child {
+          padding-top: 2rem;
+        }
+
+        .day-description-text {
+          font-size: 1rem;
+          line-height: 1.7;
+          color: var(--text-color);
+          margin-bottom: 1rem;
+          padding: 0 2rem;
+        }
+
+        .day-activities-list {
+          background: white;
+          padding: 1.25rem;
+          border-radius: 10px;
+          border: 1px solid rgba(5,59,60,0.1);
+          margin: 0 2rem 2rem 2rem;
+        }
+
+        .day-activities-list strong {
+          color: var(--primary-color);
+          font-size: 0.95rem;
+          display: block;
+          margin-bottom: 0.75rem;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+
+        .day-activities-list ul {
+          list-style: none;
+          padding: 0;
+          margin: 0;
+        }
+
+        .day-activities-list li {
+          padding: 0.5rem 0;
+          padding-left: 1.75rem;
+          position: relative;
+          font-size: 0.95rem;
+          line-height: 1.6;
+        }
+
+        .day-activities-list li:before {
+          content: "→";
+          position: absolute;
+          left: 0;
+          color: var(--secondary-color);
+          font-weight: bold;
+        }
+
+        /* Includes Grid */
+        .detail-includes-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+          gap: 1rem;
+        }
+
+        .detail-include-item {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          padding: 1rem;
+          background: rgba(5,59,60,0.03);
+          border-radius: 10px;
+          font-size: 0.95rem;
+          transition: all 0.3s ease;
+        }
+
+        .detail-include-item:hover {
+          background: rgba(5,59,60,0.06);
+          transform: translateX(5px);
+        }
+
+        .include-check-icon {
+          color: var(--primary-color);
+          font-weight: bold;
+          font-size: 1.1rem;
+          flex-shrink: 0;
+        }
+
+        /* Booking Sticky Card */
+        .booking-sticky-card {
+          position: sticky;
+          top: 2rem;
+          background: white;
+          border-radius: 15px;
+          box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+          padding: 2rem;
+          border: 2px solid rgba(5,59,60,0.1);
+        }
+
+        .booking-card-price {
+          text-align: center;
+          padding: 1.5rem;
+          background: linear-gradient(135deg, rgba(5,59,60,0.05) 0%, rgba(248,181,0,0.05) 100%);
+          border-radius: 12px;
+          margin-bottom: 1.5rem;
+        }
+
+        .price-from-label {
+          display: block;
+          font-size: 0.85rem;
+          color: var(--text-light);
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          margin-bottom: 0.5rem;
+        }
+
+        .price-main {
+          display: flex;
+          align-items: baseline;
+          justify-content: center;
+          gap: 6px;
+          margin-bottom: 0.5rem;
+        }
+
+        .price-currency {
+          font-size: 1.5rem;
+          font-weight: 700;
+          color: var(--primary-color);
+        }
+
+        .price-amount {
+          font-size: 3rem;
+          font-weight: 800;
+          color: var(--primary-color);
+          line-height: 1;
+        }
+
+        .price-per-person {
+          display: block;
+          font-size: 0.9rem;
+          color: var(--text-light);
+        }
+
+        .booking-card-info {
+          display: flex;
+          flex-direction: column;
+          gap: 0.75rem;
+          margin-bottom: 1.5rem;
+          padding: 1.5rem;
+          background: #f8f9fa;
+          border-radius: 10px;
+        }
+
+        .info-row {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 0.5rem 0;
+        }
+
+        .info-label {
+          font-size: 0.9rem;
+          color: var(--text-light);
+          font-weight: 600;
+        }
+
+        .info-value {
+          font-size: 0.95rem;
+          color: var(--primary-color);
+          font-weight: 600;
+        }
+
+        .booking-card-actions {
+          display: flex;
+          flex-direction: column;
+          gap: 0.75rem;
+        }
+
+        .btn-block {
+          width: 100%;
+          justify-content: center;
         }
 
         .modal-large {
@@ -2206,6 +2590,34 @@ export default function Tours() {
             max-width: 100%;
             margin-bottom: 2rem;
           }
+
+          /* Full-screen modal responsive */
+          .detail-main-content {
+            grid-template-columns: 1fr;
+            padding: 2rem 1.5rem;
+            gap: 2rem;
+          }
+
+          .detail-right-column {
+            order: -1;
+          }
+
+          .booking-sticky-card {
+            position: relative;
+            top: 0;
+          }
+
+          .detail-hero {
+            height: 400px;
+          }
+
+          .detail-hero-content h1 {
+            font-size: 2.5rem;
+          }
+
+          .detail-highlights-grid {
+            grid-template-columns: 1fr;
+          }
         }
 
         @media (max-width: 768px) {
@@ -2241,6 +2653,79 @@ export default function Tours() {
 
           .tour-actions {
             justify-content: space-between;
+          }
+
+          /* Full-screen modal mobile */
+          .detail-hero {
+            height: 300px;
+          }
+
+          .detail-hero-overlay {
+            padding: 1.5rem;
+          }
+
+          .detail-hero-content h1 {
+            font-size: 1.8rem;
+          }
+
+          .hero-meta {
+            font-size: 0.9rem;
+            gap: 0.75rem;
+          }
+
+          .detail-main-content {
+            padding: 1.5rem 1rem;
+          }
+
+          .detail-section {
+            padding: 1.5rem;
+          }
+
+          .detail-section-title {
+            font-size: 1.4rem;
+          }
+
+          .modal-close-fullscreen {
+            width: 45px;
+            height: 45px;
+            top: 15px;
+            right: 15px;
+          }
+
+          .detail-includes-grid {
+            grid-template-columns: 1fr;
+          }
+
+          .price-amount {
+            font-size: 2.5rem;
+          }
+
+          .day-image-wrapper {
+            height: 200px;
+          }
+
+          .day-header-card {
+            padding: 1.5rem 1.5rem 0 1.5rem;
+            gap: 1rem;
+          }
+
+          .day-number-circle {
+            width: 50px;
+            height: 50px;
+            font-size: 0.85rem;
+          }
+
+          .day-header-card h3 {
+            font-size: 1.2rem;
+          }
+
+          .day-description-text {
+            padding: 0 1.5rem;
+            font-size: 0.95rem;
+          }
+
+          .day-activities-list {
+            margin: 0 1.5rem 1.5rem 1.5rem;
           }
         }
 
