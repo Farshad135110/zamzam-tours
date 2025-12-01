@@ -503,7 +503,6 @@ export default function Hotels() {
         }}></div>
         
         <motion.div 
-          className="hero-content"
           style={{ position: 'relative', zIndex: 2 }}
           initial="hidden"
           animate="visible"
@@ -926,7 +925,7 @@ export default function Hotels() {
                     alt={hotel.name}
                     width={400}
                     height={250}
-                    objectFit="cover"
+                    style={{ objectFit: 'cover' }}
                   />
                   {hotel.class && (
                     <div className="hotel-class-badge">
@@ -1168,8 +1167,7 @@ export default function Hotels() {
                     alt={selectedHotel.name}
                     width={200}
                     height={150}
-                    objectFit="cover"
-                    style={{ borderRadius: '12px' }}
+                    style={{ borderRadius: '12px', objectFit: 'cover' }}
                   />
                 </div>
                 <div className="hotel-details-modern">
@@ -2212,9 +2210,9 @@ export default function Hotels() {
 
         .hotel-card {
           background: white;
-          border-radius: 10px;
+          border-radius: 12px;
           overflow: hidden;
-          box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
           transition: all 0.3s ease;
           display: flex;
           flex-direction: column;
@@ -2222,8 +2220,8 @@ export default function Hotels() {
         }
 
         .hotel-card:hover {
-          transform: translateY(-5px);
-          box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+          transform: translateY(-8px);
+          box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
         }
 
         .hotel-card:hover .hotel-overlay {
@@ -2233,21 +2231,22 @@ export default function Hotels() {
 
         .hotel-image {
           position: relative;
-          height: 200px;
+          height: 220px;
           width: 100%;
           overflow: hidden;
           flex-shrink: 0;
+          background: #f0f3f4;
         }
 
         .hotel-image img {
           width: 100%;
           height: 100%;
           object-fit: cover;
-          transition: transform 0.3s ease;
+          transition: transform 0.6s cubic-bezier(.2,.8,.2,1);
         }
 
         .hotel-card:hover .hotel-image img {
-          transform: scale(1.05);
+          transform: scale(1.08);
         }
 
         /* Overlay that covers entire card on hover */
@@ -2302,8 +2301,9 @@ export default function Hotels() {
         .overlay-content h3 {
           color: white;
           font-size: 1.5rem;
-          margin-bottom: 0.5rem;
+          margin-bottom: 0.75rem;
           text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+          font-weight: 700;
         }
 
         .overlay-location {
@@ -2448,6 +2448,8 @@ export default function Hotels() {
         .hotel-content h3 {
           color: var(--primary-color);
           margin-bottom: 0.5rem;
+          font-size: 1.4rem;
+          font-weight: 700;
         }
 
         .hotel-title-row {

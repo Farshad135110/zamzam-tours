@@ -15,7 +15,6 @@ import { fadeInUp, staggerContainer, cardHover } from '../src/utils/animations';
 import useTranslation from '../src/i18n/useTranslation';
 
 export default function Home() {
-  console.log('Home component rendering...');
   const { t } = useTranslation();
   const get = (key: string, fallback: string) => {
     const val = t(key);

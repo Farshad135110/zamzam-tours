@@ -1,6 +1,7 @@
 import '../styles/globals.css'
 import '../styles/home.css'
 import type { AppProps } from 'next/app'
+import Head from 'next/head'
 import { I18nProvider } from '../src/i18n/I18nContext'
 import { useEffect } from 'react'
 
@@ -37,6 +38,9 @@ export default function App({ Component, pageProps }: AppProps) {
 
   return (
     <I18nProvider>
+      <Head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+      </Head>
       <Component {...pageProps} />
     </I18nProvider>
   )

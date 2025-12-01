@@ -26,13 +26,12 @@ interface RevenueData {
   bookings: number;
 }
 
-interface BookingTypeData {
-  name: string;
-  value: number;
-  color: string;
-}
-
-export default function AdminDashboard() {
+  interface BookingTypeData {
+    name: string;
+    value: number;
+    color: string;
+    [key: string]: string | number;
+  }export default function AdminDashboard() {
   const { t } = useTranslation();
   const router = useRouter();
   

@@ -1666,11 +1666,17 @@ export default function Tours() {
           background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.45) 100%);
         }
         .destination-card {
-          border-radius: 10px;
+          border-radius: 12px;
           overflow: hidden;
           position: relative;
           height: 250px;
-          box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+          transition: all 0.3s ease;
+        }
+
+        .destination-card:hover {
+          transform: translateY(-8px);
+          box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
         }
 
         .destination-image {
@@ -1703,12 +1709,14 @@ export default function Tours() {
 
         .destination-overlay h3 {
           font-size: 1.5rem;
-          margin-bottom: 0.5rem;
+          margin-bottom: 0.75rem;
+          font-weight: 700;
         }
 
         .destination-overlay p {
           margin-bottom: 1rem;
           font-size: 0.9rem;
+          line-height: 1.6;
         }
 
         .tour-count {
@@ -1734,15 +1742,16 @@ export default function Tours() {
 
         .activity-card {
           background: white;
-          padding: 2rem;
-          border-radius: 10px;
+          padding: 1.75rem;
+          border-radius: 12px;
           text-align: center;
-          box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-          transition: transform 0.3s ease;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+          transition: all 0.3s ease;
         }
 
         .activity-card:hover {
-          transform: translateY(-5px);
+          transform: translateY(-8px);
+          box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
         }
 
         .activity-icon {

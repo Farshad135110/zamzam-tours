@@ -32,7 +32,6 @@ class MyDocument extends Document {
           <meta name="description" content={SITE_INFO.description} />
           <meta name="keywords" content="Sri Lanka tours, Zamzam Lanka Tours, car rental Sri Lanka, airport transfer, Sri Lanka travel, tourism Sri Lanka, tour packages, vehicle rental" />
           <meta name="author" content={SITE_INFO.name} />
-          <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
           
           {/* Open Graph / Facebook */}
           <meta property="og:type" content="website" />

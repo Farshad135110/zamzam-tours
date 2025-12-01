@@ -848,16 +848,17 @@ export default function AirportTransfer() {
 
         .service-card.detailed {
           background: white;
-          padding: 2rem;
-          border-radius: 10px;
-          box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+          padding: 1.75rem;
+          border-radius: 12px;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
           border: 2px solid transparent;
           transition: all 0.3s ease;
         }
 
         .service-card.detailed:hover {
           border-color: var(--primary-color);
-          transform: translateY(-5px);
+          transform: translateY(-8px);
+          box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
         }
 
         .service-header {
@@ -872,7 +873,9 @@ export default function AirportTransfer() {
 
         .service-header h3 {
           color: var(--primary-color);
-          margin-bottom: 0.5rem;
+          margin-bottom: 0.75rem;
+          font-size: 1.4rem;
+          font-weight: 700;
         }
 
         .service-description {
