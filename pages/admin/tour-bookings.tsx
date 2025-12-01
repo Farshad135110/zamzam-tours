@@ -674,6 +674,7 @@ export default function AdminTourBookings() {
                     required
                     value={formData.starting_date}
                     onChange={(e) => setFormData({...formData, starting_date: e.target.value})}
+                    min={new Date().toISOString().split('T')[0]}
                     style={{
                       width: '100%',
                       padding: '10px 12px',

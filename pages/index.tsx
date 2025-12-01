@@ -659,7 +659,7 @@ export default function Home() {
               <AnimatedSection key={act.slug} animation="fadeInUp" delay={index * 0.08}>
                 <div className="destination-card">
                   {/* emoji header instead of photo */}
-                  <div style={{ height: '120px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg, rgba(5,59,60,0.04), rgba(248,181,0,0.04))' }}>
+                  <div style={{ height: '120px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--primary-color)' }}>
                     <div style={{ fontSize: '3rem' }}>{act.icon}</div>
                   </div>
 

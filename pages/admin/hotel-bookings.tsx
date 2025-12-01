@@ -578,6 +578,7 @@ const HotelBookingsPage: React.FC = () => {
                     style={styles.input}
                     value={formData.check_in}
                     onChange={(e) => setFormData({...formData, check_in: e.target.value})}
+                    min={new Date().toISOString().split('T')[0]}
                     required
                   />
                 </div>
@@ -589,6 +590,7 @@ const HotelBookingsPage: React.FC = () => {
                     style={styles.input}
                     value={formData.check_out}
                     onChange={(e) => setFormData({...formData, check_out: e.target.value})}
+                    min={formData.check_in || new Date().toISOString().split('T')[0]}
                     required
                   />
                 </div>
@@ -600,7 +602,9 @@ const HotelBookingsPage: React.FC = () => {
                     style={styles.input}
                     value={formData.no_of_rooms}
                     onChange={(e) => setFormData({...formData, no_of_rooms: parseInt(e.target.value) || 1})}
+                    onKeyPress={(e) => { if (!/[0-9]/.test(e.key)) e.preventDefault(); }}
                     min="1"
+                    step="1"
                     required
                   />
                 </div>
@@ -612,7 +616,9 @@ const HotelBookingsPage: React.FC = () => {
                     style={styles.input}
                     value={formData.no_of_people}
                     onChange={(e) => setFormData({...formData, no_of_people: parseInt(e.target.value) || 1})}
+                    onKeyPress={(e) => { if (!/[0-9]/.test(e.key)) e.preventDefault(); }}
                     min="1"
+                    step="1"
                     required
                   />
                 </div>

@@ -43,6 +43,7 @@ export default function Tours() {
   const [showBookingForm, setShowBookingForm] = useState(false);
   const [showTourDetails, setShowTourDetails] = useState(false);
   const [selectedTour, setSelectedTour] = useState<Tour | null>(null);
+  const [bookingFormScrollTop, setBookingFormScrollTop] = useState(0);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [tours, setTours] = useState<Tour[]>([]);
@@ -133,6 +134,18 @@ export default function Tours() {
       tours.forEach(t => checkImageOrientation(t.image));
     }
   }, [tours]);
+
+  // Auto-scroll to booking form when it opens
+  useEffect(() => {
+    if (showBookingForm) {
+      setTimeout(() => {
+        const formPopup = document.querySelector('.booking-form-popup') as HTMLElement;
+        if (formPopup) {
+          formPopup.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 100);
+    }
+  }, [showBookingForm]);
   
   // Handle video end - switch to other player
   const handleVideo1End = () => {
@@ -423,6 +436,7 @@ export default function Tours() {
   const openTourDetails = (tour: any) => {
     const scrollY = window.scrollY;
     setSelectedTour(tour);
+    setShowBookingForm(false); // Reset booking form state
     setShowTourDetails(true);
     setTimeout(() => {
       const modalOverlay = document.querySelector('.modal-overlay.fullscreen') as HTMLElement;
@@ -862,12 +876,13 @@ export default function Tours() {
 
       {/* Tour Details Modal - Full Screen */}
       {showTourDetails && selectedTour && (
-        <div className="modal-overlay fullscreen" onClick={() => setShowTourDetails(false)}>
+        <div className="modal-overlay fullscreen" onClick={() => { setShowTourDetails(false); setShowBookingForm(false); }}>
           <button 
             className="modal-close-fullscreen"
             onClick={(e) => {
               e.stopPropagation();
               setShowTourDetails(false);
+              setShowBookingForm(false); // Reset booking form when closing tour details
             }}
           >
             ✕
@@ -1029,8 +1044,14 @@ export default function Tours() {
                     <div className="booking-card-actions">
                       <button 
                         className="btn btn-primary btn-large btn-block"
-                        onClick={() => {
-                          setShowTourDetails(false);
+                        onClick={(e) => {
+                          // Get the modal's scroll position to calculate where the form should appear
+                          const modalFullscreen = document.querySelector('.modal-fullscreen') as HTMLElement;
+                          if (modalFullscreen) {
+                            const scrollTop = modalFullscreen.scrollTop;
+                            // Position form at current view in the modal
+                            setBookingFormScrollTop(scrollTop);
+                          }
                           setShowBookingForm(true);
                         }}
                       >
@@ -1047,14 +1068,142 @@ export default function Tours() {
                 </div>
               </div>
             </div>
+
+            {/* Booking Form - appears inside tour details modal */}
+            {showBookingForm && showTourDetails && (
+              <div 
+                className="booking-form-overlay"
+                onClick={() => setShowBookingForm(false)}
+              >
+                <div 
+                  className="booking-form-popup"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <button 
+                    className="modal-close"
+                    onClick={() => setShowBookingForm(false)}
+                  >
+                    ×
+                  </button>
+                  
+                  <h2>{`${get('tours.modal.bookPrefix', 'Book')} ${selectedTour.name}`}</h2>
+                  
+                  <div className="tour-summary">
+                    <div className="summary-item">
+                      <span>{get('tours.modal.summary.duration', 'Duration:')}</span>
+                      <span>{selectedTour.duration}</span>
+                    </div>
+                    <div className="summary-item">
+                      <span>{get('tours.modal.summary.price', 'Price:')}</span>
+                      <span>{`${selectedTour.price} ${get('tours.modal.summary.perPerson', 'per person')}`}</span>
+                    </div>
+                    <div className="summary-item">
+                      <span>{get('tours.modal.summary.difficulty', 'Difficulty:')}</span>
+                      <span>{selectedTour.difficulty}</span>
+                    </div>
+                    <div className="summary-item">
+                      <span>{get('tours.modal.summary.season', 'Best Season:')}</span>
+                      <span>{selectedTour.season}</span>
+                    </div>
+                  </div>
+
+                  <form 
+                    className="booking-form"
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      const formData = new FormData(e.currentTarget);
+                      const fullName = formData.get('fullName');
+                      const email = formData.get('email');
+                      const phone = formData.get('phone');
+                      const travelDate = formData.get('travelDate');
+                      const travelers = formData.get('travelers');
+                      const accommodation = formData.get('accommodation');
+                      const specialRequests = formData.get('specialRequests');
+                      
+                      const message = `Hello Zamzam Lanka Tours! I would like to book the following tour:\n\n` +
+                        `*Tour:* ${selectedTour.name}\n` +
+                        `*Full Name:* ${fullName}\n` +
+                        `*Email:* ${email}\n` +
+                        `*Phone:* ${phone}\n` +
+                        `*Travel Date:* ${travelDate}\n` +
+                        `*Number of Travelers:* ${travelers}\n` +
+                        `*Accommodation Preference:* ${accommodation}\n` +
+                        `${specialRequests ? `*Special Requests:* ${specialRequests}\n` : ''}` +
+                        `\nPlease confirm availability and provide booking details.`;
+                      
+                      const encodedMessage = encodeURIComponent(message);
+                      window.open(`${CONTACT_INFO.whatsappUrl}?text=${encodedMessage}`, '_blank');
+                      setShowBookingForm(false);
+                    }}
+                  >
+                    <div className="form-group">
+                      <label>{get('tours.form.label.fullName', 'Full Name *')}</label>
+                      <input type="text" name="fullName" required />
+                    </div>
+                    
+                    <div className="form-row">
+                      <div className="form-group">
+                        <label>{get('tours.form.label.email', 'Email *')}</label>
+                        <input type="email" name="email" required />
+                      </div>
+                      <div className="form-group">
+                        <label>{get('tours.form.label.phone', 'Phone *')}</label>
+                        <input type="tel" name="phone" required inputMode="numeric" />
+                      </div>
+                    </div>
+
+                    <div className="form-row">
+                      <div className="form-group">
+                        <label>{get('tours.form.label.travelDate', 'Travel Date *')}</label>
+                        <input type="date" name="travelDate" min={new Date().toISOString().split('T')[0]} required />
+                      </div>
+                      <div className="form-group">
+                        <label>{get('tours.form.label.travelers', 'Number of Travelers *')}</label>
+                        <input type="number" name="travelers" min="1" max="50" step="1" onKeyPress={(e) => { if (!/[0-9]/.test(e.key)) e.preventDefault(); }} required />
+                      </div>
+                    </div>
+
+                    <div className="form-group">
+                      <label>{get('tours.form.label.accommodation', 'Accommodation Preference')}</label>
+                      <select name="accommodation">
+                        <option value="budget">{get('tours.form.options.budget', 'Budget')}</option>
+                        <option value="standard">{get('tours.form.options.standard', 'Standard')}</option>
+                        <option value="premium">{get('tours.form.options.premium', 'Premium')}</option>
+                        <option value="luxury">{get('tours.form.options.luxury', 'Luxury')}</option>
+                      </select>
+                    </div>
+
+                    <div className="form-group">
+                      <label>{get('tours.form.label.specialRequests', 'Special Requests')}</label>
+                      <textarea name="specialRequests" rows={4} placeholder={get('tours.form.placeholder.specialRequests', 'Dietary requirements, accessibility needs, special occasions...')}></textarea>
+                    </div>
+
+                    <button type="submit" className="btn btn-primary btn-large btn-block">
+                      {get('tours.form.submit', 'Submit Booking Request')}
+                    </button>
+                  </form>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}
 
-      {/* Booking Form Modal */}
-      {showBookingForm && selectedTour && (
-        <div className="modal-overlay">
-          <div className="modal-content">
+      {/* Remove old separate booking modal - it's now inside tour details */}
+      {false && showBookingForm && selectedTour && (
+        <div 
+          className="modal-overlay" 
+          style={{ alignItems: 'flex-start', justifyContent: 'center' }}
+          onClick={() => setShowBookingForm(false)}
+        >
+          <div 
+            className="modal-content" 
+            style={{ 
+              marginTop: `${bookingFormScrollTop + 50}px`,
+              marginBottom: '50px'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
             <button 
               className="modal-close"
               onClick={() => setShowBookingForm(false)}
@@ -1096,7 +1245,7 @@ export default function Tours() {
                 </div>
                 <div className="form-group">
                   <label>{get('tours.form.label.phone', 'Phone *')}</label>
-                  <input type="tel" required />
+                  <input type="tel" required inputMode="numeric" />
                 </div>
               </div>
 
@@ -1842,10 +1991,11 @@ export default function Tours() {
           height: 100%;
           background: rgba(0, 0, 0, 0.7);
           display: flex;
-          align-items: center;
+          align-items: flex-start;
           justify-content: center;
-          z-index: 1000;
-          padding: 20px;
+          z-index: 10002;
+          padding: 0;
+          overflow-y: auto;
         }
 
         .modal-overlay.fullscreen {
@@ -1870,9 +2020,10 @@ export default function Tours() {
           padding: 2rem;
           max-width: 600px;
           width: 100%;
-          max-height: 90vh;
-          overflow-y: auto;
+          max-height: none;
+          overflow-y: visible;
           position: relative;
+          margin: 0;
         }
 
         .modal-fullscreen {
@@ -2502,6 +2653,35 @@ export default function Tours() {
           font-size: 1.5rem;
           cursor: pointer;
           color: var(--text-light);
+          z-index: 10;
+        }
+
+        /* Booking Form Overlay - appears inside tour details modal */
+        .booking-form-overlay {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100vw;
+          height: 100vh;
+          background: rgba(0, 0, 0, 0.8);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 10003;
+          padding: 20px;
+          overflow-y: auto;
+        }
+
+        .booking-form-popup {
+          background: white;
+          border-radius: 15px;
+          padding: 2rem;
+          max-width: 600px;
+          width: 100%;
+          max-height: 85vh;
+          overflow-y: auto;
+          position: relative;
+          margin: 0;
         }
 
         .modal-content h2 {

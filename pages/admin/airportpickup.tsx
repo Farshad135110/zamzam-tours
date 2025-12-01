@@ -719,8 +719,10 @@ export default function AdminAirportPickup() {
                     required
                     min="1"
                     max="50"
+                    step="1"
                     value={formData.passengers}
                     onChange={(e) => setFormData({...formData, passengers: parseInt(e.target.value)})}
+                    onKeyPress={(e) => { if (!/[0-9]/.test(e.key)) e.preventDefault(); }}
                     style={{
                       width: '100%',
                       padding: '10px 12px',
@@ -866,6 +868,7 @@ export default function AdminAirportPickup() {
                     step="0.01"
                     value={formData.price}
                     onChange={(e) => setFormData({...formData, price: parseFloat(e.target.value)})}
+                    onKeyPress={(e) => { if (!/[0-9.]/.test(e.key)) e.preventDefault(); }}
                     style={{
                       width: '100%',
                       padding: '10px 12px',

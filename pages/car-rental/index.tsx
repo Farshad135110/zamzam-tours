@@ -1003,6 +1003,7 @@ export default function SelfDrive() {
           justify-content: center;
           z-index: 1000;
           padding: 20px;
+          overflow-y: auto;
         }
 
         .modal-content {
@@ -1011,9 +1012,10 @@ export default function SelfDrive() {
           padding: 2rem;
           max-width: 700px;
           width: 100%;
-          max-height: 90vh;
+          max-height: 85vh;
           overflow-y: auto;
           position: relative;
+          margin: auto;
         }
 
         .modal-close {
