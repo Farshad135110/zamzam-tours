@@ -421,8 +421,15 @@ export default function Tours() {
   };
 
   const openTourDetails = (tour: any) => {
+    const scrollY = window.scrollY;
     setSelectedTour(tour);
     setShowTourDetails(true);
+    setTimeout(() => {
+      const modalOverlay = document.querySelector('.modal-overlay.fullscreen') as HTMLElement;
+      if (modalOverlay) {
+        modalOverlay.style.top = `${scrollY}px`;
+      }
+    }, 10);
   };
 
   return (
@@ -856,14 +863,16 @@ export default function Tours() {
       {/* Tour Details Modal - Full Screen */}
       {showTourDetails && selectedTour && (
         <div className="modal-overlay fullscreen" onClick={() => setShowTourDetails(false)}>
+          <button 
+            className="modal-close-fullscreen"
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowTourDetails(false);
+            }}
+          >
+            ✕
+          </button>
           <div className="modal-content modal-fullscreen" onClick={(e) => e.stopPropagation()}>
-            <button 
-              className="modal-close-fullscreen"
-              onClick={() => setShowTourDetails(false)}
-            >
-              ✕
-            </button>
-            
             <div className="fullscreen-content">
               {/* Hero Section */}
               <div className="detail-hero">
@@ -877,7 +886,6 @@ export default function Tours() {
                   />
                   <div className="detail-hero-overlay">
                     <div className="detail-hero-content">
-                      <div className="tour-category-badge">{selectedTour.category.replace('-', ' ')}</div>
                       <h1>{selectedTour.name}</h1>
                       <div className="hero-meta">
                         <span>🕐 {selectedTour.duration}</span>
@@ -1841,8 +1849,19 @@ export default function Tours() {
         }
 
         .modal-overlay.fullscreen {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100vw;
+          height: 100vh;
           padding: 0;
-          background: rgba(0, 0, 0, 0.95);
+          margin: 0;
+          background: transparent;
+          align-items: flex-start;
+          overflow: hidden;
+          z-index: 1000;
+          display: flex;
+          flex-direction: column;
         }
 
         .modal-content {
@@ -1857,20 +1876,24 @@ export default function Tours() {
         }
 
         .modal-fullscreen {
-          max-width: 100%;
-          width: 100%;
+          max-width: none;
+          max-height: none;
+          width: 100vw;
           height: 100vh;
-          max-height: 100vh;
           border-radius: 0;
           padding: 0;
           overflow-y: auto;
-          background: #f8f9fa;
+          background: var(--primary-color);
+          margin: 0;
+          position: fixed;
+          top: 0;
+          left: 0;
         }
 
         .modal-close-fullscreen {
           position: fixed;
           top: 20px;
-          right: 30px;
+          right: 20px;
           background: rgba(255, 255, 255, 0.95);
           border: none;
           width: 50px;
@@ -1879,7 +1902,7 @@ export default function Tours() {
           font-size: 1.8rem;
           cursor: pointer;
           color: var(--primary-color);
-          z-index: 1001;
+          z-index: 10001;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -1895,6 +1918,7 @@ export default function Tours() {
 
         .fullscreen-content {
           width: 100%;
+          min-height: 100%;
         }
 
         /* Detail Hero */
@@ -1967,7 +1991,7 @@ export default function Tours() {
         .detail-main-content {
           max-width: 1400px;
           margin: 0 auto;
-          padding: 4rem 3rem;
+          padding: 4rem 3rem 0;
           display: grid;
           grid-template-columns: 1fr 380px;
           gap: 4rem;
