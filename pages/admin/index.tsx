@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
+import Head from 'next/head';
 import AdminSidebar from '../../components/AdminSidebar';
 import { useRouter } from 'next/router';
+import useTranslation from '../../src/i18n/useTranslation';
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 interface DashboardStats {
@@ -31,6 +33,7 @@ interface BookingTypeData {
 }
 
 export default function AdminDashboard() {
+  const { t } = useTranslation();
   const router = useRouter();
   
   // Check if user is logged in
@@ -219,12 +222,20 @@ export default function AdminDashboard() {
     <div style={{
       fontFamily: "Poppins, sans-serif",
       backgroundColor: "#f8fafc",
-      minHeight: "100vh"
+      minHeight: "100vh",
+      display: 'flex',
+      position: 'fixed',
+      width: '100%',
+      height: '100vh',
+      overflow: 'hidden'
     }}>
+      <Head>
+        <title>Dashboard - Admin Panel</title>
+      </Head>
       <AdminSidebar active="overview" />
 
       {/* Main Content */}
-      <div style={{ marginLeft: '280px', padding: "30px", minHeight: "100vh" }}>
+      <div style={{ marginLeft: '280px', padding: "30px", flex: 1, overflowY: 'auto', height: '100vh' }}>
         <style jsx global>{`
           @media (max-width: 900px) {
             body > div > div:last-child {

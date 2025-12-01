@@ -1,4 +1,5 @@
 import React from 'react';
+import Head from 'next/head';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { CldImage } from 'next-cloudinary';
@@ -858,39 +859,28 @@ const ActivityDetailPage = () => {
   };
 
   return (
-    <div className="activity-detail-page">
-      <Navbar />
+    <>
+      <Head>
+        <title>{activity.name} | Zamzam Lanka Tours</title>
+      </Head>
+      <div className="activity-detail-page" style={{ marginTop: 0 }}>
+        <Navbar />
 
       {/* Hero Section */}
-      <section style={{ position: 'relative', height: '60vh', overflow: 'hidden' }}>
-        <CldImage
-          src={activity.image}
-          alt={activity.name}
-          width={1920}
-          height={1080}
-          crop="fill"
-          gravity="auto"
-          style={{
-            position: 'absolute',
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover'
-          }}
-        />
+      <section style={{ position: 'relative', height: '60vh', overflow: 'hidden', marginTop: 0, background: '#053b3c' }}>
         <div style={{
           position: 'absolute',
           top: 0,
           left: 0,
           width: '100%',
           height: '100%',
-          background: 'linear-gradient(to bottom, rgba(5,59,60,0.5), rgba(5,59,60,0.8))',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           flexDirection: 'column',
           color: 'white',
           textAlign: 'center',
-          padding: '0 20px'
+          padding: '100px 20px 20px 20px'
         }}>
           <div style={{ fontSize: '3rem', marginBottom: '0.5rem' }}>{activity.icon}</div>
           <h1 style={{ fontSize: '2.8rem', marginBottom: '0.3rem', color: '#fff' }}>{activity.name}</h1>
@@ -1147,6 +1137,8 @@ const ActivityDetailPage = () => {
       <style jsx>{`
         .activity-detail-page {
           min-height: 100vh;
+          margin: 0;
+          padding: 0;
         }
 
         @media (max-width: 768px) {
@@ -1163,7 +1155,15 @@ const ActivityDetailPage = () => {
           }
         }
       `}</style>
-    </div>
+      
+      <style jsx global>{`
+        body {
+          margin: 0;
+          padding: 0;
+        }
+      `}</style>
+      </div>
+    </>
   );
 };
 

@@ -29,10 +29,10 @@ export default function AnimatedSection({
     <motion.div
       initial="hidden"
       whileInView="visible"
-      viewport={{ once: true, amount: 0.2 }}
+      viewport={{ once: true, amount: 0.2, margin: "0px 0px -100px 0px" }}
       variants={variant}
-      transition={{ delay }}
-      style={{ width: '100%' }}
+      transition={{ delay, duration: 0.5, ease: "easeOut" }}
+      style={{ width: '100%', willChange: 'transform, opacity' }}
     >
       <div className={className}>
         {children}

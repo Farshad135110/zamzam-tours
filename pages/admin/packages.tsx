@@ -1,7 +1,9 @@
 import React, { useState, useEffect, FormEvent, MouseEvent } from 'react';
+import Head from 'next/head';
 import AdminSidebar from '../../components/AdminSidebar';
 import Link from 'next/link';
 import CloudinaryUpload from '../../components/CloudinaryUpload';
+import useTranslation from '../../src/i18n/useTranslation';
 
 interface DayItinerary {
   day: number;
@@ -34,6 +36,7 @@ interface FormData {
 }
 
 export default function AdminPackages() {
+  const { t } = useTranslation();
   const [showModal, setShowModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [editingPackage, setEditingPackage] = useState<Package | null>(null);
@@ -239,6 +242,9 @@ export default function AdminPackages() {
 
   return (
     <div style={{ fontFamily: 'Poppins, sans-serif', backgroundColor: '#f8fafc', minHeight: '100vh' }}>
+      <Head>
+        <title>Tour Packages - Admin Panel</title>
+      </Head>
       <AdminSidebar active="packages" />
 
       {/* Main Content */}

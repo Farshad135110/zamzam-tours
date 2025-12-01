@@ -65,6 +65,13 @@ export default function AdminSidebar({ active }: Props) {
       badge: null
     },
     { 
+      id: 'gallery', 
+      label: 'Gallery', 
+      href: '/admin/gallery',
+      icon: '🖼️',
+      badge: null
+    },
+    { 
       id: 'airportpickup', 
       label: 'Airport Transfers', 
       href: '/admin/airportpickup',
@@ -143,7 +150,7 @@ export default function AdminSidebar({ active }: Props) {
       color: 'white', 
       display: 'flex',
       flexDirection: 'column',
-      position: isMobile ? 'relative' : 'fixed',
+      position: 'fixed',
       left: 0,
       top: 0,
       height: '100vh',
@@ -221,7 +228,7 @@ export default function AdminSidebar({ active }: Props) {
         }}>
           Main Menu
         </div>
-        {menuItems.slice(0, 5).map(item => (
+        {menuItems.slice(0, 6).map(item => (
           <Link key={item.id} href={item.href} legacyBehavior>
             <a style={{
               display: 'flex',
@@ -294,7 +301,7 @@ export default function AdminSidebar({ active }: Props) {
         }}>
           Bookings
         </div>
-        {menuItems.slice(5, 8).map(item => (
+        {menuItems.slice(6, 9).map(item => (
           <Link key={item.id} href={item.href} legacyBehavior>
             <a style={{
               display: 'flex',
@@ -367,7 +374,7 @@ export default function AdminSidebar({ active }: Props) {
         }}>
           System
         </div>
-        {menuItems.slice(8).map(item => (
+        {menuItems.slice(9).map(item => (
           <Link key={item.id} href={item.href} legacyBehavior>
             <a style={{
               display: 'flex',

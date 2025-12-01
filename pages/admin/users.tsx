@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
+import Head from 'next/head';
 import AdminSidebar from '../../components/AdminSidebar';
+import useTranslation from '../../src/i18n/useTranslation';
 
 interface User {
   user_id: number;
@@ -158,6 +160,9 @@ export default function AdminUsers() {
 
   return (
     <div style={{ fontFamily: 'Poppins, sans-serif', backgroundColor: '#f8fafc', minHeight: '100vh' }}>
+      <Head>
+        <title>Users - Admin Panel</title>
+      </Head>
       <AdminSidebar active="users" />
 
       {/* Main Content */}

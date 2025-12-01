@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import Head from 'next/head';
 import AdminSidebar from '../../components/AdminSidebar';
+import useTranslation from '../../src/i18n/useTranslation';
 
 interface Feedback {
   feedback_id: string;
@@ -151,6 +153,9 @@ export default function AdminFeedback() {
 
   return (
     <div style={{ fontFamily: 'Poppins, sans-serif', backgroundColor: '#f8fafc', minHeight: '100vh' }}>
+      <Head>
+        <title>Feedback - Admin Panel</title>
+      </Head>
       <AdminSidebar active="feedback" />
 
       {/* Main Content */}

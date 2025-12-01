@@ -15,15 +15,8 @@ export default function SimpleGallery() {
   const [startX, setStartX] = useState(0);
   const galleryRef = useRef(null);
   const { t } = useTranslation()
-
-  const get = (key: string, fallback: string) => {
-    const val = t(key)
-    return val === key ? fallback : val
-  }
-
-  // Simple gallery images data
-  // Use Cloudinary-hosted images (these assets exist in the repo's sample data)
-  const galleryImages = [
+  // Hardcoded gallery images (original frontend images)
+  const staticGalleryImages = [
     { id: 1, src: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453704/dylan-shaw-smUAKwMT8XA-unsplash_qhenhx.jpg', alt: 'Sigiriya Rock at sunrise', title: 'Sigiriya Sunrise', location: 'Central Province' },
     { id: 2, src: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762454466/chathura-anuradha-subasinghe-40uQmE9Zq8g-unsplash_tvflxt.jpg', alt: 'Kandy Temple', title: 'Sacred Temple', location: 'Kandy' },
     { id: 3, src: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453781/adam-vandermeer-Dw9dWTzzsUE-unsplash_l49hhe.jpg', alt: 'Nine Arch Bridge in Ella', title: 'Nine Arch Bridge', location: 'Ella' },
@@ -37,6 +30,46 @@ export default function SimpleGallery() {
     { id: 11, src: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762454341/birendra-padmaperuma-jB7TbGrC1xM-unsplash_qcpkau.jpg', alt: 'Polonnaruwa ruins', title: 'Polonnaruwa', location: 'Cultural' },
     { id: 12, src: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1761861700/agnieszka-stankiewicz-OMgi4DfiO3c-unsplash_dfa3pd.jpg', alt: 'Dambulla cave temples', title: 'Dambulla Golden Temple', location: 'Dambulla' }
   ];
+
+  // Start with static images for instant display, then fetch additional ones from database
+  const [galleryImages, setGalleryImages] = useState<any[]>(staticGalleryImages);
+
+  const get = (key: string, fallback: string) => {
+    const val = t(key)
+    return val === key ? fallback : val
+  }
+
+  // Fetch additional gallery images from database (added by admin) - runs in background
+  useEffect(() => {
+    const fetchGalleryImages = async () => {
+      try {
+        const response = await fetch('/api/gallery?active=true');
+        if (response.ok) {
+          const data = await response.json();
+          // Only add NEW images from database that aren't already in static list
+          const transformedImages = data
+            .filter((img: any) => !staticGalleryImages.some(si => si.src === img.image_url))
+            .map((img: any) => ({
+              id: `db-${img.image_id}`,
+              src: img.image_url,
+              alt: img.alt_text || img.title,
+              title: img.title,
+              location: img.location
+            }));
+          
+          // Only update if there are new images
+          if (transformedImages.length > 0) {
+            setGalleryImages([...staticGalleryImages, ...transformedImages]);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching gallery images:', error);
+        // Keep showing static images on error
+      }
+    };
+
+    fetchGalleryImages();
+  }, []);
 
   // Open lightbox with selected image
   const openLightbox = (image, index) => {
@@ -119,7 +152,7 @@ export default function SimpleGallery() {
         <meta name="description" content={t('gallery.metaDescription')} />
       </Head>
 
-  <Navbar />
+      <Navbar />
 
       {/* Hero Section */}
       <section className="gallery-hero">
@@ -157,17 +190,16 @@ export default function SimpleGallery() {
                 key={image.id}
                 className="gallery-item"
                 onClick={() => openLightbox(image, index)}
-                style={{ animationDelay: `${index * 0.1}s` }}
+                style={{ animationDelay: `${index * 0.05}s` }}
               >
                 <div className="image-container">
                   <Image 
                     src={image.src}
                     alt={image.alt}
-                    width={400}
-                    height={300}
-                    placeholder="blur"
-                    blurDataURL="/placeholder.jpg"
-                    style={{ objectFit: 'cover', width: '100%', height: '100%' }}
+                    fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    style={{ objectFit: 'cover' }}
+                    priority={index < 6}
                   />
                   <div className="image-overlay">
                     <div className="image-info">
@@ -253,9 +285,9 @@ export default function SimpleGallery() {
         </div>
       )}
 
-  <Footer />
+      <Footer />
 
-  <style jsx>{`
+      <style jsx>{`
         /* Simple Gallery Styles */
         .gallery-hero {
           height: 60vh;
@@ -264,22 +296,13 @@ export default function SimpleGallery() {
           align-items: center;
           justify-content: center;
           text-align: center;
-          background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+          background: #053b3c;
           color: white;
           position: relative;
           overflow: hidden;
         }
 
-        .gallery-hero::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          background: url('/gallery/hero-pattern.svg') center/cover;
-          opacity: 0.1;
-        }
+
 
         .hero-content h1 {
           font-size: 3rem;

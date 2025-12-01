@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
+import Head from 'next/head';
 import AdminSidebar from '../../components/AdminSidebar';
+import useTranslation from '../../src/i18n/useTranslation';
 
 interface VehicleBookingRec {
   vehicle_booking_id: string;
@@ -24,6 +26,7 @@ interface VehicleItem {
 }
 
 export default function AdminVehicleBookings() {
+  const { t } = useTranslation();
   const [showModal, setShowModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [editingBooking, setEditingBooking] = useState<VehicleBookingRec | null>(null);
@@ -231,6 +234,9 @@ export default function AdminVehicleBookings() {
 
   return (
     <div style={{ fontFamily: 'Poppins, sans-serif', backgroundColor: '#f8fafc', minHeight: '100vh' }}>
+      <Head>
+        <title>Vehicle Bookings - Admin Panel</title>
+      </Head>
       <AdminSidebar active="vehicle-bookings" />
 
       {/* Main Content */}

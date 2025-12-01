@@ -13,23 +13,55 @@ class MyDocument extends Document {
     return (
       <Html lang="en">
         <Head>
+          {/* Performance - DNS Prefetch */}
+          <link rel="dns-prefetch" href="https://res.cloudinary.com" />
+          <link rel="preconnect" href="https://res.cloudinary.com" crossOrigin="anonymous" />
+          
+          {/* PWA Manifest */}
+          <link rel="manifest" href="/manifest.json" />
+          
           {/* Favicons (prefer local SVG to avoid external requests) */}
           <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
           <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
           <link rel="icon" type="image/png" sizes="16x16" href={favicon16} />
           <link rel="apple-touch-icon" href={appleIcon} />
           <meta name="theme-color" content="#053b3c" />
+          <meta name="msapplication-TileColor" content="#053b3c" />
 
-          {/* Social preview / search engines */}
+          {/* SEO Meta Tags */}
+          <meta name="description" content={SITE_INFO.description} />
+          <meta name="keywords" content="Sri Lanka tours, Zamzam Lanka Tours, car rental Sri Lanka, airport transfer, Sri Lanka travel, tourism Sri Lanka, tour packages, vehicle rental" />
+          <meta name="author" content={SITE_INFO.name} />
+          <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+          
+          {/* Open Graph / Facebook */}
+          <meta property="og:type" content="website" />
           <meta property="og:site_name" content={SITE_INFO.name} />
           <meta property="og:title" content={SITE_INFO.name} />
           <meta property="og:description" content={SITE_INFO.description} />
           <meta property="og:image" content={ogImage} />
+          <meta property="og:image:width" content="1200" />
+          <meta property="og:image:height" content="630" />
+          <meta property="og:locale" content="en_US" />
+          
+          {/* Twitter */}
           <meta name="twitter:card" content="summary_large_image" />
+          <meta name="twitter:title" content={SITE_INFO.name} />
+          <meta name="twitter:description" content={SITE_INFO.description} />
           <meta name="twitter:image" content={ogImage} />
 
-          {/* Prevent robots from using stale crawl cache for the favicon */}
-          <meta name="robots" content="index,follow" />
+          {/* Search Engine Crawling */}
+          <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
+          <meta name="googlebot" content="index,follow" />
+          
+          {/* Mobile Web App */}
+          <meta name="mobile-web-app-capable" content="yes" />
+          <meta name="apple-mobile-web-app-capable" content="yes" />
+          <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+          <meta name="apple-mobile-web-app-title" content={SITE_INFO.name} />
+          
+          {/* Canonical URL */}
+          <link rel="canonical" href="https://zamzamlankatours.com" />
         </Head>
         <body>
           <Main />

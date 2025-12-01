@@ -15,6 +15,15 @@
   --bg-light: #f9f9f9;
 }
 
+/* Performance: Optimize font loading */
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Poppins');
+}
+
 html, body, #__next {
   height: 100%;
 }
@@ -24,6 +33,15 @@ body {
   margin: 0;
   padding: 0;
   font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Performance: GPU acceleration for animations */
+* {
+  -webkit-transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
 }
 
 /* Consistent Page Container */
@@ -43,6 +61,35 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Image Error Fallback - Solid Green Background */
+img[data-error="true"],
+.image-error-fallback {
+  background: #053b3c !important;
+  background-color: #053b3c !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: white !important;
+  font-weight: 600 !important;
+  text-align: center !important;
+  padding: 20px !important;
+}
+
+/* Next.js Image wrapper fallback */
+span[data-error="true"] {
+  background: #053b3c !important;
+  display: block !important;
+}
+
+/* Alternative fallback for missing images */
+.img-fallback-green {
+  background: #053b3c !important;
+  min-height: 200px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
 /* Navbar Styles */
 /* Navbar styles are now in Navbar.tsx component */
 
@@ -58,6 +105,21 @@ section {
   
   section {
     padding: 2rem 0;
+  }
+
+  /* Improve touch targets on mobile */
+  button, a {
+    min-height: 44px;
+    min-width: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Better spacing for form inputs */
+  input, textarea, select {
+    min-height: 44px;
+    font-size: 16px; /* Prevents zoom on iOS */
   }
 }
 

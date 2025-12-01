@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
+import Head from 'next/head';
 import AdminSidebar from '../../components/AdminSidebar';
+import useTranslation from '../../src/i18n/useTranslation';
 
 interface TourBooking {
   tour_booking_id: string;
@@ -20,6 +22,7 @@ interface PackageItem {
 }
 
 export default function AdminTourBookings() {
+  const { t } = useTranslation();
   const [showModal, setShowModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [editingBooking, setEditingBooking] = useState<TourBooking | null>(null);
@@ -185,6 +188,9 @@ export default function AdminTourBookings() {
 
   return (
     <div style={{ fontFamily: 'Poppins, sans-serif', backgroundColor: '#f8fafc', minHeight: '100vh' }}>
+      <Head>
+        <title>Tour Bookings - Admin Panel</title>
+      </Head>
       <AdminSidebar active="tour-bookings" />
 
       <div style={{ marginLeft: '280px', padding: '30px' }}>

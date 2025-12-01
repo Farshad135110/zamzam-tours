@@ -2,14 +2,18 @@ import React, { createContext, useContext, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import enTranslations from '../../locales/en.json'
 import deTranslations from '../../locales/de.json'
+import ruTranslations from '../../locales/ru.json'
+import heTranslations from '../../locales/he.json'
 
-const locales = ['en', 'de'] as const
+const locales = ['en', 'de', 'ru', 'he'] as const
 
 type Locale = typeof locales[number]
 
 const translations: Record<Locale, Record<string, string>> = {
   en: enTranslations,
-  de: deTranslations
+  de: deTranslations,
+  ru: ruTranslations,
+  he: heTranslations
 }
 
 const I18nContext = createContext<any>(null)
@@ -18,7 +22,7 @@ export function I18nProvider({ children }:{children: React.ReactNode}){
   const router = useRouter()
   const routerLocale = (router && router.locale) as Locale | undefined
 
-  const [locale, setLocaleState] = useState<Locale>((routerLocale as Locale) || 'en')
+  const [locale, setLocaleState] = useState<Locale>((routerLocale as Locale) || 'ru')
 
   // keep locale in sync with router.locale
   useEffect(() => {

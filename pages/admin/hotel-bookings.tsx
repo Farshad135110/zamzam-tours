@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import Head from 'next/head';
 import AdminSidebar from '../../components/AdminSidebar';
+import useTranslation from '../../src/i18n/useTranslation';
 
 interface Hotel {
   hotel_id: string;
@@ -160,6 +162,9 @@ const HotelBookingsPage: React.FC = () => {
 
   return (
     <div style={{ fontFamily: 'Poppins, sans-serif', backgroundColor: '#f8fafc', minHeight: '100vh' }}>
+      <Head>
+        <title>Hotel Bookings - Admin Panel</title>
+      </Head>
       <AdminSidebar active="hotel-bookings" />
 
       <div style={{ marginLeft: '280px', padding: '30px' }}>

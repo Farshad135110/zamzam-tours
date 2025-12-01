@@ -81,6 +81,8 @@ export default function Navbar() {
             >
               <option value="en">English</option>
               <option value="de">Deutsch</option>
+              <option value="ru">Русский</option>
+              <option value="he">עברית</option>
             </select>
             
             <button 
@@ -288,8 +290,16 @@ export default function Navbar() {
         }
 
         @media (max-width: 992px) {
+          .navbar {
+            height: 70px;
+            padding: 0.5rem 0;
+          }
+
           .mobile-menu-btn {
             display: block;
+            padding: 0.75rem;
+            min-width: 44px;
+            min-height: 44px;
           }
 
           .nav-links {

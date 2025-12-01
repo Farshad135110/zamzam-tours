@@ -49,11 +49,15 @@ export function authMiddleware(
                    req.headers.authorization?.replace('Bearer ', '');
 
       if (!token) {
-        return res.status(401).json({ error: 'Authentication required' });
+        console.error('No token found in cookies or headers');
+        console.log('Cookies:', req.cookies);
+        console.log('Headers:', req.headers.authorization);
+        return res.status(401).json({ error: 'Authentication required - No token provided' });
       }
 
       const user = verifyToken(token);
       if (!user) {
+        console.error('Invalid token');
         return res.status(401).json({ error: 'Invalid or expired token' });
       }
 

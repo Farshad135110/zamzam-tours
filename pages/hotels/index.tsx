@@ -45,6 +45,8 @@ export default function Hotels() {
     rentalCar: false
   });
   const [selectedAdditionalServices, setSelectedAdditionalServices] = useState<string[]>([]);
+  const [hotelGallery, setHotelGallery] = useState<any[]>([]);
+  const [showGallery, setShowGallery] = useState(false);
 
   const { t } = useTranslation()
 
@@ -426,9 +428,26 @@ export default function Hotels() {
   };
 
   // Open hotel details and booking
-  const openHotelBooking = (hotel) => {
+  const openHotelBooking = async (hotel) => {
     setSelectedHotel(hotel);
     setShowBookingForm(true);
+    
+    // Scroll to top smoothly when modal opens
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 100);
+    
+    // Fetch gallery images
+    try {
+      const res = await fetch(`/api/hotel-gallery?hotel_id=${hotel.id}`);
+      if (res.ok) {
+        const data = await res.json();
+        setHotelGallery(data);
+      }
+    } catch (err) {
+      console.error('Failed to fetch gallery:', err);
+      setHotelGallery([]);
+    }
   };
 
   return (
@@ -459,7 +478,8 @@ export default function Hotels() {
             loop
             muted
             playsInline
-            preload="auto"
+            preload="metadata"
+            poster="https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453704/dylan-shaw-smUAKwMT8XA-unsplash_qhenhx.jpg"
             style={{
               position: 'absolute',
               top: 0,
@@ -908,10 +928,6 @@ export default function Hotels() {
                     height={250}
                     objectFit="cover"
                   />
-                  <div className="hotel-rating">
-                    <span>⭐ {hotel.rating}</span>
-                    <span>({hotel.reviews})</span>
-                  </div>
                   {hotel.class && (
                     <div className="hotel-class-badge">
                       {hotel.class}
@@ -1174,6 +1190,99 @@ export default function Hotels() {
                   </div>
                 </div>
               </div>
+
+              {/* Hotel Gallery */}
+              {hotelGallery.length > 0 && (
+                <div className="hotel-gallery-section" style={{
+                  marginBottom: '1.5rem',
+                  padding: '1rem',
+                  background: '#f8f9fa',
+                  borderRadius: '10px',
+                  border: '1.5px solid #e9ecef'
+                }}>
+                  <div style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    marginBottom: '1rem'
+                  }}>
+                    <h3 style={{
+                      margin: 0,
+                      fontSize: '1rem',
+                      color: '#053b3c',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.5rem'
+                    }}>
+                      <span>📸</span> Hotel Gallery ({hotelGallery.length} photos)
+                    </h3>
+                    {hotelGallery.length > 3 && (
+                      <button
+                        type="button"
+                        onClick={() => setShowGallery(!showGallery)}
+                        style={{
+                          padding: '0.4rem 0.8rem',
+                          background: '#053b3c',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '6px',
+                          fontSize: '0.75rem',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        {showGallery ? 'Show Less' : 'View All'}
+                      </button>
+                    )}
+                  </div>
+                  
+                  <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))',
+                    gap: '0.75rem'
+                  }}>
+                    {(showGallery ? hotelGallery : hotelGallery.slice(0, 3)).map((img, idx) => (
+                      <div key={img.gallery_id || idx} style={{
+                        position: 'relative',
+                        borderRadius: '8px',
+                        overflow: 'hidden',
+                        paddingBottom: '75%',
+                        background: '#e9ecef',
+                        cursor: 'pointer'
+                      }}
+                      onClick={() => window.open(img.image_url, '_blank')}
+                      >
+                        <img 
+                          src={img.image_url} 
+                          alt={img.caption || `Hotel photo ${idx + 1}`}
+                          style={{
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'cover'
+                          }}
+                        />
+                        {img.caption && (
+                          <div style={{
+                            position: 'absolute',
+                            bottom: 0,
+                            left: 0,
+                            right: 0,
+                            background: 'rgba(0,0,0,0.7)',
+                            color: 'white',
+                            padding: '0.25rem 0.5rem',
+                            fontSize: '0.7rem',
+                            lineHeight: '1.2'
+                          }}>
+                            {img.caption}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {/* Booking Form */}
               <form className="booking-form-modern">
@@ -1617,6 +1726,7 @@ export default function Hotels() {
           z-index: 10000;
           padding: 1rem;
           animation: fadeIn 0.3s ease;
+          overflow-y: auto;
         }
 
         @keyframes fadeIn {
@@ -1633,6 +1743,7 @@ export default function Hotels() {
           overflow-y: auto;
           box-shadow: 0 15px 40px rgba(0,0,0,0.25);
           animation: slideUp 0.3s ease;
+          margin: auto;
         }
 
         @keyframes slideUp {

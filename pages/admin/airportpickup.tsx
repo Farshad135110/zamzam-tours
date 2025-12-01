@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import Head from 'next/head';
 import AdminSidebar from '../../components/AdminSidebar';
+import useTranslation from '../../src/i18n/useTranslation';
 
 interface AirportPickup {
   pickup_id: string; // Changed to string to match database
@@ -17,6 +19,7 @@ interface AirportPickup {
 }
 
 export default function AdminAirportPickup() {
+  const { t } = useTranslation();
   const [showModal, setShowModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [editingPickup, setEditingPickup] = useState<AirportPickup | null>(null);
@@ -249,11 +252,14 @@ export default function AdminAirportPickup() {
   }, []);
 
   return (
-    <div style={{ fontFamily: 'Poppins, sans-serif', backgroundColor: '#f8fafc', minHeight: '100vh' }}>
+    <div style={{ fontFamily: 'Poppins, sans-serif', backgroundColor: '#f8fafc', minHeight: '100vh', display: 'flex', position: 'fixed', width: '100%', height: '100vh', overflow: 'hidden' }}>
+      <Head>
+        <title>Airport Transfers - Admin Panel</title>
+      </Head>
       <AdminSidebar active="airportpickup" />
 
       {/* Main Content */}
-      <div style={{ marginLeft: '280px', padding: '30px' }}>
+      <div style={{ marginLeft: '280px', padding: '30px', flex: 1, overflowY: 'auto', height: '100vh' }}>
         <style jsx global>{`
           @media (max-width: 900px) {
             body > div > div:last-child {

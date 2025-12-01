@@ -98,8 +98,8 @@ export default function About() {
 
   const startCounters = () => {
     const targets = {
-      travelers: 12500,
-      tours: 4800,
+      travelers: 100,
+      tours: 50,
       destinations: 48,
       years: 13
     };
@@ -136,17 +136,7 @@ export default function About() {
   <Navbar />
 
   {/* Hero Section */}
-  <section className="about-hero">
-        <div className="hero-background">
-          <Image 
-            src="/about/hero-about.jpg" 
-            alt="Zamzam Lanka Tours Team" 
-            layout="fill"
-            objectFit="cover"
-            priority
-          />
-          <div className="hero-overlay"></div>
-        </div>
+  <section className="about-hero" style={{ background: '#053b3c' }}>
         
   <div className="hero-content">
           <div className="hero-text">
@@ -160,7 +150,7 @@ export default function About() {
               <span className="label">{t('about.stats.yearsLabel')}</span>
             </div>
             <div className="stat-preview">
-              <span className="number">12.5K+</span>
+              <span className="number">100+</span>
               <span className="label">{t('about.stats.travelersLabel')}</span>
             </div>
             <div className="stat-preview">
@@ -381,24 +371,6 @@ export default function About() {
           color: white;
           overflow: hidden;
           padding-top: 72px; /* leave gap from fixed navbar */
-        }
-
-        .hero-background {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          z-index: -1;
-        }
-
-        .hero-overlay {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background: linear-gradient(135deg, #053b3c 0%, #0a5c5e 100%);
         }
 
         .hero-content {

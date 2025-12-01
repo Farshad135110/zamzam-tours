@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import Head from 'next/head';
 import AdminSidebar from '../../components/AdminSidebar';
 import CloudinaryUpload from '../../components/CloudinaryUpload';
+import useTranslation from '../../src/i18n/useTranslation';
 
 interface Hotel {
   hotel_id: string;
@@ -12,7 +14,11 @@ interface Hotel {
 }
 
 export default function AdminHotels() {
+  const { t } = useTranslation();
   const [showModal, setShowModal] = useState(false);
+  const [showGalleryModal, setShowGalleryModal] = useState(false);
+  const [selectedHotelForGallery, setSelectedHotelForGallery] = useState<Hotel | null>(null);
+  const [galleryImages, setGalleryImages] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [editingHotel, setEditingHotel] = useState<Hotel | null>(null);
   const [hotels, setHotels] = useState<Hotel[]>([]);
@@ -24,6 +30,12 @@ export default function AdminHotels() {
     price_range: '$$',
     image: '',
     facilities: ''
+  });
+
+  const [galleryFormData, setGalleryFormData] = useState({
+    image_url: '',
+    caption: '',
+    display_order: 0
   });
 
   const filteredHotels = hotels.filter(hotel =>
@@ -132,6 +144,64 @@ export default function AdminHotels() {
     })();
   };
 
+  // Gallery Management Functions
+  const handleOpenGallery = async (hotel: Hotel) => {
+    setSelectedHotelForGallery(hotel);
+    setShowGalleryModal(true);
+    // Fetch gallery images
+    try {
+      const res = await fetch(`/api/hotel-gallery?hotel_id=${hotel.hotel_id}`);
+      if (res.ok) {
+        const data = await res.json();
+        setGalleryImages(data);
+      }
+    } catch (err) {
+      console.error('Failed to fetch gallery images:', err);
+    }
+  };
+
+  const handleAddGalleryImage = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedHotelForGallery) return;
+
+    try {
+      const res = await fetch('/api/hotel-gallery', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          hotel_id: selectedHotelForGallery.hotel_id,
+          ...galleryFormData
+        })
+      });
+      
+      if (res.ok) {
+        const newImage = await res.json();
+        setGalleryImages(prev => [...prev, newImage]);
+        setGalleryFormData({ image_url: '', caption: '', display_order: 0 });
+      }
+    } catch (err) {
+      console.error('Failed to add gallery image:', err);
+      alert('Failed to add image');
+    }
+  };
+
+  const handleDeleteGalleryImage = async (galleryId: number) => {
+    if (!confirm('Are you sure you want to delete this image?')) return;
+    
+    try {
+      const res = await fetch(`/api/hotel-gallery?gallery_id=${galleryId}`, {
+        method: 'DELETE'
+      });
+      
+      if (res.ok) {
+        setGalleryImages(prev => prev.filter(img => img.gallery_id !== galleryId));
+      }
+    } catch (err) {
+      console.error('Failed to delete gallery image:', err);
+      alert('Failed to delete image');
+    }
+  };
+
   const priceRanges = [
     { value: '$', label: '$ - Budget' },
     { value: '$$', label: '$$ - Economy' },
@@ -166,11 +236,14 @@ export default function AdminHotels() {
   };
 
     return (
-    <div style={{ fontFamily: 'Poppins, sans-serif', backgroundColor: '#f8fafc', minHeight: '100vh' }}>
+    <div style={{ fontFamily: 'Poppins, sans-serif', backgroundColor: '#f8fafc', minHeight: '100vh', display: 'flex', position: 'fixed', width: '100%', height: '100vh', overflow: 'hidden' }}>
+      <Head>
+        <title>Hotels - Admin Panel</title>
+      </Head>
       <AdminSidebar active="hotels" />
 
       {/* Main Content */}
-      <div style={{ marginLeft: '280px', padding: '30px', minHeight: '100vh' }}>
+      <div style={{ marginLeft: '280px', padding: '30px', flex: 1, overflowY: 'auto', height: '100vh' }}>
         <style jsx global>{`
           @media (max-width: 900px) {
             body > div > div:last-child {
@@ -412,12 +485,43 @@ export default function AdminHotels() {
                 <div style={{
                   display: 'flex',
                   gap: '10px',
-                  justifyContent: 'space-between'
+                  justifyContent: 'space-between',
+                  flexWrap: 'wrap'
                 }}>
+                  <button
+                    onClick={() => handleOpenGallery(hotel)}
+                    style={{
+                      flex: '1 1 auto',
+                      minWidth: '70px',
+                      padding: '10px 16px',
+                      backgroundColor: '#f8b500',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '6px',
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease'
+                    }}
+                    onMouseEnter={(e) => {
+                      const btn = e.target as HTMLButtonElement;
+                      btn.style.backgroundColor = '#d99d00';
+                      btn.style.transform = 'translateY(-1px)';
+                    }}
+                    onMouseLeave={(e) => {
+                      const btn = e.target as HTMLButtonElement;
+                      btn.style.backgroundColor = '#f8b500';
+                      btn.style.transform = 'translateY(0)';
+                    }}
+                  >
+                    📸 Gallery
+                  </button>
+                  
                   <button
                     onClick={() => handleEdit(hotel)}
                     style={{
-                      flex: 1,
+                      flex: '1 1 auto',
+                      minWidth: '70px',
                       padding: '10px 16px',
                       backgroundColor: 'transparent',
                       color: '#053b3c',
@@ -708,6 +812,203 @@ export default function AdminHotels() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Gallery Modal */}
+      {showGalleryModal && selectedHotelForGallery && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0,0,0,0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000,
+          padding: '20px'
+        }} onClick={() => setShowGalleryModal(false)}>
+          <div style={{
+            backgroundColor: 'white',
+            borderRadius: '12px',
+            padding: '30px',
+            maxWidth: '900px',
+            width: '100%',
+            maxHeight: '90vh',
+            overflow: 'auto'
+          }} onClick={(e) => e.stopPropagation()}>
+            <h2 style={{ fontSize: '24px', fontWeight: '600', color: '#053b3c', margin: '0 0 10px 0' }}>
+              Gallery: {selectedHotelForGallery.hotel_name}
+            </h2>
+            <p style={{ color: '#64748b', marginBottom: '20px' }}>Manage hotel photos</p>
+
+            {/* Add New Image Form */}
+            <form onSubmit={handleAddGalleryImage} style={{
+              backgroundColor: '#f8fafc',
+              padding: '20px',
+              borderRadius: '8px',
+              marginBottom: '30px'
+            }}>
+              <h3 style={{ fontSize: '16px', fontWeight: '600', color: '#053b3c', marginBottom: '15px' }}>
+                Add New Image
+              </h3>
+              
+              <CloudinaryUpload
+                currentImageUrl={galleryFormData.image_url}
+                onUploadSuccess={(url) => setGalleryFormData({...galleryFormData, image_url: url})}
+                folder={`zamzam-tours/hotels/${selectedHotelForGallery.hotel_id}/gallery`}
+                label="Gallery Image"
+              />
+
+              <div style={{ marginBottom: '15px' }}>
+                <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '6px' }}>
+                  Caption (Optional)
+                </label>
+                <input
+                  type="text"
+                  value={galleryFormData.caption}
+                  onChange={(e) => setGalleryFormData({...galleryFormData, caption: e.target.value})}
+                  placeholder="Beautiful view from the room..."
+                  style={{
+                    width: '100%',
+                    padding: '10px 12px',
+                    border: '1px solid #d1d5db',
+                    borderRadius: '6px',
+                    fontSize: '14px',
+                    outline: 'none'
+                  }}
+                />
+              </div>
+
+              <div style={{ marginBottom: '15px' }}>
+                <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '6px' }}>
+                  Display Order
+                </label>
+                <input
+                  type="number"
+                  value={galleryFormData.display_order}
+                  onChange={(e) => setGalleryFormData({...galleryFormData, display_order: parseInt(e.target.value)})}
+                  style={{
+                    width: '100%',
+                    padding: '10px 12px',
+                    border: '1px solid #d1d5db',
+                    borderRadius: '6px',
+                    fontSize: '14px',
+                    outline: 'none'
+                  }}
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={!galleryFormData.image_url}
+                style={{
+                  padding: '10px 20px',
+                  backgroundColor: galleryFormData.image_url ? '#053b3c' : '#9ca3af',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '6px',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  cursor: galleryFormData.image_url ? 'pointer' : 'not-allowed'
+                }}
+              >
+                + Add Image to Gallery
+              </button>
+            </form>
+
+            {/* Gallery Images Grid */}
+            <div>
+              <h3 style={{ fontSize: '16px', fontWeight: '600', color: '#053b3c', marginBottom: '15px' }}>
+                Current Gallery ({galleryImages.length} images)
+              </h3>
+              
+              {galleryImages.length === 0 ? (
+                <p style={{ color: '#64748b', textAlign: 'center', padding: '40px' }}>
+                  No images in gallery yet. Add your first image above.
+                </p>
+              ) : (
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+                  gap: '15px'
+                }}>
+                  {galleryImages.map((image) => (
+                    <div key={image.gallery_id} style={{
+                      position: 'relative',
+                      borderRadius: '8px',
+                      overflow: 'hidden',
+                      border: '1px solid #e2e8f0'
+                    }}>
+                      <img 
+                        src={image.image_url} 
+                        alt={image.caption || 'Gallery image'}
+                        style={{
+                          width: '100%',
+                          height: '200px',
+                          objectFit: 'cover'
+                        }}
+                      />
+                      <div style={{
+                        padding: '10px',
+                        backgroundColor: 'white'
+                      }}>
+                        {image.caption && (
+                          <p style={{
+                            fontSize: '12px',
+                            color: '#64748b',
+                            margin: '0 0 8px 0',
+                            lineHeight: '1.4'
+                          }}>
+                            {image.caption}
+                          </p>
+                        )}
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <span style={{ fontSize: '11px', color: '#9ca3af' }}>
+                            Order: {image.display_order}
+                          </span>
+                          <button
+                            onClick={() => handleDeleteGalleryImage(image.gallery_id)}
+                            style={{
+                              padding: '4px 10px',
+                              backgroundColor: '#ef4444',
+                              color: 'white',
+                              border: 'none',
+                              borderRadius: '4px',
+                              fontSize: '12px',
+                              cursor: 'pointer'
+                            }}
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div style={{ marginTop: '30px', display: 'flex', justifyContent: 'flex-end' }}>
+              <button
+                onClick={() => setShowGalleryModal(false)}
+                style={{
+                  padding: '10px 20px',
+                  backgroundColor: '#053b3c',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '6px',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  cursor: 'pointer'
+                }}
+              >
+                Close Gallery
+              </button>
+            </div>
           </div>
         </div>
       )}

@@ -7,8 +7,10 @@ import Footer from '../../components/Footer';
 import AnimatedSection from '../../components/AnimatedSection';
 import { CldImage } from 'next-cloudinary';
 import { fadeInUp } from '../../src/utils/animations';
+import useTranslation from '../../src/i18n/useTranslation';
 
 export default function Destinations() {
+  const { t } = useTranslation();
   const [activeFilter, setActiveFilter] = useState('all');
   const heroRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -50,9 +52,9 @@ export default function Destinations() {
   return (
     <>
       <Head>
-        <title>Destinations in Sri Lanka | Zamzam Lanka Tours</title>
-        <meta name="description" content="Explore the best destinations in Sri Lanka with Zamzam Lanka Tours. From ancient cultural sites to pristine beaches and wildlife sanctuaries." />
-        <meta name="keywords" content="Sri Lanka destinations, places to visit Sri Lanka, tourist attractions, cultural sites, beaches, wildlife" />
+        <title>{t('destinations.pageTitle')}</title>
+        <meta name="description" content={t('destinations.metaDescription')} />
+        <meta name="keywords" content={t('destinations.metaKeywords')} />
       </Head>
 
       <Navbar />
@@ -123,7 +125,7 @@ export default function Destinations() {
                 textShadow: '0 2px 10px rgba(0,0,0,0.3), 0 0 30px rgba(0,0,0,0.2)'
               }}
             >
-              Discover Sri Lanka
+              {t('destinations.hero.title')}
             </h1>
             <p 
               style={{ 
@@ -133,7 +135,7 @@ export default function Destinations() {
                 textShadow: '0 2px 10px rgba(0,0,0,0.3)'
               }}
             >
-              Explore breathtaking destinations from ancient cities to pristine beaches
+              {t('destinations.hero.subtitle')}
             </p>
           </motion.div>
         </div>
@@ -150,7 +152,7 @@ export default function Destinations() {
           }}
         >
           <div style={{ color: 'white', fontSize: '0.9rem', marginBottom: '0.5rem', textShadow: '0 2px 4px rgba(0,0,0,0.3)' }}>
-            Scroll to explore
+            {t('destinations.hero.scrollText')}
           </div>
           <div style={{ fontSize: '2rem', animation: 'bounce 2s infinite' }}>↓</div>
         </div>
@@ -161,7 +163,7 @@ export default function Destinations() {
         <div className="container">
           <AnimatedSection animation="fadeInUp">
             <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
-              <h2 className="section-title">Filter by Category</h2>
+              <h2 className="section-title">{t('destinations.filters.title')}</h2>
               <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap', marginTop: '2rem' }}>
                 <button 
                   className={`filter-btn ${activeFilter === 'all' ? 'active' : ''}`}
@@ -177,7 +179,7 @@ export default function Destinations() {
                     transition: 'all 0.3s ease'
                   }}
                 >
-                  All Destinations
+                  {t('destinations.filters.all')}
                 </button>
                 <button 
                   className={`filter-btn ${activeFilter === 'cultural' ? 'active' : ''}`}
@@ -193,7 +195,7 @@ export default function Destinations() {
                     transition: 'all 0.3s ease'
                   }}
                 >
-                  Cultural Sites
+                  {t('destinations.filters.cultural')}
                 </button>
                 <button 
                   className={`filter-btn ${activeFilter === 'nature' ? 'active' : ''}`}
@@ -209,7 +211,7 @@ export default function Destinations() {
                     transition: 'all 0.3s ease'
                   }}
                 >
-                  Nature & Hills
+                  {t('destinations.filters.nature')}
                 </button>
                 <button 
                   className={`filter-btn ${activeFilter === 'wildlife' ? 'active' : ''}`}
@@ -225,7 +227,7 @@ export default function Destinations() {
                     transition: 'all 0.3s ease'
                   }}
                 >
-                  Wildlife
+                  {t('destinations.filters.wildlife')}
                 </button>
                 <button 
                   className={`filter-btn ${activeFilter === 'beach' ? 'active' : ''}`}
@@ -241,7 +243,7 @@ export default function Destinations() {
                     transition: 'all 0.3s ease'
                   }}
                 >
-                  Beaches
+                  {t('destinations.filters.beaches')}
                 </button>
               </div>
             </div>
@@ -303,7 +305,7 @@ export default function Destinations() {
                       onMouseEnter={(e) => e.currentTarget.style.background = '#0a5c5e'}
                       onMouseLeave={(e) => e.currentTarget.style.background = '#053b3c'}
                     >
-                      Learn More
+                      {t('destinations.learnMore')}
                     </Link>
                   </div>
                 </div>
@@ -317,9 +319,9 @@ export default function Destinations() {
       <section style={{ padding: '5rem 0', background: '#053b3c', color: 'white', textAlign: 'center' }}>
         <div className="container">
           <AnimatedSection animation="fadeInUp">
-            <h2 style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>Ready to Explore Sri Lanka?</h2>
+            <h2 style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>{t('destinations.cta.title')}</h2>
             <p style={{ fontSize: '1.2rem', marginBottom: '2rem', opacity: 0.9 }}>
-              Let us help you plan the perfect itinerary for your dream vacation
+              {t('destinations.cta.subtitle')}
             </p>
             <Link 
               href="/contact"
@@ -343,7 +345,7 @@ export default function Destinations() {
                 e.currentTarget.style.boxShadow = 'none';
               }}
             >
-              Plan Your Trip
+              {t('destinations.cta.button')}
             </Link>
           </AnimatedSection>
         </div>

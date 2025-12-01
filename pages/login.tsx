@@ -17,21 +17,36 @@ export default function Login() {
     setLoading(true);
 
     try {
-      // Simple client-side check (for demo purposes)
-      if (username === 'admin' && password === 'Admin@123') {
-        // Store simple auth flag
+      // Call the actual login API
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include', // Important: Include cookies in the request
+        body: JSON.stringify({ username, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        // Store auth flag and user data with token
         localStorage.setItem('isLoggedIn', 'true');
         localStorage.setItem('user', JSON.stringify({ 
-          username: 'admin', 
-          email: 'admin@zamzamtours.com',
-          full_name: 'Administrator'
+          ...data.user,
+          token: data.token
         }));
+        
+        console.log('Login successful, token stored:', data.token);
+        console.log('Cookie should be set by server');
+        
         // Redirect to admin dashboard
         router.push('/admin');
       } else {
-        setError('Invalid username or password');
+        setError(data.error || 'Invalid username or password');
       }
     } catch (err) {
+      console.error('Login error:', err);
       setError('An error occurred. Please try again.');
     } finally {
       setLoading(false);

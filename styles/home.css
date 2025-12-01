@@ -26,6 +26,8 @@ body {
   color: var(--text-color);
   line-height: 1.6;
   overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .container {
@@ -45,6 +47,7 @@ body {
   cursor: pointer;
   transition: all 0.3s ease;
   text-align: center;
+  will-change: transform;
 }
 
 .btn-primary {
@@ -808,6 +811,19 @@ body {
 
 .whatsapp-float button:hover {
   transform: scale(1.1);
+}
+
+/* WhatsApp mobile optimization */
+@media (max-width: 768px) {
+  .whatsapp-float {
+    bottom: 20px;
+    right: 20px;
+  }
+  
+  .whatsapp-float button {
+    width: 56px;
+    height: 56px;
+  }
 }
 
 /* Animations */

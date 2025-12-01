@@ -212,18 +212,8 @@ Please respond promptly.
   <Navbar />
 
       {/* Hero Section - use shared hero styles for consistency */}
-      <section className="hero contact-hero">
-        <div className="hero-background">
-          <Image 
-            src="/contact/contact-hero.jpg" 
-            alt={t('contact.hero.alt')}
-            layout="fill"
-            objectFit="cover"
-            priority
-          />
-          <div className="hero-overlay"></div>
-        </div>
-
+      <section className="hero contact-hero" style={{ background: '#053b3c' }}>
+        
         <div className="hero-content">
           <h1 className="hero-title">
             {contactFullTitle && contactFullTitle !== 'contact.hero.title' ? (
@@ -584,24 +574,7 @@ Please respond promptly.
           text-align: center;
           color: white;
           overflow: hidden;
-        }
-
-        .hero-background {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          z-index: -1;
-        }
-
-        .hero-overlay {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background: linear-gradient(135deg, #053b3c 0%, #0a5c5e 100%);
+          padding-top: 80px;
         }
 
         .hero-content {
@@ -939,7 +912,7 @@ Please respond promptly.
           overflow: hidden;
           box-shadow: 0 6px 18px rgba(0,0,0,0.06);
           transition: transform 0.18s ease;
-          max-width: 720px;
+          max-width: 400px;
           width: 100%;
         }
 
@@ -948,12 +921,21 @@ Please respond promptly.
         }
 
         .location-image {
-          height: 160px;
+          height: 180px;
           overflow: hidden;
+          background: #f0f0f0;
+          position: relative;
+          width: 100%;
+        }
+
+        .location-image img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
         }
 
         .location-info {
-          padding: 1.5rem;
+          padding: 1.2rem;
         }
 
         .location-info h3 {

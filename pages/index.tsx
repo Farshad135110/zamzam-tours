@@ -236,7 +236,8 @@ export default function Home() {
             autoPlay
             muted
             playsInline
-            preload="auto"
+            preload="metadata"
+            poster="https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453704/dylan-shaw-smUAKwMT8XA-unsplash_qhenhx.jpg"
             onEnded={handleVideo1End}
             style={{
               position: 'absolute',
@@ -255,7 +256,8 @@ export default function Home() {
             ref={video2Ref}
             muted
             playsInline
-            preload="auto"
+            preload="metadata"
+            poster="https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453704/dylan-shaw-smUAKwMT8XA-unsplash_qhenhx.jpg"
             onEnded={handleVideo2End}
             style={{
               position: 'absolute',

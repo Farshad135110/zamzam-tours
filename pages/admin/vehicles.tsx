@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import Head from 'next/head';
 import AdminSidebar from '../../components/AdminSidebar';
 import CloudinaryUpload from '../../components/CloudinaryUpload';
+import useTranslation from '../../src/i18n/useTranslation';
 
 interface Vehicle {
   vehicle_id: string;
@@ -16,6 +18,7 @@ interface Vehicle {
 }
 
 export default function AdminVehicles() {
+  const { t } = useTranslation();
   const [showModal, setShowModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [editingVehicle, setEditingVehicle] = useState<Vehicle | null>(null);
@@ -211,6 +214,9 @@ export default function AdminVehicles() {
 
   return (
     <div style={{ fontFamily: 'Poppins, sans-serif', backgroundColor: '#f8fafc', minHeight: '100vh' }}>
+      <Head>
+        <title>Fleet Management - Admin Panel</title>
+      </Head>
       <AdminSidebar active="vehicles" />
 
       {/* Main Content */}

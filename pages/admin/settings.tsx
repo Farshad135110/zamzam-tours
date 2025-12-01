@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
+import Head from 'next/head';
 import AdminSidebar from '../../components/AdminSidebar';
+import useTranslation from '../../src/i18n/useTranslation';
 import { CONTACT_INFO, SITE_INFO, SOCIAL_MEDIA } from '../../src/constants/config';
 
 export default function AdminSettings() {
@@ -93,6 +95,9 @@ export default function AdminSettings() {
 
   return (
     <div style={{ fontFamily: 'Poppins, sans-serif', backgroundColor: '#f8fafc', minHeight: '100vh' }}>
+      <Head>
+        <title>Settings - Admin Panel</title>
+      </Head>
       <AdminSidebar active="settings" />
 
       {/* Main Content */}

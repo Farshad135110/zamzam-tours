@@ -1,0 +1,24 @@
+{
+  "name": "Zamzam Lanka Tours",
+  "short_name": "Zamzam Tours",
+  "description": "Your trusted partner for exploring the wonders of Sri Lanka with tailored tours, reliable car rentals, and seamless airport transfers.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#053b3c",
+  "theme_color": "#053b3c",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/favicon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

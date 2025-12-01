@@ -60,7 +60,7 @@ export default async function handler(
     // Set HTTP-only cookie
     res.setHeader(
       'Set-Cookie',
-      `auth_token=${token}; HttpOnly; Path=/; Max-Age=${7 * 24 * 60 * 60}; SameSite=Strict${
+      `auth_token=${token}; HttpOnly; Path=/; Max-Age=${7 * 24 * 60 * 60}; SameSite=Lax${
         process.env.NODE_ENV === 'production' ? '; Secure' : ''
       }`
     );

@@ -1,231 +1,234 @@
 import React, { useState } from 'react';
+import Head from 'next/head';
 import Link from 'next/link';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
+import useTranslation from '../../src/i18n/useTranslation';
 
 const ActivitiesPage = () => {
+  const { t } = useTranslation();
   const [activeCategory, setActiveCategory] = useState('all');
 
   const activities = [
     {
-      name: 'Wildlife Safaris',
+      name: t('activities.wildlifeSafaris.name'),
       icon: '🦁',
-      description: 'Elephant, leopard and bird watching in national parks',
-      longDescription: 'Experience thrilling wildlife safaris in Sri Lanka\'s renowned national parks. Spot elephants, leopards, sloth bears, and diverse bird species in their natural habitats.',
+      description: t('activities.wildlifeSafaris.description'),
+      longDescription: t('activities.wildlifeSafaris.longDescription'),
       category: 'Wildlife',
       slug: 'wildlife-safaris',
       image: 'zamzam-tours/activities/wildlife-safari',
-      difficulty: 'Easy',
-      duration: '3-4 hours'
+      difficulty: t('activities.wildlifeSafaris.difficulty'),
+      duration: t('activities.wildlifeSafaris.duration')
     },
     {
-      name: 'Hiking & Trekking',
+      name: t('activities.hikingTrekking.name'),
       icon: '🥾',
-      description: 'Mountain trails and nature walks through stunning landscapes',
-      longDescription: 'Trek through misty mountains, rolling tea plantations, and ancient forests. From gentle nature walks to challenging mountain climbs, Sri Lanka offers trails for all levels.',
+      description: t('activities.hikingTrekking.description'),
+      longDescription: t('activities.hikingTrekking.longDescription'),
       category: 'Adventure',
       slug: 'hiking-trekking',
       image: 'zamzam-tours/activities/hiking',
-      difficulty: 'Moderate to Hard',
-      duration: '2-8 hours'
+      difficulty: t('activities.hikingTrekking.difficulty'),
+      duration: t('activities.hikingTrekking.duration')
     },
     {
-      name: 'Cultural Tours',
+      name: t('activities.culturalTours.name'),
       icon: '🏛️',
-      description: 'Ancient temples, forts and historical monuments',
-      longDescription: 'Explore Sri Lanka\'s rich cultural heritage through ancient Buddhist temples, colonial forts, and UNESCO World Heritage Sites dating back over 2,000 years.',
+      description: t('activities.culturalTours.description'),
+      longDescription: t('activities.culturalTours.longDescription'),
       category: 'Cultural',
       slug: 'cultural-tours',
       image: 'zamzam-tours/activities/cultural-tours',
-      difficulty: 'Easy',
-      duration: 'Full Day'
+      difficulty: t('activities.culturalTours.difficulty'),
+      duration: t('activities.culturalTours.duration')
     },
     {
-      name: 'Beach Activities',
+      name: t('activities.beachActivities.name'),
       icon: '🏖️',
-      description: 'Swimming, surfing, snorkeling and beach relaxation',
-      longDescription: 'Enjoy pristine beaches with golden sands, turquoise waters, and perfect waves. Relax under palm trees or engage in exciting water sports along the coast.',
+      description: t('activities.beachActivities.description'),
+      longDescription: t('activities.beachActivities.longDescription'),
       category: 'Beach',
       slug: 'beach-activities',
       image: 'zamzam-tours/activities/beach',
-      difficulty: 'Easy',
-      duration: 'Flexible'
+      difficulty: t('activities.beachActivities.difficulty'),
+      duration: t('activities.beachActivities.duration')
     },
     {
-      name: 'Tea Plantation Tours',
+      name: t('activities.teaPlantationTours.name'),
       icon: '🍵',
-      description: 'Visit tea estates and experience Ceylon tea culture',
-      longDescription: 'Walk through emerald tea plantations, learn about Ceylon tea production, and enjoy fresh tea tasting sessions with breathtaking mountain views.',
+      description: t('activities.teaPlantationTours.description'),
+      longDescription: t('activities.teaPlantationTours.longDescription'),
       category: 'Cultural',
       slug: 'tea-plantation-tours',
       image: 'zamzam-tours/activities/tea-plantation',
-      difficulty: 'Easy',
-      duration: '2-3 hours'
+      difficulty: t('activities.teaPlantationTours.difficulty'),
+      duration: t('activities.teaPlantationTours.duration')
     },
     {
-      name: 'Whale Watching',
+      name: t('activities.whaleWatching.name'),
       icon: '🐋',
-      description: 'Witness blue whales and dolphins in their natural habitat',
-      longDescription: 'Embark on an unforgettable ocean adventure to see the world\'s largest mammals. Mirissa and Trincomalee offer some of the best whale watching opportunities globally.',
+      description: t('activities.whaleWatching.description'),
+      longDescription: t('activities.whaleWatching.longDescription'),
       category: 'Wildlife',
       slug: 'whale-watching',
       image: 'zamzam-tours/activities/whale-watching',
-      difficulty: 'Easy',
-      duration: '3-4 hours'
+      difficulty: t('activities.whaleWatching.difficulty'),
+      duration: t('activities.whaleWatching.duration')
     },
     {
-      name: 'Surfing',
+      name: t('activities.surfing.name'),
       icon: '🏄',
-      description: 'World-class surf breaks for all skill levels',
-      longDescription: 'Ride the waves at renowned surf spots like Arugam Bay, Hikkaduwa, and Weligama. Perfect conditions for beginners and experienced surfers alike.',
+      description: t('activities.surfing.description'),
+      longDescription: t('activities.surfing.longDescription'),
       category: 'Adventure',
       slug: 'surfing',
       image: 'zamzam-tours/activities/surfing',
-      difficulty: 'Moderate',
-      duration: '2-3 hours'
+      difficulty: t('activities.surfing.difficulty'),
+      duration: t('activities.surfing.duration')
     },
     {
-      name: 'Scuba Diving',
+      name: t('activities.scubaDiving.name'),
       icon: '🤿',
-      description: 'Explore vibrant coral reefs and underwater shipwrecks',
-      longDescription: 'Dive into crystal-clear waters to discover colorful coral reefs, tropical fish, and fascinating shipwrecks. Sri Lanka\'s east and south coasts offer world-class diving sites.',
+      description: t('activities.scubaDiving.description'),
+      longDescription: t('activities.scubaDiving.longDescription'),
       category: 'Adventure',
       slug: 'scuba-diving',
       image: 'zamzam-tours/activities/scuba-diving',
-      difficulty: 'Moderate',
-      duration: '3-4 hours'
+      difficulty: t('activities.scubaDiving.difficulty'),
+      duration: t('activities.scubaDiving.duration')
     },
     {
-      name: 'Train Journeys',
+      name: t('activities.trainJourneys.name'),
       icon: '🚂',
-      description: 'Scenic train rides through tea country and hill stations',
-      longDescription: 'Experience one of the world\'s most scenic train journeys from Kandy to Ella, passing through misty mountains, tea estates, and stunning viaducts.',
+      description: t('activities.trainJourneys.description'),
+      longDescription: t('activities.trainJourneys.longDescription'),
       category: 'Cultural',
       slug: 'train-journeys',
       image: 'zamzam-tours/activities/train-journey',
-      difficulty: 'Easy',
-      duration: '6-7 hours'
+      difficulty: t('activities.trainJourneys.difficulty'),
+      duration: t('activities.trainJourneys.duration')
     },
     {
-      name: 'Bird Watching',
+      name: t('activities.birdWatching.name'),
       icon: '🦜',
-      description: 'Spot endemic and migratory bird species',
-      longDescription: 'Sri Lanka is home to over 400 bird species, including 33 endemic species. Explore wetlands, forests, and national parks with expert ornithologists.',
+      description: t('activities.birdWatching.description'),
+      longDescription: t('activities.birdWatching.longDescription'),
       category: 'Wildlife',
       slug: 'bird-watching',
       image: 'zamzam-tours/activities/bird-watching',
-      difficulty: 'Easy',
-      duration: '3-5 hours'
+      difficulty: t('activities.birdWatching.difficulty'),
+      duration: t('activities.birdWatching.duration')
     },
     {
-      name: 'White Water Rafting',
+      name: t('activities.whiteWaterRafting.name'),
       icon: '🚣',
-      description: 'Thrilling rapids on Kelani River and other waterways',
-      longDescription: 'Navigate exciting rapids through lush jungle landscapes. Kitulgala on the Kelani River offers the best white water rafting experiences in Sri Lanka.',
+      description: t('activities.whiteWaterRafting.description'),
+      longDescription: t('activities.whiteWaterRafting.longDescription'),
       category: 'Adventure',
       slug: 'white-water-rafting',
       image: 'zamzam-tours/activities/rafting',
-      difficulty: 'Hard',
-      duration: '2-3 hours'
+      difficulty: t('activities.whiteWaterRafting.difficulty'),
+      duration: t('activities.whiteWaterRafting.duration')
     },
     {
-      name: 'Ayurvedic Spa',
+      name: t('activities.ayurvedicSpa.name'),
       icon: '💆',
-      description: 'Traditional healing treatments and wellness therapies',
-      longDescription: 'Rejuvenate with ancient Ayurvedic treatments, herbal massages, and wellness therapies. Experience holistic healing at authentic Ayurvedic centers.',
+      description: t('activities.ayurvedicSpa.description'),
+      longDescription: t('activities.ayurvedicSpa.longDescription'),
       category: 'Wellness',
       slug: 'ayurvedic-spa',
       image: 'zamzam-tours/activities/ayurveda',
-      difficulty: 'Easy',
-      duration: '1-3 hours'
+      difficulty: t('activities.ayurvedicSpa.difficulty'),
+      duration: t('activities.ayurvedicSpa.duration')
     },
     {
-      name: 'Cooking Classes',
+      name: t('activities.cookingClasses.name'),
       icon: '👨‍🍳',
-      description: 'Learn authentic Sri Lankan cuisine and spices',
-      longDescription: 'Master the art of Sri Lankan cooking with hands-on classes. Learn to prepare curries, hoppers, and other local delicacies using fresh spices.',
+      description: t('activities.cookingClasses.description'),
+      longDescription: t('activities.cookingClasses.longDescription'),
       category: 'Cultural',
       slug: 'cooking-classes',
       image: 'zamzam-tours/activities/cooking',
-      difficulty: 'Easy',
-      duration: '2-3 hours'
+      difficulty: t('activities.cookingClasses.difficulty'),
+      duration: t('activities.cookingClasses.duration')
     },
     {
-      name: 'Photography Tours',
+      name: t('activities.photographyTours.name'),
       icon: '📸',
-      description: 'Capture stunning landscapes and wildlife',
-      longDescription: 'Join professional photographers to capture Sri Lanka\'s breathtaking landscapes, wildlife, and cultural scenes. Perfect for all photography skill levels.',
+      description: t('activities.photographyTours.description'),
+      longDescription: t('activities.photographyTours.longDescription'),
       category: 'Cultural',
       slug: 'photography-tours',
       image: 'zamzam-tours/activities/photography',
-      difficulty: 'Easy',
-      duration: 'Full Day'
+      difficulty: t('activities.photographyTours.difficulty'),
+      duration: t('activities.photographyTours.duration')
     },
     {
-      name: 'Cycling Tours',
+      name: t('activities.cyclingTours.name'),
       icon: '🚴',
-      description: 'Bike through villages, rice paddies and coastal roads',
-      longDescription: 'Pedal through scenic countryside, traditional villages, and coastal paths. Experience local life up close on guided cycling adventures.',
+      description: t('activities.cyclingTours.description'),
+      longDescription: t('activities.cyclingTours.longDescription'),
       category: 'Adventure',
       slug: 'cycling-tours',
       image: 'zamzam-tours/activities/cycling',
-      difficulty: 'Moderate',
-      duration: '3-5 hours'
+      difficulty: t('activities.cyclingTours.difficulty'),
+      duration: t('activities.cyclingTours.duration')
     },
     {
-      name: 'Rock Climbing',
+      name: t('activities.rockClimbing.name'),
       icon: '🧗',
-      description: 'Scale ancient rock formations and mountain cliffs',
-      longDescription: 'Challenge yourself on Sri Lanka\'s unique rock formations. From beginner-friendly climbs to advanced routes, experience climbing with stunning views.',
+      description: t('activities.rockClimbing.description'),
+      longDescription: t('activities.rockClimbing.longDescription'),
       category: 'Adventure',
       slug: 'rock-climbing',
       image: 'zamzam-tours/activities/rock-climbing',
-      difficulty: 'Hard',
-      duration: '3-4 hours'
+      difficulty: t('activities.rockClimbing.difficulty'),
+      duration: t('activities.rockClimbing.duration')
     },
     {
-      name: 'Snorkeling',
+      name: t('activities.snorkeling.name'),
       icon: '🤿',
-      description: 'Discover colorful marine life in crystal clear waters',
-      longDescription: 'Float above vibrant coral reefs teeming with tropical fish, sea turtles, and other marine life. Perfect for families and beginners.',
+      description: t('activities.snorkeling.description'),
+      longDescription: t('activities.snorkeling.longDescription'),
       category: 'Beach',
       slug: 'snorkeling',
       image: 'zamzam-tours/activities/snorkeling',
-      difficulty: 'Easy',
-      duration: '2-3 hours'
+      difficulty: t('activities.snorkeling.difficulty'),
+      duration: t('activities.snorkeling.duration')
     },
     {
-      name: 'Temple Visits',
+      name: t('activities.templeVisits.name'),
       icon: '🛕',
-      description: 'Experience sacred Buddhist and Hindu temples',
-      longDescription: 'Visit ancient temples adorned with intricate carvings, Buddha statues, and colorful murals. Witness religious ceremonies and learn about spiritual traditions.',
+      description: t('activities.templeVisits.description'),
+      longDescription: t('activities.templeVisits.longDescription'),
       category: 'Cultural',
       slug: 'temple-visits',
       image: 'zamzam-tours/activities/temples',
-      difficulty: 'Easy',
-      duration: '2-4 hours'
+      difficulty: t('activities.templeVisits.difficulty'),
+      duration: t('activities.templeVisits.duration')
     },
     {
-      name: 'Camping',
+      name: t('activities.camping.name'),
       icon: '⛺',
-      description: 'Overnight camping in national parks and wilderness',
-      longDescription: 'Sleep under the stars in Sri Lanka\'s wilderness. Experience camping adventures in national parks with campfires and wildlife sounds.',
+      description: t('activities.camping.description'),
+      longDescription: t('activities.camping.longDescription'),
       category: 'Adventure',
       slug: 'camping',
       image: 'zamzam-tours/activities/camping',
-      difficulty: 'Moderate',
-      duration: 'Overnight'
+      difficulty: t('activities.camping.difficulty'),
+      duration: t('activities.camping.duration')
     },
     {
-      name: 'Zip-lining',
+      name: t('activities.zipLining.name'),
       icon: '🪂',
-      description: 'Soar through forest canopies and mountain valleys',
-      longDescription: 'Experience the thrill of flying through the air on zip-lines over tea plantations, forests, and scenic valleys. An adrenaline-pumping adventure.',
+      description: t('activities.zipLining.description'),
+      longDescription: t('activities.zipLining.longDescription'),
       category: 'Adventure',
       slug: 'zip-lining',
       image: 'zamzam-tours/activities/ziplining',
-      difficulty: 'Moderate',
-      duration: '1-2 hours'
+      difficulty: t('activities.zipLining.difficulty'),
+      duration: t('activities.zipLining.duration')
     }
   ];
 
@@ -237,32 +240,19 @@ const ActivitiesPage = () => {
 
   return (
     <div className="activities-page">
+      <Head>
+        <title>{t('activities.pageTitle')}</title>
+        <meta name="description" content={t('activities.hero.subtitle')} />
+      </Head>
       
       {/* Hero Section */}
-      <section className="hero-section" style={{ position: 'relative', height: '50vh', overflow: 'hidden' }}>
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          style={{
-            position: 'absolute',
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover',
-            top: 0,
-            left: 0
-          }}
-        >
-          <source src="/videos/srilanka-hero.mp4" type="video/mp4" />
-        </video>
+      <section className="hero-section" style={{ position: 'relative', height: '50vh', overflow: 'hidden', background: '#053b3c' }}>
         <div style={{
           position: 'absolute',
           top: 0,
           left: 0,
           width: '100%',
           height: '100%',
-          background: 'rgba(5, 59, 60, 0.6)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -277,9 +267,9 @@ const ActivitiesPage = () => {
           </div>
 
           <div style={{ marginTop: '64px' }}>
-            <h1 style={{ fontSize: '2.5rem', marginBottom: '0.5rem', color: '#f8b500' }}>Things to Do in Sri Lanka</h1>
+            <h1 style={{ fontSize: '2.5rem', marginBottom: '0.5rem', color: '#f8b500' }}>{t('activities.hero.title')}</h1>
             <p style={{ fontSize: '1.2rem', maxWidth: '700px' }}>
-              Discover exciting activities and unforgettable experiences across the island
+              {t('activities.hero.subtitle')}
             </p>
           </div>
         </div>
@@ -345,21 +335,8 @@ const ActivitiesPage = () => {
                   e.currentTarget.style.boxShadow = '0 4px 15px rgba(0,0,0,0.1)';
                 }}
               >
-                <div style={{ height: '120px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg, rgba(5,59,60,0.04), rgba(248,181,0,0.04))' }}>
+                <div style={{ height: '120px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#053b3c' }}>
                     <div style={{ fontSize: '3rem' }}>{activity.icon}</div>
-                    <div style={{
-                      position: 'absolute',
-                      top: '10px',
-                      right: '10px',
-                      background: '#f8b500',
-                      color: '#fff',
-                      padding: '0.3rem 0.7rem',
-                      borderRadius: '20px',
-                      fontSize: '0.8rem',
-                      fontWeight: '600'
-                    }}>
-                      {activity.category}
-                    </div>
                   </div>
                 
                   <div style={{ padding: '1.2rem' }}>
@@ -397,7 +374,7 @@ const ActivitiesPage = () => {
                     alignItems: 'center',
                     gap: '0.5rem'
                   }}>
-                    Learn More <span>→</span>
+                    {t('activities.learnMore')} <span>→</span>
                   </div>
                 </div>
               </Link>
@@ -414,12 +391,24 @@ const ActivitiesPage = () => {
         }
 
         @media (max-width: 768px) {
-          .hero-section h1 {
+          .hero-section {
+            min-height: 50vh !important;
+          }
+
+          .hero-content h1 {
             font-size: 2rem !important;
+            padding: 0 1rem;
           }
           
-          .hero-section p {
+          .hero-content p {
             font-size: 1.1rem !important;
+            padding: 0 1rem;
+          }
+        }
+
+        @media (max-width: 576px) {
+          .hero-content h1 {
+            font-size: 1.6rem !important;
           }
         }
       `}</style>

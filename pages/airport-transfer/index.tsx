@@ -184,7 +184,8 @@ export default function AirportTransfer() {
             loop
             muted
             playsInline
-            preload="auto"
+            preload="metadata"
+            poster="https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453704/dylan-shaw-smUAKwMT8XA-unsplash_qhenhx.jpg"
             style={{
               width: '100%',
               height: '100%',

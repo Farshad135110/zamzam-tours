@@ -1,0 +1,15 @@
+# Allow all crawlers
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://zamzamlankatours.com/sitemap.xml
+
+# Disallow admin pages
+User-agent: *
+Disallow: /admin/
+Disallow: /login
+Disallow: /api/
+
+# Crawl delay (optional, helps prevent server overload)
+Crawl-delay: 10
