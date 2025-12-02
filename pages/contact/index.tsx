@@ -460,36 +460,39 @@ Please respond promptly.
 
           <div className="locations-grid">
             {officeLocations.map((office, index) => (
-              <div key={index} className="location-card">
-                <div className="location-image">
-                  <Image 
-                    src={office.image} 
-                    alt={office.name}
-                    width={400}
-                    height={250}
-                    objectFit="cover"
-                  />
-                </div>
-                <div className="location-info">
-                  <h3>{office.name}</h3>
-                  <div className="location-details">
-                    <div className="detail-item">
-                      <span className="icon">📍</span>
-                      <span className="text">{office.address}</span>
-                    </div>
-                    <div className="detail-item">
-                      <span className="icon">📞</span>
-                      <span className="text">{office.phone}</span>
-                    </div>
-                    <div className="detail-item">
-                      <span className="icon">📧</span>
-                      <span className="text">{office.email}</span>
-                    </div>
-                    <div className="detail-item">
-                      <span className="icon">⏰</span>
-                      <span className="text">{office.hours}</span>
-                    </div>
-                  </div>
+              <div key={index} className="location-card-with-map">
+                <div className="location-content-wrapper">
+                  <div className="location-left">
+                    <div className="location-card">
+                      <div className="location-image">
+                        <Image 
+                          src={office.image} 
+                          alt={office.name}
+                          width={400}
+                          height={250}
+                          objectFit="cover"
+                        />
+                      </div>
+                      <div className="location-info">
+                        <h3>{office.name}</h3>
+                        <div className="location-details">
+                          <div className="detail-item">
+                            <span className="icon">📍</span>
+                            <span className="text">{office.address}</span>
+                          </div>
+                          <div className="detail-item">
+                            <span className="icon">📞</span>
+                            <span className="text">{office.phone}</span>
+                          </div>
+                          <div className="detail-item">
+                            <span className="icon">📧</span>
+                            <span className="text">{office.email}</span>
+                          </div>
+                          <div className="detail-item">
+                            <span className="icon">⏰</span>
+                            <span className="text">{office.hours}</span>
+                          </div>
+                        </div>
                         <div className="location-actions">
                           <button 
                             className="btn-small"
@@ -499,11 +502,28 @@ Please respond promptly.
                           </button>
                           <button 
                             className="btn-small secondary"
-                            onClick={() => window.open(`https://maps.google.com/?q=${encodeURIComponent(office.address)}`, '_blank')}
+                            onClick={() => window.open('https://www.google.com/maps/place/ZamZam+Lanka+Tours/@6.0544274,80.2129969,17z/data=!4m2!3m1!1s0x0:0x4e1d8b26e85c6606?sa=X&ved=1t:2428&ictx=111', '_blank')}
                           >
                             {t('contact.action.visit')}
                           </button>
                         </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="location-right">
+                    <div className="location-map">
+                      <iframe
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3967.5447267891547!2d80.2129969!3d6.0544274!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x4e1d8b26e85c6606!2sZamZam%20Lanka%20Tours!5e0!3m2!1sen!2slk!4v1234567890"
+                        width="100%"
+                        height="100%"
+                        style={{ border: 0, borderRadius: '10px' }}
+                        allowFullScreen
+                        loading="lazy"
+                        referrerPolicy="no-referrer-when-downgrade"
+                      ></iframe>
+                    </div>
+                  </div>
                 </div>
               </div>
             ))}
@@ -952,6 +972,70 @@ Please respond promptly.
           margin-top: 3rem;
         }
 
+        /* Two-column card with map */
+        .location-card-with-map {
+          background: transparent;
+          border-radius: 0;
+          overflow: visible;
+          box-shadow: none;
+          transition: none;
+          max-width: 1200px;
+          width: 100%;
+        }
+
+        .location-card-with-map:hover {
+          transform: none;
+        }
+
+        .location-content-wrapper {
+          display: grid;
+          grid-template-columns: 400px 1fr;
+          gap: 2rem;
+          align-items: stretch;
+        }
+
+        .location-left {
+          display: flex;
+          flex-direction: column;
+        }
+
+        .location-left .location-card {
+          background: white;
+          border-radius: 12px;
+          overflow: hidden;
+          box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+          transition: transform 0.18s ease;
+          max-width: 400px;
+          width: 100%;
+          height: 100%;
+        }
+
+        .location-left .location-card:hover {
+          transform: translateY(-3px);
+        }
+
+        .location-right {
+          display: flex;
+          align-items: stretch;
+          min-height: 500px;
+        }
+
+        .location-map {
+          width: 100%;
+          height: 100%;
+          min-height: 500px;
+          background: white;
+          border-radius: 12px;
+          overflow: hidden;
+          box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+        }
+
+        .location-map iframe {
+          width: 100%;
+          height: 100%;
+          min-height: 500px;
+        }
+
         /* Compact centered card */
         .location-card {
           background: white;
@@ -1236,6 +1320,14 @@ Please respond promptly.
 
           .inquiry-tabs {
             flex-direction: column;
+          }
+
+          .location-content-wrapper {
+            grid-template-columns: 1fr;
+          }
+
+          .location-map {
+            min-height: 300px;
           }
 
           .form-actions {

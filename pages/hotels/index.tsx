@@ -975,15 +975,6 @@ export default function Hotels() {
                       >
                         {get('hotels.buttons.viewDetails', 'View Details')}
                       </button>
-                      <button 
-                        className="btn-book-now"
-                        onClick={() => {
-                          setSelectedHotel(hotel);
-                          setShowBookingForm(true);
-                        }}
-                      >
-                        {get('hotels.buttons.bookNow', 'Book Now')}
-                      </button>
                     </div>
                   </div>
                 </div>
@@ -1017,15 +1008,6 @@ export default function Hotels() {
                         onClick={() => openHotelBooking(hotel)}
                       >
                         {get('hotels.buttons.viewDetails', 'View Details')}
-                      </button>
-                      <button 
-                        className="overlay-btn-book"
-                        onClick={() => {
-                          setSelectedHotel(hotel);
-                          setShowBookingForm(true);
-                        }}
-                      >
-                        {get('hotels.buttons.bookNow', 'Book Now')}
                       </button>
                     </div>
                   </div>
