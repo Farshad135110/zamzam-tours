@@ -13,6 +13,8 @@ import { CONTACT_INFO } from '../src/constants/config';
 import AnimatedSection from '../components/AnimatedSection';
 import { fadeInUp, staggerContainer, cardHover } from '../src/utils/animations';
 import useTranslation from '../src/i18n/useTranslation';
+import LocalBusinessSchema from '../components/SEO/LocalBusinessSchema';
+import BreadcrumbSchema from '../components/SEO/BreadcrumbSchema';
 
 export default function Home() {
   const { t } = useTranslation();
@@ -248,6 +250,10 @@ export default function Home() {
   <meta name="twitter:card" content={get('home.og.twitterCard', 'summary_large_image')} />
         <link rel="icon" href="/favicon.ico" />
       </Head>
+
+      {/* Structured Data Schemas */}
+      <LocalBusinessSchema />
+      <BreadcrumbSchema items={[{ name: 'Home', url: '/' }]} />
       
       <Navbar />
       

@@ -11,6 +11,8 @@ import AnimatedSection from '../../components/AnimatedSection';
 import { fadeInUp } from '../../src/utils/animations';
 import useTranslation from '../../src/i18n/useTranslation';
 import { useModalScrollLock } from '../../src/hooks/useModalScrollLock';
+import BreadcrumbSchema from '../../components/SEO/BreadcrumbSchema';
+import ServiceSchema from '../../components/SEO/ServiceSchema';
 
 interface PriceStructure {
   daily: number;
@@ -256,6 +258,18 @@ export default function SelfDrive() {
         <meta name="description" content={get('carRental.metaDescription', 'Rent vehicles in Sri Lanka with Zamzam Lanka Tours. Self-drive and with-driver options for tourists and locals. Best prices for Prius, Aqua, Vans, Buses and more.')} />
         <meta name="keywords" content={get('carRental.metaKeywords', 'Sri Lanka car rental, self-drive, with driver, vehicle hire, tourist rental, local rental, Prius, Aqua, van rental, bus rental')} />
       </Head>
+
+      {/* Structured Data Schemas */}
+      <BreadcrumbSchema items={[
+        { name: 'Home', url: '/' },
+        { name: 'Car Rental', url: '/car-rental' }
+      ]} />
+      <ServiceSchema
+        name="Car Rental Services in Sri Lanka"
+        description="Self-drive and chauffeur-driven car rental services across Sri Lanka. Wide range of vehicles from economy cars to luxury vans."
+        serviceType="Vehicle Rental Service"
+        areaServed={['Sri Lanka', 'Colombo', 'Kandy', 'Galle', 'Ella', 'Airport']}
+      />
 
       <Navbar />
 

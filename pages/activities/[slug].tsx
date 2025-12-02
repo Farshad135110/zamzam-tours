@@ -6,6 +6,8 @@ import { CldImage } from 'next-cloudinary';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import { CONTACT_INFO } from '../../src/constants/config';
+import BreadcrumbSchema from '../../components/SEO/BreadcrumbSchema';
+import ServiceSchema from '../../components/SEO/ServiceSchema';
 
 const ActivityDetailPage = () => {
   const router = useRouter();
@@ -863,6 +865,20 @@ const ActivityDetailPage = () => {
       <Head>
         <title>{activity.name} | Zamzam Lanka Tours</title>
       </Head>
+
+      {/* Structured Data Schemas */}
+      <BreadcrumbSchema items={[
+        { name: 'Home', url: '/' },
+        { name: 'Activities', url: '/activities' },
+        { name: activity.name, url: `/activities/${slug}` }
+      ]} />
+      <ServiceSchema
+        name={activity.name}
+        description={activity.description}
+        serviceType={`${activity.category} Activity`}
+        areaServed={activity.bestLocations?.map((loc: string) => loc.split(' - ')[0]) || ['Sri Lanka']}
+      />
+
       <div className="activity-detail-page" style={{ marginTop: 0 }}>
         <Navbar />
 

@@ -4,6 +4,8 @@ import Link from 'next/link';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import useTranslation from '../../src/i18n/useTranslation';
+import BreadcrumbSchema from '../../components/SEO/BreadcrumbSchema';
+import ServiceSchema from '../../components/SEO/ServiceSchema';
 
 const ActivitiesPage = () => {
   const { t } = useTranslation();
@@ -244,6 +246,18 @@ const ActivitiesPage = () => {
         <title>{t('activities.pageTitle')}</title>
         <meta name="description" content={t('activities.hero.subtitle')} />
       </Head>
+
+      {/* Structured Data Schemas */}
+      <BreadcrumbSchema items={[
+        { name: 'Home', url: '/' },
+        { name: 'Activities', url: '/activities' }
+      ]} />
+      <ServiceSchema
+        name="Sri Lanka Adventure & Cultural Activities"
+        description="Experience the best of Sri Lanka with our curated activities including wildlife safaris, cultural tours, beach activities, hiking, and more."
+        serviceType="Tourist Activities"
+        areaServed={['Sri Lanka', 'Colombo', 'Kandy', 'Ella', 'Yala', 'Sigiriya']}
+      />
       
       {/* Hero Section */}
       <section className="hero-section" style={{ position: 'relative', height: '50vh', overflow: 'hidden', background: '#053b3c' }}>

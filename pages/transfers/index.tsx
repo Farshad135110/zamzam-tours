@@ -10,6 +10,8 @@ import { CONTACT_INFO } from '../../src/constants/config';
 import { fadeInUp } from '../../src/utils/animations';
 import useTranslation from '../../src/i18n/useTranslation';
 import { useModalScrollLock } from '../../src/hooks/useModalScrollLock';
+import BreadcrumbSchema from '../../components/SEO/BreadcrumbSchema';
+import ServiceSchema from '../../components/SEO/ServiceSchema';
 
 export default function AirportTransfer() {
   const [passengers, setPassengers] = useState(1);
@@ -170,6 +172,18 @@ export default function AirportTransfer() {
         <meta name="description" content={get('airportTransfer.metaDescription', 'Professional airport and all-island transfers in Sri Lanka. Travel anywhere with our comfortable vehicles and professional drivers.')} />
         <meta name="keywords" content={get('airportTransfer.metaKeywords', 'Sri Lanka airport transfer, all island transfers, Colombo airport pickup, Sri Lanka taxi service, island-wide transport')} />
       </Head>
+
+      {/* Structured Data Schemas */}
+      <BreadcrumbSchema items={[
+        { name: 'Home', url: '/' },
+        { name: 'Airport Transfers', url: '/transfers' }
+      ]} />
+      <ServiceSchema
+        name="Airport & All-Island Transfer Services"
+        description="Reliable airport pickup and drop-off services with island-wide transfers across Sri Lanka. Professional drivers and comfortable vehicles."
+        serviceType="Airport Transportation & Ground Transfer"
+        areaServed={['Colombo Airport', 'Mattala Airport', 'All Sri Lanka']}
+      />
 
       <Navbar />
 
