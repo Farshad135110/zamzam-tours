@@ -1161,6 +1161,52 @@ const ActivityDetailPage = () => {
           margin: 0;
           padding: 0;
         }
+
+        @media (max-width: 768px) {
+          .activity-detail section {
+            padding: 2rem 0;
+          }
+
+          .activity-detail .container {
+            padding: 0 1rem;
+          }
+
+          .activity-detail h1 {
+            font-size: 2rem !important;
+          }
+
+          .activity-detail h2 {
+            font-size: 1.5rem !important;
+          }
+
+          .activity-detail h3 {
+            font-size: 1.3rem !important;
+          }
+
+          .activity-detail a {
+            min-height: 44px;
+            padding: 0.75rem 1.5rem !important;
+            font-size: 1rem !important;
+          }
+
+          .info-cards {
+            grid-template-columns: 1fr !important;
+          }
+
+          .locations-grid, .tips-grid {
+            grid-template-columns: 1fr !important;
+          }
+        }
+
+        @media (max-width: 576px) {
+          .activity-detail h1 {
+            font-size: 1.75rem !important;
+          }
+
+          .info-card, .location-card, .tip-card {
+            padding: 1.5rem !important;
+          }
+        }
       `}</style>
       </div>
     </>

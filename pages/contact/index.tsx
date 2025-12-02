@@ -259,7 +259,9 @@ Please respond promptly.
                 <p>{method.description}</p>
                 <div className="method-details">
                   <span className="detail">{method.details}</span>
-                  <span className="availability">{method.availability}</span>
+                  {method.action !== 'visit' && (
+                    <span className="availability">{method.availability}</span>
+                  )}
                 </div>
                 <button 
                   className="method-action-btn"
@@ -566,20 +568,22 @@ Please respond promptly.
         /* Contact Page Specific Styles */
         .contact-hero {
           position: relative;
-          height: 60vh;
-          min-height: 500px;
+          height: 72vh;
+          min-height: 520px;
           display: flex;
           align-items: center;
           justify-content: center;
           text-align: center;
           color: white;
           overflow: hidden;
-          padding-top: 80px;
+          padding-top: 55px;
         }
 
         .hero-content {
           max-width: 800px;
+          margin: 0 auto;
           padding: 0 20px;
+          width: 100%;
           z-index: 1;
         }
 
@@ -590,11 +594,20 @@ Please respond promptly.
           justify-content: center;
           gap: 2rem;
           flex-wrap: wrap;
+          margin-top: 2rem;
         }
 
         /* Hero spacing consistent with other pages */
-        .hero-content { padding: 0 20px; }
-        .hero-title { margin-bottom: 1rem; font-size: 2.4rem; }
+        .hero-title { 
+          margin-bottom: 1.5rem; 
+          font-size: 3.5rem;
+          line-height: 1.2;
+        }
+        .hero-subtitle {
+          font-size: 1.5rem;
+          line-height: 1.6;
+          margin-bottom: 1.5rem;
+        }
         .hero-highlight { color: var(--secondary-color); }
 
         .contact-badge {
@@ -661,6 +674,34 @@ Please respond promptly.
           margin-top: 3rem;
         }
 
+        /* Large Screen Optimizations */
+        @media (min-width: 2560px) {
+          .contact-methods-grid {
+            grid-template-columns: repeat(4, 1fr);
+            gap: 3rem;
+          }
+
+          .form-container {
+            max-width: 1200px;
+          }
+        }
+
+        @media (min-width: 1440px) and (max-width: 2559px) {
+          .contact-methods-grid {
+            grid-template-columns: repeat(4, 1fr);
+          }
+
+          .form-container {
+            max-width: 1000px;
+          }
+        }
+
+        @media (min-width: 1024px) and (max-width: 1279px) {
+          .contact-methods-grid {
+            grid-template-columns: repeat(2, 1fr);
+          }
+        }
+
         .contact-method-card {
           background: white;
           padding: 2.5rem 2rem;
@@ -723,20 +764,26 @@ Please respond promptly.
 
         .method-action-btn {
           width: 100%;
-          padding: 12px 20px;
-          background: var(--secondary-color); /* gold */
-          color: #000;
+          padding: 14px 28px;
+          background: var(--primary-color);
+          color: white;
           border: none;
           border-radius: 10px;
-          font-weight: 700;
+          font-weight: 600;
+          font-size: 1rem;
           cursor: pointer;
-          box-shadow: 0 8px 20px rgba(248,181,0,0.18);
-          transition: transform 0.18s ease, box-shadow 0.18s ease;
+          box-shadow: 0 4px 12px rgba(5, 59, 60, 0.2);
+          transition: all 0.3s ease;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.5rem;
         }
 
         .method-action-btn:hover {
-          transform: translateY(-3px);
-          box-shadow: 0 12px 30px rgba(248,181,0,0.24);
+          background: var(--primary-light);
+          transform: translateY(-2px);
+          box-shadow: 0 6px 20px rgba(5, 59, 60, 0.3);
         }
 
         /* Contact Form Section */
@@ -974,59 +1021,81 @@ Please respond promptly.
         }
 
         .btn-small {
-          padding: 8px 16px;
+          padding: 12px 20px;
           border: none;
           border-radius: 8px;
           font-size: 0.95rem;
-          font-weight: 700;
+          font-weight: 600;
           cursor: pointer;
-          transition: transform 0.18s ease, box-shadow 0.18s ease;
+          transition: all 0.3s ease;
           flex: 1;
-          box-shadow: 0 6px 18px rgba(0,0,0,0.06);
         }
 
         .btn-small:not(.secondary) {
-          background: var(--primary-color); /* green */
+          background: var(--primary-color);
           color: white;
+          box-shadow: 0 4px 12px rgba(5, 59, 60, 0.2);
         }
 
         .btn-small.secondary {
-          background: var(--secondary-color); /* gold */
-          color: #000;
-          border: none;
+          background: white;
+          color: var(--primary-color);
+          border: 2px solid var(--primary-color);
         }
 
-        .btn-small:hover {
-          transform: translateY(-3px);
+        .btn-small:not(.secondary):hover {
+          background: var(--primary-light);
+          transform: translateY(-2px);
+          box-shadow: 0 6px 20px rgba(5, 59, 60, 0.3);
         }
 
-        /* Local button color theme for this page: primary = gold, secondary = green outline */
+        .btn-small.secondary:hover {
+          background: var(--primary-color);
+          color: white;
+          transform: translateY(-2px);
+        }
+
+        /* Form buttons: green primary and white secondary */
         .btn-primary {
-          background: var(--secondary-color);
-          color: #000;
+          background: var(--primary-color);
+          color: white;
           border: none;
-          padding: 12px 20px;
-          border-radius: 12px;
-          font-weight: 700;
-          box-shadow: 0 10px 30px rgba(248,181,0,0.18);
+          padding: 14px 32px;
+          border-radius: 10px;
+          font-weight: 600;
+          font-size: 1rem;
+          cursor: pointer;
+          box-shadow: 0 4px 12px rgba(5, 59, 60, 0.2);
+          transition: all 0.3s ease;
         }
 
-        .btn-primary:hover {
-          transform: translateY(-3px);
-          box-shadow: 0 16px 40px rgba(248,181,0,0.22);
+        .btn-primary:hover:not(:disabled) {
+          background: var(--primary-light);
+          transform: translateY(-2px);
+          box-shadow: 0 6px 20px rgba(5, 59, 60, 0.3);
+        }
+
+        .btn-primary:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
         }
 
         .btn-secondary {
-          background: transparent;
+          background: white;
           color: var(--primary-color);
           border: 2px solid var(--primary-color);
-          padding: 10px 18px;
-          border-radius: 12px;
-          font-weight: 700;
+          padding: 12px 32px;
+          border-radius: 10px;
+          font-weight: 600;
+          font-size: 1rem;
+          cursor: pointer;
+          transition: all 0.3s ease;
         }
 
         .btn-secondary:hover {
-          background: rgba(5,59,60,0.06);
+          background: var(--primary-color);
+          color: white;
+          transform: translateY(-2px);
         }
 
         /* Map section removed */
@@ -1102,13 +1171,25 @@ Please respond promptly.
 
         .emergency-banner .btn-primary {
           background: white;
-          color: #053b3c;
+          color: var(--primary-color);
+          box-shadow: 0 4px 12px rgba(255, 255, 255, 0.3);
+        }
+
+        .emergency-banner .btn-primary:hover {
+          background: #f9f9f9;
+          transform: translateY(-2px);
+          box-shadow: 0 6px 20px rgba(255, 255, 255, 0.4);
         }
 
         .emergency-banner .btn-secondary {
           background: transparent;
           color: white;
           border: 2px solid white;
+        }
+
+        .emergency-banner .btn-secondary:hover {
+          background: rgba(255, 255, 255, 0.1);
+          transform: translateY(-2px);
         }
 
         /* Responsive Design */
@@ -1130,6 +1211,16 @@ Please respond promptly.
         @media (max-width: 768px) {
           .hero-content h1 {
             font-size: 2.2rem;
+          }
+
+          .hero-subtitle {
+            font-size: 1.1rem;
+          }
+
+          .contact-hero {
+            height: 55vh;
+            min-height: 450px;
+            padding-top: 70px;
           }
 
           .hero-contact-badges {

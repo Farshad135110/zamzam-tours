@@ -1097,6 +1097,62 @@ export default function DestinationDetail() {
         </div>
       </section>
 
+      <style jsx global>{`
+        @media (max-width: 768px) {
+          .destination-detail section {
+            padding: 2rem 0;
+          }
+
+          .destination-detail .container {
+            padding: 0 1rem;
+          }
+
+          .destination-detail h1 {
+            font-size: 2rem !important;
+          }
+
+          .destination-detail h2 {
+            font-size: 1.5rem !important;
+          }
+
+          .destination-detail h3 {
+            font-size: 1.3rem !important;
+          }
+
+          .destination-detail h4 {
+            font-size: 1.1rem !important;
+          }
+
+          .destination-detail a {
+            min-height: 44px;
+            padding: 0.75rem 1.5rem !important;
+            font-size: 1rem !important;
+          }
+
+          .destination-detail [style*="display: grid"] {
+            grid-template-columns: 1fr !important;
+          }
+
+          .destination-detail [style*="gap: 2rem"] {
+            gap: 1rem !important;
+          }
+        }
+
+        @media (max-width: 576px) {
+          .destination-detail h1 {
+            font-size: 1.75rem !important;
+          }
+
+          .destination-detail [style*="padding: 3rem"] {
+            padding: 1.5rem !important;
+          }
+
+          .destination-detail [style*="padding: 2rem"] {
+            padding: 1rem !important;
+          }
+        }
+      `}</style>
+
       <Footer />
     </>
   );

@@ -107,6 +107,32 @@ export default function Footer() {
         .contact-text { display: inline-block; white-space: nowrap; overflow: visible; text-overflow: clip; max-width: none; }
 
         /* On very small screens allow some wrapping to avoid overflow off-screen */
+        @media (max-width: 768px) {
+          .footer-content {
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            text-align: center;
+          }
+
+          .footer-section {
+            flex: 1 1 100%;
+          }
+
+          .contact-info li {
+            justify-content: center;
+          }
+
+          .footer-logo {
+            justify-content: center;
+          }
+
+          .footer-bottom {
+            flex-direction: column;
+            gap: 1rem;
+            text-align: center;
+          }
+        }
+
         @media (max-width: 420px) {
           .contact-info li { white-space: normal; }
           .footer-section { flex: 1 1 100%; }

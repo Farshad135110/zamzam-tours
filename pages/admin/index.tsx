@@ -239,6 +239,41 @@ interface RevenueData {
           @media (max-width: 900px) {
             body > div > div:last-child {
               margin-left: 0 !important;
+              padding: 15px !important;
+            }
+          }
+
+          @media (max-width: 768px) {
+            .stats-grid {
+              grid-template-columns: 1fr !important;
+            }
+            
+            .charts-grid {
+              grid-template-columns: 1fr !important;
+            }
+
+            h1 {
+              font-size: 24px !important;
+            }
+
+            button {
+              min-height: 44px;
+              padding: 12px 20px !important;
+            }
+
+            input, select, textarea {
+              min-height: 44px;
+              font-size: 16px;
+            }
+          }
+
+          @media (max-width: 576px) {
+            h1 {
+              font-size: 20px !important;
+            }
+
+            .stat-card {
+              padding: 15px !important;
             }
           }
         `}</style>

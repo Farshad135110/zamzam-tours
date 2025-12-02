@@ -858,6 +858,110 @@ body {
   }
 }
 
+/* Large Screen Optimizations */
+
+/* Ultra-Wide & 4K (2560px+) */
+@media (min-width: 2560px) {
+  .hero-title {
+    font-size: 5rem;
+  }
+
+  .section-title {
+    font-size: 3.5rem;
+  }
+
+  .vehicle-grid,
+  .tour-packages-grid,
+  .destinations-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 3rem;
+  }
+
+  .vehicle-card,
+  .tour-package-card,
+  .destination-card {
+    max-width: 100%;
+  }
+
+  .transfer-info-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Full HD & 2K (1920px-2559px) */
+@media (min-width: 1920px) and (max-width: 2559px) {
+  .hero-title {
+    font-size: 4rem;
+  }
+
+  .section-title {
+    font-size: 3rem;
+  }
+
+  .vehicle-grid,
+  .tour-packages-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2.5rem;
+  }
+
+  .destinations-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Desktop Large (1440px-1919px) */
+@media (min-width: 1440px) and (max-width: 1919px) {
+  .hero-title {
+    font-size: 3.5rem;
+  }
+
+  .vehicle-grid,
+  .tour-packages-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+  }
+
+  .destinations-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Laptop Standard (1280px-1439px) */
+@media (min-width: 1280px) and (max-width: 1439px) {
+  .hero-title {
+    font-size: 3.2rem;
+  }
+
+  .vehicle-grid,
+  .tour-packages-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Tablet Landscape (1024px-1279px) */
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .hero-title {
+    font-size: 3rem;
+  }
+
+  .section-title {
+    font-size: 2.2rem;
+  }
+
+  .vehicle-grid,
+  .tour-packages-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .destinations-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .transfer-info-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
 /* Responsive Styles */
 @media (max-width: 992px) {
   .hero-title {
@@ -918,6 +1022,8 @@ body {
   .btn {
     width: 100%;
     max-width: 250px;
+    min-height: 44px;
+    padding: 12px 30px;
   }
   
   .cta-buttons {
@@ -927,6 +1033,31 @@ body {
   
   .destinations-grid {
     grid-template-columns: 1fr;
+  }
+
+  .vehicle-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .vehicle-card {
+    max-width: 100%;
+  }
+
+  .vehicle-info h4 {
+    font-size: 1.2rem;
+  }
+
+  .transfer-info-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .transfer-info-card {
+    padding: 1.5rem;
+  }
+
+  .info-icon {
+    font-size: 2.5rem;
   }
 }
 

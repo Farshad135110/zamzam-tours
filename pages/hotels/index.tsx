@@ -2935,6 +2935,32 @@ export default function Hotels() {
           margin-top: 2rem;
         }
 
+        /* Large Screen Optimizations */
+        @media (min-width: 2560px) {
+          .hotels-grid {
+            grid-template-columns: repeat(4, 1fr);
+            gap: 3rem;
+          }
+        }
+
+        @media (min-width: 1920px) and (max-width: 2559px) {
+          .hotels-grid {
+            grid-template-columns: repeat(4, 1fr);
+          }
+        }
+
+        @media (min-width: 1440px) and (max-width: 1919px) {
+          .hotels-grid {
+            grid-template-columns: repeat(3, 1fr);
+          }
+        }
+
+        @media (min-width: 1024px) and (max-width: 1279px) {
+          .hotels-grid {
+            grid-template-columns: repeat(2, 1fr);
+          }
+        }
+
         /* Responsive Design */
         @media (max-width: 992px) {
           .search-form .form-row {

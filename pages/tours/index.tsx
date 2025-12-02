@@ -2634,6 +2634,65 @@ export default function Tours() {
           font-size: 1.1rem;
         }
 
+        /* Large Screen Optimizations */
+        @media (min-width: 2560px) {
+          .tours-grid {
+            grid-template-columns: repeat(4, 1fr);
+            gap: 3rem;
+          }
+
+          .tour-hero h1 {
+            font-size: 5rem !important;
+          }
+
+          .modal-content {
+            max-width: 1600px;
+          }
+        }
+
+        @media (min-width: 1920px) and (max-width: 2559px) {
+          .tours-grid {
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2.5rem;
+          }
+
+          .tour-hero h1 {
+            font-size: 4rem !important;
+          }
+
+          .modal-content {
+            max-width: 1400px;
+          }
+        }
+
+        @media (min-width: 1440px) and (max-width: 1919px) {
+          .tours-grid {
+            grid-template-columns: repeat(3, 1fr);
+          }
+
+          .tour-hero h1 {
+            font-size: 3.5rem !important;
+          }
+        }
+
+        @media (min-width: 1024px) and (max-width: 1279px) {
+          .tours-grid {
+            grid-template-columns: repeat(2, 1fr);
+          }
+
+          .tour-hero h1 {
+            font-size: 3rem !important;
+          }
+
+          .modal-content {
+            max-width: 90%;
+          }
+
+          .detail-includes-grid {
+            grid-template-columns: repeat(2, 1fr);
+          }
+        }
+
         @media (max-width: 768px) {
           .tour-detail-header {
             grid-template-columns: 1fr;
@@ -2682,6 +2741,33 @@ export default function Tours() {
           overflow-y: auto;
           position: relative;
           margin: 0;
+        }
+
+        @media (max-width: 768px) {
+          .booking-form-overlay {
+            padding: 10px;
+            align-items: flex-start;
+          }
+
+          .booking-form-popup {
+            padding: 1.5rem;
+            margin-top: 20px;
+            max-height: 90vh;
+          }
+
+          .booking-form-popup h2 {
+            font-size: 1.3rem;
+          }
+
+          .tour-summary {
+            padding: 1rem;
+          }
+
+          .booking-form input,
+          .booking-form select,
+          .booking-form textarea {
+            font-size: 16px;
+          }
         }
 
         .modal-content h2 {

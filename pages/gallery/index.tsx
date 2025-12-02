@@ -13,26 +13,34 @@ export default function SimpleGallery() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+  const [imagesLoaded, setImagesLoaded] = useState(0);
   const galleryRef = useRef(null);
   const { t } = useTranslation()
-  // Hardcoded gallery images (original frontend images)
+  
+  // Hardcoded gallery images (original frontend images) with optimized Cloudinary URLs
   const staticGalleryImages = [
-    { id: 1, src: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453704/dylan-shaw-smUAKwMT8XA-unsplash_qhenhx.jpg', alt: 'Sigiriya Rock at sunrise', title: 'Sigiriya Sunrise', location: 'Central Province' },
-    { id: 2, src: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762454466/chathura-anuradha-subasinghe-40uQmE9Zq8g-unsplash_tvflxt.jpg', alt: 'Kandy Temple', title: 'Sacred Temple', location: 'Kandy' },
-    { id: 3, src: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453781/adam-vandermeer-Dw9dWTzzsUE-unsplash_l49hhe.jpg', alt: 'Nine Arch Bridge in Ella', title: 'Nine Arch Bridge', location: 'Ella' },
-    { id: 4, src: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453796/chathura-indika-LAj-XlHP6Rs-unsplash_o7mzbc.jpg', alt: 'Galle Fort during sunset', title: 'Galle Fort Sunset', location: 'Galle' },
-    { id: 5, src: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762454382/siarhei-palishchuk-hgiby6qxvpc-unsplash_prnosl.jpg', alt: 'Mirissa Beach coastline', title: 'Mirissa Beach', location: 'Southern Coast' },
-    { id: 6, src: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453757/gemmmm-FRTpkBIi-1Y-unsplash_iggwsm.jpg', alt: 'Leopard in Yala National Park', title: 'Yala Wildlife', location: 'Yala National Park' },
-    { id: 7, src: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453797/anton-lecock-TPtaNsBOW9Q-unsplash_g0htag.jpg', alt: 'Tea plantations in hill country', title: 'Tea Country', location: 'Nuwara Eliya' },
-    { id: 8, src: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453785/udara-karunarathna-LfUJO4whcSU-unsplash_xnxl7h.jpg', alt: 'Surfing at Arugam Bay', title: 'Arugam Bay Waves', location: 'East Coast' },
-    { id: 9, src: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453771/claus-giering-YmcSXWcmh6w-unsplash_zw66ck.jpg', alt: 'Pristine beach in Trincomalee', title: 'Trincomalee Beaches', location: 'East Coast' },
-    { id: 10, src: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453710/train-journey.jpg', alt: 'Scenic train journey', title: 'Mountain Railway', location: 'Hill Country' },
-    { id: 11, src: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762454341/birendra-padmaperuma-jB7TbGrC1xM-unsplash_qcpkau.jpg', alt: 'Polonnaruwa ruins', title: 'Polonnaruwa', location: 'Cultural' },
-    { id: 12, src: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1761861700/agnieszka-stankiewicz-OMgi4DfiO3c-unsplash_dfa3pd.jpg', alt: 'Dambulla cave temples', title: 'Dambulla Golden Temple', location: 'Dambulla' }
+    { id: 1, src: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/q_auto:low,f_auto,w_800/v1762453704/dylan-shaw-smUAKwMT8XA-unsplash_qhenhx.jpg', alt: 'Sigiriya Rock at sunrise', title: 'Sigiriya Sunrise', location: 'Central Province' },
+    { id: 2, src: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/q_auto:low,f_auto,w_800/v1762454466/chathura-anuradha-subasinghe-40uQmE9Zq8g-unsplash_tvflxt.jpg', alt: 'Kandy Temple', title: 'Sacred Temple', location: 'Kandy' },
+    { id: 3, src: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/q_auto:low,f_auto,w_800/v1762453781/adam-vandermeer-Dw9dWTzzsUE-unsplash_l49hhe.jpg', alt: 'Nine Arch Bridge in Ella', title: 'Nine Arch Bridge', location: 'Ella' },
+    { id: 4, src: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/q_auto:low,f_auto,w_800/v1762453796/chathura-indika-LAj-XlHP6Rs-unsplash_o7mzbc.jpg', alt: 'Galle Fort during sunset', title: 'Galle Fort Sunset', location: 'Galle' },
+    { id: 5, src: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/q_auto:low,f_auto,w_800/v1762454382/siarhei-palishchuk-hgiby6qxvpc-unsplash_prnosl.jpg', alt: 'Mirissa Beach coastline', title: 'Mirissa Beach', location: 'Southern Coast' },
+    { id: 6, src: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/q_auto:low,f_auto,w_800/v1762453757/gemmmm-FRTpkBIi-1Y-unsplash_iggwsm.jpg', alt: 'Leopard in Yala National Park', title: 'Yala Wildlife', location: 'Yala National Park' },
+    { id: 7, src: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/q_auto:low,f_auto,w_800/v1762453797/anton-lecock-TPtaNsBOW9Q-unsplash_g0htag.jpg', alt: 'Tea plantations in hill country', title: 'Tea Country', location: 'Nuwara Eliya' },
+    { id: 8, src: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/q_auto:low,f_auto,w_800/v1762453785/udara-karunarathna-LfUJO4whcSU-unsplash_xnxl7h.jpg', alt: 'Surfing at Arugam Bay', title: 'Arugam Bay Waves', location: 'East Coast' },
+    { id: 9, src: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/q_auto:low,f_auto,w_800/v1762453771/claus-giering-YmcSXWcmh6w-unsplash_zw66ck.jpg', alt: 'Pristine beach in Trincomalee', title: 'Trincomalee Beaches', location: 'East Coast' },
+    { id: 10, src: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/q_auto:low,f_auto,w_800/v1762453710/train-journey.jpg', alt: 'Scenic train journey', title: 'Mountain Railway', location: 'Hill Country' },
+    { id: 11, src: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/q_auto:low,f_auto,w_800/v1762454341/birendra-padmaperuma-jB7TbGrC1xM-unsplash_qcpkau.jpg', alt: 'Polonnaruwa ruins', title: 'Polonnaruwa', location: 'Cultural' },
+    { id: 12, src: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/q_auto:low,f_auto,w_800/v1761861700/agnieszka-stankiewicz-OMgi4DfiO3c-unsplash_dfa3pd.jpg', alt: 'Dambulla cave temples', title: 'Dambulla Golden Temple', location: 'Dambulla' }
   ];
 
   // Start with static images for instant display, then fetch additional ones from database
   const [galleryImages, setGalleryImages] = useState<any[]>(staticGalleryImages);
+
+  // Mark loading complete after initial render
+  useEffect(() => {
+    setIsLoading(false);
+  }, []);
 
   const get = (key: string, fallback: string) => {
     const val = t(key)
@@ -155,10 +163,26 @@ export default function SimpleGallery() {
       <Navbar />
 
       {/* Hero Section */}
-      <section className="gallery-hero">
+      <section className="gallery-hero" style={{ marginTop: '0' }}>
         <div className="hero-content">
           <h1>{t('gallery.hero.title')}</h1>
           <p>{t('gallery.hero.subtitle')}</p>
+          
+          <div className="hero-stats-preview">
+            <div className="stat-preview">
+              <div className="stat-number">25</div>
+              <div className="stat-label">Stunning Photos</div>
+            </div>
+            <div className="stat-preview">
+              <div className="stat-number">12</div>
+              <div className="stat-label">Unique Locations</div>
+            </div>
+            <div className="stat-preview">
+              <div className="stat-number">100+</div>
+              <div className="stat-label">Happy Travelers</div>
+            </div>
+          </div>
+          
           <div className="scroll-indicator">
             <span>{t('gallery.hero.scroll')}</span>
             <div className="arrow">↓</div>
@@ -169,20 +193,29 @@ export default function SimpleGallery() {
       {/* Gallery Grid */}
       <section className="gallery-grid-section">
         <div className="container">
-          <div className="gallery-stats">
-            <div className="stat">
-              <span className="number">{galleryImages.length}</span>
-              <span className="label">{t('gallery.stats.photosLabel')}</span>
+          {isLoading && (
+            <div style={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              minHeight: '300px',
+              fontSize: '1.2rem',
+              color: 'var(--primary-color)'
+            }}>
+              <div style={{ textAlign: 'center' }}>
+                <div style={{
+                  width: '50px',
+                  height: '50px',
+                  border: '4px solid var(--border-color)',
+                  borderTop: '4px solid var(--primary-color)',
+                  borderRadius: '50%',
+                  animation: 'spin 1s linear infinite',
+                  margin: '0 auto 1rem'
+                }}></div>
+                Loading gallery...
+              </div>
             </div>
-            <div className="stat">
-              <span className="number">12</span>
-              <span className="label">{t('gallery.stats.locationsLabel')}</span>
-            </div>
-            <div className="stat">
-              <span className="number">100+</span>
-              <span className="label">{t('gallery.stats.travelersLabel')}</span>
-            </div>
-          </div>
+          )}
 
           <div className="gallery-grid" ref={galleryRef}>
             {galleryImages.map((image, index) => (
@@ -199,7 +232,12 @@ export default function SimpleGallery() {
                     fill
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     style={{ objectFit: 'cover' }}
-                    priority={index < 6}
+                    priority={index < 4}
+                    loading={index < 4 ? 'eager' : 'lazy'}
+                    quality={75}
+                    placeholder="blur"
+                    blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAb/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWEREiMxUf/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
+                    onLoadingComplete={() => setImagesLoaded(prev => prev + 1)}
                   />
                   <div className="image-overlay">
                     <div className="image-info">
@@ -290,30 +328,73 @@ export default function SimpleGallery() {
       <style jsx>{`
         /* Simple Gallery Styles */
         .gallery-hero {
-          height: 60vh;
-          min-height: 400px;
+          position: relative;
+          height: 72vh;
+          min-height: 520px;
           display: flex;
           align-items: center;
           justify-content: center;
           text-align: center;
           background: #053b3c;
           color: white;
-          position: relative;
           overflow: hidden;
+          padding-top: 130px;
         }
 
-
+        .hero-content {
+          max-width: 800px;
+          margin: 0 auto;
+          padding: 0 20px;
+          width: 100%;
+        }
 
         .hero-content h1 {
-          font-size: 3rem;
-          margin-bottom: 1rem;
+          font-size: 3.5rem;
+          margin-bottom: 1.5rem;
           font-weight: 700;
+          line-height: 1.2;
         }
 
         .hero-content p {
-          font-size: 1.3rem;
-          opacity: 0.9;
+          font-size: 1.5rem;
+          opacity: 0.95;
           margin-bottom: 2rem;
+          line-height: 1.6;
+        }
+
+        .hero-stats-preview {
+          display: flex;
+          flex-direction: row;
+          gap: 2rem;
+          align-items: center;
+          justify-content: center;
+          flex-wrap: wrap;
+          margin-top: 2rem;
+          margin-bottom: 2rem;
+        }
+
+        .stat-preview {
+          text-align: center;
+          padding: 1rem 1.5rem;
+          background: rgba(255, 255, 255, 0.1);
+          backdrop-filter: blur(10px);
+          border-radius: 12px;
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          min-width: 140px;
+        }
+
+        .stat-number {
+          font-size: 2.5rem;
+          font-weight: 700;
+          color: #f8b500;
+          margin-bottom: 0.5rem;
+          line-height: 1;
+        }
+
+        .stat-label {
+          font-size: 0.9rem;
+          color: rgba(255, 255, 255, 0.9);
+          font-weight: 500;
         }
 
         .scroll-indicator {
@@ -339,6 +420,11 @@ export default function SimpleGallery() {
           60% {
             transform: translateY(-5px);
           }
+        }
+
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
         }
 
         /* Gallery Grid Section */
@@ -622,7 +708,58 @@ export default function SimpleGallery() {
         .gallery-item:nth-child(3n+3) { animation-delay: 0.3s; }
 
         /* Responsive Design */
+        /* Large Screen Galleries */
+        @media (min-width: 2560px) {
+          .gallery-grid {
+            grid-template-columns: repeat(5, 1fr);
+            gap: 2rem;
+          }
+
+          .hero-content h1 {
+            font-size: 4.5rem;
+          }
+
+          .hero-content p {
+            font-size: 1.8rem;
+          }
+        }
+
+        @media (min-width: 1920px) and (max-width: 2559px) {
+          .gallery-grid {
+            grid-template-columns: repeat(4, 1fr);
+          }
+
+          .hero-content h1 {
+            font-size: 4rem;
+          }
+        }
+
+        @media (min-width: 1440px) and (max-width: 1919px) {
+          .gallery-grid {
+            grid-template-columns: repeat(4, 1fr);
+          }
+        }
+
+        @media (min-width: 1024px) and (max-width: 1279px) {
+          .gallery-grid {
+            grid-template-columns: repeat(3, 1fr);
+          }
+        }
+
         @media (max-width: 768px) {
+          .gallery-hero {
+            height: 50vh;
+            min-height: 400px;
+            padding-top: 70px;
+          }
+
+          .hero-content h1 {
+            font-size: 2.2rem;
+          }
+
+          .hero-content p {
+            font-size: 1.1rem;
+          }
           .hero-content h1 {
             font-size: 2.2rem;
           }
@@ -669,6 +806,17 @@ export default function SimpleGallery() {
         }
 
         @media (max-width: 576px) {
+          .gallery-hero {
+            min-height: 350px;
+          }
+
+          .hero-content h1 {
+            font-size: 1.8rem;
+          }
+
+          .hero-content p {
+            font-size: 1rem;
+          }
           .hero-content h1 {
             font-size: 1.8rem;
           }

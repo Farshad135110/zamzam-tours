@@ -98,6 +98,98 @@ section {
   padding: 4rem 0;
 }
 
+/* Large Desktop & TV Sizes (2560px+) */
+@media (min-width: 2560px) {
+  .container {
+    max-width: 2400px;
+  }
+
+  section {
+    padding: 6rem 0;
+  }
+
+  h1 {
+    font-size: 4.5rem;
+  }
+
+  h2 {
+    font-size: 3.5rem;
+  }
+
+  .btn {
+    padding: 18px 40px;
+    font-size: 1.25rem;
+  }
+}
+
+/* Desktop Large (1920px-2559px) */
+@media (min-width: 1920px) and (max-width: 2559px) {
+  .container {
+    max-width: 1800px;
+  }
+
+  section {
+    padding: 5rem 0;
+  }
+
+  h1 {
+    font-size: 3.5rem;
+  }
+
+  h2 {
+    font-size: 2.75rem;
+  }
+}
+
+/* Desktop Standard (1440px-1919px) */
+@media (min-width: 1440px) and (max-width: 1919px) {
+  .container {
+    max-width: 1400px;
+  }
+
+  .grid {
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  }
+}
+
+/* Laptop Large (1366px-1439px) */
+@media (min-width: 1366px) and (max-width: 1439px) {
+  .container {
+    max-width: 1280px;
+  }
+
+  section {
+    padding: 3.5rem 0;
+  }
+}
+
+/* Laptop Standard (1280px-1365px) */
+@media (min-width: 1280px) and (max-width: 1365px) {
+  .container {
+    max-width: 1200px;
+  }
+}
+
+/* Tablet Landscape & Small Laptop (1024px-1279px) */
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .container {
+    max-width: 960px;
+    padding: 0 2rem;
+  }
+
+  section {
+    padding: 3rem 0;
+  }
+
+  h1 {
+    font-size: 2.5rem;
+  }
+
+  h2 {
+    font-size: 2rem;
+  }
+}
+
 @media (max-width: 768px) {
   .page-content {
     padding-top: 70px;
@@ -107,19 +199,71 @@ section {
     padding: 2rem 0;
   }
 
-  /* Improve touch targets on mobile */
-  button, a {
+  /* Improve touch targets on mobile - 44px minimum for accessibility */
+  button, a.btn, .btn {
     min-height: 44px;
     min-width: 44px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    padding: 12px 24px;
   }
 
   /* Better spacing for form inputs */
   input, textarea, select {
     min-height: 44px;
     font-size: 16px; /* Prevents zoom on iOS */
+    padding: 12px 15px;
+  }
+
+  /* Optimize emoji sizing for mobile */
+  .emoji, .icon {
+    font-size: 1.5rem;
+    line-height: 1;
+  }
+
+  /* Ensure images are responsive */
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* Grid layout adjustments */
+  .grid, .vehicle-grid, .tour-grid, .destinations-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Container padding on mobile */
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
+
+@media (max-width: 576px) {
+  /* Extra small screens */
+  h1 {
+    font-size: 1.75rem;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+  }
+
+  h3 {
+    font-size: 1.25rem;
+  }
+
+  /* Button text sizes */
+  button, .btn {
+    font-size: 0.95rem;
+    padding: 10px 20px;
+  }
+
+  /* Reduce container padding further */
+  .container {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
   }
 }
 

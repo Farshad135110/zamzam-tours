@@ -410,25 +410,27 @@ export default function About() {
 
         .stat-preview {
           text-align: center;
-          padding: 0.8rem 1rem;
-          background: rgba(255, 255, 255, 0.07);
-          backdrop-filter: blur(6px);
+          padding: 1rem 1.5rem;
+          background: rgba(255, 255, 255, 0.1);
+          backdrop-filter: blur(10px);
           border-radius: 12px;
-          border: 1px solid rgba(255, 255, 255, 0.12);
-          min-width: 100px;
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          min-width: 140px;
         }
 
         .stat-preview .number {
           display: block;
-          font-size: 1.25rem;
+          font-size: 2.5rem;
           font-weight: 700;
           color: var(--secondary-color);
-          margin-bottom: 0.25rem;
+          margin-bottom: 0.5rem;
+          line-height: 1;
         }
 
         .stat-preview .label {
-          font-size: 0.85rem;
+          font-size: 0.9rem;
           opacity: 0.9;
+          font-weight: 500;
         }
 
         /* Story & Mission Section */
@@ -972,6 +974,47 @@ export default function About() {
         .about-cta .btn-secondary:hover {
           background-color: white;
           color: var(--primary-color);
+        }
+
+        /* Large Screen Optimizations */
+        @media (min-width: 2560px) {
+          .team-grid,
+          .values-grid {
+            grid-template-columns: repeat(4, 1fr);
+            gap: 3rem;
+          }
+
+          .stats-grid {
+            grid-template-columns: repeat(4, 1fr);
+          }
+        }
+
+        @media (min-width: 1920px) and (max-width: 2559px) {
+          .team-grid {
+            grid-template-columns: repeat(4, 1fr);
+          }
+
+          .values-grid {
+            grid-template-columns: repeat(3, 1fr);
+          }
+        }
+
+        @media (min-width: 1440px) and (max-width: 1919px) {
+          .team-grid,
+          .values-grid {
+            grid-template-columns: repeat(3, 1fr);
+          }
+        }
+
+        @media (min-width: 1024px) and (max-width: 1279px) {
+          .team-grid,
+          .values-grid {
+            grid-template-columns: repeat(2, 1fr);
+          }
+
+          .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+          }
         }
 
         /* Responsive Design */

@@ -24,13 +24,30 @@ export default function AirportTransfer() {
   const heroRef = useRef(null);
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  // Handle video autoplay
+  // Handle video autoplay with better error handling
   useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.play().catch((error) => {
-        console.log('Video autoplay failed:', error);
-      });
-    }
+    const playVideo = async () => {
+      if (videoRef.current) {
+        try {
+          // Wait for video to be ready
+          if (videoRef.current.readyState >= 2) {
+            await videoRef.current.play();
+          } else {
+            videoRef.current.addEventListener('loadeddata', async () => {
+              try {
+                await videoRef.current?.play();
+              } catch (error) {
+                console.log('Video autoplay deferred:', error);
+              }
+            }, { once: true });
+          }
+        } catch (error) {
+          console.log('Video autoplay failed:', error);
+        }
+      }
+    };
+    
+    playVideo();
   }, []);
 
   const { t } = useTranslation()
@@ -185,15 +202,19 @@ export default function AirportTransfer() {
             loop
             muted
             playsInline
-            preload="metadata"
+            preload="auto"
             poster="https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453704/dylan-shaw-smUAKwMT8XA-unsplash_qhenhx.jpg"
             style={{
               width: '100%',
               height: '100%',
               objectFit: 'cover'
             }}
-            src="https://res.cloudinary.com/dhfqwxyb4/video/upload/v1761687230/12177913_3840_2160_30fps_d6dhi5.mp4"
-          />
+          >
+            <source 
+              src="https://res.cloudinary.com/dhfqwxyb4/video/upload/q_auto,f_auto/v1761687230/12177913_3840_2160_30fps_d6dhi5.mp4" 
+              type="video/mp4"
+            />
+          </video>
         </div>
         
         <div className="transfer-hero-overlay" style={{
@@ -1171,6 +1192,40 @@ export default function AirportTransfer() {
           gap: 1rem;
           justify-content: flex-end;
           margin-top: 2rem;
+        }
+
+        /* Large Screen Optimizations */
+        @media (min-width: 2560px) {
+          .vehicles-showcase {
+            grid-template-columns: repeat(5, 1fr);
+            gap: 3rem;
+          }
+
+          .routes-grid {
+            grid-template-columns: repeat(3, 1fr);
+          }
+        }
+
+        @media (min-width: 1920px) and (max-width: 2559px) {
+          .vehicles-showcase {
+            grid-template-columns: repeat(4, 1fr);
+          }
+        }
+
+        @media (min-width: 1440px) and (max-width: 1919px) {
+          .vehicles-showcase {
+            grid-template-columns: repeat(4, 1fr);
+          }
+        }
+
+        @media (min-width: 1024px) and (max-width: 1279px) {
+          .vehicles-showcase {
+            grid-template-columns: repeat(3, 1fr);
+          }
+
+          .routes-grid {
+            grid-template-columns: repeat(2, 1fr);
+          }
         }
 
         /* Responsive Design */

@@ -50,6 +50,7 @@ export default function SelfDrive() {
   const [customerType, setCustomerType] = useState('tourist');
   const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
   const [showBookingForm, setShowBookingForm] = useState(false);
+  const [bookingFormScrollTop, setBookingFormScrollTop] = useState(0);
   const [pickupDate, setPickupDate] = useState('');
   const [returnDate, setReturnDate] = useState('');
   const [pickupLocation, setPickupLocation] = useState('colombo');
@@ -69,6 +70,18 @@ export default function SelfDrive() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Auto-scroll booking form into view when it opens
+  useEffect(() => {
+    if (showBookingForm) {
+      setTimeout(() => {
+        const modalContent = document.querySelector('.modal-content') as HTMLElement;
+        if (modalContent) {
+          modalContent.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 100);
+    }
+  }, [showBookingForm]);
   
   // Handle video autoplay
   useEffect(() => {
@@ -198,7 +211,16 @@ export default function SelfDrive() {
   // Open booking form
   const openBookingForm = (vehicle: Vehicle) => {
     setSelectedVehicle(vehicle);
+    setBookingFormScrollTop(window.scrollY);
+    document.body.style.overflow = 'hidden';
     setShowBookingForm(true);
+  };
+
+  // Close booking form
+  const closeBookingForm = () => {
+    setShowBookingForm(false);
+    document.body.style.overflow = '';
+    window.scrollTo(0, bookingFormScrollTop);
   };
 
   // Calculate rental period
@@ -474,11 +496,11 @@ export default function SelfDrive() {
 
       {/* Booking Form Modal */}
       {showBookingForm && selectedVehicle && (
-        <div className="modal-overlay" onClick={() => setShowBookingForm(false)}>
+        <div className="modal-overlay" onClick={closeBookingForm}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <button 
               className="modal-close"
-              onClick={() => setShowBookingForm(false)}
+              onClick={closeBookingForm}
             >
               ×
             </button>
@@ -610,7 +632,7 @@ export default function SelfDrive() {
               </div>
 
               <div className="form-actions">
-                <button type="button" className="btn btn-secondary" onClick={() => setShowBookingForm(false)}>
+                <button type="button" className="btn btn-secondary" onClick={closeBookingForm}>
                   {get('carRental.form.actions.cancel', 'Cancel')}
                 </button>
                 <button type="submit" className="btn btn-primary">
@@ -753,6 +775,61 @@ export default function SelfDrive() {
           grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
           gap: 2rem;
           margin-bottom: 3rem;
+        }
+
+        /* Large Screen Layouts */
+        @media (min-width: 2560px) {
+          .vehicles-grid {
+            grid-template-columns: repeat(5, 1fr);
+            gap: 3rem;
+          }
+
+          .container {
+            max-width: 2400px;
+          }
+
+          .hero h1 {
+            font-size: 5rem !important;
+          }
+        }
+
+        @media (min-width: 1920px) and (max-width: 2559px) {
+          .vehicles-grid {
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2.5rem;
+          }
+
+          .container {
+            max-width: 1800px;
+          }
+
+          .hero h1 {
+            font-size: 4rem !important;
+          }
+        }
+
+        @media (min-width: 1440px) and (max-width: 1919px) {
+          .vehicles-grid {
+            grid-template-columns: repeat(3, 1fr);
+          }
+
+          .hero h1 {
+            font-size: 3.5rem !important;
+          }
+        }
+
+        @media (min-width: 1024px) and (max-width: 1279px) {
+          .vehicles-grid {
+            grid-template-columns: repeat(2, 1fr);
+          }
+
+          .modal-content {
+            max-width: 85%;
+          }
+
+          .hero h1 {
+            font-size: 3rem !important;
+          }
         }
 
         /* Vehicle Card */
@@ -1015,7 +1092,56 @@ export default function SelfDrive() {
           max-height: 85vh;
           overflow-y: auto;
           position: relative;
-          margin: auto;
+        }
+
+        @media (max-width: 768px) {
+          .modal-overlay {
+            padding: 10px;
+            align-items: flex-start;
+          }
+
+          .modal-content {
+            padding: 1.5rem;
+            margin-top: 20px;
+            max-height: 90vh;
+          }
+
+          .modal-content h2 {
+            font-size: 1.3rem;
+          }
+
+          .vehicle-summary {
+            flex-direction: column;
+          }
+
+          .summary-image {
+            width: 100%;
+          }
+
+          .booking-form input,
+          .booking-form select,
+          .booking-form textarea {
+            font-size: 16px;
+          }
+
+          .modal-close {
+            width: 40px;
+            height: 40px;
+            font-size: 1.3rem;
+          }
+
+          .form-row {
+            grid-template-columns: 1fr;
+          }
+
+          .booking-form .form-group {
+            margin-bottom: 1.2rem;
+          }
+
+          .submit-booking-btn {
+            padding: 12px 20px;
+            font-size: 1rem;
+          }
         }
 
         .modal-close {
