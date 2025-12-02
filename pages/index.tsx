@@ -1,5 +1,5 @@
 // pages/index.tsx - Homepage
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -46,19 +46,28 @@ export default function Home() {
     { code: 'it', name: 'Italiano' }
   ];
   
-  // Vehicle fleet data - fetched from backend API (pages/api/vehicles)
+  // Vehicle fleet data - fetched from backend API with optimization
   const [vehicles, setVehicles] = useState<Array<{ name: string; capacity: string; type: string; image: string; description: string }>>([]);
   const [vehiclesLoading, setVehiclesLoading] = useState(true);
 
   useEffect(() => {
+    let isMounted = true;
+    const controller = new AbortController();
+    
     const fetchVehicles = async () => {
       try {
         setVehiclesLoading(true);
-        const res = await fetch('/api/vehicles');
+        const timeoutId = setTimeout(() => controller.abort(), 8000);
+        
+        const res = await fetch('/api/vehicles', { signal: controller.signal });
+        clearTimeout(timeoutId);
+        
         if (!res.ok) throw new Error('Failed to fetch vehicles');
         const data = await res.json();
 
-        const mapped = data.map((v: any) => ({
+        if (!isMounted) return;
+
+        const mapped = data.slice(0, 8).map((v: any) => ({
           name: get(`home.vehicles.${v.vehicle_id || v.id || v.vehicle_name}.name`, v.vehicle_name || v.name || 'Vehicle'),
           capacity: v.capacity ? `${v.capacity}` : (v.seats ? `${v.seats}` : '4'),
           type: (v.available_for || v.type || 'self-drive, with-driver').toString(),
@@ -68,21 +77,29 @@ export default function Home() {
         }));
 
         setVehicles(mapped);
-      } catch (err) {
-        console.error('Error loading vehicles for homepage:', err);
-        // Fallback: use a small local set so the homepage still shows vehicles when the DB/API isn't available locally
-        const fallback = [
-          { name: 'Prius', capacity: '4', type: 'self-drive, with-driver', image: 'zamzam-tours/vehicles/prius', description: 'Premium hybrid sedan' },
-          { name: 'Aqua', capacity: '4', type: 'self-drive, with-driver', image: 'zamzam-tours/vehicles/aqua', description: 'Fuel-efficient hybrid' },
-          { name: 'KDH Van', capacity: '6-8', type: 'with-driver', image: 'zamzam-tours/vehicles/kdh-van', description: 'Comfortable family vehicle' },
-        ];
-        setVehicles(fallback);
+      } catch (err: any) {
+        if (err.name !== 'AbortError' && isMounted) {
+          console.error('Error loading vehicles for homepage:', err);
+          const fallback = [
+            { name: 'Prius', capacity: '4', type: 'self-drive, with-driver', image: 'zamzam-tours/vehicles/prius', description: 'Premium hybrid sedan' },
+            { name: 'Aqua', capacity: '4', type: 'self-drive, with-driver', image: 'zamzam-tours/vehicles/aqua', description: 'Fuel-efficient hybrid' },
+            { name: 'KDH Van', capacity: '6-8', type: 'with-driver', image: 'zamzam-tours/vehicles/kdh-van', description: 'Comfortable family vehicle' },
+          ];
+          setVehicles(fallback);
+        }
       } finally {
-        setVehiclesLoading(false);
+        if (isMounted) {
+          setVehiclesLoading(false);
+        }
       }
     };
 
     fetchVehicles();
+    
+    return () => {
+      isMounted = false;
+      controller.abort();
+    };
   }, []);
   
   // Popular destinations - with Cloudinary image IDs
@@ -115,19 +132,28 @@ export default function Home() {
     { name: 'Beach Paradise', duration: '8 days', highlights: ['Mirissa', 'Galle', 'Hikkaduwa'] }
   ];
 
-  // Homepage tours loaded from API (/api/packages). Falls back to defaultTourPackages when API fails.
+  // Homepage tours loaded from API with optimization
   const [homeTours, setHomeTours] = useState<any[]>(defaultTourPackages);
   const [homeToursLoading, setHomeToursLoading] = useState<boolean>(false);
 
   useEffect(() => {
+    let isMounted = true;
+    const controller = new AbortController();
+    
     const fetchHomeTours = async () => {
       try {
         setHomeToursLoading(true);
-        const res = await fetch('/api/packages');
+        const timeoutId = setTimeout(() => controller.abort(), 8000);
+        
+        const res = await fetch('/api/packages', { signal: controller.signal });
+        clearTimeout(timeoutId);
+        
         if (!res.ok) throw new Error('Failed to fetch packages');
         const packages = await res.json();
 
-        const transformedTours = packages.map((pkg: any) => ({
+        if (!isMounted) return;
+
+        const transformedTours = packages.slice(0, 6).map((pkg: any) => ({
           id: pkg.package_id ? parseInt(pkg.package_id.replace('P', '')) || 0 : 0,
           name: get(`home.tours.${pkg.package_id}.name`, pkg.package_name || pkg.name || 'Tour'),
           duration: get(`home.tours.${pkg.package_id}.duration`, pkg.duration || 'N/A'),
@@ -138,16 +164,24 @@ export default function Home() {
           description: get(`home.tours.${pkg.package_id}.description`, pkg.description || ''),
         }));
 
-        if (transformedTours && transformedTours.length > 0) setHomeTours(transformedTours);
-      } catch (err) {
-        console.error('Failed to load home tour packages:', err);
-        // keep fallback
+        if (isMounted && transformedTours && transformedTours.length > 0) setHomeTours(transformedTours);
+      } catch (err: any) {
+        if (err.name !== 'AbortError' && isMounted) {
+          console.error('Failed to load home tour packages:', err);
+        }
       } finally {
-        setHomeToursLoading(false);
+        if (isMounted) {
+          setHomeToursLoading(false);
+        }
       }
     };
 
     fetchHomeTours();
+    
+    return () => {
+      isMounted = false;
+      controller.abort();
+    };
   }, []);
   
   // Handle scroll effect
@@ -533,16 +567,15 @@ export default function Home() {
                                   </div>
                                 </div>
                                 <div className="tour-actions">
+                                  <Link href="/tours" className="btn-view-details">
+                                    {get('home.tours.viewDetails', 'View Details')}
+                                  </Link>
                                   <button
                                     className="btn-book-now"
                                     onClick={() => handleWhatsAppBooking(`the ${tour.name} package`)}
                                   >
-                                    <span className="btn-icon">📱</span>
                                     <span>{get('home.tours.bookNow', 'Book Now')}</span>
                                   </button>
-                                  <Link href="/tours" className="btn-view-details">
-                                    {get('home.tours.viewDetails', 'View Details')}
-                                  </Link>
                                 </div>
                               </div>
                             </div>

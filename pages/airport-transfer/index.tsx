@@ -466,12 +466,12 @@ export default function AirportTransfer() {
 
               {/* Pricing Notice */}
               <div className="pricing-notice">
-                <p>💰 <strong>{get('airportTransfer.pricing.notice','Pricing will be discussed via WhatsApp')}</strong></p>
+                <p><strong>{get('airportTransfer.pricing.notice','Pricing will be discussed via WhatsApp')}</strong></p>
               </div>
 
               {/* Submit Button */}
               <button type="submit" className="btn-primary large">
-                <span>{get('airportTransfer.buttons.sendWhatsApp','📲 Send Booking Request via WhatsApp')}</span>
+                <span>{get('airportTransfer.buttons.sendWhatsApp','Send Booking Request via WhatsApp')}</span>
               </button>
             </form>
           </div>
@@ -764,7 +764,7 @@ export default function AirportTransfer() {
           padding: 12px 24px;
           font-size: 1rem;
           width: 100%;
-          background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+          background: #053b3c;
           color: white;
           border: none;
           border-radius: 10px;
@@ -775,7 +775,8 @@ export default function AirportTransfer() {
 
         .btn-primary.large:hover {
           transform: translateY(-2px);
-          box-shadow: 0 5px 15px rgba(37, 211, 102, 0.3);
+          box-shadow: 0 5px 15px rgba(5, 59, 60, 0.3);
+          background: #0a5c5e;
         }
 
         /* Why Choose Us Section */

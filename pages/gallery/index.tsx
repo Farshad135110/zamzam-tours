@@ -533,8 +533,8 @@ export default function SimpleGallery() {
 
         .view-button {
           align-self: flex-end;
-          background: var(--secondary-color);
-          color: var(--text-color);
+          background: var(--primary-color);
+          color: white;
           padding: 8px 16px;
           border-radius: 20px;
           font-weight: 600;
@@ -647,8 +647,8 @@ export default function SimpleGallery() {
         }
 
         .nav-button:hover {
-          background: var(--secondary-color);
-          color: var(--text-color);
+          background: var(--primary-color);
+          color: white;
           transform: scale(1.1);
         }
 

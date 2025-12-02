@@ -1102,36 +1102,6 @@ const ActivityDetailPage = () => {
       )}
 
       {/* CTA Section */}
-      <section style={{ padding: '3rem 5%', background: '#053b3c', textAlign: 'center' }}>
-        <div style={{ maxWidth: '800px', margin: '0 auto' }}>
-          <h2 style={{ fontSize: '2rem', color: '#25D366', marginBottom: '0.8rem' }}>
-            Ready for an Adventure?
-          </h2>
-          <p style={{ fontSize: '1.1rem', color: '#fff', marginBottom: '1.5rem', opacity: 0.9 }}>
-            Book your {activity.name} experience with Zamzam Lanka Tours today!
-          </p>
-          <button 
-            onClick={handleWhatsAppBooking}
-            style={{
-              padding: '1rem 2.5rem',
-              background: '#25D366',
-              color: '#fff',
-              border: 'none',
-              borderRadius: '30px',
-              fontSize: '1.1rem',
-              fontWeight: '700',
-              cursor: 'pointer',
-              transition: 'transform 0.3s ease',
-              boxShadow: '0 4px 15px rgba(37,211,102,0.3)'
-            }}
-            onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
-            onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
-          >
-            Contact Us on WhatsApp
-          </button>
-        </div>
-      </section>
-
       <Footer />
 
       <style jsx>{`

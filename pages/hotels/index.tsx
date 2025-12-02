@@ -1083,18 +1083,7 @@ export default function Hotels() {
               </div>
             </div>
 
-            <div className="banner-cta">
-              <button 
-                className="btn-primary large"
-                onClick={() => {
-                  const message = `Hello Zamzam Lanka Tours! I want to book a complete travel package including hotel, transfers, and tours. Please help me plan my trip.`;
-                  const encodedMessage = encodeURIComponent(message);
-                  window.open(`${CONTACT_INFO.whatsappUrl}?text=${encodedMessage}`, '_blank');
-                }}
-              >
-                {get('hotels.integrated.cta', '💬 Plan My Complete Trip on WhatsApp')}
-              </button>
-            </div>
+
           </div>
         </div>
       </section>
@@ -2105,8 +2094,8 @@ export default function Hotels() {
           position: absolute;
           top: 15px;
           left: 15px;
-          background: var(--secondary-color);
-          color: var(--text-color);
+          background: var(--primary-color);
+          color: white;
           padding: 5px 10px;
           border-radius: 15px;
           font-size: 0.8rem;
@@ -2373,12 +2362,12 @@ export default function Hotels() {
         }
 
         .overlay-btn-book {
-          background: #f8b500;
+          background: var(--primary-color);
           color: white;
         }
 
         .overlay-btn-book:hover {
-          background: #e5a600;
+          background: var(--primary-light);
           transform: scale(1.05);
         }
 
@@ -2397,7 +2386,7 @@ export default function Hotels() {
           position: absolute;
           top: 15px;
           left: 15px;
-          background: linear-gradient(135deg, #f8b500 0%, #ff8c00 100%);
+          background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
           color: white;
           padding: 5px 12px;
           border-radius: 15px;
@@ -2537,8 +2526,8 @@ export default function Hotels() {
         }
 
         .popular-tag {
-          background: var(--secondary-color);
-          color: var(--text-color);
+          background: var(--primary-color);
+          color: white;
           padding: 2px 6px;
           border-radius: 8px;
           font-size: 0.7rem;
@@ -2574,10 +2563,10 @@ export default function Hotels() {
         .btn-view-details,
         .btn-book-now {
           flex: 1;
-          padding: 0.65rem 1rem;
+          padding: 10px 18px;
           border: none;
-          border-radius: 5px;
-          font-size: 0.85rem;
+          border-radius: 8px;
+          font-size: 0.9rem;
           font-weight: 600;
           cursor: pointer;
           transition: all 0.3s ease;
@@ -2585,14 +2574,15 @@ export default function Hotels() {
 
         .btn-view-details {
           background: white;
-          color: var(--text-color);
-          border: 1px solid var(--border-color);
+          color: #053b3c;
+          border: 2px solid #053b3c;
         }
 
         .btn-view-details:hover {
-          background: var(--primary-color);
+          background: #053b3c;
           color: white;
-          border-color: var(--primary-color);
+          border-color: #053b3c;
+          transform: translateY(-2px);
         }
 
         .btn-book-now {

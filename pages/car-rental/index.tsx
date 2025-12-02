@@ -1,5 +1,5 @@
 // pages/self-drive/index.tsx - Vehicle Rental Main Page
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -10,6 +10,7 @@ import { CONTACT_INFO } from '../../src/constants/config';
 import AnimatedSection from '../../components/AnimatedSection';
 import { fadeInUp } from '../../src/utils/animations';
 import useTranslation from '../../src/i18n/useTranslation';
+import { useModalScrollLock } from '../../src/hooks/useModalScrollLock';
 
 interface PriceStructure {
   daily: number;
@@ -71,17 +72,8 @@ export default function SelfDrive() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Auto-scroll booking form into view when it opens
-  useEffect(() => {
-    if (showBookingForm) {
-      setTimeout(() => {
-        const modalContent = document.querySelector('.modal-content') as HTMLElement;
-        if (modalContent) {
-          modalContent.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
-      }, 100);
-    }
-  }, [showBookingForm]);
+  // Use modal scroll lock hook
+  useModalScrollLock(showBookingForm);
   
   // Handle video autoplay
   useEffect(() => {
@@ -92,17 +84,32 @@ export default function SelfDrive() {
     }
   }, []);
 
-  // Vehicles will be fetched from the backend API (pages/api/vehicles)
+  // Vehicles will be fetched from the backend API (pages/api/vehicles) with caching
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [loading, setLoading] = useState(true);
+  const [vehicleError, setVehicleError] = useState<string | null>(null);
 
   useEffect(() => {
+    let isMounted = true;
+    const controller = new AbortController();
+
     const fetchVehicles = async () => {
       try {
         setLoading(true);
-        const res = await fetch('/api/vehicles');
-        if (!res.ok) throw new Error('Failed to fetch vehicles');
+        setVehicleError(null);
+        
+        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
+        
+        const res = await fetch('/api/vehicles', {
+          signal: controller.signal,
+        });
+        
+        clearTimeout(timeoutId);
+        
+        if (!res.ok) throw new Error(`Failed to fetch vehicles: ${res.status}`);
         const vehiclesData = await res.json();
+
+        if (!isMounted) return;
 
         const transformed = vehiclesData.map((vehicle: any) => {
           const basePrice = parseFloat(vehicle.price_per_day) || 0;
@@ -112,7 +119,7 @@ export default function SelfDrive() {
             .split(',')
             .map((s: string) => s.trim())
             .filter(Boolean)
-            .map((t: string) => t.replace(/[_\s]+/g, '-')); // Normalize underscores and spaces to hyphens
+            .map((t: string) => t.replace(/[_\s]+/g, '-'));
           const availableFor = typesArr.length ? typesArr.join(', ') : 'self-drive, with-driver';
 
           return {
@@ -137,14 +144,24 @@ export default function SelfDrive() {
         });
 
         setVehicles(transformed);
-      } catch (error) {
-        console.error('Error fetching vehicles:', error);
+      } catch (error: any) {
+        if (error.name !== 'AbortError' && isMounted) {
+          console.error('Error fetching vehicles:', error);
+          setVehicleError(error.message || 'Failed to load vehicles');
+        }
       } finally {
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     };
 
     fetchVehicles();
+    
+    return () => {
+      isMounted = false;
+      controller.abort();
+    };
   }, []);
 
   // Pickup locations
@@ -429,16 +446,16 @@ export default function SelfDrive() {
 
                     <div className="vehicle-actions">
                       <button 
-                        className="btn btn-primary"
-                        onClick={() => openBookingForm(vehicle)}
-                      >
-                        {get('carRental.actions.bookNow', 'Book Now')}
-                      </button>
-                      <button 
                         className="btn btn-secondary"
                         onClick={() => handleWhatsAppBooking(vehicle)}
                       >
                         {get('carRental.actions.whatsapp', 'WhatsApp')}
+                      </button>
+                      <button 
+                        className="btn btn-primary"
+                        onClick={() => openBookingForm(vehicle)}
+                      >
+                        {get('carRental.actions.bookNow', 'Book Now')}
                       </button>
                     </div>
                   </div>
@@ -990,14 +1007,14 @@ export default function SelfDrive() {
         }
 
         .btn-primary {
-          background: #f8b500;
-          color: #053b3c;
+          background: #053b3c;
+          color: white;
         }
 
         .btn-primary:hover {
-          background: #e6a500;
+          background: #0a5c5e;
           transform: translateY(-2px);
-          box-shadow: 0 4px 12px rgba(248, 181, 0, 0.3);
+          box-shadow: 0 4px 12px rgba(5, 59, 60, 0.3);
         }
 
         .btn-secondary {

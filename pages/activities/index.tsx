@@ -368,11 +368,12 @@ const ActivitiesPage = () => {
                   </div>
                   
                   <div style={{
-                    color: '#f8b500',
+                    color: '#053b3c',
                     fontWeight: '600',
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '0.5rem'
+                    gap: '0.5rem',
+                    transition: 'color 0.3s ease'
                   }}>
                     {t('activities.learnMore')} <span>→</span>
                   </div>

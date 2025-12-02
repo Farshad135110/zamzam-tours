@@ -1057,12 +1057,6 @@ export default function Tours() {
                       >
                         Book This Tour
                       </button>
-                      <button 
-                        className="btn btn-secondary btn-large btn-block"
-                        onClick={() => handleWhatsAppBooking(selectedTour)}
-                      >
-                        📱 Inquire via WhatsApp
-                      </button>
                     </div>
                   </div>
                 </div>
@@ -1472,6 +1466,7 @@ export default function Tours() {
           transition: transform 0.3s ease, box-shadow 0.3s ease;
           display: flex;
           flex-direction: column;
+          height: 100%;
         }
 
         .tour-card:hover {
@@ -1514,14 +1509,14 @@ export default function Tours() {
           position: absolute;
           top: 16px;
           left: 16px;
-          background: var(--secondary-color);
-          color: var(--text-color);
+          background: var(--primary-color);
+          color: white;
           padding: 6px 14px;
           border-radius: 20px;
           font-size: 0.8rem;
           font-weight: 700;
           text-transform: capitalize;
-          box-shadow: 0 4px 12px rgba(248, 181, 0, 0.4);
+          box-shadow: 0 4px 12px rgba(5, 59, 60, 0.4);
         }
 
         .tour-duration-badge {
@@ -1728,10 +1723,11 @@ export default function Tours() {
         .tour-actions {
           display: flex;
           gap: 0.5rem;
-          flex-wrap: wrap;
+          flex-wrap: nowrap;
         }
 
         .tour-actions .btn {
+          flex: 1;
           padding: 10px 18px;
           font-size: 0.9rem;
           font-weight: 600;
@@ -1877,8 +1873,8 @@ export default function Tours() {
         }
 
         .tour-count {
-          background: var(--secondary-color);
-          color: var(--text-color);
+          background: var(--primary-color);
+          color: white;
           padding: 3px 10px;
           border-radius: 15px;
           font-size: 0.8rem;
@@ -2107,8 +2103,8 @@ export default function Tours() {
 
         .tour-category-badge {
           display: inline-block;
-          background: var(--secondary-color);
-          color: var(--primary-dark);
+          background: var(--primary-color);
+          color: white;
           padding: 8px 20px;
           border-radius: 25px;
           font-size: 0.9rem;

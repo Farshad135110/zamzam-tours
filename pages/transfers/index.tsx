@@ -1,5 +1,5 @@
 ﻿// pages/transfers/index.tsx - Airport & All-Island Transfers Main Page
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -8,7 +8,8 @@ import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import { CONTACT_INFO } from '../../src/constants/config';
 import { fadeInUp } from '../../src/utils/animations';
-import useTranslation from '../../src/i18n/useTranslation'
+import useTranslation from '../../src/i18n/useTranslation';
+import { useModalScrollLock } from '../../src/hooks/useModalScrollLock';
 
 export default function AirportTransfer() {
   const [passengers, setPassengers] = useState(1);
@@ -19,6 +20,8 @@ export default function AirportTransfer() {
   const [pickupTime, setPickupTime] = useState('');
   const [selectedVehicle, setSelectedVehicle] = useState('');
   const [notes, setNotes] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const scrollPositionRef = useRef(0);
 
   // Video hero refs
   const heroRef = useRef(null);
@@ -32,6 +35,9 @@ export default function AirportTransfer() {
       });
     }
   }, []);
+
+  // Use modal scroll lock hook for better performance
+  useModalScrollLock(isModalOpen);
 
   const { t } = useTranslation()
 
@@ -444,12 +450,12 @@ export default function AirportTransfer() {
 
               {/* Pricing Notice */}
               <div className="pricing-notice">
-                <p>💰 <strong>{get('airportTransfer.pricing.notice','Pricing will be discussed via WhatsApp')}</strong></p>
+                <p><strong>{get('airportTransfer.pricing.notice','Pricing will be discussed via WhatsApp')}</strong></p>
               </div>
 
               {/* Submit Button */}
               <button type="submit" className="btn-primary large">
-                <span>{get('airportTransfer.buttons.sendWhatsApp','📲 Send Booking Request via WhatsApp')}</span>
+                <span>{get('airportTransfer.buttons.sendWhatsApp','Send Booking Request via WhatsApp')}</span>
               </button>
             </form>
           </div>
@@ -496,7 +502,7 @@ export default function AirportTransfer() {
             </div>
 
             <div className="feature-box">
-              <div className="feature-icon">📲</div>
+              <div className="feature-icon">✓</div>
               <h3>{get('airportTransfer.why.easyBooking.title','Easy Booking')}</h3>
               <p>{get('airportTransfer.why.easyBooking.desc','Simple WhatsApp booking process')}</p>
             </div>
@@ -742,7 +748,7 @@ export default function AirportTransfer() {
           padding: 12px 24px;
           font-size: 1rem;
           width: 100%;
-          background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+          background: #053b3c;
           color: white;
           border: none;
           border-radius: 10px;
@@ -753,7 +759,8 @@ export default function AirportTransfer() {
 
         .btn-primary.large:hover {
           transform: translateY(-2px);
-          box-shadow: 0 5px 15px rgba(37, 211, 102, 0.3);
+          box-shadow: 0 5px 15px rgba(5, 59, 60, 0.3);
+          background: #0a5c5e;
         }
 
         /* Why Choose Us Section */

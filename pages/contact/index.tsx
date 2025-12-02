@@ -433,17 +433,6 @@ Please respond promptly.
                     t('contact.form.submit')
                   )}
                 </button>
-                
-                <button 
-                  type="button"
-                  className="btn-secondary"
-                  onClick={() => {
-                    const message = `Hello! I need assistance with: ${formData.subject || 'General inquiry'}`;
-                    window.open(`${CONTACT_INFO.whatsappUrl}?text=${encodeURIComponent(message)}`, '_blank');
-                  }}
-                >
-                  {t('contact.form.quickChat')}
-                </button>
               </div>
             </form>
           </div>

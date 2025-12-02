@@ -759,8 +759,8 @@ export default function About() {
         .social-links a {
           width: 50px;
           height: 50px;
-          background: var(--secondary-color);
-          color: var(--text-color);
+          background: var(--primary-color);
+          color: white;
           border-radius: 50%;
           display: flex;
           align-items: center;
@@ -770,7 +770,7 @@ export default function About() {
         }
 
         .social-links a:hover {
-          background: #ffd700;
+          background: var(--primary-light);
           transform: scale(1.1);
         }
 
