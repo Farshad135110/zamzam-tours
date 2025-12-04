@@ -776,43 +776,67 @@ export default function Home() {
             <h2 className="section-title">{get('home.testimonials.title', 'What Our Customers Say')}</h2>
           </AnimatedSection>
           
-          <div className="testimonials-slider">
+          <div className="testimonials-slider" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem', maxWidth: '1200px', margin: '0 auto' }}>
             <AnimatedSection animation="fadeInLeft" delay={0.2}>
-              <div className="testimonial">
-                <div className="testimonial-content">
-                  <p>{get('home.testimonials.1.text', '"Zamzam Lanka Tours made our Sri Lanka trip unforgettable. The self-drive car was in perfect condition, and their recommendations for accommodations were spot on!"')}</p>
+              <div className="testimonial" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                <div className="testimonial-content" style={{ flex: 1 }}>
+                  <p>"We had an amazing 7-day tour with Zam Zam Lanka Tours. From start to finish, everything was perfectly organized and exceeded our expectations. Our driver-guide was friendly, knowledgeable, and always made sure we were comfortable. The itinerary covered all the major attractions, hidden gems, and beautiful scenic spots of Sri Lanka.<br/><br/>The vehicle was clean and comfortable, and the service throughout the trip was professional and reliable. We truly felt well taken care of and enjoyed every moment of the journey and prices were affordable.<br/><br/>Highly recommended for anyone looking to explore Sri Lanka with a trustworthy and well-organized tour company. Thank you, Zam Zam Lanka Tours, for a memorable experience."</p>
                   <div className="testimonial-author">
-                    <strong>{get('home.testimonials.1.author', 'Sarah Johnson')}</strong>
-                    <span>{get('home.testimonials.1.location', 'United Kingdom')}</span>
+                    <strong>Widerbe</strong>
+                    <span>Google Review</span>
                   </div>
                 </div>
               </div>
             </AnimatedSection>
             
-            <AnimatedSection animation="fadeInUp" delay={0.3}>
-              <div className="testimonial">
-                <div className="testimonial-content">
-                  <p>{get('home.testimonials.2.text', '"The North East tour was incredible! Our guide was knowledgeable and friendly. The entire experience was seamless from start to finish."')}</p>
-                  <div className="testimonial-author">
-                    <strong>{get('home.testimonials.2.author', 'Michael Schmidt')}</strong>
-                    <span>{get('home.testimonials.2.location', 'Germany')}</span>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+              <AnimatedSection animation="fadeInRight" delay={0.3}>
+                <div className="testimonial" style={{ display: 'flex', flexDirection: 'column' }}>
+                  <div className="testimonial-content" style={{ flex: 1 }}>
+                    <p>"A few months ago, I hired a driver from them to guide me through Sri Lanka for 12 days. The trip was great. I was traveling alone and felt safe at all times. Whenever a problem arose, they tried to find a solution quickly. Faizan, the driver's name, was very kind, polite, and friendly. Sri Lanka is worth getting to know; it's a wonderful country, and so are its people. I'll be back. 🫶🏻🇱🇰🫶🏻"</p>
+                    <div className="testimonial-author">
+                      <strong>Le Tol</strong>
+                      <span>Google Review</span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </AnimatedSection>
-            
-            <AnimatedSection animation="fadeInRight" delay={0.4}>
-              <div className="testimonial">
-                <div className="testimonial-content">
-                  <p>{get('home.testimonials.3.text', '"Airport & all-island transfer with meet & greet service was excellent. They were waiting for us even though our flight was delayed. Highly recommended!"')}</p>
-                  <div className="testimonial-author">
-                    <strong>{get('home.testimonials.3.author', 'Isabelle Moreau')}</strong>
-                    <span>{get('home.testimonials.3.location', 'France')}</span>
+              </AnimatedSection>
+              
+              <AnimatedSection animation="fadeInRight" delay={0.4}>
+                <div className="testimonial" style={{ display: 'flex', flexDirection: 'column' }}>
+                  <div className="testimonial-content" style={{ flex: 1 }}>
+                    <p>"Great service. Excellent driver. Nice car. Very punctual. I will choose this service again for sure."</p>
+                    <div className="testimonial-author">
+                      <strong>Carlos Rodrigues</strong>
+                      <span>Google Review</span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </AnimatedSection>
+              </AnimatedSection>
+            </div>
           </div>
+
+          <AnimatedSection animation="fadeInUp" delay={0.5}>
+            <div style={{ textAlign: 'center', marginTop: '2rem' }}>
+              <a 
+                href="https://g.page/r/CQZmXOgmix1OEAE/review" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="btn-primary"
+                style={{
+                  display: 'inline-block',
+                  padding: '0.875rem 2rem',
+                  fontSize: '1rem',
+                  fontWeight: '600',
+                  textDecoration: 'none',
+                  borderRadius: '8px',
+                  transition: 'all 0.3s ease'
+                }}
+              >
+                Write a Review
+              </a>
+            </div>
+          </AnimatedSection>
         </div>
       </section>
       

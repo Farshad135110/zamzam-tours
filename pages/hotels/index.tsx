@@ -455,11 +455,7 @@ export default function Hotels() {
   const openHotelBooking = async (hotel) => {
     setSelectedHotel(hotel);
     setShowBookingForm(true);
-    
-    // Scroll to top smoothly when modal opens
-    setTimeout(() => {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }, 100);
+    // Removed scroll-to-top behavior on opening hotel details
     
     // Fetch gallery images
     try {
@@ -1057,7 +1053,7 @@ export default function Hotels() {
               <h3>{get('hotels.noResults.title', 'No hotels found matching your criteria')}</h3>
                 <p>{get('hotels.noResults.subtitle', 'Try adjusting your filters or search parameters')}</p>
                 <button 
-                  className="btn-primary"
+                  className="reset-filter-btn"
                   onClick={() => setSearchParams({
                   name: '',
                   email: '',
@@ -1070,9 +1066,10 @@ export default function Hotels() {
                   rating: 0,
                   amenities: []
                 })}
-              >
+                  style={{marginTop: '2rem'}}
+                >
                   {get('hotels.buttons.resetFilters', 'Reset Filters')}
-              </button>
+                </button>
             </div>
           )}
         </div>
@@ -1453,6 +1450,32 @@ export default function Hotels() {
       )}
 
       <style jsx>{`
+        /* Reset Filter Button */
+        .reset-filter-btn {
+          padding: 14px 32px;
+          background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+          color: white;
+          border: none;
+          border-radius: 8px;
+          font-size: 1.05rem;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          box-shadow: 0 4px 15px rgba(16, 185, 129, 0.18);
+          display: inline-flex;
+          align-items: center;
+        }
+
+        .reset-filter-btn:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 6px 20px rgba(16, 185, 129, 0.28);
+          background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+
+        .reset-filter-btn:active {
+          transform: translateY(0);
+        }
+
         /* Hotels Page Specific Styles */
         .hero {
           position: relative;
@@ -1524,7 +1547,7 @@ export default function Hotels() {
           font-size: 2.5rem;
           color: var(--primary-color);
           margin-bottom: 1rem;
-          font-weight: 700;
+          font-weight: 400 !important;
         }
 
         .section-header p {
@@ -2085,15 +2108,15 @@ export default function Hotels() {
         }
 
         .btn-cancel-modern {
-          background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-          color: var(--text-color);
-          border: 2px solid #dee2e6;
+          background: var(--primary-color);
+          color: white;
+          border: none;
         }
 
         .btn-cancel-modern:hover {
-          background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
+          background: #d96200;
           transform: translateY(-2px);
-          box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+          box-shadow: 0 4px 12px rgba(255,108,0,0.25);
         }
 
         .btn-confirm-modern {

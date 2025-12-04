@@ -10,7 +10,7 @@ import { CONTACT_INFO } from '../../src/constants/config';
 import AnimatedSection from '../../components/AnimatedSection';
 import { fadeInUp } from '../../src/utils/animations';
 import useTranslation from '../../src/i18n/useTranslation';
-import { useModalScrollLock } from '../../src/hooks/useModalScrollLock';
+// import { useModalScrollLock } from '../../src/hooks/useModalScrollLock'; // Disabled - conflicts with modal
 import BreadcrumbSchema from '../../components/SEO/BreadcrumbSchema';
 import ServiceSchema from '../../components/SEO/ServiceSchema';
 import OrganizationSchema from '../../components/SEO/OrganizationSchema';
@@ -75,8 +75,8 @@ export default function SelfDrive() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Use modal scroll lock hook
-  useModalScrollLock(showBookingForm);
+  // Use modal scroll lock hook - DISABLED to prevent conflicts with modal overlay
+  // useModalScrollLock(showBookingForm);
   
   // Handle video autoplay
   useEffect(() => {
@@ -228,19 +228,16 @@ export default function SelfDrive() {
     window.open(`${CONTACT_INFO.whatsappUrl}?text=${encodedMessage}`, '_blank');
   };
 
-  // Open booking form
+  // Open booking form - Fresh implementation
   const openBookingForm = (vehicle: Vehicle) => {
     setSelectedVehicle(vehicle);
-    setBookingFormScrollTop(window.scrollY);
-    document.body.style.overflow = 'hidden';
     setShowBookingForm(true);
   };
 
-  // Close booking form
+  // Close booking form - Clean close
   const closeBookingForm = () => {
     setShowBookingForm(false);
-    document.body.style.overflow = '';
-    window.scrollTo(0, bookingFormScrollTop);
+    setSelectedVehicle(null);
   };
 
   // Calculate rental period
@@ -541,186 +538,7 @@ export default function SelfDrive() {
         </div>
       </main>
 
-      {/* Booking Form Modal */}
-      {showBookingForm && selectedVehicle && (
-        <div className="modal-overlay" onClick={closeBookingForm}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <button 
-              className="modal-close"
-              onClick={closeBookingForm}
-            >
-              ×
-            </button>
-            
-            <h2>{get('carRental.modal.bookPrefix', 'Book')} {selectedVehicle.name}</h2>
-            
-            <div className="vehicle-summary">
-              <div className="summary-image">
-                <Image 
-                  src={selectedVehicle.image}
-                  alt={selectedVehicle.name}
-                  width={200}
-                  height={150}
-                />
-              </div>
-              <div className="summary-details">
-                <h3>{selectedVehicle.name}</h3>
-                <div className="summary-item">
-                  <span>{get('carRental.modal.label.category', 'Category:')}</span>
-                  <span>{selectedVehicle.category}</span>
-                </div>
-                <div className="summary-item">
-                  <span>{get('carRental.modal.label.capacity', 'Capacity:')}</span>
-                  <span>{selectedVehicle.capacity}</span>
-                </div>
-                <div className="summary-item">
-                  <span>{get('carRental.modal.label.transmission', 'Transmission:')}</span>
-                  <span>{selectedVehicle.transmission}</span>
-                </div>
-                <div className="summary-item">
-                  <span>{get('carRental.modal.label.fuel', 'Fuel Type:')}</span>
-                  <span>{selectedVehicle.fuel}</span>
-                </div>
-              </div>
-            </div>
 
-            <form className="booking-form" onSubmit={async (e) => {
-              e.preventDefault();
-              const formData = new FormData(e.currentTarget);
-              
-              // Calculate rental days
-              const pickupDateObj = new Date(pickupDate);
-              const returnDateObj = new Date(returnDate);
-              const rentalDays = Math.ceil((returnDateObj.getTime() - pickupDateObj.getTime()) / (1000 * 60 * 60 * 24));
-              
-              // Save to database first
-              try {
-                const bookingData = {
-                  rental_type: rentalType,
-                  customer_type: customerType,
-                  name: formData.get('name'),
-                  email: formData.get('email'),
-                  phone_no: formData.get('phone'),
-                  pickup_location: pickupLocation,
-                  pickup_date: pickupDate,
-                  return_date: returnDate,
-                  no_of_dates: rentalDays,
-                  special_request: formData.get('requests') || '',
-                  vehicle_id: selectedVehicle.id
-                };
-
-                await fetch('/api/vehicle-bookings', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify(bookingData)
-                });
-              } catch (error) {
-                console.error('Failed to save booking:', error);
-              }
-              
-              const message = [
-                `${get('carRental.messages.bookingRequestHeading', 'Booking Request')} - ${selectedVehicle.name}`,
-                `${get('carRental.messages.label.name', 'Name')}: ${formData.get('name')}`,
-                `${get('carRental.messages.label.email', 'Email')}: ${formData.get('email')}`,
-                `${get('carRental.messages.label.phone', 'Phone')}: ${formData.get('phone')}`,
-                `${get('carRental.messages.label.rentalType', 'Rental Type')}: ${rentalType}`,
-                `${get('carRental.messages.label.customerType', 'Customer Type')}: ${customerType}`,
-                `${get('carRental.messages.label.pickupDate', 'Pickup Date')}: ${pickupDate}`,
-                `${get('carRental.messages.label.returnDate', 'Return Date')}: ${returnDate}`,
-                `${get('carRental.messages.label.pickupLocation', 'Pickup Location')}: ${pickupLocation}`,
-                getRentalPeriod() ? `${get('carRental.messages.label.duration', 'Duration')}: ${getRentalPeriod()}` : null,
-                calculatedPrice > 0 ? `${get('carRental.messages.label.estimatedCost', 'Estimated Cost')}: $${calculatedPrice}` : null,
-                `${get('carRental.messages.label.specialRequests', 'Special Requests')}: ${formData.get('requests')}`
-              ].filter(Boolean).join('\n');
-              handleWhatsAppBooking(selectedVehicle, message);
-            }}>
-              <div className="form-row">
-                <div className="form-group">
-                  <label>{get('carRental.form.label.name', 'Full Name *')}</label>
-                  <input type="text" name="name" required />
-                </div>
-                <div className="form-group">
-                  <label>{get('carRental.form.label.email', 'Email *')}</label>
-                  <input type="email" name="email" required />
-                </div>
-              </div>
-
-              <div className="form-row">
-                <div className="form-group">
-                  <label>{get('carRental.form.label.phone', 'Phone Number *')}</label>
-                  <input type="tel" name="phone" required />
-                </div>
-                <div className="form-group">
-                  <label>{get('carRental.form.label.pickupLocation', 'Pickup Location *')}</label>
-                  <select 
-                    value={pickupLocation}
-                    onChange={(e) => setPickupLocation(e.target.value)}
-                    required
-                  >
-                    {locations.map(loc => (
-                      <option key={loc.id} value={loc.id}>{loc.name}</option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              <div className="form-row">
-                <div className="form-group">
-                  <label>{get('carRental.form.label.pickupDate', 'Pickup Date *')}</label>
-                  <input 
-                    type="date" 
-                    value={pickupDate}
-                    onChange={(e) => setPickupDate(e.target.value)}
-                    min={new Date().toISOString().split('T')[0]}
-                    required 
-                  />
-                </div>
-                <div className="form-group">
-                  <label>{get('carRental.form.label.returnDate', 'Return Date *')}</label>
-                  <input 
-                    type="date" 
-                    value={returnDate}
-                    onChange={(e) => setReturnDate(e.target.value)}
-                    min={pickupDate || new Date().toISOString().split('T')[0]}
-                    required 
-                  />
-                </div>
-              </div>
-
-              {calculatedPrice > 0 && (
-                <div className="price-summary">
-                  <div className="summary-row">
-                      <span>{get('carRental.form.summary.rentalPeriod', 'Rental Period:')}</span>
-                      <strong>{getRentalPeriod()}</strong>
-                    </div>
-                    <div className="summary-row">
-                      <span>{get('carRental.form.summary.estimatedTotal', 'Estimated Total:')}</span>
-                      <strong className="price-highlight">${calculatedPrice}</strong>
-                    </div>
-                </div>
-              )}
-
-              <div className="form-group">
-                <label>{get('carRental.form.label.requests', 'Special Requests')}</label>
-                <textarea 
-                  name="requests" 
-                  rows={3} 
-                  placeholder={get('carRental.form.placeholder.requests', 'Additional requirements, pickup/dropoff instructions, etc.')}
-                ></textarea>
-              </div>
-
-              <div className="form-actions">
-                <button type="button" className="btn btn-secondary" onClick={closeBookingForm}>
-                  {get('carRental.form.actions.cancel', 'Cancel')}
-                </button>
-                <button type="submit" className="btn btn-primary">
-                  {get('carRental.form.actions.sendWhatsApp', 'Send via WhatsApp')}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
 
       <style jsx>{`
         /* Container */
@@ -839,7 +657,6 @@ export default function SelfDrive() {
           font-size: 2.5rem;
           color: #053b3c;
           margin-bottom: 0.75rem;
-          font-weight: 700;
         }
 
         .section-header p {
@@ -1106,8 +923,7 @@ export default function SelfDrive() {
           text-align: center;
           color: #053b3c;
           margin-bottom: 2.5rem;
-          font-size: 2rem;
-          font-weight: 700;
+          font-size: 2.5rem;
         }
 
         .terms-grid {
@@ -1146,204 +962,7 @@ export default function SelfDrive() {
           font-size: 1.1rem;
         }
 
-        .modal-overlay {
-          position: fixed;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background: rgba(0, 0, 0, 0.7);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          z-index: 1000;
-          padding: 20px;
-          overflow-y: auto;
-        }
 
-        .modal-content {
-          background: white;
-          border-radius: 15px;
-          padding: 2rem;
-          max-width: 700px;
-          width: 100%;
-          max-height: 85vh;
-          overflow-y: auto;
-          position: relative;
-        }
-
-        @media (max-width: 768px) {
-          .modal-overlay {
-            padding: 10px;
-            align-items: flex-start;
-          }
-
-          .modal-content {
-            padding: 1.5rem;
-            margin-top: 20px;
-            max-height: 90vh;
-          }
-
-          .modal-content h2 {
-            font-size: 1.3rem;
-          }
-
-          .vehicle-summary {
-            flex-direction: column;
-          }
-
-          .summary-image {
-            width: 100%;
-          }
-
-          .booking-form input,
-          .booking-form select,
-          .booking-form textarea {
-            font-size: 16px;
-          }
-
-          .modal-close {
-            width: 40px;
-            height: 40px;
-            font-size: 1.3rem;
-          }
-
-          .form-row {
-            grid-template-columns: 1fr;
-          }
-
-          .booking-form .form-group {
-            margin-bottom: 1.2rem;
-          }
-
-          .submit-booking-btn {
-            padding: 12px 20px;
-            font-size: 1rem;
-          }
-        }
-
-        .modal-close {
-          position: absolute;
-          top: 15px;
-          right: 15px;
-          background: none;
-          border: none;
-          font-size: 1.5rem;
-          cursor: pointer;
-          color: var(--text-light);
-          width: 30px;
-          height: 30px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          border-radius: 50%;
-          transition: all 0.3s ease;
-        }
-
-        .modal-close:hover {
-          background: var(--section-bg);
-          color: var(--primary-color);
-        }
-
-        .modal-content h2 {
-          color: var(--primary-color);
-          margin-bottom: 1.5rem;
-        }
-
-        .vehicle-summary {
-          display: flex;
-          gap: 1.5rem;
-          background: var(--section-bg);
-          padding: 1.5rem;
-          border-radius: 10px;
-          margin-bottom: 2rem;
-        }
-
-        .summary-image {
-          flex-shrink: 0;
-        }
-
-        .summary-details h3 {
-          color: var(--primary-color);
-          margin-bottom: 1rem;
-        }
-
-        .summary-item {
-          display: flex;
-          justify-content: space-between;
-          margin-bottom: 0.5rem;
-          font-size: 0.9rem;
-        }
-
-        .summary-item span:first-child {
-          color: var(--text-light);
-        }
-
-        .booking-form .form-group {
-          margin-bottom: 1.5rem;
-        }
-
-        .booking-form label {
-          display: block;
-          margin-bottom: 0.5rem;
-          font-weight: 600;
-          color: var(--primary-color);
-        }
-
-        .booking-form input,
-        .booking-form select,
-        .booking-form textarea {
-          width: 100%;
-          padding: 10px 15px;
-          border: 1px solid var(--border-color);
-          border-radius: 5px;
-          font-size: 1rem;
-          font-family: inherit;
-        }
-
-        .booking-form input:focus,
-        .booking-form select:focus,
-        .booking-form textarea:focus {
-          outline: none;
-          border-color: var(--primary-color);
-        }
-
-        .form-row {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 1rem;
-        }
-
-        .price-summary {
-          background: var(--section-bg);
-          padding: 1rem;
-          border-radius: 8px;
-          margin-bottom: 1.5rem;
-        }
-
-        .summary-row {
-          display: flex;
-          justify-content: space-between;
-          margin-bottom: 0.5rem;
-        }
-
-        .summary-row:last-child {
-          margin-bottom: 0;
-          padding-top: 0.5rem;
-          border-top: 2px solid var(--border-color);
-        }
-
-        .price-highlight {
-          color: var(--primary-color);
-          font-size: 1.3rem;
-        }
-
-        .form-actions {
-          display: flex;
-          gap: 1rem;
-          justify-content: flex-end;
-          margin-top: 2rem;
-        }
 
         @media (max-width: 768px) {
           .rent-hero-content h1 {
@@ -1392,6 +1011,530 @@ export default function SelfDrive() {
       `}</style>
 
       <Footer />
+
+      {/* Brand New Fleet Booking Modal */}
+      {showBookingForm && selectedVehicle && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            width: '100vw',
+            height: '100vh',
+            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+            zIndex: 99999,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '20px',
+            overflowY: 'auto'
+          }}
+          onClick={closeBookingForm}
+        >
+          <div
+            style={{
+              backgroundColor: '#ffffff',
+              borderRadius: '16px',
+              padding: '2.5rem',
+              maxWidth: '800px',
+              width: '100%',
+              maxHeight: '90vh',
+              overflowY: 'auto',
+              position: 'relative',
+              boxShadow: '0 25px 50px rgba(0, 0, 0, 0.5)',
+              animation: 'modalFadeIn 0.3s ease-out'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Close Button */}
+            <button
+              onClick={closeBookingForm}
+              style={{
+                position: 'absolute',
+                top: '20px',
+                right: '20px',
+                width: '40px',
+                height: '40px',
+                borderRadius: '50%',
+                border: 'none',
+                backgroundColor: '#6b7280',
+                color: 'white',
+                fontSize: '28px',
+                fontWeight: 'bold',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                lineHeight: '1',
+                transition: 'all 0.2s ease',
+                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = '#4b5563';
+                e.currentTarget.style.transform = 'scale(1.05)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = '#6b7280';
+                e.currentTarget.style.transform = 'scale(1)';
+              }}
+              aria-label="Close"
+            >
+              ×
+            </button>
+
+            {/* Modal Header */}
+            <div style={{ marginBottom: '2rem', paddingRight: '50px' }}>
+              <h2 style={{
+                color: '#053b3c',
+                fontSize: '2.5rem',
+                marginBottom: '0.5rem',
+                lineHeight: '1.2'
+              }}>
+                Book {selectedVehicle.name}
+              </h2>
+              <p style={{ color: '#6b7280', fontSize: '1rem' }}>
+                Fill in your details to complete the booking
+              </p>
+            </div>
+
+            {/* Vehicle Summary Card */}
+            <div style={{
+              backgroundColor: '#f9fafb',
+              borderRadius: '12px',
+              padding: '1.5rem',
+              marginBottom: '2rem',
+              border: '1px solid #e5e7eb',
+              display: 'flex',
+              gap: '1.5rem',
+              flexWrap: 'wrap'
+            }}>
+              <div style={{ flexShrink: 0 }}>
+                <img
+                  src={selectedVehicle.image}
+                  alt={selectedVehicle.name}
+                  style={{
+                    width: '220px',
+                    height: '165px',
+                    objectFit: 'cover',
+                    borderRadius: '10px',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+                  }}
+                />
+              </div>
+              <div style={{ flex: 1, minWidth: '220px' }}>
+                <h3 style={{
+                  color: '#053b3c',
+                  fontSize: '1.25rem',
+                  fontWeight: '600',
+                  marginBottom: '1rem'
+                }}>
+                  {selectedVehicle.name}
+                </h3>
+                <div style={{ display: 'grid', gap: '0.75rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.95rem' }}>
+                    <span style={{ color: '#6b7280', fontWeight: '500' }}>Category:</span>
+                    <span style={{ color: '#111827', fontWeight: '600' }}>{selectedVehicle.category}</span>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.95rem' }}>
+                    <span style={{ color: '#6b7280', fontWeight: '500' }}>Capacity:</span>
+                    <span style={{ color: '#111827', fontWeight: '600' }}>{selectedVehicle.capacity}</span>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.95rem' }}>
+                    <span style={{ color: '#6b7280', fontWeight: '500' }}>Transmission:</span>
+                    <span style={{ color: '#111827', fontWeight: '600' }}>{selectedVehicle.transmission}</span>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.95rem' }}>
+                    <span style={{ color: '#6b7280', fontWeight: '500' }}>Fuel Type:</span>
+                    <span style={{ color: '#111827', fontWeight: '600' }}>{selectedVehicle.fuel}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Booking Form */}
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                const formData = new FormData(e.currentTarget);
+
+                const message = [
+                  `🚗 Vehicle Booking Request`,
+                  ``,
+                  `Vehicle: ${selectedVehicle.name}`,
+                  ``,
+                  `👤 Customer Details:`,
+                  `Name: ${formData.get('name')}`,
+                  `Email: ${formData.get('email')}`,
+                  `Phone: ${formData.get('phone')}`,
+                  ``,
+                  `📋 Booking Details:`,
+                  `Rental Type: ${rentalType}`,
+                  `Customer Type: ${customerType}`,
+                  `Pickup Location: ${pickupLocation}`,
+                  `Pickup Date: ${pickupDate}`,
+                  `Return Date: ${returnDate}`,
+                  getRentalPeriod() ? `Duration: ${getRentalPeriod()}` : null,
+                  calculatedPrice > 0 ? `Estimated Cost: $${calculatedPrice}` : null,
+                  ``,
+                  `💬 Special Requests:`,
+                  formData.get('requests') || 'None'
+                ].filter(Boolean).join('\n');
+
+                handleWhatsAppBooking(selectedVehicle, message);
+                closeBookingForm();
+              }}
+            >
+              {/* Name and Email Row */}
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                gap: '1.25rem',
+                marginBottom: '1.25rem'
+              }}>
+                <div>
+                  <label style={{
+                    display: 'block',
+                    marginBottom: '0.5rem',
+                    color: '#053b3c',
+                    fontWeight: '600',
+                    fontSize: '0.95rem'
+                  }}>
+                    Full Name <span style={{ color: '#dc2626' }}>*</span>
+                  </label>
+                  <input
+                    type="text"
+                    name="name"
+                    required
+                    placeholder="Enter your full name"
+                    style={{
+                      width: '100%',
+                      padding: '12px 16px',
+                      fontSize: '1rem',
+                      border: '2px solid #e5e7eb',
+                      borderRadius: '8px',
+                      outline: 'none',
+                      transition: 'all 0.2s ease',
+                      fontFamily: 'inherit'
+                    }}
+                    onFocus={(e) => e.currentTarget.style.borderColor = '#053b3c'}
+                    onBlur={(e) => e.currentTarget.style.borderColor = '#e5e7eb'}
+                  />
+                </div>
+                <div>
+                  <label style={{
+                    display: 'block',
+                    marginBottom: '0.5rem',
+                    color: '#053b3c',
+                    fontWeight: '600',
+                    fontSize: '0.95rem'
+                  }}>
+                    Email Address <span style={{ color: '#dc2626' }}>*</span>
+                  </label>
+                  <input
+                    type="email"
+                    name="email"
+                    required
+                    placeholder="your.email@example.com"
+                    style={{
+                      width: '100%',
+                      padding: '12px 16px',
+                      fontSize: '1rem',
+                      border: '2px solid #e5e7eb',
+                      borderRadius: '8px',
+                      outline: 'none',
+                      transition: 'all 0.2s ease',
+                      fontFamily: 'inherit'
+                    }}
+                    onFocus={(e) => e.currentTarget.style.borderColor = '#053b3c'}
+                    onBlur={(e) => e.currentTarget.style.borderColor = '#e5e7eb'}
+                  />
+                </div>
+              </div>
+
+              {/* Phone and Location Row */}
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                gap: '1.25rem',
+                marginBottom: '1.25rem'
+              }}>
+                <div>
+                  <label style={{
+                    display: 'block',
+                    marginBottom: '0.5rem',
+                    color: '#053b3c',
+                    fontWeight: '600',
+                    fontSize: '0.95rem'
+                  }}>
+                    Phone Number <span style={{ color: '#dc2626' }}>*</span>
+                  </label>
+                  <input
+                    type="tel"
+                    name="phone"
+                    required
+                    placeholder="+1 (555) 123-4567"
+                    style={{
+                      width: '100%',
+                      padding: '12px 16px',
+                      fontSize: '1rem',
+                      border: '2px solid #e5e7eb',
+                      borderRadius: '8px',
+                      outline: 'none',
+                      transition: 'all 0.2s ease',
+                      fontFamily: 'inherit'
+                    }}
+                    onFocus={(e) => e.currentTarget.style.borderColor = '#053b3c'}
+                    onBlur={(e) => e.currentTarget.style.borderColor = '#e5e7eb'}
+                  />
+                </div>
+                <div>
+                  <label style={{
+                    display: 'block',
+                    marginBottom: '0.5rem',
+                    color: '#053b3c',
+                    fontWeight: '600',
+                    fontSize: '0.95rem'
+                  }}>
+                    Pickup Location <span style={{ color: '#dc2626' }}>*</span>
+                  </label>
+                  <select
+                    value={pickupLocation}
+                    onChange={(e) => setPickupLocation(e.target.value)}
+                    required
+                    style={{
+                      width: '100%',
+                      padding: '12px 16px',
+                      fontSize: '1rem',
+                      border: '2px solid #e5e7eb',
+                      borderRadius: '8px',
+                      outline: 'none',
+                      transition: 'all 0.2s ease',
+                      fontFamily: 'inherit',
+                      backgroundColor: 'white',
+                      cursor: 'pointer'
+                    }}
+                    onFocus={(e) => e.currentTarget.style.borderColor = '#053b3c'}
+                    onBlur={(e) => e.currentTarget.style.borderColor = '#e5e7eb'}
+                  >
+                    {locations.map((loc) => (
+                      <option key={loc.id} value={loc.id}>
+                        {loc.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              {/* Pickup and Return Date Row */}
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                gap: '1.25rem',
+                marginBottom: '1.25rem'
+              }}>
+                <div>
+                  <label style={{
+                    display: 'block',
+                    marginBottom: '0.5rem',
+                    color: '#053b3c',
+                    fontWeight: '600',
+                    fontSize: '0.95rem'
+                  }}>
+                    Pickup Date <span style={{ color: '#dc2626' }}>*</span>
+                  </label>
+                  <input
+                    type="date"
+                    value={pickupDate}
+                    onChange={(e) => setPickupDate(e.target.value)}
+                    min={new Date().toISOString().split('T')[0]}
+                    required
+                    style={{
+                      width: '100%',
+                      padding: '12px 16px',
+                      fontSize: '1rem',
+                      border: '2px solid #e5e7eb',
+                      borderRadius: '8px',
+                      outline: 'none',
+                      transition: 'all 0.2s ease',
+                      fontFamily: 'inherit'
+                    }}
+                    onFocus={(e) => e.currentTarget.style.borderColor = '#053b3c'}
+                    onBlur={(e) => e.currentTarget.style.borderColor = '#e5e7eb'}
+                  />
+                </div>
+                <div>
+                  <label style={{
+                    display: 'block',
+                    marginBottom: '0.5rem',
+                    color: '#053b3c',
+                    fontWeight: '600',
+                    fontSize: '0.95rem'
+                  }}>
+                    Return Date <span style={{ color: '#dc2626' }}>*</span>
+                  </label>
+                  <input
+                    type="date"
+                    value={returnDate}
+                    onChange={(e) => setReturnDate(e.target.value)}
+                    min={pickupDate || new Date().toISOString().split('T')[0]}
+                    required
+                    style={{
+                      width: '100%',
+                      padding: '12px 16px',
+                      fontSize: '1rem',
+                      border: '2px solid #e5e7eb',
+                      borderRadius: '8px',
+                      outline: 'none',
+                      transition: 'all 0.2s ease',
+                      fontFamily: 'inherit'
+                    }}
+                    onFocus={(e) => e.currentTarget.style.borderColor = '#053b3c'}
+                    onBlur={(e) => e.currentTarget.style.borderColor = '#e5e7eb'}
+                  />
+                </div>
+              </div>
+
+              {/* Price Summary */}
+              {calculatedPrice > 0 && (
+                <div style={{
+                  backgroundColor: '#f0fdf4',
+                  border: '2px solid #86efac',
+                  borderRadius: '12px',
+                  padding: '1.25rem',
+                  marginBottom: '1.25rem'
+                }}>
+                  <div style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    marginBottom: '0.75rem'
+                  }}>
+                    <span style={{ color: '#166534', fontWeight: '600', fontSize: '0.95rem' }}>
+                      Rental Period:
+                    </span>
+                    <span style={{ color: '#15803d', fontWeight: '700', fontSize: '1rem' }}>
+                      {getRentalPeriod()}
+                    </span>
+                  </div>
+                  <div style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    paddingTop: '0.75rem',
+                    borderTop: '2px solid #86efac'
+                  }}>
+                    <span style={{ color: '#166534', fontWeight: '600', fontSize: '1.05rem' }}>
+                      Estimated Total:
+                    </span>
+                    <span style={{
+                      color: '#15803d',
+                      fontWeight: '800',
+                      fontSize: '1.5rem'
+                    }}>
+                      ${calculatedPrice}
+                    </span>
+                  </div>
+                </div>
+              )}
+
+              {/* Special Requests */}
+              <div style={{ marginBottom: '2rem' }}>
+                <label style={{
+                  display: 'block',
+                  marginBottom: '0.5rem',
+                  color: '#053b3c',
+                  fontWeight: '600',
+                  fontSize: '0.95rem'
+                }}>
+                  Special Requests (Optional)
+                </label>
+                <textarea
+                  name="requests"
+                  rows={4}
+                  placeholder="Any special requirements, child seats, GPS, etc."
+                  style={{
+                    width: '100%',
+                    padding: '12px 16px',
+                    fontSize: '1rem',
+                    border: '2px solid #e5e7eb',
+                    borderRadius: '8px',
+                    outline: 'none',
+                    transition: 'all 0.2s ease',
+                    fontFamily: 'inherit',
+                    resize: 'vertical',
+                    minHeight: '100px'
+                  }}
+                  onFocus={(e) => e.currentTarget.style.borderColor = '#053b3c'}
+                  onBlur={(e) => e.currentTarget.style.borderColor = '#e5e7eb'}
+                />
+              </div>
+
+              {/* Action Buttons */}
+              <div style={{
+                display: 'flex',
+                gap: '1rem',
+                justifyContent: 'flex-end',
+                flexWrap: 'wrap'
+              }}>
+                <button
+                  type="button"
+                  onClick={closeBookingForm}
+                  style={{
+                    padding: '14px 32px',
+                    fontSize: '1rem',
+                    fontWeight: '600',
+                    border: '2px solid #053b3c',
+                    backgroundColor: 'white',
+                    color: '#053b3c',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease',
+                    minWidth: '140px'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = '#f3f4f6';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'white';
+                  }}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  style={{
+                    padding: '14px 32px',
+                    fontSize: '1rem',
+                    fontWeight: '600',
+                    border: 'none',
+                    backgroundColor: '#053b3c',
+                    color: 'white',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease',
+                    minWidth: '180px',
+                    boxShadow: '0 4px 12px rgba(5, 59, 60, 0.3)'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = '#042f30';
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                    e.currentTarget.style.boxShadow = '0 6px 20px rgba(5, 59, 60, 0.4)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = '#053b3c';
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(5, 59, 60, 0.3)';
+                  }}
+                >
+                  📱 Send via WhatsApp
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </>
   );
 }

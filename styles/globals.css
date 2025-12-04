@@ -39,10 +39,11 @@ body {
 }
 
 /* Performance: GPU acceleration for animations */
-* {
+/* DISABLED: These rules break fixed positioning and modal overlays */
+/* * {
   -webkit-transform: translateZ(0);
   -webkit-backface-visibility: hidden;
-}
+} */
 
 /* Consistent Page Container */
 .page-container {

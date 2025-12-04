@@ -49,12 +49,23 @@ export default function CloudinaryUpload({
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Upload failed');
+        let errorMessage = 'Upload failed';
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.error || errorMessage;
+        } catch (jsonErr) {
+          // If not JSON, try to get text
+          try {
+            const errorText = await response.text();
+            errorMessage = errorText || errorMessage;
+          } catch (textErr) {
+            // fallback
+          }
+        }
+        throw new Error(errorMessage);
       }
 
       const data = await response.json();
-      
       // Set preview and notify parent
       setPreviewUrl(data.url);
       onUploadSuccess(data.url);

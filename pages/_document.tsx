@@ -4,11 +4,11 @@ import { SITE_INFO } from '../src/constants/config'
 class MyDocument extends Document {
   render() {
     // Use Cloudinary-transformed variants for favicons and social previews
-    const base = SITE_INFO.logo
-    const favicon32 = base.replace('/image/upload/', '/image/upload/w_32,h_32,c_fill/')
-    const favicon16 = base.replace('/image/upload/', '/image/upload/w_16,h_16,c_fill/')
-    const appleIcon = base.replace('/image/upload/', '/image/upload/w_180,h_180,c_fill/')
-    const ogImage = base.replace('/image/upload/', '/image/upload/w_1200,h_630,c_fill/')
+    // Use local Zamzam logo for favicons and social preview
+    const favicon32 = '/favicon.svg';
+    const favicon16 = '/favicon.svg';
+    const appleIcon = '/logo.svg';
+    const ogImage = '/logo.svg';
 
     return (
       <Html lang="en">
@@ -20,9 +20,9 @@ class MyDocument extends Document {
           {/* PWA Manifest */}
           <link rel="manifest" href="/manifest.json" />
           
-          {/* Favicons (prefer local SVG to avoid external requests) */}
-          <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-          <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
+          {/* Favicons and social preview - Zamzam logo only */}
+          <link rel="icon" href={favicon32} type="image/svg+xml" />
+          <link rel="icon" type="image/png" sizes="32x32" href={favicon32} />
           <link rel="icon" type="image/png" sizes="16x16" href={favicon16} />
           <link rel="apple-touch-icon" href={appleIcon} />
           <meta name="theme-color" content="#053b3c" />

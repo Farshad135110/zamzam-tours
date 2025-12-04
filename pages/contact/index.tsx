@@ -58,9 +58,9 @@ export default function Contact() {
       icon: '📍',
       title: t('contact.methods.visit.title'),
       description: t('contact.methods.visit.description'),
-      details: t('contact.methods.visit.details'),
+      details: '112/13 Morris Road, Milidduwa, Galle.',
       action: 'visit',
-      availability: t('contact.methods.visit.details')
+      availability: '112/13 Morris Road, Milidduwa, Galle.'
     }
   ];
 
@@ -88,14 +88,14 @@ export default function Contact() {
   // Office locations
   const officeLocations = [
     {
-      // Keep only the main office (Galle)
-      name: t('contact.locations.office1.name'),
+      // Main office in Galle
+      name: 'Main Office - Galle',
       address: CONTACT_INFO.address,
       phone: CONTACT_INFO.phone,
       email: CONTACT_INFO.email,
       hours: t('contact.locations.office1.hours'),
       coordinates: { lat: 6.0535, lng: 80.2210 },
-      image: '/contact/colombo-office.jpg'
+      image: '' // No image, just color
     }
   ];
 
@@ -454,13 +454,7 @@ Please respond promptly.
                   <div className="location-left">
                     <div className="location-card">
                       <div className="location-image">
-                        <Image 
-                          src={office.image} 
-                          alt={office.name}
-                          width={400}
-                          height={250}
-                          objectFit="cover"
-                        />
+                        {/* No image for Main Office - Galle, just keep background color */}
                       </div>
                       <div className="location-info">
                         <h3>{office.name}</h3>
@@ -921,6 +915,7 @@ Please respond promptly.
           display: flex;
           gap: 1rem;
           flex-wrap: wrap;
+          margin-top: 2rem;
         }
 
         .form-actions .btn-primary {
@@ -1046,6 +1041,13 @@ Please respond promptly.
           background: #f0f0f0;
           position: relative;
           width: 100%;
+        }
+
+        /* Show dark green for Main Office - Galle if no image */
+        .location-card-with-map .location-image:empty {
+          background: #053b3c;
+          min-height: 250px;
+        }
         }
 
         .location-image img {

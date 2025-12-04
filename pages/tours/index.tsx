@@ -316,7 +316,7 @@ export default function Tours() {
     },
     {
       name: 'Surfing',
-      icon: '�',
+        icon: '🏄‍♂️',
       description: 'World-class surf breaks for all skill levels',
       category: 'Adventure',
       slug: 'surfing',
@@ -364,7 +364,7 @@ export default function Tours() {
     },
     {
       name: 'Cooking Classes',
-      icon: '�‍🍳',
+        icon: '🧑‍🍳',
       description: 'Learn authentic Sri Lankan cuisine and spices',
       category: 'Cultural',
       slug: 'cooking-classes',
@@ -839,7 +839,7 @@ export default function Tours() {
                 <h3>{get('tours.noResults.title', 'No tours found matching your criteria')}</h3>
                 <p>{get('tours.noResults.subtitle', 'Try adjusting your filters or search terms')}</p>
                 <button 
-                  className="btn-primary"
+                  className="reset-filter-btn"
                   onClick={() => {
                     setActiveCategory('all');
                     setSelectedDuration('all');
@@ -847,7 +847,7 @@ export default function Tours() {
                     setSearchQuery('');
                   }}
                 >
-                  {get('tours.noResults.resetFilters', 'Reset Filters')}
+                  🔄 {get('tours.noResults.resetFilters', 'Reset Filters')}
                 </button>
               </div>
             )}
@@ -920,9 +920,6 @@ export default function Tours() {
                 <li><strong>🔄 Rescheduling:</strong> Free rescheduling up to 7 days before tour</li>
               </ul>
               <p className="policy-note">{get('tours.policy.note', '* Some special tours may have different cancellation policies')}</p>
-              <p style={{ marginTop: '0.75rem' }}>
-                <Link href="/cancellation" className="btn-link">Read full cancellation policy</Link>
-              </p>
             </div>
           </section>
         </div>
@@ -1527,11 +1524,11 @@ export default function Tours() {
           margin-bottom: 1rem;
         }
 
-        .section-header p {
-          font-size: 1.1rem;
-          color: var(--text-light);
-          max-width: 600px;
-          margin: 0 auto;
+        .section-header h2 {
+          font-size: 2.5rem;
+          color: var(--primary-color);
+          margin-bottom: 1rem;
+          font-weight: 400 !important;
         }
 
         /* Tours Grid */
@@ -1841,6 +1838,32 @@ export default function Tours() {
         .no-results p {
           color: var(--text-light);
           margin-bottom: 2rem;
+        }
+
+        .reset-filter-btn {
+          padding: 14px 32px;
+          background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+          color: white;
+          border: none;
+          border-radius: 8px;
+          font-size: 1.05rem;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+        }
+
+        .reset-filter-btn:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
+          background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+        }
+
+        .reset-filter-btn:active {
+          transform: translateY(0);
         }
 
         /* Loading State */
