@@ -13,6 +13,7 @@ import useTranslation from '../../src/i18n/useTranslation';
 import { useModalScrollLock } from '../../src/hooks/useModalScrollLock';
 import BreadcrumbSchema from '../../components/SEO/BreadcrumbSchema';
 import ServiceSchema from '../../components/SEO/ServiceSchema';
+import OrganizationSchema from '../../components/SEO/OrganizationSchema';
 
 interface PriceStructure {
   daily: number;
@@ -254,20 +255,26 @@ export default function SelfDrive() {
   return (
     <>
       <Head>
-        <title>{get('carRental.pageTitle', 'Vehicle Rentals in Sri Lanka | Self-Drive & With Driver | Zamzam Lanka Tours')}</title>
-        <meta name="description" content={get('carRental.metaDescription', 'Rent vehicles in Sri Lanka with Zamzam Lanka Tours. Self-drive and with-driver options for tourists and locals. Best prices for Prius, Aqua, Vans, Buses and more.')} />
-        <meta name="keywords" content={get('carRental.metaKeywords', 'Sri Lanka car rental, self-drive, with driver, vehicle hire, tourist rental, local rental, Prius, Aqua, van rental, bus rental')} />
+        <title>Car Rental Sri Lanka | Self-Drive & With Driver | ZamZam Tours</title>
+        <meta name="description" content="Rent cars in Sri Lanka with ZamZam Tours. Modern fleet, flexible rates, airport pickup available. Self-drive or hire a driver. Budget to luxury vehicles." />
+        <meta name="keywords" content="car rental Sri Lanka, self drive Sri Lanka, car hire Colombo, airport car rental, with driver, Prius rental, van rental, budget car rental" />
+        <meta name="robots" content="index,follow" />
+        <link rel="canonical" href="https://zamzamlankatours.com/car-rental" />
+        <meta property="og:title" content="Car Rental Sri Lanka | Self-Drive & With Driver" />
+        <meta property="og:description" content="Modern fleet with flexible rates. Self-drive or hire a driver for your Sri Lanka adventure." />
+        <meta property="og:type" content="website" />
       </Head>
 
       {/* Structured Data Schemas */}
+      <OrganizationSchema />
       <BreadcrumbSchema items={[
         { name: 'Home', url: '/' },
         { name: 'Car Rental', url: '/car-rental' }
       ]} />
       <ServiceSchema
         name="Car Rental Services in Sri Lanka"
+        serviceType="VehicleRental"
         description="Self-drive and chauffeur-driven car rental services across Sri Lanka. Wide range of vehicles from economy cars to luxury vans."
-        serviceType="Vehicle Rental Service"
         areaServed={['Sri Lanka', 'Colombo', 'Kandy', 'Galle', 'Ella', 'Airport']}
       />
 
@@ -415,14 +422,18 @@ export default function SelfDrive() {
             </div>
 
             <div className="vehicles-grid">
-              {filteredVehicles.map((vehicle) => (
+              {filteredVehicles.map((vehicle, index) => (
                 <div key={vehicle.id} className="vehicle-card">
                   <div className="vehicle-image">
                     <Image 
                       src={vehicle.image} 
-                      alt={vehicle.name} 
+                      alt={`${vehicle.name} - Car rental in Sri Lanka`}
                       width={400} 
-                      height={300} 
+                      height={300}
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      quality={85}
+                      loading={index < 4 ? 'eager' : 'lazy'}
+                      priority={index < 2}
                     />
                     <span className="vehicle-badge">{vehicle.category}</span>
                   </div>

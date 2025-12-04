@@ -9,6 +9,9 @@ import Footer from '../../components/Footer';
 import { fadeInUp } from '../../src/utils/animations';
 import useTranslation from '../../src/i18n/useTranslation';
 import { CONTACT_INFO } from '../../src/constants/config';
+import BreadcrumbSchema from '../../components/SEO/BreadcrumbSchema';
+import ServiceSchema from '../../components/SEO/ServiceSchema';
+import OrganizationSchema from '../../components/SEO/OrganizationSchema';
 
 export default function AirportTransfer() {
   const [passengers, setPassengers] = useState(1);
@@ -177,10 +180,28 @@ export default function AirportTransfer() {
   return (
     <>
       <Head>
-        <title>{get('airportTransfer.pageTitle', 'Airport & All-Island Transfers Sri Lanka | Zamzam Lanka Tours')}</title>
-        <meta name="description" content={get('airportTransfer.metaDescription', 'Professional airport and all-island transfers in Sri Lanka. Travel anywhere with our comfortable vehicles and professional drivers.')} />
-        <meta name="keywords" content={get('airportTransfer.metaKeywords', 'Sri Lanka airport transfer, all island transfers, Colombo airport pickup, Sri Lanka taxi service, island-wide transport')} />
+        <title>Airport Transfer Sri Lanka | CMB Airport Pickup | ZamZam Tours</title>
+        <meta name="description" content="Reliable airport transfer service in Sri Lanka. 24/7 pickup from Colombo & Mattala airports. Private vehicles, experienced drivers, competitive rates." />
+        <meta name="keywords" content="airport transfer Sri Lanka, CMB airport pickup, Colombo airport taxi, Mattala airport transfer, private airport transfer, 24/7 pickup service" />
+        <meta name="robots" content="index,follow" />
+        <link rel="canonical" href="https://zamzamlankatours.com/airport-transfer" />
+        <meta property="og:title" content="Airport Transfer Sri Lanka | 24/7 CMB Airport Pickup" />
+        <meta property="og:description" content="Reliable airport transfer service. Private vehicles, experienced drivers, competitive rates." />
+        <meta property="og:type" content="website" />
       </Head>
+
+      {/* Structured Data Schemas */}
+      <OrganizationSchema />
+      <BreadcrumbSchema items={[
+        { name: 'Home', url: '/' },
+        { name: 'Airport Transfer', url: '/airport-transfer' }
+      ]} />
+      <ServiceSchema
+        name="Airport Transfer Services"
+        serviceType="TaxiService"
+        description="24/7 airport pickup and drop-off services from Colombo (CMB) and Mattala airports. Private vehicles with experienced drivers."
+        areaServed={['Colombo', 'Mattala', 'Sri Lanka']}
+      />
 
       <Navbar />
 

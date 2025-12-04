@@ -11,6 +11,9 @@ import AnimatedSection from '../../components/AnimatedSection';
 import { CldImage } from 'next-cloudinary';
 import { fadeInUp } from '../../src/utils/animations';
 import useTranslation from '../../src/i18n/useTranslation';
+import BreadcrumbSchema from '../../components/SEO/BreadcrumbSchema';
+import OrganizationSchema from '../../components/SEO/OrganizationSchema';
+import ServiceSchema from '../../components/SEO/ServiceSchema';
 
 interface Tour {
   id: number;
@@ -66,12 +69,24 @@ export default function Tours() {
 
   // Fetch packages from database
   useEffect(() => {
+    let isMounted = true;
+    const controller = new AbortController();
+    
     const fetchPackages = async () => {
       try {
         setLoading(true);
-        const response = await fetch('/api/packages');
+        const timeoutId = setTimeout(() => controller.abort(), 8000);
+        
+        const response = await fetch('/api/packages', {
+          signal: controller.signal,
+        });
+        
+        clearTimeout(timeoutId);
+        
         if (!response.ok) throw new Error('Failed to fetch packages');
         const packages = await response.json();
+        
+        if (!isMounted) return;
         
         // Transform database packages to Tour format
         // Use locale-backed fallbacks: if a translation key exists for the package (tours.packages.<package_id>.*)
@@ -95,16 +110,26 @@ export default function Tours() {
           itinerary: pkg.itinerary || []
         }));
         
-        setTours(transformedTours);
-      } catch (error) {
-        console.error('Error fetching packages:', error);
-        alert('Failed to load tour packages');
+        if (isMounted) {
+          setTours(transformedTours);
+        }
+      } catch (error: any) {
+        if (error.name !== 'AbortError' && isMounted) {
+          console.error('Error fetching packages:', error);
+        }
       } finally {
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     };
     
     fetchPackages();
+    
+    return () => {
+      isMounted = false;
+      controller.abort();
+    };
   }, []);
 
   // Handle scroll
@@ -449,10 +474,28 @@ export default function Tours() {
   return (
     <>
       <Head>
-        <title>{get('tours.pageTitle', 'Sri Lanka Tour Packages | Zamzam Lanka Tours')}</title>
-        <meta name="description" content={get('tours.metaDescription', 'Discover amazing Sri Lanka tour packages with Zamzam Lanka Tours. Cultural, adventure, beach, wildlife, and North East tours with expert guides and best prices.')} />
-        <meta name="keywords" content={get('tours.metaKeywords', 'Sri Lanka tours, cultural tours, adventure tours, beach tours, wildlife safari, North East Sri Lanka, tour packages')} />
+        <title>Sri Lanka Tour Packages | Cultural & Wildlife Tours | ZamZam</title>
+        <meta name="description" content="Explore Sri Lanka with our expert-guided tours. 3-14 day packages covering Sigiriya, Kandy, Ella, Yala Safari, Galle & more. Customizable itineraries available." />
+        <meta name="keywords" content="Sri Lanka tour packages, cultural tours Sri Lanka, wildlife safari Yala, Sigiriya tours, Kandy tours, Ella adventures, beach tours, round tours, private tours" />
+        <meta name="robots" content="index,follow" />
+        <link rel="canonical" href="https://zamzamlankatours.com/tours" />
+        <meta property="og:title" content="Sri Lanka Tour Packages | Cultural & Wildlife Tours | ZamZam" />
+        <meta property="og:description" content="Explore Sri Lanka with our expert-guided tours. 3-14 day packages covering Sigiriya, Kandy, Ella, Yala Safari & more." />
+        <meta property="og:type" content="website" />
       </Head>
+
+      {/* Structured Data Schemas */}
+      <OrganizationSchema />
+      <BreadcrumbSchema items={[
+        { name: 'Home', url: '/' },
+        { name: 'Tours', url: '/tours' }
+      ]} />
+      <ServiceSchema 
+        name="Tour Packages"
+        serviceType="TouristTrip"
+        description="Customized tour packages covering cultural sites, wildlife safaris, beaches, and adventure activities across Sri Lanka."
+        areaServed={['Sigiriya', 'Kandy', 'Ella', 'Yala', 'Galle', 'Nuwara Eliya', 'Anuradhapura', 'Polonnaruwa']}
+      />
 
       <Navbar />
 
@@ -699,9 +742,12 @@ export default function Tours() {
                     <div className="tour-image">
                       <Image 
                         src={tour.image} 
-                        alt={tour.name}
+                        alt={`${tour.name} - Sri Lanka tour package`}
                         width={400}
                         height={250}
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        quality={85}
+                        loading="lazy"
                         style={{ objectFit: 'cover', objectPosition: portraitMap[tour.image] ? 'bottom center' : 'center', width: '100%', height: '100%' }}
                       />
                       <div className="tour-badge">{tour.category.replace('-', ' ')}</div>

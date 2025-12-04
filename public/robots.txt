@@ -3,13 +3,16 @@ User-agent: *
 Allow: /
 
 # Sitemap location
-Sitemap: https://zamzamlankatours.com/sitemap.xml
+Sitemap: https://zamzamlankatours.com/api/sitemap.xml
 
-# Disallow admin pages
+# Disallow admin and API pages only
 User-agent: *
 Disallow: /admin/
-Disallow: /login
-Disallow: /api/
+Disallow: /api/auth/
+Disallow: /api/booking/
 
-# Crawl delay (optional, helps prevent server overload)
-Crawl-delay: 10
+# Allow important API endpoints for SEO
+Allow: /api/sitemap.xml
+Allow: /api/packages
+Allow: /api/vehicles
+Allow: /api/activities

@@ -6,6 +6,7 @@ import Footer from '../../components/Footer';
 import useTranslation from '../../src/i18n/useTranslation';
 import BreadcrumbSchema from '../../components/SEO/BreadcrumbSchema';
 import ServiceSchema from '../../components/SEO/ServiceSchema';
+import OrganizationSchema from '../../components/SEO/OrganizationSchema';
 
 const ActivitiesPage = () => {
   const { t } = useTranslation();
@@ -243,19 +244,26 @@ const ActivitiesPage = () => {
   return (
     <div className="activities-page">
       <Head>
-        <title>{t('activities.pageTitle')}</title>
-        <meta name="description" content={t('activities.hero.subtitle')} />
+        <title>Sri Lanka Activities & Excursions | Safari, Diving, Tours | ZamZam</title>
+        <meta name="description" content="Experience the best of Sri Lanka: wildlife safaris, whale watching, diving, temple tours, tea plantations & more. Book activities with local experts." />
+        <meta name="keywords" content="Sri Lanka activities, wildlife safari, whale watching, diving Sri Lanka, temple tours, tea plantation, hiking Ella, adventure activities, excursions" />
+        <meta name="robots" content="index,follow" />
+        <link rel="canonical" href="https://zamzamlankatours.com/activities" />
+        <meta property="og:title" content="Sri Lanka Activities & Excursions | Safari, Diving, Tours" />
+        <meta property="og:description" content="Experience wildlife safaris, whale watching, diving, temple tours & more with local experts." />
+        <meta property="og:type" content="website" />
       </Head>
 
       {/* Structured Data Schemas */}
+      <OrganizationSchema />
       <BreadcrumbSchema items={[
         { name: 'Home', url: '/' },
         { name: 'Activities', url: '/activities' }
       ]} />
       <ServiceSchema
         name="Sri Lanka Adventure & Cultural Activities"
+        serviceType="TouristAttraction"
         description="Experience the best of Sri Lanka with our curated activities including wildlife safaris, cultural tours, beach activities, hiking, and more."
-        serviceType="Tourist Activities"
         areaServed={['Sri Lanka', 'Colombo', 'Kandy', 'Ella', 'Yala', 'Sigiriya']}
       />
       

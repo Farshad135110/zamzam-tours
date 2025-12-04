@@ -15,6 +15,7 @@ import { fadeInUp, staggerContainer, cardHover } from '../src/utils/animations';
 import useTranslation from '../src/i18n/useTranslation';
 import LocalBusinessSchema from '../components/SEO/LocalBusinessSchema';
 import BreadcrumbSchema from '../components/SEO/BreadcrumbSchema';
+import OrganizationSchema from '../components/SEO/OrganizationSchema';
 
 export default function Home() {
   const { t } = useTranslation();
@@ -240,18 +241,24 @@ export default function Home() {
   return (
     <>
       <Head>
-  <title>{get('home.title', 'Zamzam Lanka Tours - Best Travel Experience in Sri Lanka')}</title>
-  <meta name="description" content={get('home.metaDescription', 'Zamzam Lanka Tours offers premium self-drive car rentals, guided tours, and airport & all-island transfers across Sri Lanka. Experience the best of Sri Lankan hospitality with our extensive fleet and professional services.')} />
-  <meta name="keywords" content={get('home.metaKeywords', 'Sri Lanka tours, car rental Sri Lanka, airport & all-island transfers, self-drive, guided tours, hotel booking, things to do in Sri Lanka')} />
-  <meta property="og:title" content={get('home.og.title', 'Zamzam Lanka Tours - Best Travel Experience in Sri Lanka')} />
-  <meta property="og:description" content={get('home.og.description', 'Premium travel services including self-drive car rentals, guided tours, and airport & all-island transfers across Sri Lanka.')} />
-  <meta property="og:image" content={get('home.og.image', '/images/og-image.jpg')} />
-  <meta property="og:url" content={get('home.og.url', 'https://zamzamtours.com')} />
-  <meta name="twitter:card" content={get('home.og.twitterCard', 'summary_large_image')} />
+  <title>ZamZam Lanka Tours — Best Sri Lanka Tours, Private Drivers & Holiday Packages</title>
+  <meta name="description" content="Book your Sri Lanka holiday with ZamZam Lanka Tours. Private drivers, round tours, cultural tours, wildlife safaris, airport transfers & custom itineraries." />
+  <meta name="keywords" content="Sri Lanka tours, car rental Sri Lanka, airport transfer Colombo, Sri Lanka safari, private driver Sri Lanka, Colombo to Kandy transfer, self drive Sri Lanka, tour packages, holiday packages Sri Lanka" />
+  <meta name="robots" content="index,follow" />
+  <link rel="canonical" href="https://zamzamlankatours.com/" />
+  <meta property="og:title" content="ZamZam Lanka Tours — Best Sri Lanka Tours, Private Drivers & Holiday Packages" />
+  <meta property="og:description" content="Book your Sri Lanka holiday with ZamZam Lanka Tours. Private drivers, round tours, cultural tours, wildlife safaris, airport transfers & custom itineraries." />
+  <meta property="og:image" content="https://zamzamlankatours.com/images/og-image.jpg" />
+  <meta property="og:url" content="https://zamzamlankatours.com/" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="ZamZam Lanka Tours — Best Sri Lanka Tours, Private Drivers & Holiday Packages" />
+  <meta name="twitter:description" content="Book your Sri Lanka holiday with ZamZam Lanka Tours. Private drivers, round tours, safaris & custom itineraries." />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
       {/* Structured Data Schemas */}
+      <OrganizationSchema />
       <LocalBusinessSchema />
       <BreadcrumbSchema items={[{ name: 'Home', url: '/' }]} />
       
@@ -484,8 +491,12 @@ export default function Home() {
                         <div className="vehicle-image" style={{ position: 'relative', width: '100%', height: '200px' }}>
                           <CldImage 
                             src={vehicle.image} 
-                            alt={vehicle.name} 
+                            alt={`${vehicle.name} - Car rental in Sri Lanka`}
                             fill
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                            quality={85}
+                            loading={index < 3 ? 'eager' : 'lazy'}
+                            priority={index < 2}
                             style={{ objectFit: 'cover', borderRadius: '8px' }}
                           />
                         </div>
@@ -523,9 +534,15 @@ export default function Home() {
                             <div className="tour-card-image-wrapper">
                               <Image 
                                 src={tour.image || '/placeholder.jpg'} 
-                                alt={tour.name}
+                                alt={`${tour.name} - Sri Lanka tour package`}
                                 width={400}
                                 height={280}
+                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                quality={85}
+                                loading={index < 3 ? 'eager' : 'lazy'}
+                                priority={index < 2}
+                                placeholder="blur"
+                                blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCwAB8H/9k="
                                 style={{ objectFit: 'cover', width: '100%', height: '100%' }}
                               />
                               <div className="tour-duration-badge">

@@ -124,8 +124,8 @@ const LocalBusinessSchema: React.FC<LocalBusinessSchemaProps> = ({ pageName }) =
       "worstRating": "1"
     },
     "sameAs": [
-      CONTACT_INFO.facebook || "https://facebook.com/zamzamlankatours",
-      CONTACT_INFO.instagram || "https://instagram.com/zamzamlankatours",
+      "https://facebook.com/zamzamlankatours",
+      "https://instagram.com/zamzamlankatours",
       "https://wa.me/" + CONTACT_INFO.whatsapp
     ]
   };
