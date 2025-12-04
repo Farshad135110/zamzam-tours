@@ -13,69 +13,40 @@ export default function SimpleGallery() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
   const [imagesLoaded, setImagesLoaded] = useState(0);
   const galleryRef = useRef(null);
   const { t } = useTranslation()
   
-  // Hardcoded gallery images (original frontend images) with optimized Cloudinary URLs
-  const staticGalleryImages = [
-    { id: 1, src: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/q_auto:low,f_auto,w_800/v1762453704/dylan-shaw-smUAKwMT8XA-unsplash_qhenhx.jpg', alt: 'Sigiriya Rock at sunrise', title: 'Sigiriya Sunrise', location: 'Central Province' },
-    { id: 2, src: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/q_auto:low,f_auto,w_800/v1762454466/chathura-anuradha-subasinghe-40uQmE9Zq8g-unsplash_tvflxt.jpg', alt: 'Kandy Temple', title: 'Sacred Temple', location: 'Kandy' },
-    { id: 3, src: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/q_auto:low,f_auto,w_800/v1762453781/adam-vandermeer-Dw9dWTzzsUE-unsplash_l49hhe.jpg', alt: 'Nine Arch Bridge in Ella', title: 'Nine Arch Bridge', location: 'Ella' },
-    { id: 4, src: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/q_auto:low,f_auto,w_800/v1762453796/chathura-indika-LAj-XlHP6Rs-unsplash_o7mzbc.jpg', alt: 'Galle Fort during sunset', title: 'Galle Fort Sunset', location: 'Galle' },
-    { id: 5, src: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/q_auto:low,f_auto,w_800/v1762454382/siarhei-palishchuk-hgiby6qxvpc-unsplash_prnosl.jpg', alt: 'Mirissa Beach coastline', title: 'Mirissa Beach', location: 'Southern Coast' },
-    { id: 6, src: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/q_auto:low,f_auto,w_800/v1762453757/gemmmm-FRTpkBIi-1Y-unsplash_iggwsm.jpg', alt: 'Leopard in Yala National Park', title: 'Yala Wildlife', location: 'Yala National Park' },
-    { id: 7, src: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/q_auto:low,f_auto,w_800/v1762453797/anton-lecock-TPtaNsBOW9Q-unsplash_g0htag.jpg', alt: 'Tea plantations in hill country', title: 'Tea Country', location: 'Nuwara Eliya' },
-    { id: 8, src: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/q_auto:low,f_auto,w_800/v1762453785/udara-karunarathna-LfUJO4whcSU-unsplash_xnxl7h.jpg', alt: 'Surfing at Arugam Bay', title: 'Arugam Bay Waves', location: 'East Coast' },
-    { id: 9, src: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/q_auto:low,f_auto,w_800/v1762453771/claus-giering-YmcSXWcmh6w-unsplash_zw66ck.jpg', alt: 'Pristine beach in Trincomalee', title: 'Trincomalee Beaches', location: 'East Coast' },
-    { id: 10, src: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/q_auto:low,f_auto,w_800/v1762453710/train-journey.jpg', alt: 'Scenic train journey', title: 'Mountain Railway', location: 'Hill Country' },
-    { id: 11, src: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/q_auto:low,f_auto,w_800/v1762454341/birendra-padmaperuma-jB7TbGrC1xM-unsplash_qcpkau.jpg', alt: 'Polonnaruwa ruins', title: 'Polonnaruwa', location: 'Cultural' },
-    { id: 12, src: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/q_auto:low,f_auto,w_800/v1761861700/agnieszka-stankiewicz-OMgi4DfiO3c-unsplash_dfa3pd.jpg', alt: 'Dambulla cave temples', title: 'Dambulla Golden Temple', location: 'Dambulla' }
-  ];
+  // Gallery images state, initially empty, will be filled from database
+  const [galleryImages, setGalleryImages] = useState<any[]>([]);
 
-  // Start with static images for instant display, then fetch additional ones from database
-  const [galleryImages, setGalleryImages] = useState<any[]>(staticGalleryImages);
 
-  // Mark loading complete after initial render
-  useEffect(() => {
-    setIsLoading(false);
-  }, []);
 
   const get = (key: string, fallback: string) => {
     const val = t(key)
     return val === key ? fallback : val
   }
 
-  // Fetch additional gallery images from database (added by admin) - runs in background
+  // Fetch gallery images from database (added by admin)
   useEffect(() => {
     const fetchGalleryImages = async () => {
       try {
         const response = await fetch('/api/gallery?active=true');
         if (response.ok) {
           const data = await response.json();
-          // Only add NEW images from database that aren't already in static list
-          const transformedImages = data
-            .filter((img: any) => !staticGalleryImages.some(si => si.src === img.image_url))
-            .map((img: any) => ({
-              id: `db-${img.image_id}`,
-              src: img.image_url,
-              alt: img.alt_text || img.title,
-              title: img.title,
-              location: img.location
-            }));
-          
-          // Only update if there are new images
-          if (transformedImages.length > 0) {
-            setGalleryImages([...staticGalleryImages, ...transformedImages]);
-          }
+          const transformedImages = data.map((img: any) => ({
+            id: `db-${img.image_id}`,
+            src: img.image_url,
+            alt: img.alt_text || img.title,
+            title: img.title,
+            location: img.location
+          }));
+          setGalleryImages(transformedImages);
         }
       } catch (error) {
         console.error('Error fetching gallery images:', error);
-        // Keep showing static images on error
       }
     };
-
     fetchGalleryImages();
   }, []);
 
@@ -193,29 +164,7 @@ export default function SimpleGallery() {
       {/* Gallery Grid */}
       <section className="gallery-grid-section">
         <div className="container">
-          {isLoading && (
-            <div style={{
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              minHeight: '300px',
-              fontSize: '1.2rem',
-              color: 'var(--primary-color)'
-            }}>
-              <div style={{ textAlign: 'center' }}>
-                <div style={{
-                  width: '50px',
-                  height: '50px',
-                  border: '4px solid var(--border-color)',
-                  borderTop: '4px solid var(--primary-color)',
-                  borderRadius: '50%',
-                  animation: 'spin 1s linear infinite',
-                  margin: '0 auto 1rem'
-                }}></div>
-                Loading gallery...
-              </div>
-            </div>
-          )}
+
 
           <div className="gallery-grid" ref={galleryRef}>
             {galleryImages.map((image, index) => (
