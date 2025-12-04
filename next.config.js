@@ -65,7 +65,7 @@ const nextConfig = {
   
   i18n: {
     locales: ['en', 'de', 'ru', 'he'],
-    defaultLocale: 'ru'
+    defaultLocale: 'en'
   },
   
   // Allow building even when TypeScript errors are present so we can validate runtime behavior

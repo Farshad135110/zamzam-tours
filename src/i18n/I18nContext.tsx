@@ -22,7 +22,7 @@ export function I18nProvider({ children }:{children: React.ReactNode}){
   const router = useRouter()
   const routerLocale = (router && router.locale) as Locale | undefined
 
-  const [locale, setLocaleState] = useState<Locale>((routerLocale as Locale) || 'ru')
+  const [locale, setLocaleState] = useState<Locale>((routerLocale as Locale) || 'en')
 
   // keep locale in sync with router.locale
   useEffect(() => {

@@ -156,16 +156,32 @@ export default function Home() {
 
         if (!isMounted) return;
 
-        const transformedTours = packages.slice(0, 6).map((pkg: any) => ({
-          id: pkg.package_id ? parseInt(pkg.package_id.replace('P', '')) || 0 : 0,
-          name: get(`home.tours.${pkg.package_id}.name`, pkg.package_name || pkg.name || 'Tour'),
-          duration: get(`home.tours.${pkg.package_id}.duration`, pkg.duration || 'N/A'),
-          price: pkg.price ? parseFloat(pkg.price) : 0,
-          priceRange: pkg.price ? (pkg.price < 1000 ? 'budget' : pkg.price < 2000 ? 'standard' : 'premium') : 'standard',
-          image: pkg.image || '/tours/default.jpg',
-          highlights: pkg.highlights ? pkg.highlights.split(',').map((h: string) => h.trim()) : (pkg.highlights || []).slice(0,3),
-          description: get(`home.tours.${pkg.package_id}.description`, pkg.description || ''),
-        }));
+        const transformedTours = packages.slice(0, 6).map((pkg: any) => {
+          // Parse highlights - handle both comma and newline separated
+          let highlightsArray: string[] = [];
+          if (pkg.highlights) {
+            if (typeof pkg.highlights === 'string') {
+              // Split by newlines first, then commas, filter empty
+              highlightsArray = pkg.highlights
+                .split(/[\n,]/)
+                .map((h: string) => h.trim())
+                .filter((h: string) => h.length > 0);
+            } else if (Array.isArray(pkg.highlights)) {
+              highlightsArray = pkg.highlights;
+            }
+          }
+          
+          return {
+            id: pkg.package_id ? parseInt(pkg.package_id.replace('P', '')) || 0 : 0,
+            name: get(`home.tours.${pkg.package_id}.name`, pkg.package_name || pkg.name || 'Tour'),
+            duration: get(`home.tours.${pkg.package_id}.duration`, pkg.duration || 'N/A'),
+            price: pkg.price ? parseFloat(pkg.price) : 0,
+            priceRange: pkg.price ? (pkg.price < 1000 ? 'budget' : pkg.price < 2000 ? 'standard' : 'premium') : 'standard',
+            image: pkg.image || '/tours/default.jpg',
+            highlights: highlightsArray.slice(0, 3),
+            description: get(`home.tours.${pkg.package_id}.description`, pkg.description || ''),
+          };
+        });
 
         if (isMounted && transformedTours && transformedTours.length > 0) setHomeTours(transformedTours);
       } catch (err: any) {
@@ -568,23 +584,42 @@ export default function Home() {
                                   <span className="highlights-label">{get('home.tours.highlightsLabel', 'Highlights')}</span>
                                 </div>
                                 <ul className="highlights-list">
-                                  {(Array.isArray(tour.highlights) ? tour.highlights : (tour.highlights || '').split(',')).slice(0, 3).map((highlight, i) => (
-                                    <li key={i} className="highlight-item">
-                                      <span className="highlight-check">✓</span>
-                                      <span>{highlight.trim()}</span>
-                                    </li>
-                                  ))}
+                                  {(() => {
+                                    let highlightsList: string[] = [];
+                                    if (Array.isArray(tour.highlights)) {
+                                      highlightsList = tour.highlights;
+                                    } else if (typeof tour.highlights === 'string' && tour.highlights) {
+                                      highlightsList = tour.highlights
+                                        .split(/[\n,]/)
+                                        .map((h: string) => h.trim())
+                                        .filter((h: string) => h.length > 0);
+                                    }
+                                    return highlightsList.slice(0, 3).map((highlight, i) => (
+                                      <li key={i} className="highlight-item">
+                                        <span className="highlight-check">✓</span>
+                                        <span>{highlight}</span>
+                                      </li>
+                                    ));
+                                  })()}
                                 </ul>
                               </div>
 
                               <div className="tour-card-footer">
                                 <div className="tour-price-section">
-                                  <span className="price-from">{get('home.tours.fromPrice', 'From')}</span>
-                                  <div className="price-wrapper">
-                                    <span className="price-currency">$</span>
-                                    <span className="price-value">{tour.price || '—'}</span>
-                                    <span className="price-unit">/person</span>
-                                  </div>
+                                  {tour.price && tour.price > 0 ? (
+                                    <>
+                                      <span className="price-from">{get('home.tours.fromPrice', 'From')}</span>
+                                      <div className="price-wrapper">
+                                        <span className="price-currency">$</span>
+                                        <span className="price-value">{tour.price}</span>
+                                        <span className="price-unit">/person</span>
+                                      </div>
+                                    </>
+                                  ) : (
+                                    <div className="price-inquire">
+                                      <span className="price-value">{get('home.tours.priceOnRequest', 'Price on Request')}</span>
+                                    </div>
+                                  )}
                                 </div>
                                 <div className="tour-actions">
                                   <Link href="/tours" className="btn-view-details">

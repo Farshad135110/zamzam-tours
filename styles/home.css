@@ -1328,6 +1328,19 @@ body {
   margin-left: 2px;
 }
 
+.price-inquire {
+  display: flex;
+  align-items: center;
+}
+
+.price-inquire .price-value {
+  color: var(--primary-color);
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
 .tour-actions {
   display: flex;
   gap: 0.75rem;

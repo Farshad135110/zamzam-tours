@@ -457,11 +457,16 @@ export default function SelfDrive() {
                     <div className="vehicle-pricing">
                       <div className="price-item">
                         <span className="period">{get('carRental.labels.dailyRate', 'Daily Rate')}</span>
-                        <span className="price">
-                          ${customerType === 'tourist' ? 
+                        {(() => {
+                          const dailyPrice = customerType === 'tourist' ? 
                             vehicle.touristPrices[rentalType].daily : 
-                            vehicle.localPrices[rentalType].daily}
-                        </span>
+                            vehicle.localPrices[rentalType].daily;
+                          return dailyPrice > 0 ? (
+                            <span className="price">${dailyPrice}</span>
+                          ) : (
+                            <span className="price" style={{fontSize: '0.9rem', fontWeight: '600'}}>{get('home.tours.priceOnRequest', 'Price on Request')}</span>
+                          );
+                        })()}
                       </div>
                     </div>
                     <p className="pricing-note">
@@ -579,9 +584,40 @@ export default function SelfDrive() {
               </div>
             </div>
 
-            <form className="booking-form" onSubmit={(e) => {
+            <form className="booking-form" onSubmit={async (e) => {
               e.preventDefault();
               const formData = new FormData(e.currentTarget);
+              
+              // Calculate rental days
+              const pickupDateObj = new Date(pickupDate);
+              const returnDateObj = new Date(returnDate);
+              const rentalDays = Math.ceil((returnDateObj.getTime() - pickupDateObj.getTime()) / (1000 * 60 * 60 * 24));
+              
+              // Save to database first
+              try {
+                const bookingData = {
+                  rental_type: rentalType,
+                  customer_type: customerType,
+                  name: formData.get('name'),
+                  email: formData.get('email'),
+                  phone_no: formData.get('phone'),
+                  pickup_location: pickupLocation,
+                  pickup_date: pickupDate,
+                  return_date: returnDate,
+                  no_of_dates: rentalDays,
+                  special_request: formData.get('requests') || '',
+                  vehicle_id: selectedVehicle.id
+                };
+
+                await fetch('/api/vehicle-bookings', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify(bookingData)
+                });
+              } catch (error) {
+                console.error('Failed to save booking:', error);
+              }
+              
               const message = [
                 `${get('carRental.messages.bookingRequestHeading', 'Booking Request')} - ${selectedVehicle.name}`,
                 `${get('carRental.messages.label.name', 'Name')}: ${formData.get('name')}`,

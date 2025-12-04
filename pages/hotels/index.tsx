@@ -401,7 +401,31 @@ export default function Hotels() {
   };
 
   // Handle WhatsApp booking
-  const handleWhatsAppBooking = () => {
+  const handleWhatsAppBooking = async () => {
+    // Save to database first
+    if (selectedHotel && searchParams.name && searchParams.email) {
+      try {
+        const bookingData = {
+          hotel_id: selectedHotel.id,
+          name: searchParams.name,
+          email: searchParams.email,
+          phone_no: 'Via WhatsApp', // Placeholder since form doesn't collect phone
+          check_in: searchParams.checkIn || new Date().toISOString().split('T')[0],
+          check_out: searchParams.checkOut || new Date(Date.now() + 86400000).toISOString().split('T')[0],
+          no_of_rooms: searchParams.rooms,
+          no_of_people: searchParams.guests
+        };
+
+        await fetch('/api/hotel-bookings', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(bookingData)
+        });
+      } catch (error) {
+        console.error('Failed to save hotel booking:', error);
+      }
+    }
+    
     let message = `${get('hotels.messages.greeting','Hello Zamzam Lanka Tours! I would like to book accommodation and services:')}\n\n`;
     
     if (selectedHotel) {
@@ -412,7 +436,7 @@ export default function Hotels() {
       if (searchParams.checkOut) message += `• ${get('hotels.messages.checkOutLabel','Check-out:')} ${searchParams.checkOut}\n`;
       message += `• ${get('hotels.messages.guestsLabel','Guests:')} ${searchParams.guests}\n`;
       message += `• ${get('hotels.messages.roomsLabel','Rooms:')} ${searchParams.rooms}\n`;
-      message += `• ${get('hotels.messages.hotelPriceLabel','Hotel Price:')} $${selectedHotel.price}/${get('hotels.price.perNightShort','night')}\n\n`;
+      message += `• ${get('hotels.messages.hotelPriceLabel','Hotel Price:')} ${selectedHotel.price > 0 ? `$${selectedHotel.price}/${get('hotels.price.perNightShort','night')}` : get('home.tours.priceOnRequest', 'Price on Request')}\n\n`;
     }
 
     message += `🚗 ${get('hotels.messages.additionalServicesBadge','*Additional Services:*')}\n`;
@@ -965,8 +989,14 @@ export default function Hotels() {
 
                   <div className="hotel-footer">
                     <div className="hotel-price">
-                      <span className="price">{get('hotels.price.from', 'From')} ${hotel.price}</span>
-                      <span className="period">{get('hotels.price.perNight', 'per night')}</span>
+                      {hotel.price > 0 ? (
+                        <>
+                          <span className="price">{get('hotels.price.from', 'From')} ${hotel.price}</span>
+                          <span className="period">{get('hotels.price.perNight', 'per night')}</span>
+                        </>
+                      ) : (
+                        <span className="price" style={{fontSize: '0.9rem', fontWeight: '600'}}>{get('home.tours.priceOnRequest', 'Price on Request')}</span>
+                      )}
                     </div>
                     <div className="hotel-actions">
                       <button 
@@ -997,9 +1027,15 @@ export default function Hotels() {
                     )}
 
                     <div className="overlay-price">
-                      <span className="overlay-price-label">{get('hotels.price.from', 'From')}</span>
-                      <span className="overlay-price-amount">${hotel.price}</span>
-                      <span className="overlay-price-period">/{get('hotels.price.perNight', 'night')}</span>
+                      {hotel.price > 0 ? (
+                        <>
+                          <span className="overlay-price-label">{get('hotels.price.from', 'From')}</span>
+                          <span className="overlay-price-amount">${hotel.price}</span>
+                          <span className="overlay-price-period">/{get('hotels.price.perNight', 'night')}</span>
+                        </>
+                      ) : (
+                        <span className="overlay-price-amount" style={{fontSize: '0.9rem'}}>{get('home.tours.priceOnRequest', 'Price on Request')}</span>
+                      )}
                     </div>
 
                     <div className="overlay-actions">
@@ -1154,7 +1190,7 @@ export default function Hotels() {
                     </span>
                     <span className="meta-item">
                       <span className="meta-icon">💰</span>
-                      <span>${selectedHotel.price}/night</span>
+                      <span>{selectedHotel.price > 0 ? `$${selectedHotel.price}/night` : get('home.tours.priceOnRequest', 'Price on Request')}</span>
                     </span>
                   </div>
                 </div>
@@ -1332,7 +1368,7 @@ export default function Hotels() {
                           <div className="service-info-modern">
                             <div className="service-header-modern">
                               <span className="service-name">{service.name}</span>
-                              <span className="service-price-modern">+${service.price}</span>
+                              <span className="service-price-modern">{service.price > 0 ? `+$${service.price}` : get('home.tours.priceOnRequest', 'Price on Request')}</span>
                             </div>
                             <span className="service-desc-modern">{service.description}</span>
                           </div>
@@ -1351,29 +1387,38 @@ export default function Hotels() {
                   <div className="price-summary-modern">
                     <div className="summary-row-modern">
                       <span>{get('hotels.modal.priceSummary.hotelLabel', 'Hotel')} ({searchParams.rooms} {get('hotels.modal.priceSummary.roomsLabel','rooms')})</span>
-                      <span className="summary-price">${selectedHotel.price * searchParams.rooms}</span>
+                      <span className="summary-price">{selectedHotel.price > 0 ? `$${selectedHotel.price * searchParams.rooms}` : get('home.tours.priceOnRequest', 'Price on Request')}</span>
                     </div>
                     
-                    {selectedPackages.airportTransfer && (
-                      <div className="summary-row-modern">
-                        <span>✈️ {get('hotels.services.airportTransfer.name','Airport & All-Island Transfer')}</span>
-                        <span className="summary-price">+${additionalServices.find(s => s.id === 'airport-transfer')?.price}</span>
-                      </div>
-                    )}
+                    {selectedPackages.airportTransfer && (() => {
+                      const service = additionalServices.find(s => s.id === 'airport-transfer');
+                      return (
+                        <div className="summary-row-modern">
+                          <span>✈️ {get('hotels.services.airportTransfer.name','Airport & All-Island Transfer')}</span>
+                          <span className="summary-price">{service && service.price > 0 ? `+$${service.price}` : get('home.tours.priceOnRequest', 'Price on Request')}</span>
+                        </div>
+                      );
+                    })()}
                     
-                    {selectedPackages.dailyTours && (
-                      <div className="summary-row-modern">
-                        <span>🗺️ {get('hotels.services.dailyTours.name','Daily Tours')}</span>
-                        <span className="summary-price">+${additionalServices.find(s => s.id === 'daily-tours')?.price}</span>
-                      </div>
-                    )}
+                    {selectedPackages.dailyTours && (() => {
+                      const service = additionalServices.find(s => s.id === 'daily-tours');
+                      return (
+                        <div className="summary-row-modern">
+                          <span>🗺️ {get('hotels.services.dailyTours.name','Daily Tours')}</span>
+                          <span className="summary-price">{service && service.price > 0 ? `+$${service.price}` : get('home.tours.priceOnRequest', 'Price on Request')}</span>
+                        </div>
+                      );
+                    })()}
                     
-                    {selectedPackages.rentalCar && (
-                      <div className="summary-row-modern">
-                        <span>🚗 {get('hotels.services.rentalCar.name','Car Rental')}</span>
-                        <span className="summary-price">+${additionalServices.find(s => s.id === 'rental-car')?.price}</span>
-                      </div>
-                    )}
+                    {selectedPackages.rentalCar && (() => {
+                      const service = additionalServices.find(s => s.id === 'rental-car');
+                      return (
+                        <div className="summary-row-modern">
+                          <span>🚗 {get('hotels.services.rentalCar.name','Car Rental')}</span>
+                          <span className="summary-price">{service && service.price > 0 ? `+$${service.price}` : get('home.tours.priceOnRequest', 'Price on Request')}</span>
+                        </div>
+                      );
+                    })()}
 
                     <div className="summary-divider-modern"></div>
                     <div className="summary-row-modern total-modern">

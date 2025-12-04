@@ -129,8 +129,34 @@ export default function AirportTransfer() {
     return fleetVehicles.filter(vehicle => vehicle.capacity >= passengers);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Save to database first
+    try {
+      const bookingData = {
+        pickup_type: 'one_way',
+        pickup_from: pickupLocation,
+        dropoff: dropoffLocation,
+        airport: '',
+        passengers: passengers,
+        pickup_time: `${pickupDate}T${pickupTime}:00`,
+        vehicle: selectedVehicle,
+        note: `${additionalStops ? 'Stops: ' + additionalStops + '. ' : ''}${notes}`,
+        price: 0,
+        status: 'pending'
+      };
+
+      await fetch('/api/airport-pickups', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(bookingData)
+      });
+      // Continue to WhatsApp even if DB save fails
+    } catch (error) {
+      console.error('Failed to save booking:', error);
+      // Continue to WhatsApp anyway
+    }
     
     let message = '';
     message += `\u{1F697} ${get('airportTransfer.messages.heading','*ALL-ISLAND TRANSFER BOOKING REQUEST*')}\n`;

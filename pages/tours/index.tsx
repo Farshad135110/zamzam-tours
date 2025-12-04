@@ -800,12 +800,20 @@ export default function Tours() {
 
                       <div className="tour-footer">
                         <div className="tour-price">
-                          <span className="price-label">{get('tours.card.from', 'From')}</span>
-                          <div className="price-wrapper">
-                            <span className="price-currency">$</span>
-                            <span className="price">{tour.price}</span>
-                          </div>
-                          <span className="per-person">{get('tours.card.perPerson', 'per person')}</span>
+                          {tour.price > 0 ? (
+                            <>
+                              <span className="price-label">{get('tours.card.from', 'From')}</span>
+                              <div className="price-wrapper">
+                                <span className="price-currency">$</span>
+                                <span className="price">{tour.price}</span>
+                              </div>
+                              <span className="per-person">{get('tours.card.perPerson', 'per person')}</span>
+                            </>
+                          ) : (
+                            <div className="price-wrapper">
+                              <span className="price" style={{fontSize: '0.9rem', fontWeight: '600'}}>{get('home.tours.priceOnRequest', 'Price on Request')}</span>
+                            </div>
+                          )}
                         </div>
                         <div className="tour-actions">
                           <button 
@@ -1060,12 +1068,20 @@ export default function Tours() {
                 <div className="detail-right-column">
                   <div className="booking-sticky-card">
                     <div className="booking-card-price">
-                      <span className="price-from-label">From</span>
-                      <div className="price-main">
-                        <span className="price-currency">$</span>
-                        <span className="price-amount">{selectedTour.price}</span>
-                      </div>
-                      <span className="price-per-person">per person</span>
+                      {selectedTour.price > 0 ? (
+                        <>
+                          <span className="price-from-label">From</span>
+                          <div className="price-main">
+                            <span className="price-currency">$</span>
+                            <span className="price-amount">{selectedTour.price}</span>
+                          </div>
+                          <span className="price-per-person">per person</span>
+                        </>
+                      ) : (
+                        <div className="price-main">
+                          <span className="price-amount" style={{fontSize: '1.1rem', fontWeight: '600'}}>{get('home.tours.priceOnRequest', 'Price on Request')}</span>
+                        </div>
+                      )}
                     </div>
 
                     <div className="booking-card-info">
@@ -1135,7 +1151,7 @@ export default function Tours() {
                     </div>
                     <div className="summary-item">
                       <span>{get('tours.modal.summary.price', 'Price:')}</span>
-                      <span>{`${selectedTour.price} ${get('tours.modal.summary.perPerson', 'per person')}`}</span>
+                      <span>{selectedTour.price > 0 ? `$${selectedTour.price} ${get('tours.modal.summary.perPerson', 'per person')}` : get('home.tours.priceOnRequest', 'Price on Request')}</span>
                     </div>
                     <div className="summary-item">
                       <span>{get('tours.modal.summary.difficulty', 'Difficulty:')}</span>
@@ -1149,7 +1165,7 @@ export default function Tours() {
 
                   <form 
                     className="booking-form"
-                    onSubmit={(e) => {
+                    onSubmit={async (e) => {
                       e.preventDefault();
                       const formData = new FormData(e.currentTarget);
                       const fullName = formData.get('fullName');
@@ -1159,6 +1175,28 @@ export default function Tours() {
                       const travelers = formData.get('travelers');
                       const accommodation = formData.get('accommodation');
                       const specialRequests = formData.get('specialRequests');
+                      
+                      // Save to database first
+                      try {
+                        const bookingData = {
+                          package_id: selectedTour.id,
+                          name: fullName,
+                          email: email,
+                          phone_no: phone,
+                          no_of_travellers: parseInt(travelers as string) || 1,
+                          starting_date: travelDate,
+                          pickup_location: accommodation || 'Not specified',
+                          special_requirements: specialRequests || ''
+                        };
+
+                        await fetch('/api/tour-bookings', {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify(bookingData)
+                        });
+                      } catch (error) {
+                        console.error('Failed to save booking:', error);
+                      }
                       
                       const message = `Hello Zamzam Lanka Tours! I would like to book the following tour:\n\n` +
                         `*Tour:* ${selectedTour.name}\n` +
@@ -1260,7 +1298,7 @@ export default function Tours() {
               </div>
               <div className="summary-item">
                 <span>{get('tours.modal.summary.price', 'Price:')}</span>
-                <span>{`${selectedTour.price} ${get('tours.modal.summary.perPerson', 'per person')}`}</span>
+                <span>{selectedTour.price > 0 ? `$${selectedTour.price} ${get('tours.modal.summary.perPerson', 'per person')}` : get('home.tours.priceOnRequest', 'Price on Request')}</span>
               </div>
               <div className="summary-item">
                 <span>{get('tours.modal.summary.difficulty', 'Difficulty:')}</span>
