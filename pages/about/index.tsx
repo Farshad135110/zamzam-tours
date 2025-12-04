@@ -31,11 +31,11 @@ export default function About() {
   // Team members — only founder kept per request
   const teamMembers = [
     {
-      name: 'Mohamed Zamzam',
+      name: 'Mohamed Farveez',
       position: 'Founder & CEO',
       experience: '15+ years in tourism',
       specialization: 'Cultural Tours & Operations',
-      image: '/team/zamzam-founder.jpg',
+      image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1764881329/Untitled_design_16_rilrih.png',
       quote: 'Our mission is to create unforgettable Sri Lankan experiences that connect people with our rich culture and natural beauty.',
       social: { linkedin: '#', email: 'zamzam@zamzamtours.com' }
     }
@@ -301,11 +301,11 @@ export default function About() {
               <div key={index} className="team-card">
                 <div className="member-image">
                   <Image 
-                    src={member.image} 
+                    src={member.image}
                     alt={member.name}
                     width={300}
                     height={350}
-                    style={{ objectFit: 'cover', width: '100%', height: '100%' }}
+                    style={{ objectFit: 'contain', objectPosition: 'top', width: '100%', height: '100%' }}
                   />
                   <div className="member-overlay">
                     <div className="social-links">

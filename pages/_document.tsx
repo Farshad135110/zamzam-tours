@@ -4,11 +4,11 @@ import { SITE_INFO } from '../src/constants/config'
 class MyDocument extends Document {
   render() {
     // Use Cloudinary-transformed variants for favicons and social previews
-    // Use local Zamzam logo for favicons and social preview
-    const favicon32 = '/favicon.svg';
-    const favicon16 = '/favicon.svg';
-    const appleIcon = '/logo.svg';
-    const ogImage = '/logo.svg';
+    // Use Cloudinary logo for favicons and social preview
+    const favicon32 = SITE_INFO.logo;
+    const favicon16 = SITE_INFO.logo;
+    const appleIcon = SITE_INFO.logo;
+    const ogImage = SITE_INFO.logo;
 
     return (
       <Html lang="en">
