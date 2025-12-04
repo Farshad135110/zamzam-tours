@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import AdminSidebar from '../../components/AdminSidebar';
 import useTranslation from '../../src/i18n/useTranslation';
@@ -17,54 +17,8 @@ export default function AdminUsers() {
   const [showModal, setShowModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [editingUser, setEditingUser] = useState<User | null>(null);
-
-  const [users, setUsers] = useState<User[]>([
-    {
-      user_id: 1,
-      name: 'John Doe',
-      email: 'john@zamzamtours.com',
-      role: 'admin',
-      status: 'active',
-      last_login: '2024-01-15 14:30',
-      created_at: '2024-01-01'
-    },
-    {
-      user_id: 2,
-      name: 'Sarah Wilson',
-      email: 'sarah@zamzamtours.com',
-      role: 'manager',
-      status: 'active',
-      last_login: '2024-01-14 09:15',
-      created_at: '2024-01-05'
-    },
-    {
-      user_id: 3,
-      name: 'Mike Johnson',
-      email: 'mike@zamzamtours.com',
-      role: 'staff',
-      status: 'active',
-      last_login: '2024-01-13 16:45',
-      created_at: '2024-01-10'
-    },
-    {
-      user_id: 4,
-      name: 'Emily Davis',
-      email: 'emily@zamzamtours.com',
-      role: 'staff',
-      status: 'inactive',
-      last_login: '2024-01-10 11:20',
-      created_at: '2024-01-08'
-    },
-    {
-      user_id: 5,
-      name: 'Ahmed Hassan',
-      email: 'ahmed@zamzamtours.com',
-      role: 'manager',
-      status: 'active',
-      last_login: '2024-01-15 08:00',
-      created_at: '2024-01-03'
-    }
-  ]);
+  const [users, setUsers] = useState<User[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -73,6 +27,26 @@ export default function AdminUsers() {
     status: 'active' as 'active' | 'inactive',
     password: ''
   });
+
+  // Fetch users from API on component mount
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  const fetchUsers = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch('/api/admin-users');
+      if (!res.ok) throw new Error('Failed to fetch users');
+      const data = await res.json();
+      setUsers(data);
+    } catch (err) {
+      console.error('Error fetching users:', err);
+      alert('Failed to load users');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const filteredUsers = users.filter(user =>
     user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -102,28 +76,59 @@ export default function AdminUsers() {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (editingUser) {
-      // Update existing user
-      setUsers(users.map(user => 
-        user.user_id === editingUser.user_id 
-          ? { ...formData, user_id: editingUser.user_id, last_login: editingUser.last_login, created_at: editingUser.created_at }
-          : user
-      ));
-    } else {
-      // Add new user
-      const newUser: User = {
-        ...formData,
-        user_id: Math.max(...users.map(u => u.user_id)) + 1,
-        last_login: 'Never',
-        created_at: new Date().toISOString().split('T')[0]
-      };
-      setUsers([...users, newUser]);
+    
+    if (!formData.name || !formData.email) {
+      alert('Please fill in all required fields');
+      return;
     }
-    setShowModal(false);
-    setFormData({ name: '', email: '', role: 'staff', status: 'active', password: '' });
-    setEditingUser(null);
+
+    if (!editingUser && !formData.password) {
+      alert('Password is required for new users');
+      return;
+    }
+
+    try {
+      if (editingUser) {
+        const res = await fetch(`/api/admin-users/${editingUser.user_id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formData)
+        });
+        
+        if (!res.ok) {
+          const errorData = await res.json();
+          throw new Error(errorData.error || 'Failed to update user');
+        }
+        
+        const updated = await res.json();
+        setUsers(prev => prev.map(u => u.user_id === updated.user_id ? updated : u));
+        alert('User updated successfully!');
+      } else {
+        const res = await fetch('/api/admin-users', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formData)
+        });
+        
+        if (!res.ok) {
+          const errorData = await res.json();
+          throw new Error(errorData.error || 'Failed to create user');
+        }
+        
+        const created = await res.json();
+        setUsers(prev => [...prev, created]);
+        alert('User created successfully!');
+      }
+      
+      setShowModal(false);
+      setFormData({ name: '', email: '', role: 'staff', status: 'active', password: '' });
+      setEditingUser(null);
+    } catch (err: any) {
+      console.error('Error saving user:', err);
+      alert(err.message || 'Error saving user');
+    }
   };
 
   const handleEdit = (user: User) => {
@@ -138,18 +143,51 @@ export default function AdminUsers() {
     setShowModal(true);
   };
 
-  const handleDelete = (userId: number) => {
-    if (confirm('Are you sure you want to delete this user?')) {
-      setUsers(users.filter(user => user.user_id !== userId));
+  const handleDelete = async (userId: number) => {
+    if (!confirm('Are you sure you want to delete this user?')) return;
+    
+    try {
+      const res = await fetch(`/api/admin-users/${userId}`, {
+        method: 'DELETE'
+      });
+      
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || 'Failed to delete user');
+      }
+      
+      setUsers(prev => prev.filter(u => u.user_id !== userId));
+      alert('User deleted successfully!');
+    } catch (err: any) {
+      console.error('Error deleting user:', err);
+      alert(err.message || 'Error deleting user');
     }
   };
 
-  const toggleUserStatus = (userId: number) => {
-    setUsers(users.map(user => 
-      user.user_id === userId 
-        ? { ...user, status: user.status === 'active' ? 'inactive' : 'active' }
-        : user
-    ));
+  const toggleUserStatus = async (userId: number) => {
+    const user = users.find(u => u.user_id === userId);
+    if (!user) return;
+
+    const newStatus = user.status === 'active' ? 'inactive' : 'active';
+    
+    try {
+      const res = await fetch(`/api/admin-users/${userId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus })
+      });
+      
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || 'Failed to update user status');
+      }
+      
+      const updated = await res.json();
+      setUsers(prev => prev.map(u => u.user_id === updated.user_id ? updated : u));
+    } catch (err: any) {
+      console.error('Error toggling user status:', err);
+      alert(err.message || 'Error updating user status');
+    }
   };
 
   const roles = [
@@ -159,14 +197,14 @@ export default function AdminUsers() {
   ];
 
   return (
-    <div style={{ fontFamily: 'Poppins, sans-serif', backgroundColor: '#f8fafc', minHeight: '100vh' }}>
+    <div style={{ fontFamily: 'Poppins, sans-serif', backgroundColor: '#f8fafc', minHeight: '100vh', display: 'flex', position: 'fixed', width: '100%', height: '100vh', overflow: 'hidden' }}>
       <Head>
-        <title>Users - Admin Panel</title>
+        <title>User Management - Admin Panel</title>
       </Head>
       <AdminSidebar active="users" />
 
       {/* Main Content */}
-      <div style={{ marginLeft: '280px', padding: '30px' }}>
+      <div style={{ marginLeft: '280px', padding: '30px', flex: 1, overflowY: 'auto', height: '100vh' }}>
         <style jsx global>{`
           @media (max-width: 900px) {
             body > div > div:last-child {
@@ -220,28 +258,29 @@ export default function AdminUsers() {
             <button 
               onClick={() => setShowModal(true)}
               style={{
-                padding: '12px 24px',
-                backgroundColor: '#053b3c',
+                padding: '0.875rem 1.75rem',
+                background: 'linear-gradient(135deg, #053b3c 0%, #0a5c5e 100%)',
                 color: 'white',
                 border: 'none',
-                borderRadius: '8px',
-                fontSize: '14px',
+                borderRadius: '10px',
+                fontSize: '1rem',
                 fontWeight: '600',
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '8px',
-                transition: 'all 0.2s ease'
+                gap: '0.5rem',
+                boxShadow: '0 4px 12px rgba(5, 59, 60, 0.3)',
+                transition: 'all 0.3s ease'
               }}
               onMouseEnter={(e) => {
                 const btn = e.target as HTMLButtonElement;
-                btn.style.backgroundColor = '#0a4a4b';
-                btn.style.transform = 'translateY(-1px)';
+                btn.style.transform = 'translateY(-2px)';
+                btn.style.boxShadow = '0 6px 16px rgba(5, 59, 60, 0.4)';
               }}
               onMouseLeave={(e) => {
                 const btn = e.target as HTMLButtonElement;
-                btn.style.backgroundColor = '#053b3c';
                 btn.style.transform = 'translateY(0)';
+                btn.style.boxShadow = '0 4px 12px rgba(5, 59, 60, 0.3)';
               }}
             >
               <span>+</span> Add New User
@@ -552,14 +591,24 @@ export default function AdminUsers() {
               <button 
                 onClick={() => setShowModal(true)}
                 style={{
-                  padding: '12px 24px',
-                  backgroundColor: '#053b3c',
+                  padding: '0.875rem 1.75rem',
+                  background: 'linear-gradient(135deg, #053b3c 0%, #0a5c5e 100%)',
                   color: 'white',
                   border: 'none',
-                  borderRadius: '8px',
-                  fontSize: '14px',
+                  borderRadius: '10px',
+                  fontSize: '1rem',
                   fontWeight: '600',
-                  cursor: 'pointer'
+                  cursor: 'pointer',
+                  boxShadow: '0 4px 12px rgba(5, 59, 60, 0.3)',
+                  transition: 'all 0.3s ease'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.boxShadow = '0 6px 16px rgba(5, 59, 60, 0.4)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 4px 12px rgba(5, 59, 60, 0.3)';
                 }}
               >
                 Add First User
@@ -732,14 +781,24 @@ export default function AdminUsers() {
                 <button
                   type="submit"
                   style={{
-                    padding: '10px 20px',
-                    backgroundColor: '#053b3c',
+                    padding: '1rem 2rem',
+                    background: 'linear-gradient(135deg, #053b3c 0%, #0a5c5e 100%)',
                     color: 'white',
                     border: 'none',
-                    borderRadius: '6px',
-                    fontSize: '14px',
-                    fontWeight: '500',
-                    cursor: 'pointer'
+                    borderRadius: '10px',
+                    fontSize: '1rem',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    boxShadow: '0 4px 12px rgba(5, 59, 60, 0.3)',
+                    transition: 'all 0.3s ease'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                    e.currentTarget.style.boxShadow = '0 6px 16px rgba(5, 59, 60, 0.4)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(5, 59, 60, 0.3)';
                   }}
                 >
                   {editingUser ? 'Update User' : 'Create User'}

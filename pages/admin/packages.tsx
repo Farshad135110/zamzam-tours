@@ -241,14 +241,14 @@ export default function AdminPackages() {
   }
 
   return (
-    <div style={{ fontFamily: 'Poppins, sans-serif', backgroundColor: '#f8fafc', minHeight: '100vh' }}>
+    <div style={{ fontFamily: 'Poppins, sans-serif', backgroundColor: '#f8fafc', minHeight: '100vh', display: 'flex', position: 'fixed', width: '100%', height: '100vh', overflow: 'hidden' }}>
       <Head>
         <title>Tour Packages - Admin Panel</title>
       </Head>
       <AdminSidebar active="packages" />
 
       {/* Main Content */}
-      <div style={{ marginLeft: '280px', padding: '30px', minHeight: '100vh' }}>
+      <div style={{ marginLeft: '280px', padding: '30px', flex: 1, overflowY: 'auto', height: '100vh' }}>
         <style jsx global>{`
           @media (max-width: 900px) {
             body > div > div:last-child {
@@ -300,28 +300,29 @@ export default function AdminPackages() {
             <button 
               onClick={() => setShowModal(true)}
               style={{
-                  padding: '12px 24px',
-                  backgroundColor: '#053b3c',
+                  padding: '0.875rem 1.75rem',
+                  background: 'linear-gradient(135deg, #053b3c 0%, #0a5c5e 100%)',
                   color: 'white',
                   border: 'none',
-                  borderRadius: '8px',
-                  fontSize: '14px',
+                  borderRadius: '10px',
+                  fontSize: '1rem',
                   fontWeight: '600',
                   cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
-                  gap: '8px',
-                  transition: 'all 0.2s ease'
+                  gap: '0.5rem',
+                  boxShadow: '0 4px 12px rgba(5, 59, 60, 0.3)',
+                  transition: 'all 0.3s ease'
               }}
                 onMouseEnter={(e) => {
                   const btn = e.target as HTMLButtonElement;
-                  btn.style.backgroundColor = '#0a4a4b';
-                  btn.style.transform = 'translateY(-1px)';
+                  btn.style.transform = 'translateY(-2px)';
+                  btn.style.boxShadow = '0 6px 16px rgba(5, 59, 60, 0.4)';
                 }}
                 onMouseLeave={(e) => {
                   const btn = e.target as HTMLButtonElement;
-                  btn.style.backgroundColor = '#053b3c';
                   btn.style.transform = 'translateY(0)';
+                  btn.style.boxShadow = '0 4px 12px rgba(5, 59, 60, 0.3)';
                 }}
             >
               <span>+</span> Add New Package
@@ -551,16 +552,34 @@ export default function AdminPackages() {
                 }}>
                   <button
                     onClick={() => handleEdit(pkg)}
-                    className="admin-button-outline primary"
-                    style={{ flex: 1 }}
+                    style={{
+                      flex: 1,
+                      padding: '0.5rem',
+                      background: '#053b3c',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '6px',
+                      fontSize: '0.9rem',
+                      fontWeight: '600',
+                      cursor: 'pointer'
+                    }}
                   >
                     Edit
                   </button>
                   
                   <button
                     onClick={() => handleDelete(pkg.package_id)}
-                    className="admin-button-outline danger"
-                    style={{ flex: 1 }}
+                    style={{
+                      flex: 1,
+                      padding: '0.5rem',
+                      background: '#dc2626',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '6px',
+                      fontSize: '0.9rem',
+                      fontWeight: '600',
+                      cursor: 'pointer'
+                    }}
                   >
                     Delete
                   </button>
@@ -591,14 +610,24 @@ export default function AdminPackages() {
               <button 
                 onClick={() => setShowModal(true)}
                 style={{
-                  padding: '12px 24px',
-                  backgroundColor: '#053b3c',
+                  padding: '0.875rem 1.75rem',
+                  background: 'linear-gradient(135deg, #053b3c 0%, #0a5c5e 100%)',
                   color: 'white',
                   border: 'none',
-                  borderRadius: '8px',
-                  fontSize: '14px',
+                  borderRadius: '10px',
+                  fontSize: '1rem',
                   fontWeight: '600',
-                  cursor: 'pointer'
+                  cursor: 'pointer',
+                  boxShadow: '0 4px 12px rgba(5, 59, 60, 0.3)',
+                  transition: 'all 0.3s ease'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.boxShadow = '0 6px 16px rgba(5, 59, 60, 0.4)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 4px 12px rgba(5, 59, 60, 0.3)';
                 }}
               >
                 Create First Package
@@ -949,14 +978,24 @@ export default function AdminPackages() {
                 <button
                   type="submit"
                   style={{
-                    padding: '10px 20px',
-                    backgroundColor: '#053b3c',
+                    padding: '1rem 2rem',
+                    background: 'linear-gradient(135deg, #053b3c 0%, #0a5c5e 100%)',
                     color: 'white',
                     border: 'none',
-                    borderRadius: '6px',
-                    fontSize: '14px',
-                    fontWeight: '500',
-                    cursor: 'pointer'
+                    borderRadius: '10px',
+                    fontSize: '1rem',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    boxShadow: '0 4px 12px rgba(5, 59, 60, 0.3)',
+                    transition: 'all 0.3s ease'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                    e.currentTarget.style.boxShadow = '0 6px 16px rgba(5, 59, 60, 0.4)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(5, 59, 60, 0.3)';
                   }}
                 >
                   {editingPackage ? 'Update Package' : 'Create Package'}

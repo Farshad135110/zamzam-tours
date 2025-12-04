@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import AdminSidebar from '../../components/AdminSidebar';
 import useTranslation from '../../src/i18n/useTranslation';
@@ -6,6 +6,8 @@ import { CONTACT_INFO, SITE_INFO, SOCIAL_MEDIA } from '../../src/constants/confi
 
 export default function AdminSettings() {
   const [activeTab, setActiveTab] = useState('general');
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [settings, setSettings] = useState({
     // General Settings
     siteTitle: SITE_INFO.name,
@@ -47,6 +49,25 @@ export default function AdminSettings() {
     currencySymbol: 'Rs.'
   });
 
+  useEffect(() => {
+    fetchSettings();
+  }, []);
+
+  const fetchSettings = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch('/api/settings');
+      if (!res.ok) throw new Error('Failed to fetch settings');
+      const data = await res.json();
+      setSettings(prev => ({ ...prev, ...data }));
+    } catch (err) {
+      console.error('Error fetching settings:', err);
+      // Continue with default settings
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleSettingChange = (key: string, value: any) => {
     setSettings(prev => ({
       ...prev,
@@ -54,9 +75,25 @@ export default function AdminSettings() {
     }));
   };
 
-  const handleSaveSettings = () => {
-    // In a real app, you would save to your backend here
-    alert('Settings saved successfully!');
+  const handleSaveSettings = async () => {
+    try {
+      setSaving(true);
+      const res = await fetch('/api/settings', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(settings)
+      });
+      
+      if (!res.ok) throw new Error('Failed to save settings');
+      
+      const result = await res.json();
+      alert('Settings saved successfully!');
+    } catch (err) {
+      console.error('Error saving settings:', err);
+      alert('Failed to save settings. Please try again.');
+    } finally {
+      setSaving(false);
+    }
   };
 
   const tabs = [
@@ -94,14 +131,14 @@ export default function AdminSettings() {
   ];
 
   return (
-    <div style={{ fontFamily: 'Poppins, sans-serif', backgroundColor: '#f8fafc', minHeight: '100vh' }}>
+    <div style={{ fontFamily: 'Poppins, sans-serif', backgroundColor: '#f8fafc', minHeight: '100vh', display: 'flex', position: 'fixed', width: '100%', height: '100vh', overflow: 'hidden' }}>
       <Head>
         <title>Settings - Admin Panel</title>
       </Head>
       <AdminSidebar active="settings" />
 
       {/* Main Content */}
-      <div style={{ marginLeft: '280px', padding: '30px' }}>
+      <div style={{ marginLeft: '280px', padding: '30px', flex: 1, overflowY: 'auto', height: '100vh' }}>
         <style jsx global>{`
           @media (max-width: 900px) {
             body > div > div:last-child {
@@ -671,27 +708,33 @@ export default function AdminSettings() {
           <div style={{ marginTop: '30px', display: 'flex', justifyContent: 'flex-end' }}>
             <button
               onClick={handleSaveSettings}
+              disabled={saving}
               style={{
-                padding: '12px 24px',
-                backgroundColor: '#053b3c',
+                padding: '0.875rem 1.75rem',
+                background: saving ? '#9ca3af' : 'linear-gradient(135deg, #053b3c 0%, #0a5c5e 100%)',
                 color: 'white',
                 border: 'none',
-                borderRadius: '8px',
-                fontSize: '14px',
+                borderRadius: '10px',
+                fontSize: '1rem',
                 fontWeight: '600',
-                cursor: 'pointer',
-                transition: 'all 0.2s ease'
+                cursor: saving ? 'not-allowed' : 'pointer',
+                boxShadow: saving ? 'none' : '0 4px 12px rgba(5, 59, 60, 0.3)',
+                transition: 'all 0.3s ease'
               }}
               onMouseEnter={(e) => {
-                (e.target as HTMLElement).style.backgroundColor = '#0a4a4b';
-                (e.target as HTMLElement).style.transform = 'translateY(-1px)';
+                if (!saving) {
+                  (e.target as HTMLElement).style.transform = 'translateY(-2px)';
+                  (e.target as HTMLElement).style.boxShadow = '0 6px 16px rgba(5, 59, 60, 0.4)';
+                }
               }}
               onMouseLeave={(e) => {
-                (e.target as HTMLElement).style.backgroundColor = '#053b3c';
-                (e.target as HTMLElement).style.transform = 'translateY(0)';
+                if (!saving) {
+                  (e.target as HTMLElement).style.transform = 'translateY(0)';
+                  (e.target as HTMLElement).style.boxShadow = '0 4px 12px rgba(5, 59, 60, 0.3)';
+                }
               }}
             >
-              Save Settings
+              {saving ? 'Saving...' : 'Save Settings'}
             </button>
           </div>
         </div>

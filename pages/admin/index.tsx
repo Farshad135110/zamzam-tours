@@ -304,26 +304,27 @@ interface RevenueData {
           <button
             onClick={fetchDashboardData}
             style={{
-              padding: "10px 20px",
-              backgroundColor: "#053b3c",
+              padding: "0.875rem 1.75rem",
+              background: 'linear-gradient(135deg, #053b3c 0%, #0a5c5e 100%)',
               color: "white",
               border: "none",
-              borderRadius: "8px",
-              fontSize: "14px",
+              borderRadius: "10px",
+              fontSize: "1rem",
               fontWeight: "600",
               cursor: "pointer",
               display: "flex",
               alignItems: "center",
-              gap: "8px",
-              transition: "all 0.2s ease"
+              gap: "0.5rem",
+              boxShadow: '0 4px 12px rgba(5, 59, 60, 0.3)',
+              transition: "all 0.3s ease"
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = "#0a5c5e";
               e.currentTarget.style.transform = "translateY(-2px)";
+              e.currentTarget.style.boxShadow = '0 6px 16px rgba(5, 59, 60, 0.4)';
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = "#053b3c";
               e.currentTarget.style.transform = "translateY(0)";
+              e.currentTarget.style.boxShadow = '0 4px 12px rgba(5, 59, 60, 0.3)';
             }}
           >
             🔄 Refresh Data

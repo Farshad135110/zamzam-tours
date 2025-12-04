@@ -24,7 +24,22 @@ export default function AdminSidebar({ active }: Props) {
         console.error('Error parsing user data:', e);
       }
     }
-  }, []);
+
+    // Handle browser back button - logout when leaving admin panel
+    const handlePopState = () => {
+      if (router.pathname.startsWith('/admin')) {
+        localStorage.removeItem('user');
+        localStorage.removeItem('isLoggedIn');
+        router.push('/login');
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, [router]);
 
   const handleLogout = async () => {
     if (confirm('Are you sure you want to logout?')) {
@@ -154,14 +169,15 @@ export default function AdminSidebar({ active }: Props) {
       left: 0,
       top: 0,
       height: '100vh',
-      overflowY: 'auto',
       boxShadow: '4px 0 24px rgba(0, 0, 0, 0.12)',
-      zIndex: 1000
+      zIndex: 1000,
+      overflow: 'hidden'
     }}>
       {/* Logo Section */}
       <div style={{ 
         padding: '20px 20px 16px',
-        borderBottom: '1px solid rgba(255, 255, 255, 0.1)'
+        borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+        flexShrink: 0
       }}>
         <div style={{ 
           display: 'flex',
@@ -427,7 +443,8 @@ export default function AdminSidebar({ active }: Props) {
       <div style={{
         padding: '16px 20px',
         borderTop: '1px solid rgba(255, 255, 255, 0.1)',
-        background: 'rgba(0, 0, 0, 0.1)'
+        background: 'rgba(0, 0, 0, 0.1)',
+        flexShrink: 0
       }}>
         <div style={{
           display: 'flex',

@@ -183,7 +183,7 @@ export default function AdminGallery() {
   };
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', background: '#f8f9fa' }}>
+    <div style={{ display: 'flex', minHeight: '100vh', background: '#f8f9fa', position: 'fixed', width: '100%', height: '100vh', overflow: 'hidden' }}>
       <Head>
         <title>Gallery - Admin Panel</title>
       </Head>
@@ -193,7 +193,8 @@ export default function AdminGallery() {
         flex: 1, 
         marginLeft: '280px', 
         padding: '2rem',
-        minHeight: '100vh'
+        height: '100vh',
+        overflowY: 'auto'
       }}>
         <div style={{ maxWidth: '1600px', margin: '0 auto' }}>
           {/* Header */}

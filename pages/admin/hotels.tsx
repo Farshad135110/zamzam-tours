@@ -295,28 +295,29 @@ export default function AdminHotels() {
             <button 
               onClick={() => setShowModal(true)}
               style={{
-                padding: '12px 24px',
-                backgroundColor: '#053b3c',
+                padding: '0.875rem 1.75rem',
+                background: 'linear-gradient(135deg, #053b3c 0%, #0a5c5e 100%)',
                 color: 'white',
                 border: 'none',
-                borderRadius: '8px',
-                fontSize: '14px',
+                borderRadius: '10px',
+                fontSize: '1rem',
                 fontWeight: '600',
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '8px',
-                transition: 'all 0.2s ease'
+                gap: '0.5rem',
+                boxShadow: '0 4px 12px rgba(5, 59, 60, 0.3)',
+                transition: 'all 0.3s ease'
               }}
               onMouseEnter={(e) => {
                 const btn = e.target as HTMLButtonElement;
-                btn.style.backgroundColor = '#0a4a4b';
-                btn.style.transform = 'translateY(-1px)';
+                btn.style.transform = 'translateY(-2px)';
+                btn.style.boxShadow = '0 6px 16px rgba(5, 59, 60, 0.4)';
               }}
               onMouseLeave={(e) => {
                 const btn = e.target as HTMLButtonElement;
-                btn.style.backgroundColor = '#053b3c';
                 btn.style.transform = 'translateY(0)';
+                btn.style.boxShadow = '0 4px 12px rgba(5, 59, 60, 0.3)';
               }}
             >
               <span>+</span> Add New Hotel
@@ -520,27 +521,15 @@ export default function AdminHotels() {
                   <button
                     onClick={() => handleEdit(hotel)}
                     style={{
-                      flex: '1 1 auto',
-                      minWidth: '70px',
-                      padding: '10px 16px',
-                      backgroundColor: 'transparent',
-                      color: '#053b3c',
-                      border: '1px solid #053b3c',
+                      flex: 1,
+                      padding: '0.5rem',
+                      background: '#053b3c',
+                      color: 'white',
+                      border: 'none',
                       borderRadius: '6px',
-                      fontSize: '14px',
-                      fontWeight: '500',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s ease'
-                    }}
-                    onMouseEnter={(e) => {
-                      const btn = e.target as HTMLButtonElement;
-                      btn.style.backgroundColor = '#053b3c';
-                      btn.style.color = 'white';
-                    }}
-                    onMouseLeave={(e) => {
-                      const btn = e.target as HTMLButtonElement;
-                      btn.style.backgroundColor = 'transparent';
-                      btn.style.color = '#053b3c';
+                      fontSize: '0.9rem',
+                      fontWeight: '600',
+                      cursor: 'pointer'
                     }}
                   >
                     Edit
@@ -550,25 +539,14 @@ export default function AdminHotels() {
                     onClick={() => handleDelete(hotel.hotel_id)}
                     style={{
                       flex: 1,
-                      padding: '10px 16px',
-                      backgroundColor: 'transparent',
-                      color: '#ef4444',
-                      border: '1px solid #ef4444',
+                      padding: '0.5rem',
+                      background: '#dc2626',
+                      color: 'white',
+                      border: 'none',
                       borderRadius: '6px',
-                      fontSize: '14px',
-                      fontWeight: '500',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s ease'
-                    }}
-                    onMouseEnter={(e) => {
-                      const btn = e.target as HTMLButtonElement;
-                      btn.style.backgroundColor = '#ef4444';
-                      btn.style.color = 'white';
-                    }}
-                    onMouseLeave={(e) => {
-                      const btn = e.target as HTMLButtonElement;
-                      btn.style.backgroundColor = 'transparent';
-                      btn.style.color = '#ef4444';
+                      fontSize: '0.9rem',
+                      fontWeight: '600',
+                      cursor: 'pointer'
                     }}
                   >
                     Delete
@@ -600,14 +578,24 @@ export default function AdminHotels() {
               <button 
                 onClick={() => setShowModal(true)}
                 style={{
-                  padding: '12px 24px',
-                  backgroundColor: '#053b3c',
+                  padding: '0.875rem 1.75rem',
+                  background: 'linear-gradient(135deg, #053b3c 0%, #0a5c5e 100%)',
                   color: 'white',
                   border: 'none',
-                  borderRadius: '8px',
-                  fontSize: '14px',
+                  borderRadius: '10px',
+                  fontSize: '1rem',
                   fontWeight: '600',
-                  cursor: 'pointer'
+                  cursor: 'pointer',
+                  boxShadow: '0 4px 12px rgba(5, 59, 60, 0.3)',
+                  transition: 'all 0.3s ease'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.boxShadow = '0 6px 16px rgba(5, 59, 60, 0.4)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 4px 12px rgba(5, 59, 60, 0.3)';
                 }}
               >
                 Add First Hotel
@@ -798,14 +786,24 @@ export default function AdminHotels() {
                 <button
                   type="submit"
                   style={{
-                    padding: '10px 20px',
-                    backgroundColor: '#053b3c',
+                    padding: '1rem 2rem',
+                    background: 'linear-gradient(135deg, #053b3c 0%, #0a5c5e 100%)',
                     color: 'white',
                     border: 'none',
-                    borderRadius: '6px',
-                    fontSize: '14px',
-                    fontWeight: '500',
-                    cursor: 'pointer'
+                    borderRadius: '10px',
+                    fontSize: '1rem',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    boxShadow: '0 4px 12px rgba(5, 59, 60, 0.3)',
+                    transition: 'all 0.3s ease'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                    e.currentTarget.style.boxShadow = '0 6px 16px rgba(5, 59, 60, 0.4)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(5, 59, 60, 0.3)';
                   }}
                 >
                   {editingHotel ? 'Update Hotel' : 'Create Hotel'}
@@ -906,14 +904,28 @@ export default function AdminHotels() {
                 type="submit"
                 disabled={!galleryFormData.image_url}
                 style={{
-                  padding: '10px 20px',
-                  backgroundColor: galleryFormData.image_url ? '#053b3c' : '#9ca3af',
+                  padding: '1rem 2rem',
+                  background: galleryFormData.image_url ? 'linear-gradient(135deg, #053b3c 0%, #0a5c5e 100%)' : '#9ca3af',
                   color: 'white',
                   border: 'none',
-                  borderRadius: '6px',
-                  fontSize: '14px',
-                  fontWeight: '500',
-                  cursor: galleryFormData.image_url ? 'pointer' : 'not-allowed'
+                  borderRadius: '10px',
+                  fontSize: '1rem',
+                  fontWeight: '600',
+                  cursor: galleryFormData.image_url ? 'pointer' : 'not-allowed',
+                  boxShadow: galleryFormData.image_url ? '0 4px 12px rgba(5, 59, 60, 0.3)' : 'none',
+                  transition: 'all 0.3s ease'
+                }}
+                onMouseEnter={(e) => {
+                  if (galleryFormData.image_url) {
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                    e.currentTarget.style.boxShadow = '0 6px 16px rgba(5, 59, 60, 0.4)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (galleryFormData.image_url) {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(5, 59, 60, 0.3)';
+                  }
                 }}
               >
                 + Add Image to Gallery
@@ -996,14 +1008,24 @@ export default function AdminHotels() {
               <button
                 onClick={() => setShowGalleryModal(false)}
                 style={{
-                  padding: '10px 20px',
-                  backgroundColor: '#053b3c',
+                  padding: '1rem 2rem',
+                  background: 'linear-gradient(135deg, #053b3c 0%, #0a5c5e 100%)',
                   color: 'white',
                   border: 'none',
-                  borderRadius: '6px',
-                  fontSize: '14px',
-                  fontWeight: '500',
-                  cursor: 'pointer'
+                  borderRadius: '10px',
+                  fontSize: '1rem',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  boxShadow: '0 4px 12px rgba(5, 59, 60, 0.3)',
+                  transition: 'all 0.3s ease'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.boxShadow = '0 6px 16px rgba(5, 59, 60, 0.4)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 4px 12px rgba(5, 59, 60, 0.3)';
                 }}
               >
                 Close Gallery
