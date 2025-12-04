@@ -493,12 +493,9 @@ export default function Home() {
                           <h4>{get(`home.vehicles.${vehicle.name}.name`, vehicle.name)}</h4>
                           <p>{get('home.vehicles.capacityLabel', 'Capacity:')} {vehicle.capacity} {get('home.vehicles.passengers', 'passengers')}</p>
                           <p className="vehicle-desc">{get(`home.vehicles.${vehicle.name}.description`, vehicle.description)}</p>
-                          <button 
-                            className="btn btn-small"
-                            onClick={() => handleWhatsAppBooking(`a ${vehicle.name}`)}
-                          >
-                            {get('home.vehicles.checkRates', 'Check Rates')}
-                          </button>
+                          <Link href="/car-rental" className="btn-view-details">
+                            {get('home.vehicles.viewMoreDetails', 'View More Details')}
+                          </Link>
                         </div>
                       </div>
                     </AnimatedSection>
