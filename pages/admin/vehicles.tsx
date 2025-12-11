@@ -92,7 +92,7 @@ export default function AdminVehicles() {
       case 'self_drive': return '👤';
       case 'with_driver': return '👨‍💼';
       case 'tour': return '🗺️';
-      default: return '⚡';
+      default: return '';
     }
   };
 
@@ -116,7 +116,10 @@ export default function AdminVehicles() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(formData)
         });
-        if (!res.ok) throw new Error('Failed to update vehicle');
+        if (!res.ok) {
+          const errorData = await res.json().catch(() => ({}));
+          throw new Error(errorData.error || 'Failed to update vehicle');
+        }
         const updated = await res.json();
         setVehicles(vehicles.map(v => v.vehicle_id === updated.vehicle_id ? updated : v));
       } else {
@@ -126,17 +129,19 @@ export default function AdminVehicles() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(formData)
         });
-        if (!res.ok) throw new Error('Failed to create vehicle');
+        if (!res.ok) {
+          const errorData = await res.json().catch(() => ({}));
+          throw new Error(errorData.error || 'Failed to create vehicle');
+        }
         const created = await res.json();
         setVehicles([...vehicles, created]);
       }
-      
       setShowModal(false);
       resetForm();
       setEditingVehicle(null);
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error saving vehicle:', err);
-      alert('Failed to save vehicle');
+      alert(err.message || 'Failed to save vehicle');
     }
   };
 
@@ -175,11 +180,14 @@ export default function AdminVehicles() {
     
     try {
       const res = await fetch(`/api/vehicles/${vehicleId}`, { method: 'DELETE' });
-      if (!res.ok) throw new Error('Failed to delete vehicle');
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Failed to delete vehicle');
+      }
       setVehicles(vehicles.filter(v => v.vehicle_id !== vehicleId));
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error deleting vehicle:', err);
-      alert('Failed to delete vehicle');
+      alert(err.message || 'Failed to delete vehicle');
     }
   };
 
@@ -455,7 +463,7 @@ export default function AdminVehicles() {
                   fontSize: '14px',
                   fontWeight: '600'
                 }}>
-                  ${vehicle.price_per_day}/day
+                  {vehicle.price_per_day > 0 ? `$${vehicle.price_per_day}/day` : t('home.tours.priceOnRequest', 'Price on Request')}
                 </div>
               </div>
 
@@ -500,7 +508,7 @@ export default function AdminVehicles() {
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <span style={{ color: '#6b7280', fontSize: '16px' }}>💰</span>
                     <span style={{ color: '#374151', fontSize: '14px', fontWeight: '500' }}>
-                      ${vehicle.extra_charge_per_km}/extra km
+                      {vehicle.extra_charge_per_km > 0 ? `$${vehicle.extra_charge_per_km}/extra km` : t('home.tours.priceOnRequest', 'Price on Request')}
                     </span>
                   </div>
                 </div>
@@ -511,24 +519,27 @@ export default function AdminVehicles() {
                     Available For:
                   </div>
                   <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                    {parseAvailableFor(vehicle.available_for).map(type => (
-                      <div
-                        key={type}
-                        style={{
-                          backgroundColor: '#f1f5f9',
-                          color: '#374151',
-                          padding: '4px 8px',
-                          borderRadius: '6px',
-                          fontSize: '11px',
-                          fontWeight: '500',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '4px'
-                        }}
-                      >
-                        {getUsageTypeIcon(type)} {getUsageTypeText(type)}
-                      </div>
-                    ))}
+                    {parseAvailableFor(vehicle.available_for).map(type => {
+                      if (["self-drive", "with-driver"].includes(type)) return null;
+                      return (
+                        <div
+                          key={type}
+                          style={{
+                            backgroundColor: '#f1f5f9',
+                            color: '#374151',
+                            padding: '4px 8px',
+                            borderRadius: '6px',
+                            fontSize: '11px',
+                            fontWeight: '500',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '4px'
+                          }}
+                        >
+                          {getUsageTypeIcon(type)} {getUsageTypeText(type)}
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
 
@@ -778,7 +789,7 @@ export default function AdminVehicles() {
                   <input
                     type="number"
                     required
-                    min="1"
+                    min="0"
                     step="0.01"
                     value={formData.price_per_day}
                     onChange={(e) => setFormData({...formData, price_per_day: parseFloat(e.target.value)})}
@@ -800,7 +811,7 @@ export default function AdminVehicles() {
                   <input
                     type="number"
                     required
-                    min="0.1"
+                    min="0"
                     step="0.01"
                     value={formData.extra_charge_per_km}
                     onChange={(e) => setFormData({...formData, extra_charge_per_km: parseFloat(e.target.value)})}

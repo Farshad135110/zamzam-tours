@@ -202,6 +202,13 @@ Please respond promptly.
 
   // map initialization removed (interactive map section was removed)
 
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      document.body.classList.add('contact-page');
+      return () => document.body.classList.remove('contact-page');
+    }
+  }, []);
+
   return (
     <>
       <Head>
@@ -580,6 +587,29 @@ Please respond promptly.
           color: white;
           overflow: hidden;
           padding-top: 55px;
+        }
+
+        @media (max-width: 768px) {
+          .navbar {
+            background: #053b3c !important;
+          }
+          .contact-hero {
+            background: #053b3c !important;
+            padding-top: 300px !important;
+            height: 50vh !important;
+            min-height: 400px !important;
+          }
+        }
+        @media (max-width: 576px) {
+          .navbar {
+            background: #053b3c !important;
+          }
+          .contact-hero {
+            background: #053b3c !important;
+            padding-top: 300px !important;
+            height: 50vh !important;
+            min-height: 250px !important;
+          }
         }
 
         .hero-content {

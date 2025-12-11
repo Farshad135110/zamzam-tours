@@ -224,15 +224,16 @@ export default function AirportTransfer() {
             muted
             playsInline
             preload="auto"
-            poster="https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453704/dylan-shaw-smUAKwMT8XA-unsplash_qhenhx.jpg"
+            poster="https://res.cloudinary.com/dhfqwxyb4/image/upload/q_auto,f_auto,w_1280/v1762453704/dylan-shaw-smUAKwMT8XA-unsplash_qhenhx.jpg"
             style={{
               width: '100%',
               height: '100%',
-              objectFit: 'cover'
+              objectFit: 'cover',
+              background: '#053b3c'
             }}
           >
-            <source 
-              src="https://res.cloudinary.com/dhfqwxyb4/video/upload/q_auto,f_auto/v1761687230/12177913_3840_2160_30fps_d6dhi5.mp4" 
+            <source
+              src="https://res.cloudinary.com/dhfqwxyb4/video/upload/q_auto:eco,f_auto,w_1280/v1761687230/12177913_3840_2160_30fps_d6dhi5.mp4"
               type="video/mp4"
             />
           </video>

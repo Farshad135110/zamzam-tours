@@ -621,7 +621,7 @@ export default function Tours() {
                   backgroundColor: '#f8b500',
                   color: '#000000',
                   border: 'none',
-                  borderRadius: '0 50px 50px 0',
+                  borderRadius: '0',
                   cursor: 'pointer',
                   fontWeight: 'bold',
                   boxShadow: '0 4px 15px rgba(248, 181, 0, 0.4)'

@@ -985,14 +985,7 @@ export default function Hotels() {
 
                   <div className="hotel-footer">
                     <div className="hotel-price">
-                      {hotel.price > 0 ? (
-                        <>
-                          <span className="price">{get('hotels.price.from', 'From')} ${hotel.price}</span>
-                          <span className="period">{get('hotels.price.perNight', 'per night')}</span>
-                        </>
-                      ) : (
-                        <span className="price" style={{fontSize: '0.9rem', fontWeight: '600'}}>{get('home.tours.priceOnRequest', 'Price on Request')}</span>
-                      )}
+                      <span className="price" style={{fontSize: '0.9rem', fontWeight: '600'}}>{get('home.tours.priceOnRequest', 'Price on Request')}</span>
                     </div>
                     <div className="hotel-actions">
                       <button 
@@ -1023,15 +1016,7 @@ export default function Hotels() {
                     )}
 
                     <div className="overlay-price">
-                      {hotel.price > 0 ? (
-                        <>
-                          <span className="overlay-price-label">{get('hotels.price.from', 'From')}</span>
-                          <span className="overlay-price-amount">${hotel.price}</span>
-                          <span className="overlay-price-period">/{get('hotels.price.perNight', 'night')}</span>
-                        </>
-                      ) : (
-                        <span className="overlay-price-amount" style={{fontSize: '0.9rem'}}>{get('home.tours.priceOnRequest', 'Price on Request')}</span>
-                      )}
+                      <span className="overlay-price-amount" style={{fontSize: '0.9rem'}}>{get('home.tours.priceOnRequest', 'Price on Request')}</span>
                     </div>
 
                     <div className="overlay-actions">
@@ -1384,7 +1369,7 @@ export default function Hotels() {
                   <div className="price-summary-modern">
                     <div className="summary-row-modern">
                       <span>{get('hotels.modal.priceSummary.hotelLabel', 'Hotel')} ({searchParams.rooms} {get('hotels.modal.priceSummary.roomsLabel','rooms')})</span>
-                      <span className="summary-price">{selectedHotel.price > 0 ? `$${selectedHotel.price * searchParams.rooms}` : get('home.tours.priceOnRequest', 'Price on Request')}</span>
+                      <span className="summary-price">{get('home.tours.priceOnRequest', 'Price on Request')}</span>
                     </div>
                     
                     {selectedPackages.airportTransfer && (() => {
@@ -1420,7 +1405,7 @@ export default function Hotels() {
                     <div className="summary-divider-modern"></div>
                     <div className="summary-row-modern total-modern">
                       <span>{get('hotels.modal.priceSummary.totalLabel','Total Amount')}</span>
-                      <span className="summary-total-price">${calculateTotalPrice()}</span>
+                      <span className="summary-total-price">{get('home.tours.priceOnRequest', 'Price on Request')}</span>
                     </div>
                   </div>
                 </div>
@@ -1745,7 +1730,7 @@ export default function Hotels() {
 
         .service-compact-card.selected .service-compact-check {
           background: var(--primary-color);
-          border-color: var(--primary-color);
+                                     border-color: var(--primary-color);
         }
 
         /* Modern Modal Styles */
@@ -1997,8 +1982,8 @@ export default function Hotels() {
         .service-checkbox-modern {
           display: flex;
           align-items: flex-start;
-          gap: 0.75rem;
-          padding: 0.75rem;
+          gap: 1rem;
+          padding: 1rem;
           background: #f8f9fa;
           border: 1.5px solid transparent;
           border-radius: 8px;
@@ -2017,700 +2002,6 @@ export default function Hotels() {
           cursor: pointer;
           accent-color: var(--primary-color);
           margin-top: 1px;
-        }
-
-        .service-info-modern {
-          flex: 1;
-        }
-
-        .service-header-modern {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 0.3rem;
-        }
-
-        .service-name {
-          font-weight: 600;
-          color: var(--text-color);
-          font-size: 0.9rem;
-        }
-
-        .service-price-modern {
-          font-weight: 700;
-          color: var(--primary-color);
-          font-size: 0.9rem;
-        }
-
-        .service-desc-modern {
-          font-size: 0.75rem;
-          color: var(--text-light);
-          line-height: 1.3;
-        }
-
-        .price-summary-modern {
-          display: flex;
-          flex-direction: column;
-          gap: 0.6rem;
-        }
-
-        .summary-row-modern {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 0.5rem 0;
-          font-size: 0.85rem;
-        }
-
-        .summary-price {
-          font-weight: 600;
-          color: var(--text-color);
-        }
-
-        .summary-divider-modern {
-          height: 1.5px;
-          background: linear-gradient(90deg, transparent, #e9ecef, transparent);
-          margin: 0.4rem 0;
-        }
-
-        .summary-row-modern.total-modern {
-          padding: 0.75rem 0 0 0;
-          font-size: 1rem;
-          font-weight: 700;
-        }
-
-        .summary-total-price {
-          font-size: 1.3rem;
-          color: var(--primary-color);
-          font-weight: 700;
-        }
-
-        .form-actions-modern {
-          display: flex;
-          gap: 0.75rem;
-          padding-top: 0.75rem;
-        }
-
-        .btn-cancel-modern,
-        .btn-confirm-modern {
-          flex: 1;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 0.5rem;
-          padding: 0.75rem 1.5rem;
-          border: none;
-          border-radius: 8px;
-          font-size: 0.9rem;
-          font-weight: 600;
-          cursor: pointer;
-          transition: all 0.3s ease;
-        }
-
-        .btn-cancel-modern {
-          background: var(--primary-color);
-          color: white;
-          border: none;
-        }
-
-        .btn-cancel-modern:hover {
-          background: #d96200;
-          transform: translateY(-2px);
-          box-shadow: 0 4px 12px rgba(255,108,0,0.25);
-        }
-
-        .btn-confirm-modern {
-          background: linear-gradient(135deg, var(--primary-color) 0%, #d96200 100%);
-          color: white;
-        }
-
-        .btn-confirm-modern:hover {
-          background: linear-gradient(135deg, #d96200 0%, var(--primary-color) 100%);
-          transform: translateY(-1px);
-          box-shadow: 0 4px 12px rgba(255,108,0,0.25);
-        }
-
-        /* Packages Section */
-        .packages-section {
-          padding: 4rem 0;
-        }
-
-        .packages-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-          gap: 2rem;
-        }
-
-        .package-card {
-          background: white;
-          border-radius: 10px;
-          overflow: hidden;
-          box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-          transition: transform 0.3s ease;
-        }
-
-        .package-card:hover {
-          transform: translateY(-5px);
-        }
-
-        .package-image {
-          position: relative;
-          height: 200px;
-        }
-
-        .package-badge {
-          position: absolute;
-          top: 15px;
-          left: 15px;
-          background: var(--primary-color);
-          color: white;
-          padding: 5px 10px;
-          border-radius: 15px;
-          font-size: 0.8rem;
-          font-weight: 600;
-        }
-
-        .package-content {
-          padding: 1.5rem;
-        }
-
-        .package-content h3 {
-          color: var(--primary-color);
-          margin-bottom: 0.5rem;
-        }
-
-        .package-content p {
-          color: var(--text-light);
-          margin-bottom: 1rem;
-          font-size: 0.9rem;
-        }
-
-        .package-includes {
-          margin-bottom: 1.5rem;
-        }
-
-        .package-includes h4 {
-          color: var(--primary-color);
-          margin-bottom: 0.5rem;
-          font-size: 1rem;
-        }
-
-        .package-includes ul {
-          list-style: none;
-          padding: 0;
-        }
-
-        .package-includes li {
-          margin-bottom: 0.3rem;
-          font-size: 0.9rem;
-          color: var(--text-light);
-        }
-
-        .package-pricing {
-          display: flex;
-          align-items: center;
-          gap: 1rem;
-          margin-bottom: 1.5rem;
-          flex-wrap: wrap;
-        }
-
-        .price-original {
-          text-decoration: line-through;
-          color: var(--text-light);
-          font-size: 1.1rem;
-        }
-
-        .price-discounted {
-          font-size: 1.5rem;
-          font-weight: 700;
-          color: var(--primary-color);
-        }
-
-        .price-save {
-          background: #053b3c;
-          color: white;
-          padding: 3px 8px;
-          border-radius: 12px;
-          font-size: 0.8rem;
-          font-weight: 600;
-        }
-
-        /* Hotels Grid */
-        .hotels-grid-section {
-          padding: 4rem 0;
-          background: var(--section-bg);
-        }
-
-        .hotels-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-          gap: 2rem;
-        }
-
-        .hotel-card {
-          background: white;
-          border-radius: 12px;
-          overflow: hidden;
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-          transition: all 0.3s ease;
-          display: flex;
-          flex-direction: column;
-          position: relative;
-        }
-
-        .hotel-card:hover {
-          transform: translateY(-8px);
-          box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
-        }
-
-        .hotel-card:hover .hotel-overlay {
-          opacity: 1;
-          pointer-events: auto;
-        }
-
-        .hotel-image {
-          position: relative;
-          height: 220px;
-          width: 100%;
-          overflow: hidden;
-          flex-shrink: 0;
-          background: #f0f3f4;
-        }
-
-        .hotel-image img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-          transition: transform 0.6s cubic-bezier(.2,.8,.2,1);
-        }
-
-        .hotel-card:hover .hotel-image img {
-          transform: scale(1.08);
-        }
-
-        /* Overlay that covers entire card on hover */
-        .hotel-overlay {
-          position: absolute;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          opacity: 0;
-          pointer-events: none;
-          transition: opacity 0.3s ease;
-          z-index: 10;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          padding: 2rem;
-          overflow-y: auto;
-        }
-
-        .hotel-overlay::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          background: linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.8) 50%, rgba(0,0,0,0.95) 100%);
-          z-index: 1;
-        }
-
-        .hotel-card:hover .hotel-image {
-          position: absolute;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          height: 100%;
-          z-index: 5;
-        }
-
-        .overlay-content {
-          color: white;
-          text-align: center;
-          width: 100%;
-          max-height: 100%;
-          overflow-y: auto;
-          position: relative;
-          z-index: 2;
-        }
-
-        .overlay-content h3 {
-          color: white;
-          font-size: 1.5rem;
-          margin-bottom: 0.75rem;
-          text-shadow: 0 2px 4px rgba(0,0,0,0.5);
-          font-weight: 700;
-        }
-
-        .overlay-location {
-          color: #f8b500;
-          font-size: 0.9rem;
-          margin-bottom: 1rem;
-          font-weight: 600;
-        }
-
-        .overlay-description {
-          color: rgba(255,255,255,0.9);
-          font-size: 0.9rem;
-          margin-bottom: 1rem;
-          line-height: 1.5;
-        }
-
-        .overlay-facilities {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 0.5rem;
-          margin-bottom: 1.5rem;
-        }
-
-        .overlay-facility-tag {
-          background: rgba(255,255,255,0.15);
-          padding: 0.3rem 0.6rem;
-          border-radius: 5px;
-          font-size: 0.75rem;
-          color: white;
-          backdrop-filter: blur(5px);
-          text-align: left;
-        }
-
-        .overlay-price {
-          margin-bottom: 1.5rem;
-          display: flex;
-          align-items: baseline;
-          justify-content: center;
-          gap: 0.3rem;
-        }
-
-        .overlay-price-label {
-          color: rgba(255,255,255,0.8);
-          font-size: 0.9rem;
-        }
-
-        .overlay-price-amount {
-          color: #f8b500;
-          font-size: 2rem;
-          font-weight: 700;
-        }
-
-        .overlay-price-period {
-          color: rgba(255,255,255,0.8);
-          font-size: 0.9rem;
-        }
-
-        .overlay-actions {
-          display: flex;
-          gap: 1rem;
-          justify-content: center;
-        }
-
-        .overlay-btn-view,
-        .overlay-btn-book {
-          padding: 0.7rem 1.5rem;
-          border-radius: 5px;
-          border: none;
-          font-weight: 600;
-          cursor: pointer;
-          transition: all 0.3s ease;
-          font-size: 0.9rem;
-        }
-
-        .overlay-btn-view {
-          background: rgba(255,255,255,0.2);
-          color: white;
-          border: 2px solid white;
-          backdrop-filter: blur(10px);
-        }
-
-        .overlay-btn-view:hover {
-          background: white;
-          color: var(--primary-color);
-        }
-
-        .overlay-btn-book {
-          background: var(--primary-color);
-          color: white;
-        }
-
-        .overlay-btn-book:hover {
-          background: var(--primary-light);
-          transform: scale(1.05);
-        }
-
-        .hotel-rating {
-          position: absolute;
-          top: 15px;
-          right: 15px;
-          background: rgba(255, 255, 255, 0.9);
-          padding: 5px 10px;
-          border-radius: 15px;
-          font-size: 0.8rem;
-          font-weight: 600;
-        }
-
-        .hotel-class-badge {
-          position: absolute;
-          top: 15px;
-          left: 15px;
-          background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
-          color: white;
-          padding: 5px 12px;
-          border-radius: 15px;
-          font-size: 0.75rem;
-          font-weight: 700;
-          text-transform: uppercase;
-          box-shadow: 0 2px 8px rgba(248, 181, 0, 0.4);
-          letter-spacing: 0.5px;
-        }
-
-        .hotel-location {
-          position: absolute;
-          bottom: 15px;
-          left: 15px;
-          background: var(--primary-color);
-          color: white;
-          padding: 5px 10px;
-          border-radius: 15px;
-          font-size: 0.8rem;
-          font-weight: 600;
-        }
-
-        .hotel-content {
-          padding: 1.5rem;
-          display: flex;
-          flex-direction: column;
-          flex-grow: 1;
-        }
-
-        .hotel-content h3 {
-          color: var(--primary-color);
-          margin-bottom: 0.5rem;
-          font-size: 1.4rem;
-          font-weight: 700;
-        }
-
-        .hotel-title-row {
-          display: flex;
-          align-items: center;
-          gap: 10px;
-          margin-bottom: 0.5rem;
-          flex-wrap: wrap;
-        }
-
-        .hotel-title-row h3 {
-          margin: 0;
-          flex: 0 1 auto;
-        }
-
-        .hotel-type-badge {
-          background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-          color: white;
-          padding: 4px 12px;
-          border-radius: 12px;
-          font-size: 0.7rem;
-          font-weight: 600;
-          text-transform: uppercase;
-          letter-spacing: 0.3px;
-          white-space: nowrap;
-        }
-
-        .hotel-description {
-          color: var(--text-light);
-          margin-bottom: 1rem;
-          font-size: 0.9rem;
-        }
-
-        .hotel-amenities {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 0.5rem;
-          margin-bottom: 1rem;
-        }
-
-        .amenity-tag {
-          background: var(--section-bg);
-          padding: 3px 8px;
-          border-radius: 10px;
-          font-size: 0.7rem;
-          color: var(--text-light);
-        }
-
-        .amenity-more {
-          background: var(--primary-light);
-          color: white;
-          padding: 3px 8px;
-          border-radius: 10px;
-          font-size: 0.7rem;
-          font-weight: 600;
-        }
-
-        /* Facilities (from DB) */
-        .hotel-facilities {
-          margin-bottom: 1rem;
-        }
-
-        .facility-tags {
-          display: flex;
-          gap: 0.5rem;
-          flex-wrap: wrap;
-          margin-top: 0.5rem;
-        }
-
-        .facility-tag {
-          background: var(--section-bg);
-          padding: 3px 8px;
-          border-radius: 10px;
-          font-size: 0.75rem;
-          color: var(--text-light);
-        }
-
-        .facility-more {
-          background: linear-gradient(135deg, var(--primary-color) 0%, #d96200 100%);
-          color: white;
-          padding: 3px 10px;
-          border-radius: 10px;
-          font-size: 0.7rem;
-          font-weight: 600;
-          cursor: default;
-        }
-
-        .hotel-popular {
-          margin-bottom: 1.5rem;
-        }
-
-        .hotel-popular span {
-          font-size: 0.8rem;
-          color: var(--text-light);
-          margin-bottom: 0.5rem;
-          display: block;
-        }
-
-        .popular-tags {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 0.3rem;
-        }
-
-        .popular-tag {
-          background: var(--primary-color);
-          color: white;
-          padding: 2px 6px;
-          border-radius: 8px;
-          font-size: 0.7rem;
-          font-weight: 600;
-          text-transform: capitalize;
-        }
-
-        .hotel-footer {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding-top: 1rem;
-          border-top: 1px solid var(--border-color);
-        }
-
-        .hotel-price .price {
-          font-size: 1.3rem;
-          font-weight: 700;
-          color: var(--primary-color);
-        }
-
-        .hotel-price .period {
-          display: block;
-          font-size: 0.8rem;
-          color: var(--text-light);
-        }
-
-        .hotel-actions {
-          display: flex;
-          gap: 0.5rem;
-        }
-
-        .btn-view-details,
-        .btn-book-now {
-          flex: 1;
-          padding: 10px 18px;
-          border: none;
-          border-radius: 8px;
-          font-size: 0.9rem;
-          font-weight: 600;
-          cursor: pointer;
-          transition: all 0.3s ease;
-        }
-
-        .btn-view-details {
-          background: white;
-          color: #053b3c;
-          border: 2px solid #053b3c;
-        }
-
-        .btn-view-details:hover {
-          background: #053b3c;
-          color: white;
-          border-color: #053b3c;
-          transform: translateY(-2px);
-        }
-
-        .btn-book-now {
-          background: var(--primary-color);
-          color: white;
-        }
-
-        .btn-book-now:hover {
-          background: #d96200;
-          transform: translateY(-1px);
-          box-shadow: 0 4px 8px rgba(255,108,0,0.2);
-        }
-
-        /* Services Section */
-        .services-section {
-          padding: 4rem 0;
-        }
-
-        .services-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-          gap: 2rem;
-        }
-
-        .service-card {
-          background: white;
-          border-radius: 10px;
-          overflow: hidden;
-          box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-          position: relative;
-          transition: all 0.3s ease;
-          border: 3px solid transparent;
-        }
-
-        .service-card:hover {
-          transform: translateY(-5px);
-          box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-        }
-
-        .service-card.selected {
-          border-color: var(--primary-color);
-          box-shadow: 0 8px 25px rgba(5, 59, 60, 0.3);
-        }
-
-        .service-checkbox-wrapper {
-          position: absolute;
-          top: 15px;
-          right: 15px;
-          z-index: 10;
-          background: white;
-          border-radius: 50%;
-          padding: 5px;
-          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-        }
-
-        .service-checkbox-input {
-          width: 24px;
-          height: 24px;
-          cursor: pointer;
-          accent-color: var(--primary-color);
         }
 
         .service-image {
@@ -3020,11 +2311,10 @@ export default function Hotels() {
           }
 
           .hero-content h1 {
-            font-size: 2.8rem;
+            font-size: 3rem !important;
           }
-
           .hero-content p {
-            font-size: 1.2rem;
+            font-size: 1.3rem !important;
           }
 
           .section-header h2 {
@@ -3033,12 +2323,16 @@ export default function Hotels() {
         }
 
         @media (max-width: 768px) {
-          .hero-content h1 {
-            font-size: 2.2rem;
+          .hero {
+            padding-top: 300px !important;
+            min-height: 50vh !important;
           }
 
+          .hero-content h1 {
+            font-size: 3rem !important;
+          }
           .hero-content p {
-            font-size: 1.1rem;
+            font-size: 1.3rem !important;
           }
 
           .section-header h2 {
@@ -3072,31 +2366,15 @@ export default function Hotels() {
 
         @media (max-width: 576px) {
           .hero {
-            min-height: 80vh;
+            padding-top: 300px !important;
+            min-height: 40vh !important;
           }
 
           .hero-content h1 {
-            font-size: 1.8rem;
+            font-size: 2.2rem !important;
           }
-
           .hero-content p {
-            font-size: 1rem;
-          }
-
-          .section-header h2 {
-            font-size: 1.5rem;
-          }
-
-          .search-card {
-            padding: 1.5rem;
-          }
-
-          .amenities-filters {
-            grid-template-columns: 1fr;
-          }
-
-          .modal-content.large {
-            padding: 1rem;
+            font-size: 1.1rem !important;
           }
         }`}</style>
 

@@ -47,7 +47,6 @@ export default function Navbar() {
           <Link href="/" className="logo">
             <Image src={SITE_INFO.logo} alt={SITE_INFO.name} width={90} height={36} priority />
           </Link>
-          
           <button 
             className="mobile-menu-btn"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -55,24 +54,29 @@ export default function Navbar() {
           >
             {isMenuOpen ? '✕' : '☰'}
           </button>
-          
-          <div className={`nav-links ${isMenuOpen ? 'active' : ''}`}>
-            {navLinks.map((link) => (
-              <Link 
-                key={link.href}
-                href={link.href} 
-                onClick={() => setIsMenuOpen(false)}
-                className={isActive(link.href) ? 'active' : ''}
-                style={{
-                  color: isScrolled ? '#333' : '#f8b500',
-                  textShadow: isScrolled ? 'none' : '0 2px 4px rgba(0, 0, 0, 0.5)'
-                }}
-              >
-                {link.label}
-              </Link>
-            ))}
+          <div className={`nav-links ${isMenuOpen ? 'active' : ''}`}> 
+            {navLinks.map((link) => {
+              // Mobile: always gold when scrolled
+              const isMobile = typeof window !== 'undefined' && window.innerWidth <= 992;
+              let linkColor = '#f8b500';
+              if (isScrolled && !isMobile) linkColor = '#333';
+              // On mobile, keep gold even when scrolled
+              return (
+                <Link 
+                  key={link.href}
+                  href={link.href} 
+                  onClick={() => setIsMenuOpen(false)}
+                  className={isActive(link.href) ? 'active' : ''}
+                  style={{
+                    color: linkColor,
+                    textShadow: isScrolled && !isMobile ? 'none' : '0 2px 4px rgba(0, 0, 0, 0.5)'
+                  }}
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
           </div>
-          
           <div className="nav-actions">
             <select 
               className="language-select" 
@@ -84,7 +88,6 @@ export default function Navbar() {
               <option value="ru">Русский</option>
               <option value="he">עברית</option>
             </select>
-            
           </div>
         </div>
       </nav>
@@ -121,6 +124,22 @@ export default function Navbar() {
           display: flex;
           align-items: center;
           transition: all 0.3s;
+          z-index: 2;
+        }
+        @media (max-width: 992px) {
+          .container {
+            flex-direction: row;
+            align-items: center;
+          }
+          .logo {
+            margin-right: auto;
+            justify-content: flex-start;
+            position: relative;
+          }
+          .navbar.scrolled {
+            background: white !important;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+          }
         }
 
         .logo:hover {

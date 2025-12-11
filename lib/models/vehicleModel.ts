@@ -61,10 +61,21 @@ export async function getVehicleById(id: string): Promise<VehicleRecord | null> 
 }
 
 export async function createVehicle(payload: Omit<VehicleRecord, 'vehicle_id'>): Promise<VehicleRecord> {
-  // Generate next ID
-  const count = await prisma.vehicle.count();
-  const nextId = `V${String(count + 1).padStart(3, '0')}`;
-  
+  // Generate next unique ID
+  const lastVehicle = await prisma.vehicle.findMany({
+    orderBy: { vehicle_id: 'desc' },
+    take: 1
+  });
+  let nextNum = 1;
+  if (lastVehicle.length > 0) {
+    const lastId = lastVehicle[0].vehicle_id;
+    const match = lastId.match(/V(\d+)/);
+    if (match) {
+      nextNum = parseInt(match[1], 10) + 1;
+    }
+  }
+  const nextId = `V${String(nextNum).padStart(3, '0')}`;
+
   const dbData = recordToDb(payload);
   const created = await prisma.vehicle.create({
     data: {

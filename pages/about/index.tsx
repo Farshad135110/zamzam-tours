@@ -373,6 +373,17 @@ export default function About() {
           padding-top: 72px; /* leave gap from fixed navbar */
         }
 
+        @media (max-width: 768px) {
+          .about-hero {
+            padding-top: 300px;
+          }
+        }
+        @media (max-width: 576px) {
+          .about-hero {
+            padding-top: 300px;
+          }
+        }
+
         .hero-content {
           max-width: 800px;
           margin: 0 auto;

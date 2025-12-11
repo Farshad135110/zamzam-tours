@@ -606,14 +606,22 @@ export default function SimpleGallery() {
           display: flex;
           flex-direction: column;
           align-items: center;
-          max-height: 80vh;
+          justify-content: center;
+          width: 100vw;
+          height: 100vh;
+          max-width: 100vw;
+          max-height: 100vh;
         }
 
         .lightbox-image-container img {
-          max-width: 100%;
-          max-height: 70vh;
-          object-fit: contain;
+          max-width: 90vw !important;
+          max-height: 90vh !important;
+          width: auto !important;
+          height: auto !important;
+          object-fit: contain !important;
           border-radius: 10px;
+          display: block;
+          margin: 0 auto;
         }
 
         .lightbox-info {
@@ -699,7 +707,7 @@ export default function SimpleGallery() {
           .gallery-hero {
             height: 50vh;
             min-height: 400px;
-            padding-top: 70px;
+            padding-top: 300px;
           }
 
           .hero-content h1 {
@@ -756,7 +764,8 @@ export default function SimpleGallery() {
 
         @media (max-width: 576px) {
           .gallery-hero {
-            min-height: 350px;
+            min-height: 250px;
+            padding-top: 300px;
           }
 
           .hero-content h1 {
