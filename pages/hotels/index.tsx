@@ -980,8 +980,6 @@ export default function Hotels() {
                       </div>
                     </div>
                   )}
-                  
-                  
 
                   <div className="hotel-footer">
                     <div className="hotel-price">
@@ -999,36 +997,7 @@ export default function Hotels() {
                 </div>
 
                 {/* Hover overlay with details on gradient */}
-                <div className="hotel-overlay">
-                  <div className="overlay-content">
-                    <h3>{hotel.name}</h3>
-                    <div className="overlay-location">
-                      📍 {locations.find(l => l.id === hotel.location)?.name}
-                    </div>
-                    <p className="overlay-description">{hotel.description}</p>
-                    
-                    {hotel.facilities && hotel.facilities.length > 0 && (
-                      <div className="overlay-facilities">
-                        {hotel.facilities.slice(0, 6).map((f: string) => (
-                          <span key={f} className="overlay-facility-tag">✓ {f.trim()}</span>
-                        ))}
-                      </div>
-                    )}
-
-                    <div className="overlay-price">
-                      <span className="overlay-price-amount" style={{fontSize: '0.9rem'}}>{get('home.tours.priceOnRequest', 'Price on Request')}</span>
-                    </div>
-
-                    <div className="overlay-actions">
-                      <button 
-                        className="overlay-btn-view"
-                        onClick={() => openHotelBooking(hotel)}
-                      >
-                        {get('hotels.buttons.viewDetails', 'View Details')}
-                      </button>
-                    </div>
-                  </div>
-                </div>
+                {/* Overlay removed as per request */}
               </div>
             ))}
           </div>
@@ -1066,40 +1035,7 @@ export default function Hotels() {
           <div className="banner-content">
             <h2>{get('hotels.integrated.title', 'One Booking, Complete Journey')}</h2>
             <p>{get('hotels.integrated.subtitle', 'From airport pickup to hotel stay, daily tours, and departure - we handle everything')}</p>
-            
-            <div className="banner-steps">
-              <div className="step">
-                <div className="step-icon">🛬</div>
-                <div className="step-text">
-                  <h4>{get('hotels.integrated.steps.airportPickup.title', 'Airport Pickup')}</h4>
-                  <p>{get('hotels.integrated.steps.airportPickup.description', 'Meet & greet service with comfortable transfer to hotel')}</p>
-                </div>
-              </div>
-              
-              <div className="step">
-                <div className="step-icon">🏨</div>
-                <div className="step-text">
-                  <h4>{get('hotels.integrated.steps.hotelStay.title', 'Hotel Stay')}</h4>
-                  <p>{get('hotels.integrated.steps.hotelStay.description', 'Luxury accommodation with best locations and amenities')}</p>
-                </div>
-              </div>
-              
-              <div className="step">
-                <div className="step-icon">🚗</div>
-                <div className="step-text">
-                  <h4>{get('hotels.integrated.steps.dailyTours.title', 'Daily Tours')}</h4>
-                  <p>{get('hotels.integrated.steps.dailyTours.description', 'Guided excursions from your hotel to major attractions')}</p>
-                </div>
-              </div>
-              
-              <div className="step">
-                <div className="step-icon">✈️</div>
-                <div className="step-text">
-                  <h4>{get('hotels.integrated.steps.departure.title', 'Departure Transfer')}</h4>
-                  <p>{get('hotels.integrated.steps.departure.description', 'Timely pickup from hotel to airport for your flight')}</p>
-                </div>
-              </div>
-            </div>
+            {/* Steps and emoji removed as per request */}
 
 
           </div>
@@ -1730,7 +1666,7 @@ export default function Hotels() {
 
         .service-compact-card.selected .service-compact-check {
           background: var(--primary-color);
-                                     border-color: var(--primary-color);
+                                                                                                                                                                                                                                                                                 border-color: var(--primary-color);
         }
 
         /* Modern Modal Styles */
@@ -2161,109 +2097,227 @@ export default function Hotels() {
           font-weight: 600;
         }
 
-        .hotel-summary {
-          display: flex;
-          gap: 1.5rem;
-          background: var(--section-bg);
-          padding: 1.5rem;
-          border-radius: 10px;
-          margin-bottom: 2rem;
+        .hotel-card {
+           background: #fff;
+           border-radius: 18px;
+           overflow: hidden;
+           box-shadow: 0 5px 24px rgba(0,0,0,0.10);
+           transition: transform 0.3s cubic-bezier(.2,.8,.2,1), box-shadow 0.3s cubic-bezier(.2,.8,.2,1);
+           display: flex;
+           flex-direction: column;
+           height: 100%;
+           margin-bottom: 2.5rem;
+           position: relative;
+           border: 1.5px solid #f2f4f8;
+        }
+        .hotel-card:hover {
+          transform: translateY(-10px) scale(1.025);
+          box-shadow: 0 18px 40px rgba(0,0,0,0.16);
         }
 
         .hotel-image {
-          flex: 0 0 200px;
+          position: relative;
+          height: 240px;
+          background: linear-gradient(180deg, #f0f3f4 0%, #eef2f3 100%);
+          overflow: hidden;
         }
-
-        .hotel-details h3 {
-          color: var(--primary-color);
-          margin-bottom: 1rem;
+        .hotel-image img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          display: block;
+          transition: transform 0.6s cubic-bezier(.2,.8,.2,1);
         }
-
-        .hotel-meta {
+        .hotel-card:hover .hotel-image img {
+          transform: scale(1.08) translateZ(0);
+        }
+        .hotel-class-badge {
+          position: absolute;
+          top: 18px;
+          left: 18px;
+          background: var(--primary-color, #f8b500);
+          color: #fff;
+          padding: 7px 18px;
+          border-radius: 20px;
+          font-size: 0.9rem;
+          font-weight: 700;
+          text-transform: capitalize;
+          box-shadow: 0 4px 12px rgba(5,59,60,0.18);
+        }
+        .hotel-location {
+          position: absolute;
+          bottom: 18px;
+          left: 18px;
+          background: rgba(255,255,255,0.92);
+          color: var(--primary-color, #053b3c);
+          padding: 6px 14px;
+          border-radius: 16px;
+          font-size: 0.92rem;
+          font-weight: 600;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+        }
+        .hotel-content {
+          padding: 1.75rem 1.5rem 1.25rem 1.5rem;
+          flex: 1;
           display: flex;
           flex-direction: column;
+        }
+        .hotel-title-row {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+          margin-bottom: 0.5rem;
+        }
+        .hotel-title-row h3 {
+          font-size: 1.35rem;
+          color: var(--primary-color, #053b3c);
+          font-weight: 700;
+          margin: 0;
+        }
+        .hotel-type-badge {
+          background: rgba(5,59,60,0.06);
+          color: var(--primary-color, #053b3c);
+          border: 1px solid rgba(5,59,60,0.12);
+          border-radius: 15px;
+          font-size: 0.85rem;
+          font-weight: 600;
+          padding: 4px 12px;
+        }
+        .hotel-description {
+          color: var(--text-light, #5a6a7a);
+          font-size: 0.98rem;
+          line-height: 1.7;
+          margin-bottom: 0.7rem;
+          display: -webkit-box;
+          -webkit-line-clamp: 3;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+        }
+        .hotel-facilities {
+          margin-bottom: 0.7rem;
+        }
+        .facility-tags {
+          display: flex;
+          flex-wrap: wrap;
           gap: 0.5rem;
-          color: var(--text-light);
-        }
-
-        .services-selection {
-          display: flex;
-          flex-direction: column;
-          gap: 1rem;
-        }
-
-        .service-checkbox {
-          display: flex;
-          align-items: flex-start;
-          gap: 1rem;
-          padding: 1rem;
-          border: 1px solid var(--border-color);
-          border-radius: 8px;
-          cursor: pointer;
-          transition: all 0.3s ease;
-        }
-
-        .service-checkbox:hover {
-          border-color: var(--primary-color);
-        }
-
-        .service-checkbox input {
           margin-top: 0.3rem;
         }
-
-        .service-info {
-          flex: 1;
+        .facility-tag {
+          background: #f0f3f4;
+          color: #053b3c;
+          border-radius: 12px;
+          font-size: 0.85rem;
+          padding: 4px 10px;
+          font-weight: 500;
         }
-
-        .service-name {
-          display: block;
-          font-weight: 600;
-          color: var(--primary-color);
-          margin-bottom: 0.3rem;
+        .facility-more {
+          color: #888;
+          font-size: 0.85rem;
+          margin-left: 0.5rem;
         }
-
-        .service-desc {
-          display: block;
-          color: var(--text-light);
-          font-size: 0.9rem;
-          margin-bottom: 0.3rem;
-        }
-
-        .service-price {
-          display: block;
-          font-weight: 600;
-          color: var(--primary-color);
-        }
-
-        .price-summary {
-          background: var(--section-bg);
-          padding: 1.5rem;
-          border-radius: 10px;
-        }
-
-        .summary-row {
+        .hotel-footer {
           display: flex;
+          align-items: center;
           justify-content: space-between;
-          margin-bottom: 0.8rem;
-          padding-bottom: 0.8rem;
-          border-bottom: 1px solid var(--border-color);
+          margin-top: auto;
+          gap: 1.2rem;
         }
-
-        .summary-row:last-child {
-          border-bottom: none;
-        }
-
-        .summary-row.total {
+        .hotel-price .price {
+          color: var(--primary-color, #f8b500);
+          font-size: 1.08rem;
           font-weight: 700;
-          font-size: 1.1rem;
-          color: var(--primary-color);
+        }
+        .hotel-actions .btn-view-details {
+          background: var(--primary-color, #f8b500);
+          color: #fff;
+          border: none;
+          border-radius: 16px;
+          padding: 8px 22px;
+          font-size: 1rem;
+          font-weight: 600;
+          cursor: pointer;
+          transition: background 0.2s;
+        }
+        .hotel-actions .btn-view-details:hover {
+          background: #e09e00;
         }
 
-        .form-actions {
+        /* Booking Form Action Buttons & Price Summary */
+        .form-actions-modern {
           display: flex;
           gap: 1rem;
           justify-content: flex-end;
-          margin-top: 2rem;
+          margin-top: 1.5rem;
+        }
+        .btn-cancel-modern {
+          background: #fff;
+          color: var(--primary-color, #f8b500);
+          border: 2px solid var(--primary-color, #f8b500);
+          border-radius: 8px;
+          padding: 12px 28px;
+          font-size: 1rem;
+          font-weight: 600;
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          cursor: pointer;
+          transition: background 0.2s, color 0.2s, border 0.2s;
+        }
+        .btn-cancel-modern:hover {
+          background: #f0fdf4;
+          color: #e09e00;
+          border-color: #e09e00;
+        }
+        .btn-confirm-modern {
+          background: var(--primary-color, #f8b500);
+          color: #fff;
+          border: none;
+          border-radius: 8px;
+          padding: 12px 28px;
+          font-size: 1rem;
+          font-weight: 700;
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          cursor: pointer;
+          box-shadow: 0 4px 16px rgba(16, 185, 129, 0.13);
+          transition: background 0.2s, box-shadow 0.2s;
+        }
+        .btn-confirm-modern:hover {
+          background: #e09e00;
+          box-shadow: 0 6px 24px rgba(16, 185, 129, 0.22);
+        }
+        .btn-icon {
+          font-size: 1.2em;
+          display: flex;
+          align-items: center;
+        }
+        .btn-text {
+          font-size: 1em;
+        }
+        .price-summary-modern {
+          background: #f8f9fa;
+          border-radius: 8px;
+          padding: 1rem 1.2rem;
+          margin-bottom: 0.5rem;
+        }
+        .summary-row-modern {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          font-size: 1rem;
+          margin-bottom: 0.4rem;
+        }
+        .summary-row-modern.total-modern {
+          font-weight: 700;
+          color: #059669;
+        }
+        .summary-price, .summary-total-price {
+          font-weight: 600;
+        }
+        .summary-divider-modern {
+          border-top: 1.5px dashed #b5e0d4;
+          margin: 0.7rem 0 0.7rem 0;
         }
 
         /* Large Screen Optimizations */
@@ -2376,7 +2430,23 @@ export default function Hotels() {
           .hero-content p {
             font-size: 1.1rem !important;
           }
-        }`}</style>
+        }
+
+        .hotels-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 1.5rem;
+          justify-items: center;
+        }
+        .hotel-card {
+          width: 100%;
+          max-width: 400px;
+          margin-bottom: 0;
+        }
+        .hotel-image {
+          height: 250px;
+        }
+      `}</style>
 
       <Footer />
     </>
