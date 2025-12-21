@@ -261,7 +261,8 @@ export default function Home() {
   <meta name="description" content="Book your Sri Lanka holiday with ZamZam Lanka Tours. Private drivers, round tours, cultural tours, wildlife safaris, airport transfers & custom itineraries." />
   <meta name="keywords" content="Sri Lanka tours, car rental Sri Lanka, airport transfer Colombo, Sri Lanka safari, private driver Sri Lanka, Colombo to Kandy transfer, self drive Sri Lanka, tour packages, holiday packages Sri Lanka" />
   <meta name="robots" content="index,follow" />
-  <link rel="canonical" href="https://zamzamlankatours.com/" />
+  <link rel="canonical" href="https://www.zamzamlankatours.com/" />
+  <link rel="alternate" href="https://zamzamlankatours.com/" hreflang="x-default" />
   <meta property="og:title" content="ZamZam Lanka Tours — Best Sri Lanka Tours, Private Drivers & Holiday Packages" />
   <meta property="og:description" content="Book your Sri Lanka holiday with ZamZam Lanka Tours. Private drivers, round tours, cultural tours, wildlife safaris, airport transfers & custom itineraries." />
   <meta property="og:image" content="https://zamzamlankatours.com/images/og-image.jpg" />
@@ -270,7 +271,7 @@ export default function Home() {
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="ZamZam Lanka Tours — Best Sri Lanka Tours, Private Drivers & Holiday Packages" />
   <meta name="twitter:description" content="Book your Sri Lanka holiday with ZamZam Lanka Tours. Private drivers, round tours, safaris & custom itineraries." />
-        <link rel="icon" href="/favicon.ico" />
+  <link rel="icon" href="/favicon.ico" />
       </Head>
 
       {/* Structured Data Schemas */}

@@ -73,4 +73,15 @@ const nextConfig = {
     ignoreBuildErrors: true
   }
 }
+// Add redirects for non-www and http to https://www.zamzamlankatours.com/
+nextConfig.redirects = async () => [
+  {
+    source: '/(.*)',
+    has: [
+      { type: 'host', value: 'zamzamlankatours.com' },
+    ],
+    destination: 'https://www.zamzamlankatours.com/:1',
+    permanent: true,
+  },
+];
 module.exports = nextConfig

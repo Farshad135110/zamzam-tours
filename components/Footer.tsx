@@ -51,9 +51,6 @@ export default function Footer() {
             <ul>
               <li><Link href="/about">About Us</Link></li>
               <li><Link href="/gallery">Gallery</Link></li>
-              <li><Link href="/testimonials">Testimonials</Link></li>
-              <li><Link href="/blog">Blog</Link></li>
-              <li><Link href="/careers">Careers</Link></li>
             </ul>
           </div>
 
@@ -63,8 +60,6 @@ export default function Footer() {
               <li><Link href="/contact#locations">Contact Us</Link></li>
               <li><Link href="/contact#faq">FAQ</Link></li>
               <li><Link href="/terms">Terms & Conditions</Link></li>
-              <li><Link href="/privacy">Privacy Policy</Link></li>
-              <li><Link href="/cancellation">Cancellation Policy</Link></li>
             </ul>
           </div>
 
