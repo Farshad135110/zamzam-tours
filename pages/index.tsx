@@ -108,12 +108,12 @@ export default function Home() {
   
   // Popular destinations - with Cloudinary image IDs
   const destinations = [
-  { name: 'Sigiriya', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453704/dylan-shaw-smUAKwMT8XA-unsplash_qhenhx.jpg', description: 'Ancient rock fortress', slug: 'sigiriya' },
-  { name: 'Kandy', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762454466/chathura-anuradha-subasinghe-40uQmE9Zq8g-unsplash_tvflxt.jpg', description: 'Cultural capital', slug: 'kandy' },
+  { name: 'Sigiriya', image: 'https://res.cloudinary.com/dhqhxma30/image/upload/v1766843237/dylan-shaw-smUAKwMT8XA-unsplash_k21uuc.jpg', description: 'Ancient rock fortress', slug: 'sigiriya' },
+  { name: 'Kandy', image: 'https://res.cloudinary.com/dhqhxma30/image/upload/v1767550687/chathura-anuradha-subasinghe-40uQmE9Zq8g-unsplash_pnyinr.jpg', description: 'Cultural capital', slug: 'kandy' },
   { name: 'Galle', image: 'https://res.cloudinary.com/dhqhxma30/image/upload/v1766843255/chathura-indika-LAj-XlHP6Rs-unsplash_icfodb.jpg', description: 'Historic fort city', slug: 'galle' },
-  { name: 'Ella', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453781/adam-vandermeer-Dw9dWTzzsUE-unsplash_l49hhe.jpg', description: 'Mountain paradise', slug: 'ella' },
-  { name: 'Yala', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453757/gemmmm-FRTpkBIi-1Y-unsplash_iggwsm.jpg', description: 'Wildlife sanctuary', slug: 'yala' },
-  { name: 'Nuwara Eliya', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453797/anton-lecock-TPtaNsBOW9Q-unsplash_g0htag.jpg', description: 'Little England', slug: 'nuwara-eliya' }
+  { name: 'Ella', image: 'https://res.cloudinary.com/dhqhxma30/image/upload/v1766843253/adam-vandermeer-Dw9dWTzzsUE-unsplash_lcyp9r.jpg', description: 'Mountain paradise', slug: 'ella' },
+  { name: 'Yala', image: 'https://res.cloudinary.com/dhqhxma30/image/upload/v1766842969/sachindra-chalaka-ERIYlk3Hppo-unsplash_t66kqu.jpg', description: 'Wildlife sanctuary', slug: 'yala' },
+  { name: 'Nuwara Eliya', image: 'https://res.cloudinary.com/dhqhxma30/image/upload/v1766843115/subodha-karunarathne-PuWCoG8WHok-unsplash_mthga0.jpg', description: 'Little England', slug: 'nuwara-eliya' }
   ];
 
   // Activities / Things to do (show a few popular activities and link to detailed pages)
