@@ -35,7 +35,7 @@ export default function About() {
       position: 'Founder & CEO',
       experience: '15+ years in tourism',
       specialization: 'Cultural Tours & Operations',
-      image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1764881329/Untitled_design_16_rilrih.png',
+      image: 'https://res.cloudinary.com/dhqhxma30/image/upload/v1767556225/Untitled_design_16_kniydj.png',
       quote: 'Our mission is to create unforgettable Sri Lankan experiences that connect people with our rich culture and natural beauty.',
       social: { linkedin: '#', email: 'zamzam@zamzamtours.com' }
     }
