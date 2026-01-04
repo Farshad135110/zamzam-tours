@@ -361,7 +361,8 @@ export default function Home() {
                 textShadow: '2px 2px 8px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 0, 0, 0.5)',
                 color: '#ffffff'
               }}>
-                {get('home.hero.title.prefix', 'Discover the Wonders of ')}<span style={{ 
+                {get('home.hero.title.prefix', 'Discover the Wonders of ')}<br />
+                <span style={{ 
                   color: '#f8b500',
                   textShadow: '2px 2px 8px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 0, 0, 0.5)'
                 }}>{get('home.hero.title.highlight', 'Sri Lanka')}</span>
