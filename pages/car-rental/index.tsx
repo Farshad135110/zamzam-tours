@@ -302,7 +302,7 @@ export default function SelfDrive() {
               height: '100%',
               objectFit: 'cover'
             }}
-            src="https://res.cloudinary.com/dhfqwxyb4/video/upload/v1761578014/133696-757782416_small_umzqax.mp4"
+            src="https://res.cloudinary.com/dhqhxma30/video/upload/v1766841295/133696-757782416_small_2_du9hl6.mp4"
           />
         </div>
         

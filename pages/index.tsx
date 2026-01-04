@@ -34,10 +34,11 @@ export default function Home() {
   const [activePlayer, setActivePlayer] = useState<1 | 2>(1);
   const router = useRouter();
   
-  // Array of videos from zamzam-tours/heroes/home folder
+  // Array of new Cloudinary hero videos
   const heroVideos = [
-    'https://res.cloudinary.com/dhfqwxyb4/video/upload/v1761564719/191283-889685028_small_eyum5p.mp4',
-    'https://res.cloudinary.com/dhfqwxyb4/video/upload/v1761565698/180699-864967760_udzhyj.mp4',
+    'https://res.cloudinary.com/dhqhxma30/video/upload/v1766841868/191283-889685028_small_b8dplp.mp4',
+    'https://res.cloudinary.com/dhqhxma30/video/upload/v1766841614/180699-864967760_hzwddy.mp4',
+    'https://res.cloudinary.com/dhqhxma30/video/upload/v1766841213/173497-849651784_small_lpsxdo.mp4',
   ];
   
   // Language options
@@ -109,7 +110,7 @@ export default function Home() {
   const destinations = [
   { name: 'Sigiriya', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453704/dylan-shaw-smUAKwMT8XA-unsplash_qhenhx.jpg', description: 'Ancient rock fortress', slug: 'sigiriya' },
   { name: 'Kandy', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762454466/chathura-anuradha-subasinghe-40uQmE9Zq8g-unsplash_tvflxt.jpg', description: 'Cultural capital', slug: 'kandy' },
-  { name: 'Galle', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453796/chathura-indika-LAj-XlHP6Rs-unsplash_o7mzbc.jpg', description: 'Historic fort city', slug: 'galle' },
+  { name: 'Galle', image: 'https://res.cloudinary.com/dhqhxma30/image/upload/v1766843255/chathura-indika-LAj-XlHP6Rs-unsplash_icfodb.jpg', description: 'Historic fort city', slug: 'galle' },
   { name: 'Ella', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453781/adam-vandermeer-Dw9dWTzzsUE-unsplash_l49hhe.jpg', description: 'Mountain paradise', slug: 'ella' },
   { name: 'Yala', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453757/gemmmm-FRTpkBIi-1Y-unsplash_iggwsm.jpg', description: 'Wildlife sanctuary', slug: 'yala' },
   { name: 'Nuwara Eliya', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453797/anton-lecock-TPtaNsBOW9Q-unsplash_g0htag.jpg', description: 'Little England', slug: 'nuwara-eliya' }
@@ -706,12 +707,25 @@ export default function Home() {
               >
                 <div className="destination-card">
                   <div className="destination-image" style={{ position: 'relative', width: '100%', height: '300px' }}>
-                    <CldImage 
-                      src={destination.image} 
-                      alt={destination.name} 
-                      fill
-                      style={{ objectFit: 'cover' }}
-                    />
+                    {destination.image.startsWith('http') ? (
+                      <Image
+                        src={destination.image}
+                        alt={destination.name}
+                        fill
+                        style={{ objectFit: 'cover' }}
+                        sizes="(max-width: 768px) 100vw, 33vw"
+                        priority={index < 3}
+                      />
+                    ) : (
+                      <CldImage
+                        src={destination.image}
+                        alt={destination.name}
+                        fill
+                        style={{ objectFit: 'cover' }}
+                        sizes="(max-width: 768px) 100vw, 33vw"
+                        priority={index < 3}
+                      />
+                    )}
                     <div className="destination-overlay">
                       <h3>{destination.name}</h3>
                       <p>{destination.description}</p>

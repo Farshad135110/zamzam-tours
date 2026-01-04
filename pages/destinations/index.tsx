@@ -6,45 +6,63 @@ import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import AnimatedSection from '../../components/AnimatedSection';
 import { CldImage } from 'next-cloudinary';
+import Image from 'next/image';
 import { fadeInUp } from '../../src/utils/animations';
 import useTranslation from '../../src/i18n/useTranslation';
 
 export default function Destinations() {
   const { t } = useTranslation();
   const [activeFilter, setActiveFilter] = useState('all');
-  const heroRef = useRef<HTMLDivElement>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
 
-  // Autoplay video
+  const heroRef = useRef<HTMLDivElement>(null);
+  const video1Ref = useRef<HTMLVideoElement>(null);
+  const video2Ref = useRef<HTMLVideoElement>(null);
+  const [activeVideo, setActiveVideo] = useState(0);
+
+  // Use the same hero videos as the tours page
+  const heroVideos = [
+    'https://res.cloudinary.com/dhqhxma30/video/upload/v1766841496/218798_small_q4n93c.mp4',
+    'https://res.cloudinary.com/dhqhxma30/video/upload/v1766840917/158112-816068529_small_sihmzh.mp4',
+    'https://res.cloudinary.com/dhqhxma30/video/upload/v1766840756/158220-816359501_small_gjvyuv.mp4',
+  ];
+
+  // Autoplay and fallback logic for videos
   useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.play().catch(error => {
-        console.log('Video autoplay failed:', error);
-      });
-    }
-  }, []);
+    const refs = [video1Ref, video2Ref];
+    const playActive = () => {
+      const ref = refs[activeVideo % heroVideos.length];
+      if (ref.current) {
+        ref.current.play().catch(() => {});
+      }
+    };
+    playActive();
+  }, [activeVideo, heroVideos.length]);
+
+  const handleVideoError = () => {
+    setActiveVideo((prev) => (prev + 1) % heroVideos.length);
+  };
 
   const destinations = [
-    { name: 'Sigiriya', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453704/dylan-shaw-smUAKwMT8XA-unsplash_qhenhx.jpg', description: 'Ancient rock fortress with breathtaking views', longDescription: 'Climb the iconic Lion Rock and explore one of the most spectacular archaeological sites in the world.', category: 'cultural', duration: '1 Day', slug: 'sigiriya' },
-  { name: 'Kandy', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762454466/chathura-anuradha-subasinghe-40uQmE9Zq8g-unsplash_tvflxt.jpg', description: 'Cultural capital with the Temple of the Tooth', longDescription: 'Visit the sacred Temple of the Tooth Relic and experience traditional Kandyan dance performances.', category: 'cultural', duration: '1-2 Days', slug: 'kandy' },
-    { name: 'Galle', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453796/chathura-indika-LAj-XlHP6Rs-unsplash_o7mzbc.jpg', description: 'Historic fort city by the ocean', longDescription: 'Walk through the colonial Dutch fort and enjoy stunning ocean views from the ramparts.', category: 'cultural', duration: '1 Day', slug: 'galle' },
-    { name: 'Ella', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453781/adam-vandermeer-Dw9dWTzzsUE-unsplash_l49hhe.jpg', description: 'Mountain paradise with tea plantations', longDescription: 'Hike to Little Adam\'s Peak, visit Nine Arch Bridge, and enjoy panoramic views from Ella Rock.', category: 'nature', duration: '2-3 Days', slug: 'ella' },
-    { name: 'Yala', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453757/gemmmm-FRTpkBIi-1Y-unsplash_iggwsm.jpg', description: 'Premier wildlife sanctuary', longDescription: 'Spot leopards, elephants, and exotic birds in Sri Lanka\'s most famous national park.', category: 'wildlife', duration: '1-2 Days', slug: 'yala' },
-    { name: 'Nuwara Eliya', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453797/anton-lecock-TPtaNsBOW9Q-unsplash_g0htag.jpg', description: 'Little England in the hills', longDescription: 'Experience the cool climate, visit tea factories, and explore colonial-era architecture.', category: 'nature', duration: '1-2 Days', slug: 'nuwara-eliya' },
-    { name: 'Mirissa', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762454382/siarhei-palishchuk-hgiby6qxvpc-unsplash_prnosl.jpg', description: 'Beach paradise and whale watching hub', longDescription: 'Relax on pristine beaches and embark on whale watching adventures.', category: 'beach', duration: '2-3 Days', slug: 'mirissa' },
-    { name: 'Anuradhapura', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762454366/andrea-zanenga-U2-9JKq3Sv8-unsplash_ykmenj.jpg', description: 'Ancient capital with sacred sites', longDescription: 'Explore the ruins of an ancient civilization and visit the sacred Bodhi tree.', category: 'cultural', duration: '1 Day', slug: 'anuradhapura' },
-    { name: 'Polonnaruwa', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762454341/birendra-padmaperuma-jB7TbGrC1xM-unsplash_qcpkau.jpg', description: 'Medieval capital with ancient ruins', longDescription: 'Cycle through well-preserved ruins and marvel at the Gal Vihara rock sculptures.', category: 'cultural', duration: '1 Day', slug: 'polonnaruwa' },
-    { name: 'Udawalawe', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1761861324/sachindra-chalaka-ERIYlk3Hppo-unsplash_n41n9c.jpg', description: 'Elephant sanctuary and national park', longDescription: 'Witness large herds of elephants in their natural habitat.', category: 'wildlife', duration: '1 Day', slug: 'udawalawe' },
-    { name: 'Trincomalee', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453771/claus-giering-YmcSXWcmh6w-unsplash_zw66ck.jpg', description: 'Pristine beaches and historic temples', longDescription: 'Enjoy crystal-clear waters, world-class diving, and ancient Hindu temples.', category: 'beach', duration: '2-3 Days', slug: 'trincomalee' },
-    { name: 'Arugam Bay', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453785/udara-karunarathna-LfUJO4whcSU-unsplash_xnxl7h.jpg', description: 'World-famous surfing destination', longDescription: 'Catch the perfect wave and enjoy the laid-back beach atmosphere.', category: 'beach', duration: '2-4 Days', slug: 'arugam-bay' },
-    { name: 'Bentota', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453760/ivani-de-silva-p4CkGihlKeI-unsplash_faup7y.jpg', description: 'Golden beaches and water sports paradise', longDescription: 'Enjoy pristine beaches, water sports, and luxury resorts on the southwest coast.', category: 'beach', duration: '2-3 Days', slug: 'bentota' },
-    { name: 'Hikkaduwa', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453918/croyde-bay-qw6f1CIXOqQ-unsplash_heu61d.jpg', description: 'Coral reefs and vibrant nightlife', longDescription: 'Snorkel with sea turtles, explore coral reefs, and enjoy beachside cafes.', category: 'beach', duration: '2-3 Days', slug: 'hikkaduwa' },
-    { name: 'Dambulla', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1761861700/agnieszka-stankiewicz-OMgi4DfiO3c-unsplash_dfa3pd.jpg', description: 'Golden Temple and cave monasteries', longDescription: 'Discover the UNESCO World Heritage cave temple complex with stunning Buddha statues.', category: 'cultural', duration: 'Half Day', slug: 'dambulla' },
-    { name: 'Horton Plains', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1761861681/anupa-uthsara-Prg6PmMQdK4-unsplash_rfz6fv.jpg', description: 'World\'s End cliff and cloud forests', longDescription: 'Trek through misty highlands to the dramatic World\'s End precipice.', category: 'nature', duration: '1 Day', slug: 'horton-plains' },
-    { name: 'Unawatuna', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453914/eirik-skarstein-7CsKioF9O6g-unsplash_gb7eow.jpg', description: 'Crescent bay with coral reefs', longDescription: 'Swim in the protected bay, snorkel among colorful fish, and relax on golden sands.', category: 'beach', duration: '2-3 Days', slug: 'unawatuna' },
-    { name: 'Wilpattu', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453910/udara-karunarathna-PPGM2ZpCrzc-unsplash_vchneo.jpg', description: 'Largest national park with leopards', longDescription: 'Safari through ancient lakes and dense forests to spot leopards and sloth bears.', category: 'wildlife', duration: '1-2 Days', slug: 'wilpattu' },
-    { name: 'Jaffna', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1761861565/ajai-s-A4amRej5Hes-unsplash_ofpmmw.jpg', description: 'Northern peninsula with Tamil culture', longDescription: 'Experience unique Tamil culture, visit historic temples, and explore remote islands.', category: 'cultural', duration: '2-3 Days', slug: 'jaffna' },
-    { name: 'Adams Peak', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453906/manoj-dharmarathne-sznpwfFhfrU-unsplash_hnkhcg.jpg', description: 'Sacred mountain pilgrimage', longDescription: 'Climb the holy peak for sunrise views and visit the sacred footprint at the summit.', category: 'nature', duration: '1 Day', slug: 'adams-peak' }
+    { name: 'Sigiriya', image: 'https://res.cloudinary.com/dhqhxma30/image/upload/v1766843237/dylan-shaw-smUAKwMT8XA-unsplash_k21uuc.jpg', description: 'Ancient rock fortress with breathtaking views', longDescription: 'Climb the iconic Lion Rock and explore one of the most spectacular archaeological sites in the world.', category: 'cultural', duration: '1 Day', slug: 'sigiriya' },
+    { name: 'Kandy', image: 'https://res.cloudinary.com/dhqhxma30/image/upload/v1767550687/chathura-anuradha-subasinghe-40uQmE9Zq8g-unsplash_pnyinr.jpg', description: 'Cultural capital with the Temple of the Tooth', longDescription: 'Visit the sacred Temple of the Tooth Relic and experience traditional Kandyan dance performances.', category: 'cultural', duration: '1-2 Days', slug: 'kandy' },
+    { name: 'Galle', image: 'https://res.cloudinary.com/dhqhxma30/image/upload/v1766843255/chathura-indika-LAj-XlHP6Rs-unsplash_icfodb.jpg', description: 'Historic fort city by the ocean', longDescription: 'Walk through the colonial Dutch fort and enjoy stunning ocean views from the ramparts.', category: 'cultural', duration: '1 Day', slug: 'galle' },
+    { name: 'Ella', image: 'https://res.cloudinary.com/dhqhxma30/image/upload/v1766843253/adam-vandermeer-Dw9dWTzzsUE-unsplash_lcyp9r.jpg', description: 'Mountain paradise with tea plantations', longDescription: 'Hike to Little Adam\'s Peak, visit Nine Arch Bridge, and enjoy panoramic views from Ella Rock.', category: 'nature', duration: '2-3 Days', slug: 'ella' },
+    { name: 'Yala', image: 'https://res.cloudinary.com/dhqhxma30/image/upload/v1766842969/sachindra-chalaka-ERIYlk3Hppo-unsplash_t66kqu.jpg', description: 'Premier wildlife sanctuary', longDescription: 'Spot leopards, elephants, and exotic birds in Sri Lanka\'s most famous national park.', category: 'wildlife', duration: '1-2 Days', slug: 'yala' },
+      { name: 'Nuwara Eliya', image: 'https://res.cloudinary.com/dhqhxma30/image/upload/v1766843115/subodha-karunarathne-PuWCoG8WHok-unsplash_mthga0.jpg', description: 'Little England in the hills', longDescription: 'Experience the cool climate, visit tea factories, and explore colonial-era architecture.', category: 'nature', duration: '1-2 Days', slug: 'nuwara-eliya' },
+    { name: 'Mirissa', image: 'https://res.cloudinary.com/dhqhxma30/image/upload/v1766843087/siarhei-palishchuk-hgiby6qxvpc-unsplash_lvzysr.jpg', description: 'Beach paradise and whale watching hub', longDescription: 'Relax on pristine beaches and embark on whale watching adventures.', category: 'beach', duration: '2-3 Days', slug: 'mirissa' },
+    { name: 'Anuradhapura', image: 'https://res.cloudinary.com/dhqhxma30/image/upload/v1766843216/andrea-zanenga-U2-9JKq3Sv8-unsplash_mwmgql.jpg', description: 'Ancient capital with sacred sites', longDescription: 'Explore the ruins of an ancient civilization and visit the sacred Bodhi tree.', category: 'cultural', duration: '1 Day', slug: 'anuradhapura' },
+    { name: 'Polonnaruwa', image: 'https://res.cloudinary.com/dhqhxma30/image/upload/v1766843145/birendra-padmaperuma-jB7TbGrC1xM-unsplash_vd570j.jpg', description: 'Medieval capital with ancient ruins', longDescription: 'Cycle through well-preserved ruins and marvel at the Gal Vihara rock sculptures.', category: 'cultural', duration: '1 Day', slug: 'polonnaruwa' },
+    { name: 'Udawalawe', image: 'https://res.cloudinary.com/dhqhxma30/image/upload/v1766842969/sachindra-chalaka-ERIYlk3Hppo-unsplash_t66kqu.jpg', description: 'Elephant sanctuary and national park', longDescription: 'Witness large herds of elephants in their natural habitat.', category: 'wildlife', duration: '1 Day', slug: 'udawalawe' },
+    { name: 'Trincomalee', image: 'https://res.cloudinary.com/dhqhxma30/image/upload/v1766843026/claus-giering-YmcSXWcmh6w-unsplash_hxe1o1.jpg', description: 'Pristine beaches and historic temples', longDescription: 'Enjoy crystal-clear waters, world-class diving, and ancient Hindu temples.', category: 'beach', duration: '2-3 Days', slug: 'trincomalee' },
+    { name: 'Arugam Bay', image: 'https://res.cloudinary.com/dhqhxma30/image/upload/v1766843020/croyde-bay-qw6f1CIXOqQ-unsplash_vhndq2.jpg', description: 'World-famous surfing destination', longDescription: 'Catch the perfect wave and enjoy the laid-back beach atmosphere.', category: 'beach', duration: '2-4 Days', slug: 'arugam-bay' },
+    { name: 'Bentota', image: 'https://res.cloudinary.com/dhqhxma30/image/upload/v1766843010/ivani-de-silva-p4CkGihlKeI-unsplash_qpatpo.jpg', description: 'Golden beaches and water sports paradise', longDescription: 'Enjoy pristine beaches, water sports, and luxury resorts on the southwest coast.', category: 'beach', duration: '2-3 Days', slug: 'bentota' },
+    { name: 'Hikkaduwa', image: 'https://res.cloudinary.com/dhqhxma30/image/upload/v1766842769/eirik-skarstein-7CsKioF9O6g-unsplash_jbrqjh.jpg', description: 'Coral reefs and vibrant nightlife', longDescription: 'Snorkel with sea turtles, explore coral reefs, and enjoy beachside cafes.', category: 'beach', duration: '2-3 Days', slug: 'hikkaduwa' },
+      { name: 'Dambulla', image: 'https://res.cloudinary.com/dhqhxma30/image/upload/v1766843008/agnieszka-stankiewicz-OMgi4DfiO3c-unsplash_avetoa.jpg', description: 'Golden Temple and cave monasteries', longDescription: 'Discover the UNESCO World Heritage cave temple complex with stunning Buddha statues.', category: 'cultural', duration: 'Half Day', slug: 'dambulla' },
+    { name: 'Horton Plains', image: 'https://res.cloudinary.com/dhqhxma30/image/upload/v1766842730/anupa-uthsara-Prg6PmMQdK4-unsplash_ykzpdh.jpg', description: 'World\'s End cliff and cloud forests', longDescription: 'Trek through misty highlands to the dramatic World\'s End precipice.', category: 'nature', duration: '1 Day', slug: 'horton-plains' },
+    { name: 'Unawatuna', image: 'https://res.cloudinary.com/dhqhxma30/image/upload/v1766843000/udara-karunarathna-LfUJO4whcSU-unsplash_ywr2d0.jpg', description: 'Crescent bay with coral reefs', longDescription: 'Swim in the protected bay, snorkel among colorful fish, and relax on golden sands.', category: 'beach', duration: '2-3 Days', slug: 'unawatuna' },
+    { name: 'Wilpattu', image: 'https://res.cloudinary.com/dhqhxma30/image/upload/v1766842782/udara-karunarathna-PPGM2ZpCrzc-unsplash_tjyoqz.jpg', description: 'Largest national park with leopards', longDescription: 'Safari through ancient lakes and dense forests to spot leopards and sloth bears.', category: 'wildlife', duration: '1-2 Days', slug: 'wilpattu' },
+    { name: 'Jaffna', image: 'https://res.cloudinary.com/dhqhxma30/image/upload/v1766842750/eshan-malaviarachchi-Z3XO2B2Db7Q-unsplash_hgbxje.jpg', description: 'Northern peninsula with Tamil culture', longDescription: 'Experience unique Tamil culture, visit historic temples, and explore remote islands.', category: 'cultural', duration: '2-3 Days', slug: 'jaffna' },
+    { name: 'Adams Peak', image: 'https://res.cloudinary.com/dhqhxma30/image/upload/v1766842728/manoj-dharmarathne-sznpwfFhfrU-unsplash_f4sz9f.jpg', description: 'Sacred mountain pilgrimage', longDescription: 'Climb the holy peak for sunrise views and visit the sacred footprint at the summit.', category: 'nature', duration: '1 Day', slug: 'adams-peak' }
   ];
 
   const filteredDestinations = activeFilter === 'all' ? destinations : destinations.filter(dest => dest.category === activeFilter);
@@ -52,7 +70,7 @@ export default function Destinations() {
   return (
     <>
       <Head>
-        <title>{t('destinations.pageTitle')}</title>
+        <title>{t('pages/destinations/index.str1')}</title>
         <meta name="description" content={t('destinations.metaDescription')} />
         <meta name="keywords" content={t('destinations.metaKeywords')} />
       </Head>
@@ -60,7 +78,7 @@ export default function Destinations() {
       <Navbar />
 
       {/* Hero Section */}
-      <section 
+      <section
         ref={heroRef}
         className="hero-section"
         style={{
@@ -73,28 +91,31 @@ export default function Destinations() {
           marginTop: 0
         }}
       >
-        {/* Background Video */}
-        <video
-          ref={videoRef}
-          autoPlay
-          loop
-          muted
-          playsInline
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover',
-            zIndex: 0
-          }}
-        >
-          <source 
-            src="https://res.cloudinary.com/dhfqwxyb4/video/upload/v1737895743/218798_small_ov2k3s.mp4" 
-            type="video/mp4" 
-          />
-        </video>
+        {/* Background Video(s) with fallback */}
+        {heroVideos.map((video, idx) => (
+          <video
+            key={video}
+            ref={idx === 0 ? video1Ref : idx === 1 ? video2Ref : undefined}
+            autoPlay
+            loop
+            muted
+            playsInline
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              zIndex: 0,
+              opacity: activeVideo === idx ? 1 : 0,
+              transition: 'opacity 0.5s',
+            }}
+            onError={handleVideoError}
+          >
+            <source src={video} type="video/mp4" />
+          </video>
+        ))}
 
         {/* Overlay */}
         <div 
@@ -272,12 +293,25 @@ export default function Destinations() {
                   }}
                 >
                   <div style={{ position: 'relative', width: '100%', height: '250px' }}>
-                    <CldImage 
-                      src={destination.image}
-                      alt={destination.name}
-                      fill
-                      style={{ objectFit: 'cover' }}
-                    />
+                    {destination.image.startsWith('http') ? (
+                      <Image
+                        src={destination.image}
+                        alt={destination.name}
+                        fill
+                        style={{ objectFit: 'cover' }}
+                        sizes="(max-width: 768px) 100vw, 33vw"
+                        priority={index < 3}
+                      />
+                    ) : (
+                      <CldImage
+                        src={destination.image}
+                        alt={destination.name}
+                        fill
+                        style={{ objectFit: 'cover' }}
+                        sizes="(max-width: 768px) 100vw, 33vw"
+                        priority={index < 3}
+                      />
+                    )}
                     {/* duration removed per request */}
                   </div>
                   <div style={{ padding: '1.5rem' }}>

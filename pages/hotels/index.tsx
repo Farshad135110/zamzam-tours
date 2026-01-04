@@ -508,7 +508,7 @@ export default function Hotels() {
               height: '100%',
               objectFit: 'cover'
             }}
-            src="https://res.cloudinary.com/dhfqwxyb4/video/upload/v1761688999/18993612-hd_1920_1080_50fps_eaeogq.mp4"
+            src="https://res.cloudinary.com/dhqhxma30/video/upload/v1766841769/18993612-hd_1920_1080_50fps_wlbtkp.mp4"
           />
         </div>
         

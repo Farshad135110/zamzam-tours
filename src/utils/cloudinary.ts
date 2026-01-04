@@ -1,7 +1,7 @@
 // Cloudinary utility for image optimization and delivery
 // Using next-cloudinary package
 
-const CLOUD_NAME = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || 'dhfqwxyb4';
+const CLOUD_NAME = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || 'dhqhxma30';
 
 /**
  * Get optimized Cloudinary image URL

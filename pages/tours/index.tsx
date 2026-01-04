@@ -60,11 +60,11 @@ export default function Tours() {
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
   const [activePlayer, setActivePlayer] = useState<1 | 2>(1);
   
-  // Array of videos from zamzam-tours/heroes/tours folder
+  // Array of hero videos (same as destinations page)
   const heroVideos = [
-    'https://res.cloudinary.com/dhfqwxyb4/video/upload/v1761571416/218798_small_ov2k3s.mp4',
-    'https://res.cloudinary.com/dhfqwxyb4/video/upload/v1761571365/158112-816068529_small_jsqcds.mp4',
-    'https://res.cloudinary.com/dhfqwxyb4/video/upload/v1761571370/158220-816359501_small_dp2ik1.mp4',
+    'https://res.cloudinary.com/dhqhxma30/video/upload/v1766841496/218798_small_q4n93c.mp4',
+    'https://res.cloudinary.com/dhqhxma30/video/upload/v1766840917/158112-816068529_small_sihmzh.mp4',
+    'https://res.cloudinary.com/dhqhxma30/video/upload/v1766840756/158220-816359501_small_gjvyuv.mp4',
   ];
 
   // Fetch packages from database
@@ -242,26 +242,26 @@ export default function Tours() {
 
   // Popular destinations in Sri Lanka
   const popularDestinations = [
-    { name: 'Sigiriya', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453704/dylan-shaw-smUAKwMT8XA-unsplash_qhenhx.jpg', description: 'Ancient rock fortress - UNESCO World Heritage Site with stunning frescoes', category: 'Cultural', slug: 'sigiriya' },
-    { name: 'Kandy', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762454466/chathura-anuradha-subasinghe-40uQmE9Zq8g-unsplash_tvflxt.jpg', description: 'Sacred city with Temple of the Tooth Relic and cultural performances', category: 'Cultural', slug: 'kandy' },
-    { name: 'Ella', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453781/adam-vandermeer-Dw9dWTzzsUE-unsplash_l49hhe.jpg', description: 'Mountain paradise with tea plantations, Nine Arch Bridge, and hiking trails', category: 'Nature', slug: 'ella' },
-    { name: 'Galle', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453796/chathura-indika-LAj-XlHP6Rs-unsplash_o7mzbc.jpg', description: 'Historic Dutch fort city by the ocean - UNESCO World Heritage Site', category: 'Cultural', slug: 'galle' },
-    { name: 'Yala', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453757/gemmmm-FRTpkBIi-1Y-unsplash_iggwsm.jpg', description: 'Premier wildlife sanctuary with highest leopard density in the world', category: 'Wildlife', slug: 'yala' },
-    { name: 'Nuwara Eliya', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453797/anton-lecock-TPtaNsBOW9Q-unsplash_g0htag.jpg', description: 'Little England - Cool climate hill station with tea plantations', category: 'Nature', slug: 'nuwara-eliya' },
-    { name: 'Mirissa', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762454382/siarhei-palishchuk-hgiby6qxvpc-unsplash_prnosl.jpg', description: 'Whale watching capital with pristine beaches and tropical vibes', category: 'Beach', slug: 'mirissa' },
-    { name: 'Anuradhapura', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762454366/andrea-zanenga-U2-9JKq3Sv8-unsplash_ykmenj.jpg', description: 'Ancient capital with sacred Buddhist sites and massive stupas', category: 'Cultural', slug: 'anuradhapura' },
-    { name: 'Polonnaruwa', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762454341/birendra-padmaperuma-jB7TbGrC1xM-unsplash_qcpkau.jpg', description: 'Medieval capital with Gal Vihara rock sculptures', category: 'Cultural', slug: 'polonnaruwa' },
-    { name: 'Udawalawe', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1761861324/sachindra-chalaka-ERIYlk3Hppo-unsplash_n41n9c.jpg', description: 'Elephant paradise with guaranteed sightings of wild elephant herds', category: 'Wildlife', slug: 'udawalawe' },
-    { name: 'Trincomalee', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453771/claus-giering-YmcSXWcmh6w-unsplash_zw66ck.jpg', description: 'Pristine east coast beaches, diving spots, and historic temples', category: 'Beach', slug: 'trincomalee' },
-    { name: 'Arugam Bay', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453785/udara-karunarathna-LfUJO4whcSU-unsplash_xnxl7h.jpg', description: 'World-famous surfing destination on the southeast coast', category: 'Beach', slug: 'arugam-bay' },
-    { name: 'Bentota', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453760/ivani-de-silva-p4CkGihlKeI-unsplash_faup7y.jpg', description: 'Golden beaches and water sports paradise on the southwest coast', category: 'Beach', slug: 'bentota' },
-    { name: 'Hikkaduwa', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453918/croyde-bay-qw6f1CIXOqQ-unsplash_heu61d.jpg', description: 'Coral reefs, sea turtles, and vibrant beach town atmosphere', category: 'Beach', slug: 'hikkaduwa' },
-    { name: 'Dambulla', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1761861700/agnieszka-stankiewicz-OMgi4DfiO3c-unsplash_dfa3pd.jpg', description: 'Golden Temple with cave shrines and 150+ Buddha statues', category: 'Cultural', slug: 'dambulla' },
-    { name: 'Horton Plains', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1761861681/anupa-uthsara-Prg6PmMQdK4-unsplash_rfz6fv.jpg', description: "World's End cliff with dramatic 880m drop and cloud forests", category: 'Nature', slug: 'horton-plains' },
-    { name: 'Unawatuna', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453914/eirik-skarstein-7CsKioF9O6g-unsplash_gb7eow.jpg', description: "Crescent bay paradise voted one of world's best beaches", category: 'Beach', slug: 'unawatuna' },
-    { name: 'Wilpattu', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453910/udara-karunarathna-PPGM2ZpCrzc-unsplash_vchneo.jpg', description: 'Largest national park with unique villus (lakes) and leopards', category: 'Wildlife', slug: 'wilpattu' },
-    { name: 'Jaffna', image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1761861565/ajai-s-A4amRej5Hes-unsplash_ofpmmw.jpg', description: 'Northern Tamil cultural capital with unique heritage and islands', category: 'Cultural', slug: 'jaffna' },
-    { name: "Adam's Peak", image: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1762453906/manoj-dharmarathne-sznpwfFhfrU-unsplash_hnkhcg.jpg', description: 'Sacred mountain pilgrimage with spectacular sunrise views', category: 'Nature', slug: 'adams-peak' }
+    { name: 'Sigiriya', image: 'https://res.cloudinary.com/dhqhxma30/image/upload/v1766843237/dylan-shaw-smUAKwMT8XA-unsplash_k21uuc.jpg', description: 'Ancient rock fortress - UNESCO World Heritage Site with stunning frescoes', category: 'Cultural', slug: 'sigiriya' },
+    { name: 'Kandy', image: 'https://res.cloudinary.com/dhqhxma30/image/upload/v1767550687/chathura-anuradha-subasinghe-40uQmE9Zq8g-unsplash_pnyinr.jpg', description: 'Sacred city with Temple of the Tooth Relic and cultural performances', category: 'Cultural', slug: 'kandy' },
+    { name: 'Ella', image: 'https://res.cloudinary.com/dhqhxma30/image/upload/v1766843253/adam-vandermeer-Dw9dWTzzsUE-unsplash_lcyp9r.jpg', description: 'Mountain paradise with tea plantations, Nine Arch Bridge, and hiking trails', category: 'Nature', slug: 'ella' },
+    { name: 'Galle', image: 'https://res.cloudinary.com/dhqhxma30/image/upload/v1766843255/chathura-indika-LAj-XlHP6Rs-unsplash_icfodb.jpg', description: 'Historic Dutch fort city by the ocean - UNESCO World Heritage Site', category: 'Cultural', slug: 'galle' },
+    { name: 'Yala', image: 'https://res.cloudinary.com/dhqhxma30/image/upload/v1766842969/sachindra-chalaka-ERIYlk3Hppo-unsplash_t66kqu.jpg', description: 'Premier wildlife sanctuary with highest leopard density in the world', category: 'Wildlife', slug: 'yala' },
+    { name: 'Nuwara Eliya', image: 'https://res.cloudinary.com/dhqhxma30/image/upload/v1766843115/subodha-karunarathne-PuWCoG8WHok-unsplash_mthga0.jpg', description: 'Little England - Cool climate hill station with tea plantations', category: 'Nature', slug: 'nuwara-eliya' },
+    { name: 'Mirissa', image: 'https://res.cloudinary.com/dhqhxma30/image/upload/v1766843087/siarhei-palishchuk-hgiby6qxvpc-unsplash_lvzysr.jpg', description: 'Whale watching capital with pristine beaches and tropical vibes', category: 'Beach', slug: 'mirissa' },
+    { name: 'Anuradhapura', image: 'https://res.cloudinary.com/dhqhxma30/image/upload/v1766843216/andrea-zanenga-U2-9JKq3Sv8-unsplash_mwmgql.jpg', description: 'Ancient capital with sacred Buddhist sites and massive stupas', category: 'Cultural', slug: 'anuradhapura' },
+    { name: 'Polonnaruwa', image: 'https://res.cloudinary.com/dhqhxma30/image/upload/v1766843145/birendra-padmaperuma-jB7TbGrC1xM-unsplash_vd570j.jpg', description: 'Medieval capital with Gal Vihara rock sculptures', category: 'Cultural', slug: 'polonnaruwa' },
+    { name: 'Udawalawe', image: 'https://res.cloudinary.com/dhqhxma30/image/upload/v1766843087/gemmmm-FRTpkBIi-1Y-unsplash_krrswe.jpg', description: 'Elephant paradise with guaranteed sightings of wild elephant herds', category: 'Wildlife', slug: 'udawalawe' },
+    { name: 'Trincomalee', image: 'https://res.cloudinary.com/dhqhxma30/image/upload/v1766843026/claus-giering-YmcSXWcmh6w-unsplash_hxe1o1.jpg', description: 'Pristine east coast beaches, diving spots, and historic temples', category: 'Beach', slug: 'trincomalee' },
+    { name: 'Arugam Bay', image: 'https://res.cloudinary.com/dhqhxma30/image/upload/v1766843020/croyde-bay-qw6f1CIXOqQ-unsplash_vhndq2.jpg', description: 'World-famous surfing destination on the southeast coast', category: 'Beach', slug: 'arugam-bay' },
+    { name: 'Bentota', image: 'https://res.cloudinary.com/dhqhxma30/image/upload/v1766843010/ivani-de-silva-p4CkGihlKeI-unsplash_qpatpo.jpg', description: 'Golden beaches and water sports paradise on the southwest coast', category: 'Beach', slug: 'bentota' },
+    { name: 'Hikkaduwa', image: 'https://res.cloudinary.com/dhqhxma30/image/upload/v1766842769/eirik-skarstein-7CsKioF9O6g-unsplash_jbrqjh.jpg', description: 'Coral reefs, sea turtles, and vibrant beach town atmosphere', category: 'Beach', slug: 'hikkaduwa' },
+    { name: 'Dambulla', image: 'https://res.cloudinary.com/dhqhxma30/image/upload/v1766843008/agnieszka-stankiewicz-OMgi4DfiO3c-unsplash_avetoa.jpg', description: 'Golden Temple with cave shrines and 150+ Buddha statues', category: 'Cultural', slug: 'dambulla' },
+    { name: 'Horton Plains', image: 'https://res.cloudinary.com/dhqhxma30/image/upload/v1766842730/anupa-uthsara-Prg6PmMQdK4-unsplash_ykzpdh.jpg', description: "World's End cliff with dramatic 880m drop and cloud forests", category: 'Nature', slug: 'horton-plains' },
+    { name: 'Unawatuna', image: 'https://res.cloudinary.com/dhqhxma30/image/upload/v1766843000/udara-karunarathna-LfUJO4whcSU-unsplash_ywr2d0.jpg', description: "Crescent bay paradise voted one of world's best beaches", category: 'Beach', slug: 'unawatuna' },
+    { name: 'Wilpattu', image: 'https://res.cloudinary.com/dhqhxma30/image/upload/v1766842782/udara-karunarathna-PPGM2ZpCrzc-unsplash_tjyoqz.jpg', description: 'Largest national park with unique villus (lakes) and leopards', category: 'Wildlife', slug: 'wilpattu' },
+    { name: 'Jaffna', image: 'https://res.cloudinary.com/dhqhxma30/image/upload/v1766842750/eshan-malaviarachchi-Z3XO2B2Db7Q-unsplash_hgbxje.jpg', description: 'Northern Tamil cultural capital with unique heritage and islands', category: 'Cultural', slug: 'jaffna' },
+    { name: "Adam's Peak", image: 'https://res.cloudinary.com/dhqhxma30/image/upload/v1766842728/manoj-dharmarathne-sznpwfFhfrU-unsplash_f4sz9f.jpg', description: 'Sacred mountain pilgrimage with spectacular sunrise views', category: 'Nature', slug: 'adams-peak' }
   ];
 
   // Activities available
@@ -869,7 +869,7 @@ export default function Tours() {
                       alt={destination.name}
                       width={300}
                       height={200}
-                      style={{ objectFit: 'cover', objectPosition: portraitMap[destination.image] ? 'bottom center' : 'center', width: '100%', height: '100%' }}
+                      style={{ objectFit: 'cover', objectPosition: 'center', width: '100%', height: '100%' }}
                     />
                     <div className="destination-overlay">
                       <span className="destination-category">{destination.category}</span>
