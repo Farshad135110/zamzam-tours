@@ -16,7 +16,7 @@ const LocalBusinessSchema: React.FC<LocalBusinessSchemaProps> = ({ pageName }) =
     "url": "https://www.zamzamlankatours.com",
     "logo": {
       "@type": "ImageObject",
-      "url": "https://www.zamzamlankatours.com/logo.png",
+      "url": "https://res.cloudinary.com/dhqhxma30/image/upload/v1767556814/Project_Luvi_-_Gemstones_j2ipqf.png",
       "width": "250",
       "height": "60"
     },

@@ -13,7 +13,7 @@ export const SITE_INFO = {
   tagline: 'Best Travel Experience in Sri Lanka',
   description: 'Premium travel services including self-drive car rentals, guided tours, and airport & all-island transfers across Sri Lanka.',
   url: 'https://zamzamlankatours.com',
-  logo: 'https://res.cloudinary.com/dhfqwxyb4/image/upload/v1763663535/Project_Luvi_-_Gemstones_ce9h12.png'
+  logo: 'https://res.cloudinary.com/dhqhxma30/image/upload/v1767556814/Project_Luvi_-_Gemstones_j2ipqf.png'
 };
 
 export const SOCIAL_MEDIA = {

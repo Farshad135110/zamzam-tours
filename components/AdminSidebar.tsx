@@ -197,7 +197,7 @@ export default function AdminSidebar({ active }: Props) {
             boxShadow: '0 4px 12px rgba(255, 108, 0, 0.3)'
           }}>
             <Image 
-              src="https://res.cloudinary.com/dhfqwxyb4/image/upload/v1763663535/Project_Luvi_-_Gemstones_ce9h12.png" 
+              src="https://res.cloudinary.com/dhqhxma30/image/upload/v1767556814/Project_Luvi_-_Gemstones_j2ipqf.png" 
               alt="Zamzam Lanka Tours"
               width={32}
               height={32}
@@ -446,46 +446,7 @@ export default function AdminSidebar({ active }: Props) {
         background: 'rgba(0, 0, 0, 0.1)',
         flexShrink: 0
       }}>
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '10px',
-          marginBottom: '12px'
-        }}>
-          <div style={{
-            width: '36px',
-            height: '36px',
-            borderRadius: '50%',
-            background: 'linear-gradient(135deg, #ff6c00 0%, #ff8c00 100%)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '16px'
-          }}>
-            👤
-          </div>
-          <div style={{ flex: 1 }}>
-            <div style={{ 
-              fontSize: '13px', 
-              fontWeight: 600,
-              marginBottom: '2px',
-              whiteSpace: 'nowrap',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis'
-            }}>
-              {userName}
-            </div>
-            <div style={{ 
-              fontSize: '10px', 
-              color: 'rgba(255, 255, 255, 0.6)',
-              whiteSpace: 'nowrap',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis'
-            }}>
-              {userEmail}
-            </div>
-          </div>
-        </div>
+        {/* User icon and info removed, only logout button remains */}
         <button
           onClick={handleLogout}
           style={{
