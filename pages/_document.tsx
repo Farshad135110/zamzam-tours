@@ -1,4 +1,5 @@
 import Document, { Html, Head, Main, NextScript } from 'next/document'
+import { SpeedInsights } from "@vercel/speed-insights/next"
 import { SITE_INFO } from '../src/constants/config'
 
 class MyDocument extends Document {
@@ -21,10 +22,10 @@ class MyDocument extends Document {
           <link rel="manifest" href="/manifest.json" />
           
           {/* Favicons and social preview - Zamzam logo only */}
-          <link rel="icon" href={favicon32} type="image/svg+xml" />
-          <link rel="icon" type="image/png" sizes="32x32" href={favicon32} />
-          <link rel="icon" type="image/png" sizes="16x16" href={favicon16} />
-          <link rel="apple-touch-icon" href={appleIcon} />
+          <link rel="icon" href={SITE_INFO.logo} type="image/png" />
+          <link rel="icon" type="image/png" sizes="32x32" href={SITE_INFO.logo} />
+          <link rel="icon" type="image/png" sizes="16x16" href={SITE_INFO.logo} />
+          <link rel="apple-touch-icon" href={SITE_INFO.logo} />
           <meta name="theme-color" content="#053b3c" />
           <meta name="msapplication-TileColor" content="#053b3c" />
 
