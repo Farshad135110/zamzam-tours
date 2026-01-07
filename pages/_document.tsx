@@ -62,6 +62,18 @@ class MyDocument extends Document {
           
           {/* Canonical URL */}
           <link rel="canonical" href="https://zamzamlankatours.com" />
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "Organization",
+                "name": "ZamZam Lanka Tours",
+                "url": "https://zamzamlankatours.com",
+                "logo": "https://res.cloudinary.com/dhqhxma30/image/upload/v1767556814/Project_Luvi_-_Gemstones_j2ipqf.png"
+              })
+            }}
+          />
         </Head>
         <body>
           <Main />
