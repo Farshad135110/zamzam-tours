@@ -11,6 +11,7 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { CONTACT_INFO } from '../src/constants/config';
 import AnimatedSection from '../components/AnimatedSection';
+import QuickQuoteForm from '../components/QuickQuoteForm';
 import { fadeInUp, staggerContainer, cardHover } from '../src/utils/animations';
 import useTranslation from '../src/i18n/useTranslation';
 import LocalBusinessSchema from '../components/SEO/LocalBusinessSchema';
@@ -856,6 +857,45 @@ export default function Home() {
         </div>
       </section>
       
+      {/* Quick Quote Section */}
+      <section className="quick-quote-section" style={{ padding: '80px 0', background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)' }}>
+        <div className="container">
+          <AnimatedSection animation="fadeInUp">
+            <div style={{ textAlign: 'center', color: 'white' }}>
+              <h2 style={{ fontSize: '2.5rem', fontWeight: 'bold', marginBottom: '1rem' }}>
+                {get('home.quote.title', 'Get Your Free Tour Quotation')}
+              </h2>
+              <p style={{ fontSize: '1.2rem', marginBottom: '2rem', opacity: 0.95 }}>
+                {get('home.quote.subtitle', 'Tell us about your dream trip and receive a personalized quotation within 24 hours')}
+              </p>
+              <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem' }}>
+                <QuickQuoteForm />
+                <a 
+                  href={`${CONTACT_INFO.whatsappUrl}?text=${encodeURIComponent('Hi! I would like to get a quotation for a Sri Lanka tour.')}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn"
+                  style={{
+                    backgroundColor: '#25D366',
+                    color: 'white',
+                    padding: '12px 24px',
+                    borderRadius: '8px',
+                    fontWeight: 600,
+                    textDecoration: 'none',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    transition: 'all 0.3s ease'
+                  }}
+                >
+                  💬 WhatsApp Us
+                </a>
+              </div>
+            </div>
+          </AnimatedSection>
+        </div>
+      </section>
+
       {/* CTA Section */}
       <section className="cta-section">
         <div className="container">

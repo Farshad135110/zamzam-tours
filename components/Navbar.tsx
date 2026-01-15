@@ -12,6 +12,9 @@ export default function Navbar() {
   const { locale, setLocale, t } = useI18n();
   const router = useRouter();
 
+  // Check if we're on a quotation page
+  const isQuotationPage = router.pathname === '/quotation/[number]';
+
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
@@ -103,11 +106,12 @@ export default function Navbar() {
           padding: 1rem 0;
           z-index: 1000;
           transition: all 0.3s ease;
+          box-shadow: ${isQuotationPage ? 'none !important' : 'none'};
         }
 
         .navbar.scrolled {
           background: white;
-          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+          box-shadow: ${isQuotationPage ? 'none !important' : '0 4px 15px rgba(0, 0, 0, 0.1)'};
         }
 
         .container {
@@ -138,7 +142,7 @@ export default function Navbar() {
           }
           .navbar.scrolled {
             background: white !important;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            box-shadow: ${isQuotationPage ? 'none !important' : '0 4px 15px rgba(0, 0, 0, 0.1)'};
           }
         }
 
@@ -320,7 +324,7 @@ export default function Navbar() {
             flex-direction: column;
             gap: 0;
             padding: 2rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            box-shadow: ${isQuotationPage ? 'none !important' : '0 10px 30px rgba(0, 0, 0, 0.1)'};
             transform: translateY(-100%);
             opacity: 0;
             visibility: hidden;

@@ -66,6 +66,13 @@ export default function AdminSidebar({ active }: Props) {
       badge: null
     },
     { 
+      id: 'quotations', 
+      label: 'Quotations', 
+      href: '/admin/quotations',
+      icon: '💰',
+      badge: null
+    },
+    { 
       id: 'vehicles', 
       label: 'Fleet', 
       href: '/admin/vehicles',
