@@ -136,25 +136,38 @@ async function updateQuotation(id: string, req: NextApiRequest, res: NextApiResp
     // Send email notifications if quotation was accepted
     if (updates.status === 'accepted') {
       try {
+        console.log('🎉 Quotation accepted! Sending confirmation emails...');
         const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://zamzamlankatours.com';
         const quotationUrl = `${siteUrl}/quotation/${updatedQuotation.quotation_number}`;
         const adminEmail = process.env.NEXT_PUBLIC_EMAIL || 'info@zamzamlankatours.com';
         
+        console.log('Admin email:', adminEmail);
+        console.log('Customer email:', updatedQuotation.customer_email);
+        console.log('Quotation URL:', quotationUrl);
+        
         // Send notification to admin
-        await sendEmail({
+        const adminResult = await sendEmail({
           to: adminEmail,
           subject: `🎉 Quotation Accepted: ${updatedQuotation.quotation_number}`,
           html: createAdminNotificationEmail(updatedQuotation, quotationUrl)
         });
+        console.log('Admin email result:', adminResult);
 
         // Send confirmation to customer
-        await sendEmail({
+        const customerResult = await sendEmail({
           to: updatedQuotation.customer_email,
           subject: `Quotation Accepted - ${updatedQuotation.tour_name} | ZamZam Lanka Tours`,
           html: createCustomerConfirmationEmail(updatedQuotation, quotationUrl)
         });
+        console.log('Customer email result:', customerResult);
+        
+        if (adminResult.success && customerResult.success) {
+          console.log('✅ Both acceptance emails sent successfully!');
+        } else {
+          console.warn('⚠️ Some emails may have failed:', { adminResult, customerResult });
+        }
       } catch (emailError) {
-        console.error('Error sending acceptance emails:', emailError);
+        console.error('❌ Error sending acceptance emails:', emailError);
         // Don't fail the request if emails fail
       }
     }

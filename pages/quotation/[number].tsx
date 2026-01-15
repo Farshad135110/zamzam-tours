@@ -51,6 +51,10 @@ export default function QuotationView() {
   const [error, setError] = useState('');
   const [showAcceptModal, setShowAcceptModal] = useState(false);
 
+  // WhatsApp URL for customer support
+  const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '+94701888993';
+  const whatsappUrl = `https://wa.me/${whatsappNumber.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`Hi, I have a question about quotation ${quotation?.quotation_number || ''}`)}`;
+
   useEffect(() => {
     if (number) {
       fetchQuotation(number as string);
@@ -131,7 +135,6 @@ export default function QuotationView() {
   };
 
   const isExpired = quotation ? new Date(quotation.valid_until) < new Date() : false;
-  const whatsappUrl = `https://wa.me/${process.env.NEXT_PUBLIC_WHATSAPP_NUMBER?.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`Hi, I have a question about quotation ${quotation?.quotation_number}`)}`;
 
   if (loading) {
     return (
