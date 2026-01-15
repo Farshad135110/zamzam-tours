@@ -1,5 +1,6 @@
 // Admin panel page for managing tour quotations
 import { useState, useEffect } from 'react';
+import Head from 'next/head';
 import AdminSidebar from '../../components/AdminSidebar';
 
 interface Quotation {
@@ -402,6 +403,9 @@ export default function QuotationsAdmin() {
 
   return (
     <>
+      <Head>
+        <title>Quotation | ZamZam Lanka Tours Admin</title>
+      </Head>
       <div className="flex min-h-screen bg-gray-100">
         <AdminSidebar />
 

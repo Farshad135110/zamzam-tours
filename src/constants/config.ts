@@ -18,7 +18,8 @@ export const SITE_INFO = {
 
 export const SOCIAL_MEDIA = {
   facebook: 'https://www.facebook.com/share/1AArFVbXiD/',
-  instagram: 'https://www.instagram.com/zamzam_lanka_tours?igsh=MXB4ZmVsdnRhZWZsag=='
+  instagram: 'https://www.instagram.com/zamzam_lanka_tours?igsh=MXB4ZmVsdnRhZWZsag==',
+  tiktok: 'https://www.tiktok.com/@zam.zam.tours.ren?_r=1&_t=ZS-933rgtHM6Me'
 };
 
 export const NAVBAR_HEIGHT = 80;

@@ -30,6 +30,7 @@ export default function AdminSettings() {
     // Social Media
     facebook: SOCIAL_MEDIA.facebook,
     instagram: SOCIAL_MEDIA.instagram,
+    tiktok: SOCIAL_MEDIA.tiktok || '',
     
     // Notification Settings
     emailNotifications: true,
@@ -464,7 +465,7 @@ export default function AdminSettings() {
                   />
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '20px' }}>
                   <div>
                     <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '6px' }}>
                       Facebook URL
@@ -494,6 +495,26 @@ export default function AdminSettings() {
                       value={settings.instagram}
                       onChange={(e) => handleSettingChange('instagram', e.target.value)}
                       placeholder="https://instagram.com/..."
+                      style={{
+                        width: '100%',
+                        padding: '10px 12px',
+                        border: '1px solid #d1d5db',
+                        borderRadius: '6px',
+                        fontSize: '14px',
+                        outline: 'none',
+                        transition: 'all 0.2s ease'
+                      }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '6px' }}>
+                      TikTok URL
+                    </label>
+                    <input
+                      type="url"
+                      value={settings.tiktok}
+                      onChange={(e) => handleSettingChange('tiktok', e.target.value)}
+                      placeholder="https://tiktok.com/@..."
                       style={{
                         width: '100%',
                         padding: '10px 12px',

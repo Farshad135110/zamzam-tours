@@ -359,18 +359,6 @@ export default function AdminSidebar({ active }: Props) {
           </Link>
         ))}
 
-        <div style={{
-          fontSize: '10px',
-          color: 'rgba(255, 255, 255, 0.5)',
-          fontWeight: 600,
-          textTransform: 'uppercase',
-          letterSpacing: '1px',
-          marginTop: '16px',
-          marginBottom: '8px',
-          paddingLeft: '12px'
-        }}>
-          System
-        </div>
         {menuItems.slice(9).map(item => (
           <Link key={item.id} href={item.href} legacyBehavior>
             <a style={{

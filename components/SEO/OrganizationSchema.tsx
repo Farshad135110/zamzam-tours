@@ -64,6 +64,7 @@ const OrganizationSchema: React.FC<OrganizationSchemaProps> = ({
     "sameAs": [
       "https://facebook.com/zamzamlankatours",
       "https://instagram.com/zamzamlankatours",
+      "https://www.tiktok.com/@zam.zam.tours.ren",
       ...includeSameAs
     ].filter(Boolean),
     "contactPoint": [

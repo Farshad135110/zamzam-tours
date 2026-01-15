@@ -115,6 +115,9 @@ export function createPostTourReviewEmail(tourData: {
                     <a href="https://instagram.com/zamzamlankatours" style="display: inline-block; margin: 0 8px; text-decoration: none;">
                       <span style="display: inline-block; background: linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%); color: white; width: 36px; height: 36px; line-height: 36px; border-radius: 50%; font-size: 18px;">📷</span>
                     </a>
+                    <a href="https://www.tiktok.com/@zam.zam.tours.ren?_r=1&_t=ZS-933rgtHM6Me" style="display: inline-block; margin: 0 8px; text-decoration: none;">
+                      <span style="display: inline-block; background-color: #000000; color: white; width: 36px; height: 36px; line-height: 36px; border-radius: 50%; font-size: 18px;">🎵</span>
+                    </a>
                     <a href="https://wa.me/${process.env.NEXT_PUBLIC_WHATSAPP_NUMBER?.replace(/\D/g, '')}" style="display: inline-block; margin: 0 8px; text-decoration: none;">
                       <span style="display: inline-block; background-color: #25d366; color: white; width: 36px; height: 36px; line-height: 36px; border-radius: 50%; font-size: 18px;">💬</span>
                     </a>

@@ -126,6 +126,7 @@ const LocalBusinessSchema: React.FC<LocalBusinessSchemaProps> = ({ pageName }) =
     "sameAs": [
       "https://facebook.com/zamzamlankatours",
       "https://instagram.com/zamzamlankatours",
+      "https://www.tiktok.com/@zam.zam.tours.ren",
       "https://wa.me/" + CONTACT_INFO.whatsapp
     ]
   };

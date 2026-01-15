@@ -94,6 +94,11 @@ export default function Footer() {
                   <Image src="/social/instagram.svg" alt="Instagram" width={28} height={28} />
                 </a>
               )}
+              {SOCIAL_MEDIA.tiktok && (
+                <a href={SOCIAL_MEDIA.tiktok} aria-label="TikTok" target="_blank" rel="noreferrer">
+                  <Image src="/social/tiktok.svg" alt="TikTok" width={28} height={28} />
+                </a>
+              )}
             </div>
           </div>
 
