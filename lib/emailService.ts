@@ -7,6 +7,7 @@ interface EmailOptions {
   html: string;
   from?: string;
   replyTo?: string;
+  bcc?: string | string[];
 }
 
 interface EmailResponse {
@@ -191,6 +192,11 @@ async function sendWithResend(options: EmailOptions, from: string, replyTo: stri
   // Only add reply_to if it's a valid email
   if (replyTo && isValidEmail(replyTo)) {
     emailPayload.reply_to = [replyTo];
+  }
+
+  // Add BCC if provided
+  if (options.bcc) {
+    emailPayload.bcc = Array.isArray(options.bcc) ? options.bcc : [options.bcc];
   }
 
   const response = await fetch('https://api.resend.com/emails', {
@@ -416,6 +422,30 @@ export function createQuotationEmailHTML(quotation: any): string {
               <p style="margin: 0; color: #92400e; font-size: 14px;">
                 ⏰ This quotation is valid until <strong>${new Date(quotation.valid_until).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</strong>
               </p>
+            </td>
+          </tr>
+
+          <!-- Review Request -->
+          <tr>
+            <td style="padding: 30px 40px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); text-align: center; border-top: 3px solid #047857;">
+              <p style="margin: 0 0 15px 0; color: #ffffff; font-size: 20px; font-weight: 700;">
+                Enjoyed Your Experience?
+              </p>
+              <p style="margin: 0 0 25px 0; color: #ffffff; font-size: 15px; opacity: 0.95;">
+                Share your feedback and help other travelers discover Sri Lanka with us!
+              </p>
+              <table width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td align="center" style="padding: 10px;">
+                    <a href="https://www.tripadvisor.com/UserReviewEdit-g12364193-d34116256-ZamZam_Lanka_Tours-Galle_District_Southern_Province.html" style="display: inline-block; text-decoration: none; margin: 0 10px;">
+                      <img src="https://static.tacdn.com/img2/brand_refresh/Tripadvisor_lockup_horizontal_secondary_registered.svg" alt="Review us on TripAdvisor" width="180" height="36" style="border: 0; display: block; background-color: #ffffff; padding: 8px 16px; border-radius: 8px;">
+                    </a>
+                    <a href="https://www.trustpilot.com/review/zamzamlankatours.com" style="display: inline-block; text-decoration: none; margin: 0 10px;">
+                      <img src="https://cdn.trustpilot.net/brand-assets/4.1.0/logo-black.svg" alt="Review us on Trustpilot" width="140" height="36" style="border: 0; display: block; background-color: #ffffff; padding: 8px 16px; border-radius: 8px;">
+                    </a>
+                  </td>
+                </tr>
+              </table>
             </td>
           </tr>
 

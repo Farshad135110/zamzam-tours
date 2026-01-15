@@ -340,6 +340,56 @@ export default function Login() {
             display: none;
           }
         }
+        
+        /* Enhanced mobile responsive styles */
+        @media (max-width: 768px) {
+          /* Make container single column on mobile */
+          div[style*="minHeight: '100vh'"] {
+            flex-direction: column !important;
+          }
+          
+          /* Hide branding panel on mobile */
+          div[style*="minHeight: '100vh'"] > div:first-child {
+            display: none !important;
+          }
+          
+          /* Full width login form on mobile */
+          div[style*="minHeight: '100vh'"] > div:last-child {
+            flex: 1 !important;
+            padding: 20px !important;
+          }
+          
+          /* Reduce form padding on mobile */
+          div[style*="maxWidth: '440px'"] {
+            padding: 32px 24px !important;
+            border-radius: 16px !important;
+          }
+          
+          /* Smaller heading on mobile */
+          h2[style*="fontSize: '32px'"] {
+            font-size: 24px !important;
+          }
+          
+          /* Adjust input font size to prevent zoom on iOS */
+          input {
+            font-size: 16px !important;
+          }
+        }
+        
+        @media (max-width: 480px) {
+          /* Extra compact on small phones */
+          div[style*="maxWidth: '440px'"] {
+            padding: 24px 20px !important;
+          }
+          
+          h2[style*="fontSize: '32px'"] {
+            font-size: 22px !important;
+          }
+          
+          div[style*="minHeight: '100vh'"] > div:last-child {
+            padding: 16px !important;
+          }
+        }
       `}</style>
     </div>
   );

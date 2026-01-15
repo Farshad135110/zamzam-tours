@@ -1,9 +1,24 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Image from 'next/image';
 import { SITE_INFO, CONTACT_INFO, SOCIAL_MEDIA } from '../src/constants/config';
 import Link from 'next/link';
 
 export default function Footer() {
+  // Load Trustpilot widget script
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://widget.trustpilot.com/bootstrap/v5/tp.widget.bootstrap.min.js';
+    script.async = true;
+    document.body.appendChild(script);
+
+    return () => {
+      // Cleanup script on unmount
+      if (document.body.contains(script)) {
+        document.body.removeChild(script);
+      }
+    };
+  }, []);
+
   const handleWhatsAppBooking = (service = 'assistance') => {
     const message = `Hello Zamzam Lanka Tours! I need ${service}`;
     const encoded = encodeURIComponent(message);
@@ -13,9 +28,56 @@ export default function Footer() {
   };
 
   return (
-    <footer className="footer">
-      <div className="container">
-        <div className="footer-content">
+    <>
+      {/* Review Request Section */}
+      <section style={{ padding: '60px 0', background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)' }}>
+        <div className="container">
+          <div style={{ textAlign: 'center', color: 'white', maxWidth: '900px', margin: '0 auto' }}>
+            <h2 style={{ fontSize: '2.5rem', fontWeight: 'bold', marginBottom: '1rem' }}>
+              Enjoyed Your Experience?
+            </h2>
+            <p style={{ fontSize: '1.2rem', marginBottom: '2rem', opacity: 0.95 }}>
+              Share your feedback and help other travelers discover Sri Lanka with us!
+            </p>
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '2rem', marginTop: '2rem', flexWrap: 'wrap' }}>
+              <a 
+                href="https://www.tripadvisor.com/UserReviewEdit-g12364193-d34116256-ZamZam_Lanka_Tours-Galle_District_Southern_Province.html"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ display: 'inline-block', backgroundColor: 'white', padding: '8px 16px', borderRadius: '8px', transition: 'transform 0.3s ease' }}
+                onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
+                onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+              >
+                <Image 
+                  src="https://static.tacdn.com/img2/brand_refresh/Tripadvisor_lockup_horizontal_secondary_registered.svg" 
+                  alt="Review us on TripAdvisor" 
+                  width={180} 
+                  height={36}
+                />
+              </a>
+              <a 
+                href="https://www.trustpilot.com/review/zamzamlankatours.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ display: 'inline-block', backgroundColor: 'white', padding: '8px 16px', borderRadius: '8px', transition: 'transform 0.3s ease' }}
+                onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
+                onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+              >
+                <Image 
+                  src="https://cdn.trustpilot.net/brand-assets/4.1.0/logo-black.svg" 
+                  alt="Review us on Trustpilot" 
+                  width={140} 
+                  height={36}
+                />
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <footer className="footer">
+        <div className="container">
+          <div className="footer-content">
           <div className="footer-section">
             <div className="footer-logo">
               <Image src={SITE_INFO.logo} alt={SITE_INFO.name} width={110} height={36} />
@@ -72,6 +134,23 @@ export default function Footer() {
               <li><span className="contact-icon">🕒</span><span className="contact-text">Open 24/7</span></li>
             </ul>
           </div>
+        </div>
+
+        {/* Trustpilot Logo */}
+        <div style={{ textAlign: 'center', padding: '30px 0 20px 0', borderTop: '1px solid rgba(255, 255, 255, 0.1)' }}>
+          <a 
+            href="https://www.trustpilot.com/review/zamzamlankatours.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ display: 'inline-block' }}
+          >
+            <Image 
+              src="https://cdn.trustpilot.net/brand-assets/4.1.0/logo-white.svg" 
+              alt="Trustpilot" 
+              width={120} 
+              height={30}
+            />
+          </a>
         </div>
 
         <div className="footer-bottom">
@@ -133,6 +212,7 @@ export default function Footer() {
           .footer-section { flex: 1 1 100%; }
         }
       `}</style>
-    </footer>
+      </footer>
+    </>
   );
 }

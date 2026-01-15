@@ -295,6 +295,12 @@ export default function QuotationsAdmin() {
         
         // Reset form
         setFormData({
+          serviceType: 'tour',
+          serviceId: '',
+          withDriver: true,
+          numRooms: 1,
+          pickupLocation: '',
+          dropoffLocation: '',
           customerName: '',
           customerEmail: '',
           customerPhone: '',

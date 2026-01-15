@@ -11,6 +11,7 @@ export default function AdminSidebar({ active }: Props) {
   const router = useRouter();
   const [userName, setUserName] = useState('Admin User');
   const [userEmail, setUserEmail] = useState('admin@zamzam.com');
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   
   useEffect(() => {
     // Get user info from localStorage
@@ -40,6 +41,11 @@ export default function AdminSidebar({ active }: Props) {
       window.removeEventListener('popstate', handlePopState);
     };
   }, [router]);
+  
+  // Close mobile menu when route changes
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [router.pathname]);
 
   const handleLogout = async () => {
     if (confirm('Are you sure you want to logout?')) {
@@ -94,41 +100,6 @@ export default function AdminSidebar({ active }: Props) {
       badge: null
     },
     { 
-      id: 'airportpickup', 
-      label: 'Airport Transfers', 
-      href: '/admin/airportpickup',
-      icon: '✈️',
-      badge: null
-    },
-    { 
-      id: 'vehicle-bookings', 
-      label: 'Vehicle Bookings', 
-      href: '/admin/vehicle-bookings',
-      icon: '📋',
-      badge: 'new'
-    },
-    { 
-      id: 'tour-bookings', 
-      label: 'Tour Bookings', 
-      href: '/admin/tour-bookings',
-      icon: '🎫',
-      badge: null
-    },
-    { 
-      id: 'hotel-bookings', 
-      label: 'Hotel Bookings', 
-      href: '/admin/hotel-bookings',
-      icon: '🛏️',
-      badge: null
-    },
-    { 
-      id: 'feedback', 
-      label: 'Feedback', 
-      href: '/admin/feedback',
-      icon: '⭐',
-      badge: null
-    },
-    { 
       id: 'users', 
       label: 'Users', 
       href: '/admin/users',
@@ -166,20 +137,23 @@ export default function AdminSidebar({ active }: Props) {
   }, []);
 
   const sidebarContent = (
-    <div style={{ 
-      width: '280px', 
-      background: 'linear-gradient(180deg, #053b3c 0%, #0a5c5e 100%)',
-      color: 'white', 
-      display: 'flex',
-      flexDirection: 'column',
-      position: 'fixed',
-      left: 0,
-      top: 0,
-      height: '100vh',
-      boxShadow: '4px 0 24px rgba(0, 0, 0, 0.12)',
-      zIndex: 1000,
-      overflow: 'hidden'
-    }}>
+    <div 
+      className="admin-sidebar"
+      style={{ 
+        width: '280px', 
+        background: 'linear-gradient(180deg, #053b3c 0%, #0a5c5e 100%)',
+        color: 'white', 
+        display: 'flex',
+        flexDirection: 'column',
+        position: 'fixed',
+        left: 0,
+        top: 0,
+        height: '100vh',
+        boxShadow: '4px 0 24px rgba(0, 0, 0, 0.12)',
+        zIndex: 1000,
+        overflow: 'hidden'
+      }}
+    >
       {/* Logo Section */}
       <div style={{ 
         padding: '20px 20px 16px',

@@ -264,7 +264,7 @@ export default function Home() {
   <meta name="keywords" content="Sri Lanka tours, car rental Sri Lanka, airport transfer Colombo, Sri Lanka safari, private driver Sri Lanka, Colombo to Kandy transfer, self drive Sri Lanka, tour packages, holiday packages Sri Lanka" />
   <meta name="robots" content="index,follow" />
   <link rel="canonical" href="https://www.zamzamlankatours.com/" />
-  <link rel="alternate" href="https://zamzamlankatours.com/" hreflang="x-default" />
+  <link rel="alternate" href="https://www.zamzamlankatours.com/" hrefLang="x-default" />
   <meta property="og:title" content="ZamZam Lanka Tours — Best Sri Lanka Tours, Private Drivers & Holiday Packages" />
   <meta property="og:description" content="Book your Sri Lanka holiday with ZamZam Lanka Tours. Private drivers, round tours, cultural tours, wildlife safaris, airport transfers & custom itineraries." />
   <meta property="og:image" content="https://zamzamlankatours.com/images/og-image.jpg" />
@@ -553,7 +553,7 @@ export default function Home() {
                           <div className="tour-package-card">
                             <div className="tour-card-image-wrapper">
                               <Image 
-                                src={tour.image || '/placeholder.jpg'} 
+                                src={tour.image || 'https://res.cloudinary.com/dhqhxma30/image/upload/v1767556814/Project_Luvi_-_Gemstones_j2ipqf.png'} 
                                 alt={`${tour.name} - Sri Lanka tour package`}
                                 width={400}
                                 height={280}
@@ -857,45 +857,6 @@ export default function Home() {
         </div>
       </section>
       
-      {/* Quick Quote Section */}
-      <section className="quick-quote-section" style={{ padding: '80px 0', background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)' }}>
-        <div className="container">
-          <AnimatedSection animation="fadeInUp">
-            <div style={{ textAlign: 'center', color: 'white' }}>
-              <h2 style={{ fontSize: '2.5rem', fontWeight: 'bold', marginBottom: '1rem' }}>
-                {get('home.quote.title', 'Get Your Free Tour Quotation')}
-              </h2>
-              <p style={{ fontSize: '1.2rem', marginBottom: '2rem', opacity: 0.95 }}>
-                {get('home.quote.subtitle', 'Tell us about your dream trip and receive a personalized quotation within 24 hours')}
-              </p>
-              <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem' }}>
-                <QuickQuoteForm />
-                <a 
-                  href={`${CONTACT_INFO.whatsappUrl}?text=${encodeURIComponent('Hi! I would like to get a quotation for a Sri Lanka tour.')}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn"
-                  style={{
-                    backgroundColor: '#25D366',
-                    color: 'white',
-                    padding: '12px 24px',
-                    borderRadius: '8px',
-                    fontWeight: 600,
-                    textDecoration: 'none',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    transition: 'all 0.3s ease'
-                  }}
-                >
-                  💬 WhatsApp Us
-                </a>
-              </div>
-            </div>
-          </AnimatedSection>
-        </div>
-      </section>
-
       {/* CTA Section */}
       <section className="cta-section">
         <div className="container">

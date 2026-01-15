@@ -1,6 +1,7 @@
 // API endpoint for quotations management
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { Pool } from 'pg';
+import { authMiddleware, AuthRequest } from '../../../src/lib/auth';
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -13,8 +14,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   try {
     switch (method) {
       case 'GET':
-        return await getQuotations(req, res);
+        // GET requires authentication (admin viewing quotations)
+        return authMiddleware(getQuotations)(req, res);
       case 'POST':
+        // POST is public (customers creating quotations)
         return await createQuotation(req, res);
       default:
         res.setHeader('Allow', ['GET', 'POST']);
@@ -27,7 +30,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 }
 
 // GET /api/quotations - Get all quotations with filters
-async function getQuotations(req: NextApiRequest, res: NextApiResponse) {
+async function getQuotations(req: AuthRequest, res: NextApiResponse) {
   const { status, email, search, limit = '50', offset = '0' } = req.query;
 
   try {

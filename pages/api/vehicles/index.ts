@@ -1,16 +1,21 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { VehicleController } from '../../../lib/controllers/vehicleController';
+import { authMiddleware, AuthRequest } from '../../../src/lib/auth';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
+    // GET is public
     if (req.method === 'GET') {
       const vehicles = await VehicleController.getAll();
       return res.status(200).json(vehicles);
     }
 
+    // POST requires authentication
     if (req.method === 'POST') {
-      const vehicle = await VehicleController.create(req.body);
-      return res.status(201).json(vehicle);
+      return authMiddleware(async (authReq: AuthRequest) => {
+        const vehicle = await VehicleController.create(authReq.body);
+        return res.status(201).json(vehicle);
+      })(req, res);
     }
 
     return res.status(405).json({ error: 'Method not allowed' });

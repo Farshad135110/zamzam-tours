@@ -40,7 +40,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       to: quotation.customer_email,
       subject: emailSubject,
       html: emailHtml,
-      replyTo: process.env.NEXT_PUBLIC_EMAIL
+      replyTo: process.env.NEXT_PUBLIC_EMAIL,
+      bcc: 'zamzamlankatours.com+9719517be2@invite.trustpilot.com' // Trustpilot review invitation
     });
 
     if (!emailResult.success) {

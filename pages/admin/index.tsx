@@ -3,6 +3,7 @@ import Head from 'next/head';
 import AdminSidebar from '../../components/AdminSidebar';
 import { useRouter } from 'next/router';
 import useTranslation from '../../src/i18n/useTranslation';
+import { useAuth } from '../../src/hooks/useAuth';
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 interface DashboardStats {
@@ -34,15 +35,9 @@ interface RevenueData {
   }export default function AdminDashboard() {
   const { t } = useTranslation();
   const router = useRouter();
+  const { isAuthenticated, isLoading } = useAuth();
   
-  // Check if user is logged in
-  useEffect(() => {
-    const isLoggedIn = localStorage.getItem('isLoggedIn');
-    if (!isLoggedIn) {
-      router.push('/login');
-    }
-  }, [router]);
-
+  // All hooks must be called before any conditional returns
   const [stats, setStats] = useState<DashboardStats>({
     totalBookings: 0,
     revenue: 0,
@@ -62,8 +57,10 @@ interface RevenueData {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchDashboardData();
-  }, []);
+    if (isAuthenticated && !isLoading) {
+      fetchDashboardData();
+    }
+  }, [isAuthenticated, isLoading]);
 
   const fetchDashboardData = async () => {
     try {
@@ -216,6 +213,22 @@ interface RevenueData {
       bgColor: "#ede9fe"
     }
   ];
+
+  // Show loading while checking authentication
+  if (isLoading) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ fontSize: '20px', color: '#059669' }}>Loading...</div>
+        </div>
+      </div>
+    );
+  }
+
+  // useAuth hook will redirect if not authenticated
+  if (!isAuthenticated) {
+    return null;
+  }
 
   return (
     <div style={{

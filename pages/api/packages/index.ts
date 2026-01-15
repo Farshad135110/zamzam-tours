@@ -1,16 +1,21 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { PackageController } from '../../../lib/controllers/packageController';
+import { authMiddleware, AuthRequest } from '../../../src/lib/auth';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
+    // GET is public (for website display)
     if (req.method === 'GET') {
       const packages = await PackageController.getAll();
       return res.status(200).json(packages);
     }
 
+    // POST requires authentication (admin only)
     if (req.method === 'POST') {
-      const pkg = await PackageController.create(req.body);
-      return res.status(201).json(pkg);
+      return authMiddleware(async (authReq: AuthRequest) => {
+        const pkg = await PackageController.create(authReq.body);
+        return res.status(201).json(pkg);
+      })(req, res);
     }
 
     return res.status(405).json({ error: 'Method not allowed' });

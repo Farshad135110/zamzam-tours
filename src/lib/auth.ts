@@ -1,6 +1,7 @@
 // Authentication middleware and utilities
 import jwt from 'jsonwebtoken';
 import { NextApiRequest, NextApiResponse } from 'next';
+import { logAuditEvent, AUDIT_ACTIONS, RESOURCE_TYPES } from './auditLog';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'zamzam-tours-secret-key-change-in-production';
 
@@ -49,6 +50,12 @@ export function authMiddleware(
                    req.headers.authorization?.replace('Bearer ', '');
 
       if (!token) {
+        const clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+        await logAuditEvent(null, AUDIT_ACTIONS.UNAUTHORIZED_ACCESS, RESOURCE_TYPES.AUTH, {
+          ipAddress: clientIp as string,
+          success: false,
+          details: { reason: 'No token provided', path: req.url }
+        });
         console.error('No token found in cookies or headers');
         console.log('Cookies:', req.cookies);
         console.log('Headers:', req.headers.authorization);
@@ -57,6 +64,12 @@ export function authMiddleware(
 
       const user = verifyToken(token);
       if (!user) {
+        const clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+        await logAuditEvent(null, AUDIT_ACTIONS.INVALID_TOKEN, RESOURCE_TYPES.AUTH, {
+          ipAddress: clientIp as string,
+          success: false,
+          details: { path: req.url }
+        });
         console.error('Invalid token');
         return res.status(401).json({ error: 'Invalid or expired token' });
       }

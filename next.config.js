@@ -47,6 +47,10 @@ const nextConfig = {
             value: 'on'
           },
           {
+            key: 'Strict-Transport-Security',
+            value: 'max-age=63072000; includeSubDomains; preload'
+          },
+          {
             key: 'X-Frame-Options',
             value: 'SAMEORIGIN'
           },
@@ -55,8 +59,29 @@ const nextConfig = {
             value: 'nosniff'
           },
           {
+            key: 'X-XSS-Protection',
+            value: '1; mode=block'
+          },
+          {
             key: 'Referrer-Policy',
-            value: 'origin-when-cross-origin'
+            value: 'strict-origin-when-cross-origin'
+          },
+          {
+            key: 'Permissions-Policy',
+            value: 'camera=(), microphone=(), geolocation=()'
+          },
+        ],
+      },
+      {
+        source: '/admin/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'no-store, no-cache, must-revalidate, private'
+          },
+          {
+            key: 'X-Robots-Tag',
+            value: 'noindex, nofollow'
           },
         ],
       },

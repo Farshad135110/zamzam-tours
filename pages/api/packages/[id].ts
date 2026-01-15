@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { PackageController } from '../../../lib/controllers/packageController';
+import { authMiddleware, AuthRequest } from '../../../src/lib/auth';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { id } = req.query;
@@ -9,6 +10,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
+    // GET is public (for website display)
     if (req.method === 'GET') {
       const pkg = await PackageController.getById(id);
       if (!pkg) {
@@ -17,14 +19,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(200).json(pkg);
     }
 
+    // PUT and DELETE require authentication
     if (req.method === 'PUT') {
-      const pkg = await PackageController.update(id, req.body);
-      return res.status(200).json(pkg);
+      return authMiddleware(async (authReq: AuthRequest) => {
+        const pkg = await PackageController.update(id, authReq.body);
+        return res.status(200).json(pkg);
+      })(req, res);
     }
 
     if (req.method === 'DELETE') {
-      await PackageController.delete(id);
-      return res.status(204).end();
+      return authMiddleware(async (authReq: AuthRequest) => {
+        await PackageController.delete(id);
+        return res.status(204).end();
+      })(req, res);
     }
 
     return res.status(405).json({ error: 'Method not allowed' });
