@@ -382,7 +382,8 @@ function createCustomerConfirmationEmail(quotation: any, quotationUrl: string): 
 
               <div style="background-color: #fef3c7; border-radius: 8px; padding: 20px; margin: 25px 0;">
                 <h3 style="margin: 0 0 10px 0; color: #92400e; font-size: 16px; font-weight: 600;">📞 Need Assistance?</h3>
-                <p style="margin: 5px 0; color: #78350f; font-size: 14px;">WhatsApp: <a href="https://wa.me/94701888993" style="color: #10b981; text-decoration: none; font-weight: 600;">+94 70 188 8993</a></p>
+                <p style="margin: 5px 0; color: #78350f; font-size: 14px;">Phone: <strong style="color: #92400e;">+94 70 188 8993</strong></p>
+                <p style="margin: 5px 0; color: #78350f; font-size: 14px;">💬 <a href="https://api.whatsapp.com/send/?phone=94701888993&text=Hi,%20I%20have%20a%20question%20about%20my%20tour" style="color: #10b981; text-decoration: none; font-weight: 600;">Chat on WhatsApp</a></p>
                 <p style="margin: 5px 0; color: #78350f; font-size: 14px;">Email: <a href="mailto:${process.env.NEXT_PUBLIC_EMAIL}" style="color: #10b981; text-decoration: none;">${process.env.NEXT_PUBLIC_EMAIL}</a></p>
               </div>
 
@@ -392,41 +393,7 @@ function createCustomerConfirmationEmail(quotation: any, quotationUrl: string): 
             </td>
           </tr>
 
-          <!-- Review Section -->
-          <tr>
-            <td style="padding: 30px 40px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); text-align: center;">
-              <p style="margin: 0 0 15px 0; color: #ffffff; font-size: 20px; font-weight: 700;">
-                Enjoyed Your Experience?
-              </p>
-              <p style="margin: 0 0 25px 0; color: #ffffff; font-size: 15px; opacity: 0.95;">
-                Share your feedback and help other travelers discover Sri Lanka with us!
-              </p>
-              <table width="100%" cellpadding="10" cellspacing="0">
-                <tr>
-                  <td align="center">
-                    <table cellpadding="0" cellspacing="0" style="display: inline-block; margin: 0 5px;">
-                      <tr>
-                        <td style="background-color: #ffffff; border-radius: 8px; padding: 12px 24px;">
-                          <a href="https://www.tripadvisor.com/UserReviewEdit-g12364193-d34116256-ZamZam_Lanka_Tours-Galle_District_Southern_Province.html" style="color: #00af87; text-decoration: none; font-weight: 700; font-size: 14px; display: block;">
-                            🦉 Review on TripAdvisor
-                          </a>
-                        </td>
-                      </tr>
-                    </table>
-                    <table cellpadding="0" cellspacing="0" style="display: inline-block; margin: 0 5px;">
-                      <tr>
-                        <td style="background-color: #ffffff; border-radius: 8px; padding: 12px 24px;">
-                          <a href="https://www.trustpilot.com/review/zamzamlankatours.com" style="color: #00b67a; text-decoration: none; font-weight: 700; font-size: 14px; display: block;">
-                            ⭐ Review on Trustpilot
-                          </a>
-                        </td>
-                      </tr>
-                    </table>
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
+
 
           <!-- Footer -->
           <tr>
@@ -435,7 +402,7 @@ function createCustomerConfirmationEmail(quotation: any, quotationUrl: string): 
               <p style="margin: 0 0 15px 0; color: #9ca3af; font-size: 14px;">Your Trusted Travel Partner in Sri Lanka</p>
               <p style="margin: 0; color: #9ca3af; font-size: 13px;">
                 📧 ${process.env.NEXT_PUBLIC_EMAIL} | 
-                📱 ${process.env.NEXT_PUBLIC_PHONE_NUMBER}
+                📱 +94 70 188 8993
               </p>
             </td>
           </tr>

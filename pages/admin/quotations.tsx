@@ -206,6 +206,16 @@ export default function QuotationsAdmin() {
 
   // Auto-calculate end date when start date or duration changes
   const handleStartDateChange = (startDate: string) => {
+    // Validate that start date is not in the past
+    const selectedDate = new Date(startDate);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Reset time to start of day for comparison
+    
+    if (selectedDate < today) {
+      alert('Start date cannot be in the past. Please select a future date.');
+      return;
+    }
+    
     const days = formData.durationDays;
     let endDate = '';
     
@@ -773,8 +783,16 @@ export default function QuotationsAdmin() {
                     <input
                       type="date"
                       required
+                      min={new Date().toISOString().split('T')[0]}
                       value={formData.startDate}
                       onChange={(e) => {
+                        const selectedDate = new Date(e.target.value);
+                        const today = new Date();
+                        today.setHours(0, 0, 0, 0);
+                        if (selectedDate < today) {
+                          alert('Transfer date cannot be in the past. Please select a future date.');
+                          return;
+                        }
                         setFormData({...formData, startDate: e.target.value, endDate: e.target.value, durationDays: 1});
                       }}
                       className="w-full border rounded px-3 py-2"
@@ -788,6 +806,7 @@ export default function QuotationsAdmin() {
                     <input
                       type="date"
                       required
+                      min={new Date().toISOString().split('T')[0]}
                       value={formData.startDate}
                       onChange={(e) => handleStartDateChange(e.target.value)}
                       className="w-full border rounded px-3 py-2"

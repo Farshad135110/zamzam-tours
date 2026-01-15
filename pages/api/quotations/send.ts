@@ -105,7 +105,7 @@ function generateQuotationEmail(quotation: any): string {
   } = quotation;
 
   const viewUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/quotation/${quotation_number}`;
-  const whatsappUrl = `https://wa.me/${process.env.NEXT_PUBLIC_WHATSAPP_NUMBER?.replace(/[^0-9]/g, '')}?text=Hi, I have a question about quotation ${quotation_number}`;
+  const whatsappUrl = `https://api.whatsapp.com/send/?phone=94701888993&text=${encodeURIComponent(`Hi, I have a question about quotation ${quotation_number}`)}`;
 
   return `
 <!DOCTYPE html>
