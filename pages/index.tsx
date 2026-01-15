@@ -558,11 +558,9 @@ export default function Home() {
                                 width={400}
                                 height={280}
                                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                                quality={85}
-                                loading={index < 3 ? 'eager' : 'lazy'}
-                                priority={index < 2}
-                                placeholder="blur"
-                                blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCwAB8H/9k="
+                                quality={75}
+                                loading="lazy"
+                                priority={false}
                                 style={{ objectFit: 'cover', width: '100%', height: '100%' }}
                               />
                               <div className="tour-duration-badge">
@@ -716,7 +714,9 @@ export default function Home() {
                         fill
                         style={{ objectFit: 'cover' }}
                         sizes="(max-width: 768px) 100vw, 33vw"
-                        priority={index < 3}
+                        quality={80}
+                        loading={index < 3 ? 'eager' : 'lazy'}
+                        priority={index < 2}
                       />
                     ) : (
                       <CldImage
@@ -725,7 +725,9 @@ export default function Home() {
                         fill
                         style={{ objectFit: 'cover' }}
                         sizes="(max-width: 768px) 100vw, 33vw"
-                        priority={index < 3}
+                        quality={80}
+                        loading={index < 3 ? 'eager' : 'lazy'}
+                        priority={index < 2}
                       />
                     )}
                     <div className="destination-overlay">
@@ -793,7 +795,7 @@ export default function Home() {
             <h2 className="section-title">{get('home.testimonials.title', 'What Our Customers Say')}</h2>
           </AnimatedSection>
           
-          <div className="testimonials-slider" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem', maxWidth: '1200px', margin: '0 auto' }}>
+          <div className="testimonials-slider" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 350px), 1fr))', gap: '1.5rem', maxWidth: '1200px', margin: '0 auto' }}>
             <AnimatedSection animation="fadeInLeft" delay={0.2}>
               <div className="testimonial" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
                 <div className="testimonial-content" style={{ flex: 1 }}>
@@ -806,8 +808,7 @@ export default function Home() {
               </div>
             </AnimatedSection>
             
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-              <AnimatedSection animation="fadeInRight" delay={0.3}>
+            <AnimatedSection animation="fadeInRight" delay={0.3}>
                 <div className="testimonial" style={{ display: 'flex', flexDirection: 'column' }}>
                   <div className="testimonial-content" style={{ flex: 1 }}>
                     <p>"A few months ago, I hired a driver from them to guide me through Sri Lanka for 12 days. The trip was great. I was traveling alone and felt safe at all times. Whenever a problem arose, they tried to find a solution quickly. Faizan, the driver's name, was very kind, polite, and friendly. Sri Lanka is worth getting to know; it's a wonderful country, and so are its people. I'll be back. 🫶🏻🇱🇰🫶🏻"</p>
@@ -818,19 +819,18 @@ export default function Home() {
                   </div>
                 </div>
               </AnimatedSection>
-              
-              <AnimatedSection animation="fadeInRight" delay={0.4}>
-                <div className="testimonial" style={{ display: 'flex', flexDirection: 'column' }}>
-                  <div className="testimonial-content" style={{ flex: 1 }}>
-                    <p>"Great service. Excellent driver. Nice car. Very punctual. I will choose this service again for sure."</p>
-                    <div className="testimonial-author">
-                      <strong>Carlos Rodrigues</strong>
-                      <span>Google Review</span>
-                    </div>
+            
+            <AnimatedSection animation="fadeInRight" delay={0.4}>
+              <div className="testimonial" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                <div className="testimonial-content" style={{ flex: 1 }}>
+                  <p>"Great service. Excellent driver. Nice car. Very punctual. I will choose this service again for sure."</p>
+                  <div className="testimonial-author">
+                    <strong>Carlos Rodrigues</strong>
+                    <span>Google Review</span>
                   </div>
                 </div>
-              </AnimatedSection>
-            </div>
+              </div>
+            </AnimatedSection>
           </div>
 
           <AnimatedSection animation="fadeInUp" delay={0.5}>

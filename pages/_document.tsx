@@ -14,9 +14,15 @@ class MyDocument extends Document {
     return (
       <Html lang="en">
         <Head>
-          {/* Performance - DNS Prefetch */}
+          {/* Performance - DNS Prefetch & Preconnect */}
           <link rel="dns-prefetch" href="https://res.cloudinary.com" />
           <link rel="preconnect" href="https://res.cloudinary.com" crossOrigin="anonymous" />
+          <link rel="dns-prefetch" href="https://cdn.trustpilot.net" />
+          <link rel="preconnect" href="https://cdn.trustpilot.net" crossOrigin="anonymous" />
+          <link rel="dns-prefetch" href="https://static.tacdn.com" />
+          <link rel="preconnect" href="https://static.tacdn.com" crossOrigin="anonymous" />
+          <link rel="dns-prefetch" href="https://widget.trustpilot.com" />
+          <link rel="preconnect" href="https://widget.trustpilot.com" crossOrigin="anonymous" />
           
           {/* PWA Manifest */}
           <link rel="manifest" href="/manifest.json" />

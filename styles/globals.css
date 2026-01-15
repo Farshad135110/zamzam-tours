@@ -60,6 +60,25 @@ body {
 /* Smooth Scrolling */
 html {
   scroll-behavior: smooth;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Performance: Enable GPU acceleration for animations */
+.animated,
+.card:hover,
+.btn:hover,
+.vehicle-card:hover,
+.tour-card:hover,
+.destination-card:hover {
+  will-change: transform;
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+/* Optimize scroll performance */
+* {
+  -webkit-overflow-scrolling: touch;
 }
 
 /* Image Error Fallback - Solid Green Background */
@@ -197,7 +216,7 @@ section {
   }
   
   section {
-    padding: 2rem 0;
+    padding: 2.5rem 0;
   }
 
   /* Improve touch targets on mobile - 44px minimum for accessibility */
@@ -208,6 +227,7 @@ section {
     align-items: center;
     justify-content: center;
     padding: 12px 24px;
+    font-size: 1rem;
   }
 
   /* Better spacing for form inputs */
@@ -232,39 +252,146 @@ section {
   /* Grid layout adjustments */
   .grid, .vehicle-grid, .tour-grid, .destinations-grid {
     grid-template-columns: 1fr !important;
+    gap: 1.5rem;
   }
 
   /* Container padding on mobile */
   .container {
-    padding-left: 1rem;
-    padding-right: 1rem;
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+
+  /* Better card spacing */
+  .card {
+    margin-bottom: 1.5rem;
+  }
+
+  /* Optimized tables for mobile */
+  table {
+    font-size: 0.9rem;
+  }
+
+  /* Better modal sizing */
+  .modal {
+    width: 95%;
+    max-width: 95vw;
   }
 }
 
 @media (max-width: 576px) {
   /* Extra small screens */
   h1 {
-    font-size: 1.75rem;
+    font-size: clamp(1.5rem, 7vw, 2rem);
+    line-height: 1.2;
   }
 
   h2 {
-    font-size: 1.5rem;
+    font-size: clamp(1.35rem, 6vw, 1.75rem);
+    line-height: 1.3;
   }
 
   h3 {
-    font-size: 1.25rem;
+    font-size: clamp(1.15rem, 5vw, 1.4rem);
+    line-height: 1.4;
+  }
+
+  h4 {
+    font-size: clamp(1rem, 4.5vw, 1.2rem);
+  }
+
+  p, li {
+    font-size: clamp(0.9rem, 3.5vw, 1rem);
+    line-height: 1.6;
   }
 
   /* Button text sizes */
   button, .btn {
-    font-size: 0.95rem;
+    font-size: clamp(0.875rem, 3.5vw, 0.95rem);
     padding: 10px 20px;
+    min-height: 44px;
   }
 
   /* Reduce container padding further */
   .container {
-    padding-left: 0.75rem;
-    padding-right: 0.75rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  /* Stack everything */
+  .flex, .flex-row {
+    flex-direction: column !important;
+    gap: 1rem;
+  }
+
+  /* Better form spacing */
+  form {
+    width: 100%;
+  }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="tel"],
+  input[type="number"],
+  textarea,
+  select {
+    width: 100%;
+    font-size: 16px; /* Prevent zoom on iOS */
+  }
+
+  /* Optimize spacing */
+  section {
+    padding: 2rem 0;
+  }
+
+  .card, .panel {
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  /* WhatsApp button mobile optimization */
+  .whatsapp-float {
+    bottom: 70px !important;
+    right: 15px !important;
+  }
+
+  .whatsapp-float button {
+    width: 50px !important;
+    height: 50px !important;
   }
 }
 
+/* WhatsApp Floating Button - Global Styles */
+.whatsapp-float {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  z-index: 999;
+  animation: pulse 2s infinite;
+}
+
+.whatsapp-float button {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: none;
+  transition: all 0.3s ease;
+}
+
+.whatsapp-float button:hover {
+  transform: scale(1.1);
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}

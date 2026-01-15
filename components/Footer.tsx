@@ -30,44 +30,46 @@ export default function Footer() {
   return (
     <>
       {/* Review Request Section */}
-      <section style={{ padding: '60px 0', background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)' }}>
+      <section style={{ padding: '40px 20px', background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)' }}>
         <div className="container">
           <div style={{ textAlign: 'center', color: 'white', maxWidth: '900px', margin: '0 auto' }}>
-            <h2 style={{ fontSize: '2.5rem', fontWeight: 'bold', marginBottom: '1rem' }}>
+            <h2 style={{ fontSize: 'clamp(1.5rem, 5vw, 2.5rem)', fontWeight: 'bold', marginBottom: '0.75rem' }}>
               Enjoyed Your Experience?
             </h2>
-            <p style={{ fontSize: '1.2rem', marginBottom: '2rem', opacity: 0.95 }}>
+            <p style={{ fontSize: 'clamp(0.95rem, 3vw, 1.2rem)', marginBottom: '1.5rem', opacity: 0.95 }}>
               Share your feedback and help other travelers discover Sri Lanka with us!
             </p>
-            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '2rem', marginTop: '2rem', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 'clamp(1rem, 4vw, 2rem)', marginTop: '1.5rem', flexWrap: 'wrap' }}>
               <a 
                 href="https://www.tripadvisor.com/UserReviewEdit-g12364193-d34116256-ZamZam_Lanka_Tours-Galle_District_Southern_Province.html"
                 target="_blank"
                 rel="noopener noreferrer"
-                style={{ display: 'inline-block', backgroundColor: 'white', padding: '8px 16px', borderRadius: '8px', transition: 'transform 0.3s ease' }}
+                style={{ display: 'inline-block', backgroundColor: 'white', padding: '8px 12px', borderRadius: '8px', transition: 'transform 0.3s ease', maxWidth: '160px' }}
                 onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
                 onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
               >
                 <Image 
                   src="https://static.tacdn.com/img2/brand_refresh/Tripadvisor_lockup_horizontal_secondary_registered.svg" 
                   alt="Review us on TripAdvisor" 
-                  width={180} 
-                  height={36}
+                  width={160} 
+                  height={32}
+                  style={{ width: '100%', height: 'auto' }}
                 />
               </a>
               <a 
                 href="https://www.trustpilot.com/review/zamzamlankatours.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                style={{ display: 'inline-block', backgroundColor: 'white', padding: '8px 16px', borderRadius: '8px', transition: 'transform 0.3s ease' }}
+                style={{ display: 'inline-block', backgroundColor: 'white', padding: '8px 12px', borderRadius: '8px', transition: 'transform 0.3s ease', maxWidth: '130px' }}
                 onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
                 onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
               >
-                <Image 
+                <img
                   src="https://cdn.trustpilot.net/brand-assets/4.1.0/logo-black.svg" 
                   alt="Review us on Trustpilot" 
-                  width={140} 
-                  height={36}
+                  width="130" 
+                  height="32"
+                  style={{ width: '100%', height: 'auto' }}
                 />
               </a>
             </div>
@@ -86,17 +88,17 @@ export default function Footer() {
             <div className="social-links">
               {SOCIAL_MEDIA.facebook && (
                 <a href={SOCIAL_MEDIA.facebook} aria-label="Facebook" target="_blank" rel="noreferrer">
-                  <Image src="/social/facebook.svg" alt="Facebook" width={28} height={28} />
+                  <img src="/social/facebook.svg" alt="Facebook" width="28" height="28" />
                 </a>
               )}
               {SOCIAL_MEDIA.instagram && (
                 <a href={SOCIAL_MEDIA.instagram} aria-label="Instagram" target="_blank" rel="noreferrer">
-                  <Image src="/social/instagram.svg" alt="Instagram" width={28} height={28} />
+                  <img src="/social/instagram.svg" alt="Instagram" width="28" height="28" />
                 </a>
               )}
               {SOCIAL_MEDIA.tiktok && (
                 <a href={SOCIAL_MEDIA.tiktok} aria-label="TikTok" target="_blank" rel="noreferrer">
-                  <Image src="/social/tiktok.svg" alt="TikTok" width={28} height={28} />
+                  <img src="/social/tiktok.svg" alt="TikTok" width="28" height="28" />
                 </a>
               )}
             </div>
@@ -149,11 +151,11 @@ export default function Footer() {
             rel="noopener noreferrer"
             style={{ display: 'inline-block' }}
           >
-            <Image 
+            <img
               src="https://cdn.trustpilot.net/brand-assets/4.1.0/logo-white.svg" 
               alt="Trustpilot" 
-              width={120} 
-              height={30}
+              width="120" 
+              height="30"
             />
           </a>
         </div>
@@ -169,7 +171,7 @@ export default function Footer() {
             onClick={() => window.open(`${CONTACT_INFO.whatsappUrl}?text=${encodeURIComponent('Hello Zamzam Lanka Tours! I need assistance')}`, '_blank')}
             aria-label="Contact via WhatsApp"
           >
-            <Image src="/whatsapp-icon.svg" alt="WhatsApp" width={30} height={30} />
+            <img src="/whatsapp-icon.svg" alt="WhatsApp" width="30" height="30" />
           </button>
         </div>
 

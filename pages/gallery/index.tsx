@@ -181,9 +181,9 @@ export default function SimpleGallery() {
                     fill
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     style={{ objectFit: 'cover' }}
-                    priority={index < 4}
-                    loading={index < 4 ? 'eager' : 'lazy'}
-                    quality={75}
+                    priority={index < 2}
+                    loading={index < 2 ? 'eager' : 'lazy'}
+                    quality={65}
                     placeholder="blur"
                     blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAb/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWEREiMxUf/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
                     onLoadingComplete={() => setImagesLoaded(prev => prev + 1)}
@@ -248,8 +248,13 @@ export default function SimpleGallery() {
               <Image 
                 src={selectedImage.src}
                 alt={selectedImage.alt}
-                width={1200}
-                height={800}
+                width={800}
+                height={600}
+                quality={70}
+                sizes="90vw"
+                loading="lazy"
+                placeholder="blur"
+                blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAb/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWEREiMxUf/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
                 style={{ objectFit: 'contain', maxWidth: '100%', height: 'auto' }}
               />
               <div className="lightbox-info">
@@ -607,15 +612,16 @@ export default function SimpleGallery() {
           flex-direction: column;
           align-items: center;
           justify-content: center;
-          width: 100vw;
-          height: 100vh;
-          max-width: 100vw;
-          max-height: 100vh;
+          width: 90vw;
+          height: 85vh;
+          max-width: 90vw;
+          max-height: 85vh;
+          padding: 2rem;
         }
 
         .lightbox-image-container img {
-          max-width: 90vw !important;
-          max-height: 90vh !important;
+          max-width: 85vw !important;
+          max-height: 75vh !important;
           width: auto !important;
           height: auto !important;
           object-fit: contain !important;

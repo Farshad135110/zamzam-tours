@@ -1,7 +1,6 @@
 // pages/contact/index.js - Contact Us Page
 import { useState, useRef, useEffect } from 'react';
 import Head from 'next/head';
-import Image from 'next/image';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import { CONTACT_INFO } from '../../src/constants/config';
@@ -39,7 +38,7 @@ export default function Contact() {
       availability: t('contact.badge.phone')
     },
     {
-      icon: (<span className="svg-icon"><Image src="/whatsapp-icon.svg" alt="WhatsApp" width={74} height={74} /></span>),
+      icon: (<span className="svg-icon"><img src="/whatsapp-icon.svg" alt="WhatsApp" width="74" height="74" /></span>),
       title: t('contact.methods.whatsapp.title'),
       description: t('contact.methods.whatsapp.description'),
       details: t('contact.methods.whatsapp.details'),
@@ -239,7 +238,7 @@ Please respond promptly.
               <span className="badge-text">{t('contact.badge.phone')}</span>
             </div>
             <div className="contact-badge">
-              <span className="badge-icon svg-icon"><Image src="/whatsapp-icon.svg" alt="WhatsApp" width={24} height={24} /></span>
+              <span className="badge-icon svg-icon"><img src="/whatsapp-icon.svg" alt="WhatsApp" width="24" height="24" /></span>
               <span className="badge-text">{t('contact.badge.whatsapp')}</span>
             </div>
             <div className="contact-badge">
