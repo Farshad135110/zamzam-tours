@@ -1,4 +1,6 @@
 // components/SEO/BreadcrumbSchema.tsx
+import React from 'react';
+
 interface BreadcrumbItem {
   name: string;
   url: string;

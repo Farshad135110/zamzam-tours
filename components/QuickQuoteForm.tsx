@@ -94,7 +94,7 @@ export default function QuickQuoteForm({ defaultPackage, onSuccess }: QuickQuote
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 overflow-y-auto">
           <div className="bg-white rounded-lg max-w-2xl w-full p-6 my-8">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold text-gray-900">Request Tour Quotation</h2>
+              <h2 className="text-2xl font-bold text-gray-900">Request Tour Itinerary</h2>
               <button
                 onClick={() => setIsOpen(false)}
                 className="text-gray-400 hover:text-gray-600 text-3xl font-bold"

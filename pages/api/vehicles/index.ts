@@ -1,6 +1,12 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { VehicleController } from '../../../lib/controllers/vehicleController';
 import { authMiddleware, AuthRequest } from '../../../src/lib/auth';
+import { Pool } from 'pg';
+
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+});
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
@@ -13,8 +19,31 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // POST requires authentication
     if (req.method === 'POST') {
       return authMiddleware(async (authReq: AuthRequest) => {
-        const vehicle = await VehicleController.create(authReq.body);
-        return res.status(201).json(vehicle);
+        const { images, ...vehicleData } = authReq.body;
+        
+        // Create vehicle
+        const vehicle = await VehicleController.create(vehicleData);
+        
+        // Add images if provided
+        if (images && Array.isArray(images) && images.length > 0) {
+          const insertPromises = images.map((img: any, index: number) => {
+            const query = `
+              INSERT INTO vehicle_images (vehicle_id, image_url, is_primary, display_order)
+              VALUES ($1, $2, $3, $4)
+            `;
+            return pool.query(query, [
+              vehicle.vehicle_id,
+              img.image_url,
+              img.is_primary || false,
+              img.display_order || index + 1
+            ]);
+          });
+          await Promise.all(insertPromises);
+        }
+        
+        // Fetch created vehicle with images
+        const createdVehicle = await VehicleController.getById(vehicle.vehicle_id);
+        return res.status(201).json(createdVehicle);
       })(req, res);
     }
 

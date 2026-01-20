@@ -286,7 +286,7 @@ export function createQuotationEmailHTML(quotation: any): string {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tour Quotation - ${quotation.quotation_number}</title>
+  <title>Tour Itinerary - ${quotation.quotation_number}</title>
 </head>
 <body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f4f4f4;">
   <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f4f4f4; padding: 20px;">
@@ -306,7 +306,7 @@ export function createQuotationEmailHTML(quotation: any): string {
           <!-- Quotation Number -->
           <tr>
             <td style="padding: 30px 40px 20px; text-align: center; background-color: #f9fafb;">
-              <h2 style="margin: 0 0 10px 0; color: #111827; font-size: 24px;">Your Tour Quotation is Ready!</h2>
+              <h2 style="margin: 0 0 10px 0; color: #111827; font-size: 24px;">Your Tour Itinerary is Ready!</h2>
               <p style="margin: 0; color: #6b7280; font-size: 14px;">Quotation Number: <strong style="color: #10b981;">${quotation.quotation_number}</strong></p>
             </td>
           </tr>

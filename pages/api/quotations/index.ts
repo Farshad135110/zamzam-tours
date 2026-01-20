@@ -194,23 +194,61 @@ async function createQuotation(req: NextApiRequest, res: NextApiResponse) {
   }
 
   try {
-    // Calculate pricing - use provided basePrice or calculate
-    const pricing = basePrice ? {
-      basePrice: parseFloat(basePrice),
-      accommodationUpgrade: 0,
-      discount: 0,
-      discountPercentage: 0,
-      subtotal: parseFloat(basePrice),
-      total: parseFloat(basePrice)
-    } : calculatePricing({
-      packageId,
-      numAdults,
-      numChildren,
-      numInfants,
-      durationDays,
-      accommodationType,
-      startDate
-    });
+    // Calculate pricing based on service type and parameters
+    let pricing;
+    
+    if (basePrice) {
+      // Calculate based on service type
+      let calculatedTotal = 0;
+      let calculatedBasePrice = 0;
+      
+      if (serviceType === 'tour') {
+        // For tours: basePrice is per person per day or total per person
+        // Assume basePrice is per person for the entire tour
+        calculatedBasePrice = parseFloat(basePrice) * numAdults;
+        
+        // Children pricing (70% of adult price)
+        if (numChildren > 0) {
+          calculatedBasePrice += (parseFloat(basePrice) * numChildren * 0.7);
+        }
+        // Infants are free
+        
+        calculatedTotal = calculatedBasePrice;
+      } else if (serviceType === 'vehicle') {
+        // For vehicles: basePrice is per day
+        calculatedBasePrice = parseFloat(basePrice) * durationDays;
+        calculatedTotal = calculatedBasePrice;
+      } else if (serviceType === 'hotel') {
+        // For hotels: basePrice is per night per room
+        const numRooms = req.body.numRooms || 1;
+        calculatedBasePrice = parseFloat(basePrice) * durationDays * numRooms;
+        calculatedTotal = calculatedBasePrice;
+      } else {
+        // For other services (transfers, etc.): basePrice is total
+        calculatedBasePrice = parseFloat(basePrice);
+        calculatedTotal = calculatedBasePrice;
+      }
+      
+      pricing = {
+        basePrice: calculatedBasePrice,
+        accommodationUpgrade: 0,
+        discount: 0,
+        discountPercentage: 0,
+        subtotal: calculatedTotal,
+        total: calculatedTotal
+      };
+    } else {
+      // Use the old calculation method if no basePrice provided
+      pricing = calculatePricing({
+        packageId,
+        numAdults,
+        numChildren,
+        numInfants,
+        durationDays,
+        accommodationType,
+        startDate
+      });
+    }
 
     console.log('Calculated pricing:', pricing);
 
@@ -218,12 +256,10 @@ async function createQuotation(req: NextApiRequest, res: NextApiResponse) {
     const quotationNumberResult = await pool.query('SELECT generate_quotation_number() as number');
     const quotationNumber = quotationNumberResult.rows[0].number;
 
-    // Set valid until date (14 days from now)
-    const validUntil = new Date();
-    validUntil.setDate(validUntil.getDate() + 14);
+    // Set valid until date (until tour/rental start date)
+    const validUntil = new Date(startDate);
 
-    // Calculate deposit and balance
-    const depositPercentage = 30;
+    // Calculate deposit and balance using the depositPercentage from request
     const depositAmount = pricing.total * (depositPercentage / 100);
     const balanceAmount = pricing.total - depositAmount;
 
@@ -234,20 +270,97 @@ async function createQuotation(req: NextApiRequest, res: NextApiResponse) {
     const balanceDueDate = new Date(startDate);
     balanceDueDate.setDate(balanceDueDate.getDate() - 14); // 14 days before tour
 
-    // Default included services - use provided or default
-    const defaultIncludedServices = [
-      'Private A/C Vehicle with English-speaking Driver',
-      'Accommodation (Double/Twin Rooms)',
-      'Daily Breakfast',
-      'Airport Pickup & Drop-off',
-      'All Fuel, Parking & Highway Charges',
-      'Driver Accommodation & Meals',
-      'Government Taxes'
-    ];
+    // Fetch services from package or vehicle based on service type
+    let finalIncludedServices: string[] = [];
     
-    const finalIncludedServices = includedServices && includedServices.length > 0 
-      ? includedServices 
-      : defaultIncludedServices;
+    if (includedServices && includedServices.length > 0) {
+      // Use provided services if explicitly given
+      finalIncludedServices = includedServices;
+    } else {
+      // Fetch services from the relevant package or vehicle
+      if (serviceType === 'tour' && (packageId || serviceId)) {
+        try {
+          const pkgId = packageId || serviceId;
+          const pkgResult = await pool.query(
+            'SELECT includings FROM package WHERE package_id = $1',
+            [pkgId]
+          );
+          
+          if (pkgResult.rows.length > 0 && pkgResult.rows[0].includings) {
+            // Parse includings - assuming it's a comma or newline separated string
+            const includingsText = pkgResult.rows[0].includings;
+            finalIncludedServices = includingsText
+              .split(/[,\n]/)
+              .map((s: string) => s.trim())
+              .filter((s: string) => s.length > 0);
+          }
+        } catch (err) {
+          console.error('Error fetching package services:', err);
+        }
+      } else if (serviceType === 'vehicle' && serviceId) {
+        try {
+          const vehicleResult = await pool.query(
+            'SELECT vehicle_name, vehicle_type, available_for FROM vehicle WHERE vehicle_id = $1',
+            [serviceId]
+          );
+          
+          if (vehicleResult.rows.length > 0) {
+            const vehicle = vehicleResult.rows[0];
+            // Create vehicle rental services
+            finalIncludedServices = [
+              `${vehicle.vehicle_name} - ${vehicle.vehicle_type}`,
+              'Comprehensive Insurance Coverage',
+              'Unlimited Mileage (within daily limit)',
+              '24/7 Roadside Assistance',
+              'Free Additional Driver',
+              'GPS Navigation System',
+              'Child Seat Available (on request)',
+              'Airport Pickup & Drop-off'
+            ];
+            
+            if (vehicle.available_for) {
+              finalIncludedServices.push(`Available for: ${vehicle.available_for}`);
+            }
+          }
+        } catch (err) {
+          console.error('Error fetching vehicle services:', err);
+        }
+      } else if (serviceType === 'hotel' && serviceId) {
+        try {
+          const hotelResult = await pool.query(
+            'SELECT hotel_name, facilities FROM hotel WHERE hotel_id = $1',
+            [serviceId]
+          );
+          
+          if (hotelResult.rows.length > 0 && hotelResult.rows[0].facilities) {
+            const facilities = hotelResult.rows[0].facilities;
+            finalIncludedServices = facilities
+              .split(/[,\n]/)
+              .map((s: string) => s.trim())
+              .filter((s: string) => s.length > 0);
+            
+            // Add standard hotel services
+            finalIncludedServices.unshift('Daily Housekeeping');
+            finalIncludedServices.unshift('Complimentary Breakfast');
+          }
+        } catch (err) {
+          console.error('Error fetching hotel services:', err);
+        }
+      }
+      
+      // If still no services, use default tour services
+      if (finalIncludedServices.length === 0) {
+        finalIncludedServices = [
+          'Private A/C Vehicle with English-speaking Driver',
+          'Accommodation (Double/Twin Rooms)',
+          'Daily Breakfast',
+          'Airport Pickup & Drop-off',
+          'All Fuel, Parking & Highway Charges',
+          'Driver Accommodation & Meals',
+          'Government Taxes'
+        ];
+      }
+    }
 
     console.log('Final included services:', finalIncludedServices);
 

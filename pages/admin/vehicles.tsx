@@ -4,6 +4,14 @@ import AdminSidebar from '../../components/AdminSidebar';
 import CloudinaryUpload from '../../components/CloudinaryUpload';
 import useTranslation from '../../src/i18n/useTranslation';
 
+interface VehicleImage {
+  image_id?: number;
+  vehicle_id?: string;
+  image_url: string;
+  is_primary: boolean;
+  display_order: number;
+}
+
 interface Vehicle {
   vehicle_id: string;
   vehicle_name: string;
@@ -13,6 +21,7 @@ interface Vehicle {
   price_per_day: number;
   extra_charge_per_km: number;
   image: string;
+  images?: VehicleImage[];
   capacity: number;
   available_for: string;
 }
@@ -33,6 +42,7 @@ export default function AdminVehicles() {
     price_per_day: 50,
     extra_charge_per_km: 0.3,
     image: '',
+    images: [] as VehicleImage[],
     capacity: 4,
     available_for: ''
   });
@@ -154,6 +164,7 @@ export default function AdminVehicles() {
       price_per_day: 50,
       extra_charge_per_km: 0.3,
       image: '', 
+      images: [] as VehicleImage[],
       capacity: 4,
       available_for: ''
     });
@@ -168,6 +179,7 @@ export default function AdminVehicles() {
       price_per_day: vehicle.price_per_day,
       extra_charge_per_km: vehicle.extra_charge_per_km,
       image: vehicle.image,
+      images: vehicle.images || [],
       capacity: vehicle.capacity,
       available_for: vehicle.available_for
     });
@@ -870,8 +882,103 @@ export default function AdminVehicles() {
                 currentImageUrl={formData.image}
                 onUploadSuccess={(url) => setFormData({...formData, image: url})}
                 folder="zamzam-tours/vehicles"
-                label="Vehicle Image"
+                label="Primary Vehicle Image"
               />
+
+              {/* Vehicle Gallery - Multiple Images */}
+              <div style={{ marginTop: '24px' }}>
+                <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', marginBottom: '12px', color: '#374151' }}>
+                  Vehicle Gallery (Multiple Images)
+                </label>
+                
+                {/* Display current images */}
+                {formData.images.length > 0 && (
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: '12px', marginBottom: '12px' }}>
+                    {formData.images.map((img, index) => (
+                      <div key={index} style={{ position: 'relative', aspectRatio: '1', borderRadius: '8px', overflow: 'hidden', border: '2px solid #e5e7eb' }}>
+                        <img 
+                          src={img.image_url} 
+                          alt={`Vehicle ${index + 1}`}
+                          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                        />
+                        <div style={{ position: 'absolute', top: '4px', right: '4px', display: 'flex', gap: '4px' }}>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const newImages = [...formData.images];
+                              newImages[index].is_primary = true;
+                              newImages.forEach((img, i) => {
+                                if (i !== index) img.is_primary = false;
+                              });
+                              setFormData({...formData, images: newImages});
+                            }}
+                            style={{
+                              padding: '4px 8px',
+                              backgroundColor: img.is_primary ? '#10b981' : '#6b7280',
+                              color: 'white',
+                              border: 'none',
+                              borderRadius: '4px',
+                              fontSize: '10px',
+                              cursor: 'pointer'
+                            }}
+                            title={img.is_primary ? 'Primary image' : 'Set as primary'}
+                          >
+                            {img.is_primary ? '⭐' : '☆'}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const newImages = formData.images.filter((_, i) => i !== index);
+                              setFormData({...formData, images: newImages});
+                            }}
+                            style={{
+                              padding: '4px 8px',
+                              backgroundColor: '#ef4444',
+                              color: 'white',
+                              border: 'none',
+                              borderRadius: '4px',
+                              fontSize: '10px',
+                              cursor: 'pointer'
+                            }}
+                          >
+                            ×
+                          </button>
+                        </div>
+                        {img.is_primary && (
+                          <div style={{
+                            position: 'absolute',
+                            bottom: '4px',
+                            left: '4px',
+                            backgroundColor: '#10b981',
+                            color: 'white',
+                            padding: '2px 6px',
+                            borderRadius: '4px',
+                            fontSize: '10px',
+                            fontWeight: '600'
+                          }}>
+                            Primary
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Add new image */}
+                <CloudinaryUpload
+                  currentImageUrl=""
+                  onUploadSuccess={(url) => {
+                    const newImage: VehicleImage = {
+                      image_url: url,
+                      is_primary: formData.images.length === 0,
+                      display_order: formData.images.length + 1
+                    };
+                    setFormData({...formData, images: [...formData.images, newImage]});
+                  }}
+                  folder="zamzam-tours/vehicles"
+                  label="Add Another Image"
+                />
+              </div>
 
               <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
                 <button

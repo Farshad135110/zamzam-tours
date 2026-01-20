@@ -89,7 +89,7 @@ export default function QuotationView() {
           num_children: parseInt(q.num_children || 0),
           num_infants: parseInt(q.num_infants || 0),
           duration_days: parseInt(q.duration_days),
-          deposit_percentage: parseInt(q.deposit_percentage)
+          deposit_percentage: parseInt(q.deposit_percentage || 30)
         };
         setQuotation(parsedQuotation);
         setError('');
@@ -166,7 +166,7 @@ export default function QuotationView() {
     <>
       <Head>
         <title>Quotation {quotation.quotation_number} - {quotation.tour_name} | ZamZam Lanka Tours</title>
-        <meta name="description" content={`Tour quotation for ${quotation.tour_name}`} />
+        <meta name="description" content={`Tour itinerary for ${quotation.tour_name}`} />
         <meta name="robots" content="noindex, nofollow" />
       </Head>
 
@@ -338,7 +338,7 @@ export default function QuotationView() {
 
       <div className="min-h-screen bg-gray-50" style={{ paddingTop: '100px' }}>
         <div className="print-message">
-          <strong>ZamZam Lanka Tours</strong> - Tour Quotation Document
+          <strong>ZamZam Lanka Tours</strong> - Tour Itinerary Document
         </div>
         
         <div className="max-w-4xl mx-auto px-3 sm:px-4 lg:px-8 quotation-container" style={{ paddingBottom: '3rem' }}>
@@ -346,7 +346,7 @@ export default function QuotationView() {
           <div className="bg-gradient-to-r from-emerald-600 to-emerald-700 text-white rounded-lg p-4 sm:p-6 md:p-8 mb-6 shadow-lg">
             <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
               <div>
-                <h1 className="text-2xl sm:text-3xl font-bold mb-2">Tour Quotation</h1>
+                <h1 className="text-2xl sm:text-3xl font-bold mb-2">Tour Itinerary</h1>
                 <p className="text-emerald-100 text-base sm:text-lg">ZamZam Lanka Tours</p>
               </div>
               <div className="sm:text-right">
@@ -576,6 +576,26 @@ export default function QuotationView() {
                   <p className="text-sm text-gray-600">Vehicle Type</p>
                   <p className="font-semibold">{quotation.service_details.vehicle_type}</p>
                 </div>
+                {quotation.service_details.rental_type && (
+                  <div className="col-span-1 sm:col-span-2">
+                    <p className="text-sm text-gray-600">Rental Type</p>
+                    <p className="font-semibold text-lg">
+                      <span className="inline-flex items-center px-4 py-2 rounded-lg bg-emerald-100 text-emerald-800">
+                        {quotation.service_details.rental_type === 'with-driver' ? '🚗 With Driver' : '🔑 Self-Drive'}
+                      </span>
+                    </p>
+                  </div>
+                )}
+                {quotation.service_details.rental_type === 'with-driver' && (quotation.num_adults > 0 || quotation.num_children > 0 || quotation.num_infants > 0) && (
+                  <div className="col-span-1 sm:col-span-2">
+                    <p className="text-sm text-gray-600">Passengers</p>
+                    <p className="font-semibold">
+                      {quotation.num_adults > 0 && `${quotation.num_adults} Adult${quotation.num_adults > 1 ? 's' : ''}`}
+                      {quotation.num_children > 0 && `, ${quotation.num_children} Child${quotation.num_children > 1 ? 'ren' : ''}`}
+                      {quotation.num_infants > 0 && `, ${quotation.num_infants} Infant${quotation.num_infants > 1 ? 's' : ''}`}
+                    </p>
+                  </div>
+                )}
                 {quotation.service_details.capacity && (
                   <div>
                     <p className="text-sm text-gray-600">Capacity</p>
@@ -599,12 +619,6 @@ export default function QuotationView() {
                 <div className="mt-4">
                   <p className="text-sm text-gray-600 mb-2">Description</p>
                   <p className="text-gray-700">{quotation.service_details.description}</p>
-                </div>
-              )}
-              {quotation.service_details.available_for && (
-                <div className="mt-4">
-                  <p className="text-sm text-gray-600 mb-2">Available For</p>
-                  <p className="text-gray-700">{quotation.service_details.available_for}</p>
                 </div>
               )}
             </div>
@@ -739,7 +753,6 @@ export default function QuotationView() {
                 <ul className="list-disc list-inside space-y-1 text-gray-700 ml-2 sm:ml-4 text-xs sm:text-sm">
                   <li>Bank Transfer</li>
                   <li>Credit/Debit Card (Visa, Mastercard)</li>
-                  <li>PayPal</li>
                 </ul>
               </div>
             </div>

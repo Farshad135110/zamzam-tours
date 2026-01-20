@@ -1,4 +1,6 @@
 // components/SEO/ServiceSchema.tsx
+import React from 'react';
+
 interface ServiceSchemaProps {
   name: string;
   description: string;

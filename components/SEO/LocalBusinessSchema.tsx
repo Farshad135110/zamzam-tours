@@ -71,7 +71,7 @@ const LocalBusinessSchema: React.FC<LocalBusinessSchemaProps> = ({ pageName }) =
     ],
     "priceRange": "$$",
     "currenciesAccepted": "USD, EUR, LKR",
-    "paymentAccepted": "Cash, Credit Card, Bank Transfer, PayPal",
+    "paymentAccepted": "Cash, Credit Card, Bank Transfer",
     "openingHours": "Mo-Su 00:00-24:00",
     "availableLanguage": ["English", "German", "French", "Spanish", "Italian", "Sinhala"],
     "hasOfferCatalog": {

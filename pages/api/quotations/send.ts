@@ -33,7 +33,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // Generate email content using new email service
     const emailHtml = createQuotationEmailHTML(quotation);
-    const emailSubject = `Tour Quotation ${quotation.quotation_number} - ${quotation.tour_name}`;
+    const emailSubject = `Tour Itinerary ${quotation.quotation_number} - ${quotation.tour_name}`;
 
     // Send email using configured email service
     const emailResult = await sendEmail({
@@ -98,6 +98,7 @@ function generateQuotationEmail(quotation: any): string {
     total_amount,
     currency,
     deposit_amount,
+    deposit_percentage,
     balance_amount,
     valid_until,
     included_services,
@@ -113,7 +114,7 @@ function generateQuotationEmail(quotation: any): string {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tour Quotation ${quotation_number}</title>
+  <title>Tour Itinerary ${quotation_number}</title>
   <style>
     body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; }
     .header { background: linear-gradient(135deg, #059669 0%, #047857 100%); color: white; padding: 30px 20px; text-align: center; }
@@ -232,12 +233,12 @@ function generateQuotationEmail(quotation: any): string {
     <div class="section">
       <div class="section-title">💳 Payment Terms</div>
       <div class="price-row">
-        <span>Deposit (30%):</span>
+        <span>Deposit (${deposit_percentage || 30}%):</span>
         <span><strong>${currency} ${deposit_amount.toFixed(2)}</strong></span>
       </div>
       <p style="margin: 5px 0; color: #6b7280; font-size: 14px;">Due upon booking confirmation</p>
       <div class="price-row" style="margin-top: 15px;">
-        <span>Balance (70%):</span>
+        <span>Balance (${100 - (deposit_percentage || 30)}%):</span>
         <span><strong>${currency} ${balance_amount.toFixed(2)}</strong></span>
       </div>
       <p style="margin: 5px 0; color: #6b7280; font-size: 14px;">Due 14 days before tour commencement</p>
@@ -246,7 +247,6 @@ function generateQuotationEmail(quotation: any): string {
       <ul style="color: #6b7280;">
         <li>Bank Transfer</li>
         <li>Credit/Debit Card (Visa, Mastercard)</li>
-        <li>PayPal</li>
       </ul>
     </div>
 

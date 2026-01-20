@@ -32,6 +32,9 @@ export default function QuotationsAdmin() {
   const [searchTerm, setSearchTerm] = useState('');
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showEmailPreview, setShowEmailPreview] = useState<string | null>(null);
+  const [showInvoiceModal, setShowInvoiceModal] = useState(false);
+  const [selectedQuotationForInvoice, setSelectedQuotationForInvoice] = useState<any>(null);
+  const [invoices, setInvoices] = useState<any[]>([]);
 
   // Available services and data
   const [serviceType, setServiceType] = useState<'tour' | 'vehicle' | 'hotel' | 'airport-transfer' | 'all-island-transfer'>('tour');
@@ -76,6 +79,7 @@ export default function QuotationsAdmin() {
 
   useEffect(() => {
     fetchQuotations();
+    fetchInvoices();
     loadServiceData();
   }, [filter, searchTerm]);
 
@@ -147,7 +151,7 @@ export default function QuotationsAdmin() {
           durationDays: days,
           endDate: endDate,
           basePrice: parseFloat(service.price_per_person || 500),
-          includedServices: service.highlights ? service.highlights.split('\n').filter((s: string) => s.trim()) : []
+          includedServices: service.includings ? service.includings.split(/[,\n]/).map((s: string) => s.trim()).filter((s: string) => s.length > 0) : []
         });
       }
     } else if (formData.serviceType === 'vehicle') {
@@ -164,14 +168,32 @@ export default function QuotationsAdmin() {
           price_per_day: service.price_per_day,
           extra_charge_per_km: service.extra_charge_per_km,
           image: service.image,
-          available_for: service.available_for
+          available_for: service.available_for,
+          rental_type: formData.withDriver ? 'with-driver' : 'self-drive'
         };
+        
+        // Create vehicle rental services
+        const vehicleServices = [
+          `${service.vehicle_name} - ${service.vehicle_type}`,
+          'Comprehensive Insurance Coverage',
+          'Unlimited Mileage (within daily limit)',
+          '24/7 Roadside Assistance',
+          'Free Additional Driver',
+          'GPS Navigation System',
+          'Child Seat Available (on request)',
+          'Airport Pickup & Drop-off'
+        ];
+        
+        if (service.available_for) {
+          vehicleServices.push(`Available for: ${service.available_for}`);
+        }
         
         setFormData({
           ...formData,
           serviceId,
           tourName: `Car Rental - ${service.vehicle_name}`,
-          basePrice: parseFloat(service.price_per_day || 100)
+          basePrice: parseFloat(service.price_per_day || 100),
+          includedServices: vehicleServices
         });
       }
     } else if (formData.serviceType === 'hotel') {
@@ -187,11 +209,34 @@ export default function QuotationsAdmin() {
           image: service.image
         };
         
+        // Create hotel services from facilities
+        let hotelServices: string[] = [];
+        if (service.facilities) {
+          hotelServices = service.facilities
+            .split(/[,\n]/)
+            .map((s: string) => s.trim())
+            .filter((s: string) => s.length > 0);
+          
+          // Add standard hotel services at the beginning
+          hotelServices.unshift('Daily Housekeeping');
+          hotelServices.unshift('Complimentary Breakfast');
+        } else {
+          // Default hotel services
+          hotelServices = [
+            'Complimentary Breakfast',
+            'Daily Housekeeping',
+            'Free WiFi',
+            'Room Service',
+            'Concierge Service'
+          ];
+        }
+        
         setFormData({
           ...formData,
           serviceId,
           tourName: `Hotel Booking - ${service.hotel_name}`,
-          basePrice: 0
+          basePrice: 0,
+          includedServices: hotelServices
         });
       }
     }
@@ -242,6 +287,28 @@ export default function QuotationsAdmin() {
     setFormData({ ...formData, durationDays: days, endDate });
   };
 
+  const handleEndDateChange = (endDate: string) => {
+    // Calculate duration based on start and end dates
+    if (formData.startDate && endDate) {
+      const start = new Date(formData.startDate);
+      const end = new Date(endDate);
+      
+      // Validate that end date is after start date
+      if (end < start) {
+        alert('End date must be after start date.');
+        return;
+      }
+      
+      // Calculate days difference (inclusive)
+      const diffTime = end.getTime() - start.getTime();
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1; // +1 to include both start and end day
+      
+      setFormData({ ...formData, endDate, durationDays: diffDays });
+    } else {
+      setFormData({ ...formData, endDate });
+    }
+  };
+
   const fetchQuotations = async () => {
     setLoading(true);
     try {
@@ -268,6 +335,87 @@ export default function QuotationsAdmin() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const fetchInvoices = async () => {
+    try {
+      const res = await fetch('/api/invoices');
+      const data = await res.json();
+      setInvoices(data.invoices || []);
+    } catch (error) {
+      console.error('Error fetching invoices:', error);
+    }
+  };
+
+  const handleCreateInvoice = (quotation: any) => {
+    setSelectedQuotationForInvoice(quotation);
+    setShowInvoiceModal(true);
+  };
+
+  const handleSubmitInvoice = async (invoiceData: any) => {
+    try {
+      console.log('Submitting invoice data:', invoiceData);
+      
+      const res = await fetch('/api/invoices', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(invoiceData)
+      });
+
+      const data = await res.json();
+      console.log('Invoice API response:', data);
+      
+      if (res.ok) {
+        alert(`✅ Invoice ${data.invoice.invoice_number} created successfully!`);
+        
+        // Ask if user wants to send the invoice via email
+        if (confirm('Would you like to send this invoice to the customer via email?')) {
+          await handleSendInvoice(data.invoice.invoice_number);
+        }
+        
+        setShowInvoiceModal(false);
+        setSelectedQuotationForInvoice(null);
+        fetchInvoices();
+        
+        // Preview invoice
+        if (confirm('Would you like to preview the invoice?')) {
+          window.open(`/invoice/${data.invoice.invoice_number}`, '_blank');
+        }
+      } else {
+        const errorMsg = data.details ? `${data.error}\n\nDetails: ${data.details}` : data.error;
+        alert(`❌ Error: ${errorMsg}`);
+        console.error('Invoice creation error:', data);
+      }
+    } catch (error) {
+      console.error('Error creating invoice:', error);
+      alert('Failed to create invoice. Please check the browser console for details.');
+    }
+  };
+
+  const handleSendInvoice = async (invoiceNumber: string) => {
+    try {
+      const res = await fetch('/api/invoices/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ invoiceNumber })
+      });
+
+      const data = await res.json();
+      
+      if (res.ok) {
+        alert(`✅ Invoice sent to ${data.email}`);
+        fetchInvoices();
+      } else {
+        alert(`❌ Error: ${data.error}`);
+      }
+    } catch (error) {
+      console.error('Error sending invoice:', error);
+      alert('Failed to send invoice. Please try again.');
+    }
+  };
+
+  const getQuotationInvoices = (quotationId: number) => {
+    return invoices.filter(inv => inv.quotation_id === quotationId);
   };
 
   const handleCreateQuotation = async (e: React.FormEvent) => {
@@ -424,7 +572,7 @@ export default function QuotationsAdmin() {
             <div className="max-w-full">
               {/* Header */}
               <div className="mb-8">
-                <h1 className="text-3xl font-bold text-gray-900">Tour Quotations</h1>
+                <h1 className="text-3xl font-bold text-gray-900">Tour Itineraries</h1>
                 <p className="text-gray-600 mt-2">Manage tour booking quotations and estimates</p>
               </div>
 
@@ -585,6 +733,18 @@ export default function QuotationsAdmin() {
                               >
                                 📧 Send
                               </button>
+                            )}
+                            <button
+                              onClick={() => handleCreateInvoice(quotation)}
+                              className="inline-flex items-center px-3 py-1.5 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-md hover:bg-emerald-100 text-xs font-medium"
+                              title="Create invoice for payment"
+                            >
+                              💳 Invoice
+                            </button>
+                            {getQuotationInvoices(quotation.quotation_id).length > 0 && (
+                              <span className="inline-flex items-center px-2 py-1 bg-green-100 text-green-800 text-xs font-semibold rounded-full">
+                                {getQuotationInvoices(quotation.quotation_id).length} Invoice{getQuotationInvoices(quotation.quotation_id).length > 1 ? 's' : ''}
+                              </span>
                             )}
                             <button
                               onClick={() => handleDeleteQuotation(quotation.quotation_id)}
@@ -817,11 +977,11 @@ export default function QuotationsAdmin() {
                     <input
                       type="date"
                       required
+                      min={formData.startDate}
                       value={formData.endDate}
-                      onChange={(e) => setFormData({...formData, endDate: e.target.value})}
-                      className="w-full border rounded px-3 py-2 bg-gray-50"
-                      readOnly
-                      title="Auto-calculated based on start date and duration"
+                      onChange={(e) => handleEndDateChange(e.target.value)}
+                      className="w-full border rounded px-3 py-2"
+                      title="Select return date - duration will be calculated automatically"
                     />
                   </div>
                   <div>
@@ -831,45 +991,94 @@ export default function QuotationsAdmin() {
                       min="1"
                       value={formData.durationDays}
                       onChange={(e) => handleDurationChange(parseInt(e.target.value))}
-                      className="w-full border rounded px-3 py-2"
+                      className="w-full border rounded px-3 py-2 bg-gray-50"
+                      readOnly
+                      title="Auto-calculated based on start and end dates"
                     />
                   </div>
                 </div>
               )}
 
-              {formData.serviceType === 'tour' && (
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Adults</label>
-                    <input
-                      type="number"
-                      min="1"
-                      value={formData.numAdults}
-                      onChange={(e) => setFormData({...formData, numAdults: parseInt(e.target.value)})}
-                      className="w-full border rounded px-3 py-2"
-                    />
+              {(formData.serviceType === 'tour' || (formData.serviceType === 'vehicle' && formData.withDriver)) && (
+                <>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Adults</label>
+                      <input
+                        type="number"
+                        min="1"
+                        max={formData.serviceType === 'vehicle' && selectedService?.capacity ? selectedService.capacity : undefined}
+                        value={formData.numAdults}
+                        onChange={(e) => {
+                          const value = parseInt(e.target.value);
+                          if (formData.serviceType === 'vehicle' && selectedService?.capacity) {
+                            const totalPeople = value + formData.numChildren + formData.numInfants;
+                            if (totalPeople > selectedService.capacity) {
+                              alert(`Total passengers (${totalPeople}) exceeds vehicle capacity (${selectedService.capacity}). Please select a larger vehicle or reduce the number of passengers.`);
+                              return;
+                            }
+                          }
+                          setFormData({...formData, numAdults: value});
+                        }}
+                        className="w-full border rounded px-3 py-2"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Children</label>
+                      <input
+                        type="number"
+                        min="0"
+                        max={formData.serviceType === 'vehicle' && selectedService?.capacity ? selectedService.capacity : undefined}
+                        value={formData.numChildren}
+                        onChange={(e) => {
+                          const value = parseInt(e.target.value);
+                          if (formData.serviceType === 'vehicle' && selectedService?.capacity) {
+                            const totalPeople = formData.numAdults + value + formData.numInfants;
+                            if (totalPeople > selectedService.capacity) {
+                              alert(`Total passengers (${totalPeople}) exceeds vehicle capacity (${selectedService.capacity}). Please select a larger vehicle or reduce the number of passengers.`);
+                              return;
+                            }
+                          }
+                          setFormData({...formData, numChildren: value});
+                        }}
+                        className="w-full border rounded px-3 py-2"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Infants</label>
+                      <input
+                        type="number"
+                        min="0"
+                        max={formData.serviceType === 'vehicle' && selectedService?.capacity ? selectedService.capacity : undefined}
+                        value={formData.numInfants}
+                        onChange={(e) => {
+                          const value = parseInt(e.target.value);
+                          if (formData.serviceType === 'vehicle' && selectedService?.capacity) {
+                            const totalPeople = formData.numAdults + formData.numChildren + value;
+                            if (totalPeople > selectedService.capacity) {
+                              alert(`Total passengers (${totalPeople}) exceeds vehicle capacity (${selectedService.capacity}). Please select a larger vehicle or reduce the number of passengers.`);
+                              return;
+                            }
+                          }
+                          setFormData({...formData, numInfants: value});
+                        }}
+                        className="w-full border rounded px-3 py-2"
+                      />
+                    </div>
                   </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Children</label>
-                    <input
-                      type="number"
-                      min="0"
-                      value={formData.numChildren}
-                      onChange={(e) => setFormData({...formData, numChildren: parseInt(e.target.value)})}
-                      className="w-full border rounded px-3 py-2"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Infants</label>
-                    <input
-                      type="number"
-                      min="0"
-                      value={formData.numInfants}
-                      onChange={(e) => setFormData({...formData, numInfants: parseInt(e.target.value)})}
-                      className="w-full border rounded px-3 py-2"
-                    />
-                  </div>
-                </div>
+                  {formData.serviceType === 'vehicle' && selectedService?.capacity && (
+                    <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                      <p className="text-sm text-blue-800">
+                        <strong>Vehicle Capacity:</strong> {selectedService.capacity} passengers maximum
+                        {' | '}
+                        <strong>Current Total:</strong> {formData.numAdults + formData.numChildren + formData.numInfants} passengers
+                        {(formData.numAdults + formData.numChildren + formData.numInfants) > selectedService.capacity && (
+                          <span className="text-red-600 font-semibold"> ⚠️ Exceeds capacity! Select a larger vehicle.</span>
+                        )}
+                      </p>
+                    </div>
+                  )}
+                </>
               )}
 
               {formData.serviceType === 'tour' && (
@@ -978,7 +1187,7 @@ export default function QuotationsAdmin() {
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div>
                     <label className="block text-sm font-medium mb-1">
-                      {formData.serviceType === 'vehicle' ? 'Total Price *' : 
+                      {formData.serviceType === 'vehicle' ? 'Price per Day *' : 
                        formData.serviceType === 'hotel' ? 'Price per Night *' : 
                        'Base Price (per person) *'}
                     </label>
@@ -990,7 +1199,7 @@ export default function QuotationsAdmin() {
                       value={formData.basePrice}
                       onChange={(e) => setFormData({...formData, basePrice: parseFloat(e.target.value)})}
                       className="w-full border rounded px-3 py-2"
-                      placeholder={formData.serviceType === 'vehicle' ? '5000.00' : '500.00'}
+                      placeholder={formData.serviceType === 'vehicle' ? '100.00' : '500.00'}
                     />
                   </div>
                   <div>
@@ -1022,19 +1231,38 @@ export default function QuotationsAdmin() {
                 <div className="mt-3 p-3 bg-blue-50 rounded">
                   <div className="text-sm font-medium text-blue-900">Estimated Total</div>
                   <div className="text-2xl font-bold text-blue-600">
-                    {formData.currency} {formData.serviceType === 'tour' 
-                      ? (formData.basePrice * formData.numAdults).toFixed(2)
-                      : (formData.basePrice * formData.durationDays).toFixed(2)}
+                    {formData.currency} {(() => {
+                      if (formData.serviceType === 'tour') {
+                        const adultTotal = formData.basePrice * formData.numAdults;
+                        const childTotal = formData.basePrice * formData.numChildren * 0.7;
+                        return (adultTotal + childTotal).toFixed(2);
+                      } else {
+                        return (formData.basePrice * formData.durationDays).toFixed(2);
+                      }
+                    })()}
                   </div>
                   <div className="text-xs text-blue-700 mt-1">
-                    {formData.serviceType !== 'tour' && (
+                    {formData.serviceType === 'tour' ? (
+                      <div className="mb-1">
+                        {formData.numAdults} Adult{formData.numAdults > 1 ? 's' : ''} × {formData.basePrice.toFixed(2)}
+                        {formData.numChildren > 0 && ` + ${formData.numChildren} Child${formData.numChildren > 1 ? 'ren' : ''} × ${(formData.basePrice * 0.7).toFixed(2)}`}
+                      </div>
+                    ) : (
                       <div className="mb-1">
                         {formData.basePrice.toFixed(2)} × {formData.durationDays} day{formData.durationDays > 1 ? 's' : ''}
                       </div>
                     )}
-                    Deposit: {formData.currency} {formData.serviceType === 'tour'
-                      ? ((formData.basePrice * formData.numAdults) * formData.depositPercentage / 100).toFixed(2)
-                      : ((formData.basePrice * formData.durationDays) * formData.depositPercentage / 100).toFixed(2)}
+                    Deposit: {formData.currency} {(() => {
+                      let total;
+                      if (formData.serviceType === 'tour') {
+                        const adultTotal = formData.basePrice * formData.numAdults;
+                        const childTotal = formData.basePrice * formData.numChildren * 0.7;
+                        total = adultTotal + childTotal;
+                      } else {
+                        total = formData.basePrice * formData.durationDays;
+                      }
+                      return (total * formData.depositPercentage / 100).toFixed(2);
+                    })()}
                     {' '}({formData.depositPercentage}%)
                   </div>
                 </div>
@@ -1117,6 +1345,18 @@ export default function QuotationsAdmin() {
           </div>
         </div>
       )}
+
+      {/* Invoice Creation Modal */}
+      {showInvoiceModal && selectedQuotationForInvoice && (
+        <InvoiceModal
+          quotation={selectedQuotationForInvoice}
+          onClose={() => {
+            setShowInvoiceModal(false);
+            setSelectedQuotationForInvoice(null);
+          }}
+          onSubmit={handleSubmitInvoice}
+        />
+      )}
       </div>
       </div>
 
@@ -1133,5 +1373,217 @@ export default function QuotationsAdmin() {
         }
       `}</style>
     </>
+  );
+}
+
+// Invoice Modal Component
+function InvoiceModal({ quotation, onClose, onSubmit }: { quotation: any; onClose: () => void; onSubmit: (data: any) => void }) {
+  const [invoiceData, setInvoiceData] = useState({
+    quotationId: quotation.quotation_id,
+    paymentType: 'bank-transfer',
+    paymentReference: '',
+    paidAmount: '',
+    notes: '',
+    createdBy: 'admin'
+  });
+
+  const [depositPercentage, setDepositPercentage] = useState(() => {
+    const percentage = quotation.deposit_percentage;
+    return percentage && !isNaN(parseFloat(percentage)) ? parseFloat(percentage) : 30;
+  });
+
+  const totalAmount = parseFloat(quotation.total_amount || 0);
+  const depositAmount = (totalAmount * depositPercentage) / 100;
+  const remainingAmount = totalAmount - depositAmount;
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!invoiceData.paidAmount || parseFloat(invoiceData.paidAmount) <= 0) {
+      alert('Please enter a valid payment amount');
+      return;
+    }
+
+    onSubmit({
+      ...invoiceData,
+      depositPercentage
+    });
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+      <div className="bg-white rounded-lg max-w-2xl w-full shadow-xl flex flex-col" style={{ maxHeight: 'calc(100vh - 2rem)' }}>
+        {/* Header - Fixed */}
+        <div className="bg-emerald-600 text-white px-6 py-4 rounded-t-lg flex-shrink-0">
+          <div className="flex justify-between items-center">
+            <h2 className="text-2xl font-bold">Create Invoice</h2>
+            <button
+              onClick={onClose}
+              className="text-white hover:text-gray-200 text-3xl font-bold leading-none"
+              type="button"
+            >
+              ×
+            </button>
+          </div>
+        </div>
+
+        {/* Content - Scrollable */}
+        <form onSubmit={handleSubmit} className="flex flex-col flex-1 min-h-0">
+          <div className="overflow-y-auto flex-1 px-6 pt-6 pb-4">
+          {/* Quotation Summary */}
+          <div className="bg-gray-50 rounded-lg p-3 mb-4">
+            <h3 className="font-semibold text-base mb-2 text-emerald-700">Quotation Summary</h3>
+            <div className="grid grid-cols-2 gap-2 text-xs">
+              <div>
+                <span className="text-gray-600">Quotation #:</span>
+                <span className="ml-2 font-semibold">{quotation.quotation_number}</span>
+              </div>
+              <div>
+                <span className="text-gray-600">Customer:</span>
+                <span className="ml-2 font-semibold">{quotation.customer_name}</span>
+              </div>
+              <div className="col-span-2">
+                <span className="text-gray-600">Service:</span>
+                <span className="ml-2">{quotation.tour_name}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Pricing Information */}
+          <div className="bg-blue-50 rounded-lg p-3 mb-4">
+            <h3 className="font-semibold text-base mb-2 text-blue-700">Pricing Details</h3>
+            <div className="space-y-1 text-xs">
+              <div className="flex justify-between">
+                <span className="text-gray-600">Total Amount:</span>
+                <span className="font-bold text-base">{quotation.currency} {totalAmount.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between items-center border-t pt-1">
+                <div className="flex items-center gap-2">
+                  <span className="text-gray-600">Deposit:</span>
+                  <input
+                    type="number"
+                    min="0"
+                    max="100"
+                    step="1"
+                    value={depositPercentage}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      const num = val === '' ? 0 : parseFloat(val);
+                      setDepositPercentage(Math.min(100, Math.max(0, isNaN(num) ? 0 : num)));
+                    }}
+                    className="w-16 border border-gray-300 rounded px-2 py-1 text-xs text-center"
+                  />
+                  <span className="text-gray-600">%</span>
+                </div>
+                <span className="font-semibold text-green-600">{quotation.currency} {depositAmount.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-600">Remaining Balance:</span>
+                <span className="font-semibold text-orange-600">{quotation.currency} {remainingAmount.toFixed(2)}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Payment Information */}
+          <div className="space-y-3">
+            <h3 className="font-semibold text-base text-gray-800">Payment Information</h3>
+            
+            <div>
+              <label className="block text-xs font-medium text-gray-700 mb-1">
+                Payment Type <span className="text-red-500">*</span>
+              </label>
+              <select
+                value={invoiceData.paymentType}
+                onChange={(e) => setInvoiceData({ ...invoiceData, paymentType: e.target.value })}
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500"
+                required
+              >
+                <option value="bank-transfer">Bank Transfer</option>
+                <option value="cash">Cash</option>
+                <option value="card">Credit/Debit Card</option>
+                <option value="online">Online Payment</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-xs font-medium text-gray-700 mb-1">
+                Paid Amount ({quotation.currency}) <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="number"
+                step="0.01"
+                min="0"
+                max={totalAmount}
+                value={invoiceData.paidAmount}
+                onChange={(e) => setInvoiceData({ ...invoiceData, paidAmount: e.target.value })}
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500"
+                placeholder={`Enter amount (e.g., ${depositAmount.toFixed(2)} for deposit)`}
+                required
+              />
+              <div className="mt-1 flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setInvoiceData({ ...invoiceData, paidAmount: depositAmount.toFixed(2) })}
+                  className="px-2 py-1 bg-green-100 text-green-700 text-xs rounded hover:bg-green-200"
+                >
+                  Set Deposit ({depositPercentage}%)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setInvoiceData({ ...invoiceData, paidAmount: totalAmount.toFixed(2) })}
+                  className="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded hover:bg-blue-200"
+                >
+                  Set Full Amount
+                </button>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-xs font-medium text-gray-700 mb-1">
+                Payment Reference (Optional)
+              </label>
+              <input
+                type="text"
+                value={invoiceData.paymentReference}
+                onChange={(e) => setInvoiceData({ ...invoiceData, paymentReference: e.target.value })}
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500"
+                placeholder="Transaction ID, Check number, etc."
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-medium text-gray-700 mb-1">
+                Notes (Optional)
+              </label>
+              <textarea
+                value={invoiceData.notes}
+                onChange={(e) => setInvoiceData({ ...invoiceData, notes: e.target.value })}
+                rows={2}
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500"
+                placeholder="Any additional notes for this payment..."
+              />
+            </div>
+          </div>
+          </div>
+
+          {/* Actions - Fixed at bottom */}
+          <div className="flex gap-3 px-6 py-4 border-t bg-gray-50 rounded-b-lg flex-shrink-0">
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex-1 px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 font-semibold"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="flex-1 px-6 py-3 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 font-semibold"
+            >
+              💳 Create Invoice
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
   );
 }

@@ -21,12 +21,21 @@ interface PriceStructure {
   monthly: number;
 }
 
+interface VehicleImage {
+  image_id?: number;
+  vehicle_id?: string;
+  image_url: string;
+  is_primary: boolean;
+  display_order: number;
+}
+
 interface Vehicle {
   id: number;
   name: string;
   category: string;
   type: string;
   image: string;
+  images?: VehicleImage[];
   capacity: string;
   transmission: string;
   fuel: string;
@@ -419,11 +428,13 @@ export default function SelfDrive() {
             </div>
 
             <div className="vehicles-grid">
-              {filteredVehicles.map((vehicle, index) => (
+              {filteredVehicles.map((vehicle, index) => {
+                const displayImage = vehicle.images?.find(img => img.is_primary)?.image_url || vehicle.image;
+                return (
                 <div key={vehicle.id} className="vehicle-card">
-                  <div className="vehicle-image">
+                  <div className="vehicle-image" style={{ position: 'relative' }}>
                     <Image 
-                      src={vehicle.image} 
+                      src={displayImage} 
                       alt={`${vehicle.name} - Car rental in Sri Lanka`}
                       width={400} 
                       height={300}
@@ -433,6 +444,26 @@ export default function SelfDrive() {
                       priority={index < 2}
                     />
                     <span className="vehicle-badge">{vehicle.category}</span>
+                    
+                    {/* Image gallery indicator */}
+                    {vehicle.images && vehicle.images.length > 1 && (
+                      <div style={{
+                        position: 'absolute',
+                        bottom: '10px',
+                        left: '10px',
+                        backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                        color: 'white',
+                        padding: '4px 10px',
+                        borderRadius: '20px',
+                        fontSize: '12px',
+                        fontWeight: '600',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '5px'
+                      }}>
+                        📷 {vehicle.images.length} photos
+                      </div>
+                    )}
                   </div>
 
                   <div className="vehicle-content">
@@ -487,7 +518,7 @@ export default function SelfDrive() {
                     </div>
                   </div>
                 </div>
-              ))}
+              )})}
             </div>
           </section>
 
@@ -1105,25 +1136,68 @@ export default function SelfDrive() {
               borderRadius: '12px',
               padding: '1.5rem',
               marginBottom: '2rem',
-              border: '1px solid #e5e7eb',
-              display: 'flex',
-              gap: '1.5rem',
-              flexWrap: 'wrap'
+              border: '1px solid #e5e7eb'
             }}>
-              <div style={{ flexShrink: 0 }}>
-                <img
-                  src={selectedVehicle.image}
-                  alt={selectedVehicle.name}
-                  style={{
-                    width: '220px',
-                    height: '165px',
-                    objectFit: 'cover',
-                    borderRadius: '10px',
-                    boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
-                  }}
-                />
-              </div>
-              <div style={{ flex: 1, minWidth: '220px' }}>
+              {/* Image Gallery */}
+              {selectedVehicle.images && selectedVehicle.images.length > 0 ? (
+                <div style={{ marginBottom: '1.5rem' }}>
+                  <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                    gap: '12px',
+                    marginBottom: '12px'
+                  }}>
+                    {selectedVehicle.images.map((img, index) => (
+                      <div key={img.image_id || index} style={{ position: 'relative', aspectRatio: '4/3', borderRadius: '8px', overflow: 'hidden' }}>
+                        <img
+                          src={img.image_url}
+                          alt={`${selectedVehicle.name} - Image ${index + 1}`}
+                          style={{
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'cover'
+                          }}
+                        />
+                        {img.is_primary && (
+                          <div style={{
+                            position: 'absolute',
+                            top: '8px',
+                            right: '8px',
+                            backgroundColor: '#10b981',
+                            color: 'white',
+                            padding: '4px 10px',
+                            borderRadius: '20px',
+                            fontSize: '11px',
+                            fontWeight: '600'
+                          }}>
+                            ⭐ Primary
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap', marginBottom: '1.5rem' }}>
+                  <div style={{ flexShrink: 0 }}>
+                    <img
+                      src={selectedVehicle.image}
+                      alt={selectedVehicle.name}
+                      style={{
+                        width: '220px',
+                        height: '165px',
+                        objectFit: 'cover',
+                        borderRadius: '10px',
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+                      }}
+                    />
+                  </div>
+                </div>
+              )}
+              
+              {/* Vehicle Details */}
+              <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap' }}>
+                <div style={{ flex: 1, minWidth: '220px' }}>
                 <h3 style={{
                   color: '#053b3c',
                   fontSize: '1.25rem',
@@ -1534,6 +1608,7 @@ export default function SelfDrive() {
             </form>
           </div>
         </div>
+      </div>
       )}
     </>
   );
