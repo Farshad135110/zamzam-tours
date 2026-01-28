@@ -21,7 +21,7 @@ export default function Fleet() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {vehicles.map(v => (
             <div key={v} className="border rounded p-4 shadow-sm">
-              <img src="https://res.cloudinary.com/dhqhxma30/image/upload/v1767556814/Project_Luvi_-_Gemstones_j2ipqf.png" alt={v} className="w-full h-40 object-contain bg-gray-100 rounded mb-3 p-4" />
+              <img src="https://res.cloudinary.com/dhqhxma30/image/upload/v1769571998/zamzamlankatourslogonewcropped_knodzl.png" alt={v} className="w-full h-40 object-contain bg-gray-100 rounded mb-3 p-4" />
               <h3 className="font-semibold">{v}</h3>
               <p className="text-sm text-gray-600 mt-2">{t('fleet.contactForPrice')}</p>
               <a className="inline-block mt-3 text-emerald-600" href={`${CONTACT_INFO.whatsappUrl}?text=${encodeURIComponent('Hello, I am interested in renting a '+v)}`} target="_blank" rel="noreferrer">{t('fleet.contactWhatsApp')}</a>

@@ -1,5 +1,5 @@
 // Admin panel page for managing tour quotations
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Head from 'next/head';
 import AdminSidebar from '../../components/AdminSidebar';
 
@@ -35,6 +35,9 @@ export default function QuotationsAdmin() {
   const [showInvoiceModal, setShowInvoiceModal] = useState(false);
   const [selectedQuotationForInvoice, setSelectedQuotationForInvoice] = useState<any>(null);
   const [invoices, setInvoices] = useState<any[]>([]);
+  const [vehicleImageUrls, setVehicleImageUrls] = useState<string[]>([]);
+  const [isUploadingImages, setIsUploadingImages] = useState(false);
+  const vehicleImageInputRef = useRef<HTMLInputElement>(null);
 
   // Available services and data
   const [serviceType, setServiceType] = useState<'tour' | 'vehicle' | 'hotel' | 'airport-transfer' | 'all-island-transfer'>('tour');
@@ -421,6 +424,9 @@ export default function QuotationsAdmin() {
   const handleCreateQuotation = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      // Use the vehicleImageUrls that were uploaded in the onChange handler
+      const finalVehicleImageUrls = vehicleImageUrls && vehicleImageUrls.length > 0 ? vehicleImageUrls : null;
+      
       // Auto-generate tourName for transfers if not set
       let finalFormData = { ...formData };
       if ((formData.serviceType === 'airport-transfer' || formData.serviceType === 'all-island-transfer') && !formData.tourName && formData.pickupLocation && formData.dropoffLocation) {
@@ -430,8 +436,12 @@ export default function QuotationsAdmin() {
       // Prepare quotation data with service details
       const quotationData = {
         ...finalFormData,
-        serviceDetails: (window as any).currentServiceDetails || null
+        serviceDetails: (window as any).currentServiceDetails || null,
+        vehicleImageUrls: finalVehicleImageUrls
       };
+      
+      console.log('Form submission - vehicleImageUrls to send:', finalVehicleImageUrls);
+      console.log('Creating quotation with data:', quotationData);
       
       const res = await fetch('/api/quotations', {
         method: 'POST',
@@ -480,12 +490,19 @@ export default function QuotationsAdmin() {
           source: 'website',
           createdBy: 'admin'
         });
+        setVehicleImageUrls([]);
+        
+        // Reset file input
+        if (vehicleImageInputRef.current) {
+          vehicleImageInputRef.current.value = '';
+        }
       } else {
         alert('Error creating quotation: ' + (data.error || 'Unknown error'));
       }
     } catch (error) {
       console.error('Error creating quotation:', error);
       alert('Failed to create quotation');
+      setIsUploadingImages(false);
     }
   };
 
@@ -1098,17 +1115,89 @@ export default function QuotationsAdmin() {
               )}
 
               {formData.serviceType === 'vehicle' && (
-                <div>
-                  <label className="block text-sm font-medium mb-1">Driver Option</label>
-                  <select
-                    value={formData.withDriver ? 'with-driver' : 'self-drive'}
-                    onChange={(e) => setFormData({...formData, withDriver: e.target.value === 'with-driver'})}
-                    className="w-full border rounded px-3 py-2"
-                  >
-                    <option value="with-driver">With Driver</option>
-                    <option value="self-drive">Self Drive (Without Driver)</option>
-                  </select>
-                </div>
+                <>
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Driver Option</label>
+                    <select
+                      value={formData.withDriver ? 'with-driver' : 'self-drive'}
+                      onChange={(e) => setFormData({...formData, withDriver: e.target.value === 'with-driver'})}
+                      className="w-full border rounded px-3 py-2"
+                    >
+                      <option value="with-driver">With Driver</option>
+                      <option value="self-drive">Self Drive (Without Driver)</option>
+                    </select>
+                  </div>
+
+                  <div className="bg-purple-50 border-l-4 border-purple-500 p-4 rounded">
+                    <label className="block text-sm font-medium mb-2">🚗 Vehicle Images (Optional)</label>
+                    <p className="text-xs text-gray-600 mb-3">Upload custom images of the actual vehicle to be sent (e.g., different color/variants). If not provided, the default package images will be shown.</p>
+                    <div className="space-y-2">
+                      <input
+                        ref={vehicleImageInputRef}
+                        type="file"
+                        accept="image/*"
+                        multiple
+                        onChange={async (e) => {
+                          const files = e.target.files;
+                          console.log('Files selected:', files?.length);
+                          if (files) {
+                            setIsUploadingImages(true);
+                            const newUrls: string[] = [];
+                            for (let i = 0; i < files.length; i++) {
+                              const file = files[i];
+                              console.log(`Uploading file ${i + 1}/${files.length}: ${file.name}`);
+                              const formDataObj = new FormData();
+                              formDataObj.append('file', file);
+                              formDataObj.append('upload_preset', 'zamzam_tours');
+                              try {
+                                const res = await fetch('https://api.cloudinary.com/v1_1/dhqhxma30/image/upload', {
+                                  method: 'POST',
+                                  body: formDataObj
+                                });
+                                const data = await res.json();
+                                console.log(`Upload response for ${file.name}:`, data.secure_url ? '✅' : '❌');
+                                if (data.secure_url) {
+                                  newUrls.push(data.secure_url);
+                                }
+                              } catch (error) {
+                                console.error('Upload error:', error);
+                              }
+                            }
+                            console.log('Setting vehicleImageUrls, old:', vehicleImageUrls, 'new:', newUrls);
+                            setVehicleImageUrls((prev) => {
+                              const updated = [...prev, ...newUrls];
+                              console.log('Updated vehicleImageUrls:', updated);
+                              return updated;
+                            });
+                            setIsUploadingImages(false);
+                          }
+                        }}
+                        className="w-full border rounded px-3 py-2"
+                      />
+                      <p className="text-xs text-gray-500">You can select multiple images at once</p>
+                    </div>
+
+                    {vehicleImageUrls && vehicleImageUrls.length > 0 && (
+                      <div className="mt-4">
+                        <p className="text-sm font-semibold mb-3">Uploaded Images ({vehicleImageUrls.length}):</p>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                          {vehicleImageUrls.map((url, idx) => (
+                            <div key={idx} className="relative group">
+                              <img src={url} alt={`Vehicle ${idx + 1}`} className="w-full h-24 object-cover rounded border-2 border-emerald-200" />
+                              <button
+                                type="button"
+                                onClick={() => setVehicleImageUrls(vehicleImageUrls.filter((_, i) => i !== idx))}
+                                className="absolute top-1 right-1 bg-red-500 text-white px-2 py-1 rounded text-xs hover:bg-red-600 opacity-0 group-hover:opacity-100 transition"
+                              >
+                                ✕
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </>
               )}
 
               {formData.serviceType === 'hotel' && (
@@ -1308,9 +1397,10 @@ export default function QuotationsAdmin() {
                     </button>
                     <button
                       type="submit"
-                      className="px-4 sm:px-6 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700"
+                      disabled={isUploadingImages}
+                      className={`px-4 sm:px-6 py-2 rounded-lg ${isUploadingImages ? 'bg-gray-400 text-gray-200 cursor-not-allowed' : 'bg-emerald-600 text-white hover:bg-emerald-700'}`}
                     >
-                      Create Quotation
+                      {isUploadingImages ? 'Uploading Images...' : 'Create Quotation'}
                     </button>
                   </div>
                 </div>

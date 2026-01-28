@@ -23,6 +23,7 @@ CREATE TABLE IF NOT EXISTS quotations (
     service_type VARCHAR(50), -- tour, vehicle, hotel, airport-transfer, all-island-transfer
     service_id VARCHAR(10), -- ID from package, vehicle, or hotel table
     service_details JSONB, -- Full service details including itinerary, images, facilities
+    vehicle_image_urls TEXT[], -- Custom vehicle image URLs (for car rentals with different color/vehicle)
     
     -- Passenger Information
     num_adults INTEGER DEFAULT 1,

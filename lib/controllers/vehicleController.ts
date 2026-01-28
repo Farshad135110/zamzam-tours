@@ -30,8 +30,8 @@ export class VehicleController {
     if (!data.km_per_day || data.km_per_day < 1) {
       throw new Error('Valid km per day is required');
     }
-    if (!data.price_per_day || data.price_per_day < 0) {
-      throw new Error('Valid price per day is required');
+    if (data.price_per_day === undefined || data.price_per_day === null) {
+      throw new Error('Price per day is required');
     }
 
     return await createVehicle(data);
@@ -57,9 +57,9 @@ export class VehicleController {
       throw new Error('Valid km per day is required');
     }
 
-    // Validate if price_per_day is being updated
+    // Validate if price_per_day is being updated (allow 0 for price on request)
     if (data.price_per_day !== undefined && data.price_per_day < 0) {
-      throw new Error('Valid price per day is required');
+      throw new Error('Price per day cannot be negative');
     }
 
     return await updateVehicle(id, data);

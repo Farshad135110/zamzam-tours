@@ -167,21 +167,21 @@ export default function AdminSidebar({ active }: Props) {
           marginBottom: '8px'
         }}>
           <div style={{
-            width: '40px',
-            height: '40px',
-            background: 'white',
+            width: '80px',
+            height: '80px',
+            background: 'transparent',
             borderRadius: '10px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             padding: '4px',
-            boxShadow: '0 4px 12px rgba(255, 108, 0, 0.3)'
+            boxShadow: 'none'
           }}>
             <Image 
-              src="https://res.cloudinary.com/dhqhxma30/image/upload/v1767556814/Project_Luvi_-_Gemstones_j2ipqf.png" 
+              src="https://res.cloudinary.com/dhqhxma30/image/upload/v1769571998/zamzamlankatourslogonewcropped_knodzl.png" 
               alt="Zamzam Lanka Tours"
-              width={32}
-              height={32}
+              width={72}
+              height={72}
               style={{ width: '100%', height: '100%', objectFit: 'contain' }}
             />
           </div>

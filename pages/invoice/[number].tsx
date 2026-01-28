@@ -181,7 +181,7 @@ export default function InvoicePage() {
               <div className="relative z-10 flex items-center justify-between">
                 <div className="flex items-center gap-4">
                   <img 
-                    src="https://res.cloudinary.com/dhqhxma30/image/upload/v1767556814/Project_Luvi_-_Gemstones_j2ipqf.png" 
+                    src="https://res.cloudinary.com/dhqhxma30/image/upload/v1769571998/zamzamlankatourslogonewcropped_knodzl.png" 
                     alt="ZamZam Lanka Tours" 
                     className="h-16 w-auto bg-white rounded-lg p-2"
                   />

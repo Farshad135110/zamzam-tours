@@ -48,7 +48,7 @@ export default function Navbar() {
       <nav className={`navbar ${isScrolled ? 'scrolled' : ''}`}>
         <div className="container">
           <Link href="/" className="logo">
-            <Image src={SITE_INFO.logo} alt={SITE_INFO.name} width={90} height={36} priority />
+            <Image src={SITE_INFO.logo} alt={SITE_INFO.name} width={150} height={60} priority quality={100} />
           </Link>
           <button 
             className="mobile-menu-btn"
@@ -103,7 +103,7 @@ export default function Navbar() {
           right: 0;
           background: transparent;
           backdrop-filter: none;
-          padding: 1rem 0;
+          padding: 0.5rem 0;
           z-index: 1000;
           transition: all 0.3s ease;
           box-shadow: ${isQuotationPage ? 'none !important' : 'none'};
@@ -111,17 +111,23 @@ export default function Navbar() {
 
         .navbar.scrolled {
           background: white;
+          padding: 0.15rem 0;
           box-shadow: ${isQuotationPage ? 'none !important' : '0 4px 15px rgba(0, 0, 0, 0.1)'};
         }
 
         .container {
           max-width: 1400px;
           margin: 0 auto;
-          padding: 0 2rem;
+          padding: 0 0.75rem;
           display: flex;
           align-items: center;
           justify-content: space-between;
-          gap: 1.5rem;
+          gap: 1rem;
+        }
+
+        .navbar.scrolled .container {
+          padding: 0 0.5rem;
+          gap: 0.75rem;
         }
 
         .logo {
@@ -129,7 +135,13 @@ export default function Navbar() {
           align-items: center;
           transition: all 0.3s;
           z-index: 2;
+          margin: 0;
         }
+
+        .navbar.scrolled .logo {
+          margin: 0;
+        }
+
         @media (max-width: 992px) {
           .container {
             flex-direction: row;
@@ -139,6 +151,11 @@ export default function Navbar() {
             margin-right: auto;
             justify-content: flex-start;
             position: relative;
+            margin: 0;
+          }
+          .navbar.scrolled .logo {
+            margin-right: auto;
+            margin: 0;
           }
           .navbar.scrolled {
             background: white !important;
@@ -158,6 +175,7 @@ export default function Navbar() {
           cursor: pointer;
           color: #f8b500 !important;
           padding: 0.5rem;
+          margin: 0;
           transition: color 0.3s ease;
           text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
         }
@@ -165,6 +183,8 @@ export default function Navbar() {
         .navbar.scrolled .mobile-menu-btn {
           color: #333 !important;
           text-shadow: none;
+          padding: 0.25rem;
+          margin: 0;
         }
 
         .nav-links {

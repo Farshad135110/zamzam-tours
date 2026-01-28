@@ -63,6 +63,7 @@ export default function SelfDrive() {
   const [customerType, setCustomerType] = useState('tourist');
   const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
   const [showBookingForm, setShowBookingForm] = useState(false);
+  const [lightboxImage, setLightboxImage] = useState<string | null>(null);
   const [bookingFormScrollTop, setBookingFormScrollTop] = useState(0);
   const [pickupDate, setPickupDate] = useState('');
   const [returnDate, setReturnDate] = useState('');
@@ -140,6 +141,7 @@ export default function SelfDrive() {
             category: (vehicle.vehicle_type || '').toLowerCase(),
             type: availableFor,
             image: vehicle.image || '/vehicles/default.jpg',
+            images: vehicle.images || [],
             capacity: `${vehicle.capacity || 4} passengers`,
             transmission: vehicle.transmission || 'Automatic',
             fuel: vehicle.fuel || 'Hybrid',
@@ -1148,7 +1150,27 @@ export default function SelfDrive() {
                     marginBottom: '12px'
                   }}>
                     {selectedVehicle.images.map((img, index) => (
-                      <div key={img.image_id || index} style={{ position: 'relative', aspectRatio: '4/3', borderRadius: '8px', overflow: 'hidden' }}>
+                      <div 
+                        key={img.image_id || index} 
+                        style={{ 
+                          position: 'relative', 
+                          aspectRatio: '4/3', 
+                          borderRadius: '8px', 
+                          overflow: 'hidden',
+                          cursor: 'pointer',
+                          transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+                          boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+                        }}
+                        onClick={() => setLightboxImage(img.image_url)}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.transform = 'scale(1.05)';
+                          e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.2)';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.transform = 'scale(1)';
+                          e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)';
+                        }}
+                      >
                         <img
                           src={img.image_url}
                           alt={`${selectedVehicle.name} - Image ${index + 1}`}
@@ -1168,11 +1190,36 @@ export default function SelfDrive() {
                             padding: '4px 10px',
                             borderRadius: '20px',
                             fontSize: '11px',
-                            fontWeight: '600'
+                            fontWeight: '600',
+                            boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
                           }}>
                             ⭐ Primary
                           </div>
                         )}
+                        <div style={{
+                          position: 'absolute',
+                          bottom: 0,
+                          left: 0,
+                          right: 0,
+                          background: 'linear-gradient(to top, rgba(0,0,0,0.7), transparent)',
+                          color: 'white',
+                          padding: '8px',
+                          fontSize: '12px',
+                          fontWeight: '500',
+                          textAlign: 'center',
+                          opacity: 0,
+                          transition: 'opacity 0.2s ease'
+                        }}
+                        onMouseEnter={(e) => {
+                          const parent = e.currentTarget.parentElement;
+                          if (parent) {
+                            const overlay = parent.querySelector('div:last-child') as HTMLElement;
+                            if (overlay) overlay.style.opacity = '1';
+                          }
+                        }}
+                        >
+                          🔍 Click to enlarge
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -1609,6 +1656,107 @@ export default function SelfDrive() {
           </div>
         </div>
       </div>
+      )}
+
+      {/* Image Lightbox Modal */}
+      {lightboxImage && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            width: '100vw',
+            height: '100vh',
+            backgroundColor: 'rgba(0, 0, 0, 0.95)',
+            zIndex: 999999,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '20px',
+            cursor: 'zoom-out'
+          }}
+          onClick={() => setLightboxImage(null)}
+        >
+          {/* Close Button */}
+          <button
+            onClick={() => setLightboxImage(null)}
+            style={{
+              position: 'absolute',
+              top: '20px',
+              right: '20px',
+              width: '50px',
+              height: '50px',
+              borderRadius: '50%',
+              border: 'none',
+              backgroundColor: 'rgba(255, 255, 255, 0.9)',
+              color: '#000',
+              fontSize: '32px',
+              fontWeight: 'bold',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              lineHeight: '1',
+              transition: 'all 0.2s ease',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)',
+              zIndex: 10
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 1)';
+              e.currentTarget.style.transform = 'scale(1.1)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.9)';
+              e.currentTarget.style.transform = 'scale(1)';
+            }}
+            aria-label="Close"
+          >
+            ×
+          </button>
+
+          {/* Image Container */}
+          <div
+            style={{
+              maxWidth: '95vw',
+              maxHeight: '95vh',
+              position: 'relative',
+              cursor: 'default'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <img
+              src={lightboxImage}
+              alt="Enlarged vehicle image"
+              style={{
+                maxWidth: '100%',
+                maxHeight: '95vh',
+                width: 'auto',
+                height: 'auto',
+                borderRadius: '8px',
+                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.5)',
+                objectFit: 'contain'
+              }}
+            />
+          </div>
+
+          {/* Hint Text */}
+          <div style={{
+            position: 'absolute',
+            bottom: '30px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            color: 'white',
+            backgroundColor: 'rgba(0, 0, 0, 0.7)',
+            padding: '10px 20px',
+            borderRadius: '20px',
+            fontSize: '14px',
+            fontWeight: '500'
+          }}>
+            Click anywhere to close
+          </div>
+        </div>
       )}
     </>
   );

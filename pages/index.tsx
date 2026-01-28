@@ -553,7 +553,7 @@ export default function Home() {
                           <div className="tour-package-card">
                             <div className="tour-card-image-wrapper">
                               <Image 
-                                src={tour.image || 'https://res.cloudinary.com/dhqhxma30/image/upload/v1767556814/Project_Luvi_-_Gemstones_j2ipqf.png'} 
+                                src={tour.image || 'https://res.cloudinary.com/dhqhxma30/image/upload/v1769571998/zamzamlankatourslogonewcropped_knodzl.png'} 
                                 alt={`${tour.name} - Sri Lanka tour package`}
                                 width={400}
                                 height={280}

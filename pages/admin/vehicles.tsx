@@ -964,19 +964,21 @@ export default function AdminVehicles() {
                   </div>
                 )}
 
-                {/* Add new image */}
+                {/* Add new images - Support both single and multiple */}
                 <CloudinaryUpload
                   currentImageUrl=""
-                  onUploadSuccess={(url) => {
-                    const newImage: VehicleImage = {
+                  onUploadSuccess={(urls) => {
+                    const urlArray = Array.isArray(urls) ? urls : [urls];
+                    const newImages: VehicleImage[] = urlArray.map((url, idx) => ({
                       image_url: url,
-                      is_primary: formData.images.length === 0,
-                      display_order: formData.images.length + 1
-                    };
-                    setFormData({...formData, images: [...formData.images, newImage]});
+                      is_primary: formData.images.length === 0 && idx === 0,
+                      display_order: formData.images.length + idx + 1
+                    }));
+                    setFormData({...formData, images: [...formData.images, ...newImages]});
                   }}
                   folder="zamzam-tours/vehicles"
-                  label="Add Another Image"
+                  label="Upload Images (Single or Multiple)"
+                  multiple={true}
                 />
               </div>
 

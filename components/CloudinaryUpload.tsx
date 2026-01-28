@@ -2,79 +2,141 @@ import { useState } from 'react';
 
 interface CloudinaryUploadProps {
   currentImageUrl?: string;
-  onUploadSuccess: (url: string) => void;
+  onUploadSuccess: (url: string | string[]) => void;
   folder?: string;
   label?: string;
+  multiple?: boolean;
 }
 
 export default function CloudinaryUpload({ 
   currentImageUrl, 
   onUploadSuccess, 
   folder = 'zamzam-tours',
-  label = 'Image'
+  label = 'Image',
+  multiple = false
 }: CloudinaryUploadProps) {
   const [uploading, setUploading] = useState(false);
   const [previewUrl, setPreviewUrl] = useState(currentImageUrl || '');
   const [error, setError] = useState('');
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
 
-    // Validate file type
-    if (!file.type.startsWith('image/')) {
-      setError('Please select an image file');
-      return;
-    }
+    if (multiple) {
+      // Handle multiple files
+      const uploadedUrls: string[] = [];
+      let failureCount = 0;
 
-    // Validate file size (max 10MB)
-    if (file.size > 10 * 1024 * 1024) {
-      setError('Image size must be less than 10MB');
-      return;
-    }
+      setError('');
+      setUploading(true);
 
-    setError('');
-    setUploading(true);
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
 
-    try {
-      // Create form data
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('folder', folder);
-
-      // Upload to our API endpoint
-      const response = await fetch('/api/cloudinary/upload', {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (!response.ok) {
-        let errorMessage = 'Upload failed';
-        try {
-          const errorData = await response.json();
-          errorMessage = errorData.error || errorMessage;
-        } catch (jsonErr) {
-          // If not JSON, try to get text
-          try {
-            const errorText = await response.text();
-            errorMessage = errorText || errorMessage;
-          } catch (textErr) {
-            // fallback
-          }
+        // Validate file type
+        if (!file.type.startsWith('image/')) {
+          failureCount++;
+          continue;
         }
-        throw new Error(errorMessage);
+
+        // Validate file size (max 10MB)
+        if (file.size > 10 * 1024 * 1024) {
+          failureCount++;
+          continue;
+        }
+
+        try {
+          const formData = new FormData();
+          formData.append('file', file);
+          formData.append('folder', folder);
+
+          const response = await fetch('/api/cloudinary/upload', {
+            method: 'POST',
+            body: formData,
+          });
+
+          if (!response.ok) {
+            failureCount++;
+            continue;
+          }
+
+          const data = await response.json();
+          uploadedUrls.push(data.url);
+        } catch (err) {
+          failureCount++;
+        }
       }
 
-      const data = await response.json();
-      // Set preview and notify parent
-      setPreviewUrl(data.url);
-      onUploadSuccess(data.url);
-      
-    } catch (err) {
-      console.error('Upload error:', err);
-      setError(err instanceof Error ? err.message : 'Failed to upload image');
-    } finally {
       setUploading(false);
+
+      if (uploadedUrls.length > 0) {
+        onUploadSuccess(uploadedUrls);
+        if (failureCount > 0) {
+          setError(`${uploadedUrls.length} uploaded successfully, ${failureCount} failed`);
+        }
+      } else {
+        setError('No files uploaded successfully');
+      }
+    } else {
+      // Handle single file
+      const file = files[0];
+
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        setError('Please select an image file');
+        return;
+      }
+
+      // Validate file size (max 10MB)
+      if (file.size > 10 * 1024 * 1024) {
+        setError('Image size must be less than 10MB');
+        return;
+      }
+
+      setError('');
+      setUploading(true);
+
+      try {
+        // Create form data
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('folder', folder);
+
+        // Upload to our API endpoint
+        const response = await fetch('/api/cloudinary/upload', {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (!response.ok) {
+          let errorMessage = 'Upload failed';
+          try {
+            const errorData = await response.json();
+            errorMessage = errorData.error || errorMessage;
+          } catch (jsonErr) {
+            // If not JSON, try to get text
+            try {
+              const errorText = await response.text();
+              errorMessage = errorText || errorMessage;
+            } catch (textErr) {
+              // fallback
+            }
+          }
+          throw new Error(errorMessage);
+        }
+
+        const data = await response.json();
+        // Set preview and notify parent
+        setPreviewUrl(data.url);
+        onUploadSuccess(data.url);
+        
+      } catch (err) {
+        console.error('Upload error:', err);
+        setError(err instanceof Error ? err.message : 'Failed to upload image');
+      } finally {
+        setUploading(false);
+      }
     }
   };
 
@@ -94,7 +156,7 @@ export default function CloudinaryUpload({
         {label}
       </label>
       
-      {previewUrl ? (
+      {!multiple && previewUrl ? (
         <div style={{ 
           position: 'relative', 
           display: 'inline-block',
@@ -152,6 +214,7 @@ export default function CloudinaryUpload({
             accept="image/*"
             onChange={handleFileChange}
             disabled={uploading}
+            multiple={multiple}
             style={{
               display: 'block',
               width: '100%',
@@ -191,8 +254,8 @@ export default function CloudinaryUpload({
         <div style={{ 
           marginTop: '0.5rem', 
           padding: '0.5rem', 
-          background: '#fee2e2', 
-          color: '#dc2626',
+          background: error.includes('successfully') ? '#e0f2fe' : '#fee2e2', 
+          color: error.includes('successfully') ? '#0369a1' : '#dc2626',
           borderRadius: '4px',
           fontSize: '0.875rem'
         }}>

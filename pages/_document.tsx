@@ -76,7 +76,7 @@ class MyDocument extends Document {
                 "@type": "Organization",
                 "name": "ZamZam Lanka Tours",
                 "url": "https://zamzamlankatours.com",
-                "logo": "https://res.cloudinary.com/dhqhxma30/image/upload/v1767556814/Project_Luvi_-_Gemstones_j2ipqf.png"
+                "logo": "https://res.cloudinary.com/dhqhxma30/image/upload/v1769571998/zamzamlankatourslogonewcropped_knodzl.png"
               })
             }}
           />

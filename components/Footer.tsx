@@ -82,7 +82,7 @@ export default function Footer() {
           <div className="footer-content">
           <div className="footer-section">
             <div className="footer-logo">
-              <Image src={SITE_INFO.logo} alt={SITE_INFO.name} width={110} height={36} />
+              <Image src={SITE_INFO.logo} alt={SITE_INFO.name} width={170} height={70} quality={100} />
             </div>
             <p>Your trusted partner for premium travel experiences in Sri Lanka since 2010.</p>
             <div className="social-links">

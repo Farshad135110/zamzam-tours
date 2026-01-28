@@ -142,7 +142,7 @@ function generateInvoiceEmailTemplate(invoice: any): string {
           <!-- Header -->
           <tr>
             <td style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 40px 20px; text-align: center;">
-              <img src="https://res.cloudinary.com/dhqhxma30/image/upload/v1767556814/Project_Luvi_-_Gemstones_j2ipqf.png" alt="ZamZam Lanka Tours" style="height: 60px; margin-bottom: 15px;" />
+              <img src="https://res.cloudinary.com/dhqhxma30/image/upload/v1769571998/zamzamlankatourslogonewcropped_knodzl.png" alt="ZamZam Lanka Tours" style="height: 60px; margin-bottom: 15px;" />
               <h1 style="color: #ffffff; margin: 0; font-size: 28px;">ZamZam Lanka Tours</h1>
               <p style="color: #ffffff; margin: 10px 0 0 0; opacity: 0.9;">Payment Invoice</p>
             </td>

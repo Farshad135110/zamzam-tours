@@ -40,6 +40,7 @@ interface Quotation {
   service_type: string;
   service_id: string;
   service_details: any;
+  vehicle_image_urls?: string[];
 }
 
 export default function QuotationView() {
@@ -75,8 +76,25 @@ export default function QuotationView() {
       if (res.ok && data.quotation) {
         // Convert numeric string fields to numbers for proper display
         const q = data.quotation;
+        
+        // Parse vehicle_image_urls if it's a JSON string
+        let vehicleImageUrls: string[] | undefined;
+        if (q.vehicle_image_urls) {
+          if (typeof q.vehicle_image_urls === 'string') {
+            try {
+              vehicleImageUrls = JSON.parse(q.vehicle_image_urls);
+            } catch (err) {
+              console.error('Error parsing vehicle_image_urls:', err);
+              vehicleImageUrls = undefined;
+            }
+          } else if (Array.isArray(q.vehicle_image_urls)) {
+            vehicleImageUrls = q.vehicle_image_urls;
+          }
+        }
+        
         const parsedQuotation = {
           ...q,
+          vehicle_image_urls: vehicleImageUrls,
           base_price: parseFloat(q.base_price),
           accommodation_upgrade: parseFloat(q.accommodation_upgrade || 0),
           discount_amount: parseFloat(q.discount_amount || 0),
@@ -558,15 +576,39 @@ export default function QuotationView() {
               <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4 border-b-2 border-emerald-600 pb-2">
                 🚗 Vehicle Details
               </h2>
-              {quotation.service_details.image && (
-                <div className="mb-4 rounded-lg overflow-hidden">
+              
+              {/* Vehicle Images - Custom or Default */}
+              {quotation.vehicle_image_urls && quotation.vehicle_image_urls.length > 0 ? (
+                <div className="mb-6">
+                  <p className="text-sm font-semibold text-emerald-800 mb-3 bg-emerald-50 p-2 rounded">
+                    ✅ These are the actual vehicle images that will be provided for your rental
+                  </p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {quotation.vehicle_image_urls.map((url, idx) => (
+                      <div key={idx} className="rounded-lg overflow-hidden border-2 border-emerald-200 shadow">
+                        <img 
+                          src={url} 
+                          alt={`Vehicle image ${idx + 1}`}
+                          className="w-full h-64 object-cover cursor-pointer hover:opacity-90 transition"
+                          onClick={() => {
+                            // Simple lightbox - could be enhanced
+                            window.open(url, '_blank');
+                          }}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : quotation.service_details.image ? (
+                <div className="mb-6 rounded-lg overflow-hidden">
                   <img 
                     src={quotation.service_details.image} 
                     alt={quotation.service_details.vehicle_name}
                     className="w-full h-64 object-cover"
                   />
                 </div>
-              )}
+              ) : null}
+
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <p className="text-sm text-gray-600">Vehicle Name</p>
