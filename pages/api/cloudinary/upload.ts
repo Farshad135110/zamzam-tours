@@ -74,8 +74,11 @@ export default async function handler(
 
   } catch (error) {
     console.error('Upload error:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Upload failed';
+    console.error('Full error details:', JSON.stringify(error, null, 2));
     return res.status(500).json({ 
-      error: error instanceof Error ? error.message : 'Upload failed' 
+      error: errorMessage,
+      details: error instanceof Error ? error.stack : 'Unknown error'
     });
   }
 }

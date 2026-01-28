@@ -77,23 +77,45 @@ export default function QuotationView() {
         // Convert numeric string fields to numbers for proper display
         const q = data.quotation;
         
-        // Parse vehicle_image_urls if it's a JSON string
+        // Parse service_details if it's a JSON string
+        let serviceDetails = q.service_details;
+        if (serviceDetails && typeof serviceDetails === 'string') {
+          try {
+            serviceDetails = JSON.parse(serviceDetails);
+            console.log('Parsed service_details from JSON string');
+          } catch (err) {
+            console.error('Error parsing service_details:', err);
+          }
+        }
+        console.log('Service details:', serviceDetails);
+        
+        // Parse vehicle_image_urls - handle both array and JSON string formats
         let vehicleImageUrls: string[] | undefined;
+        console.log('Raw vehicle_image_urls from API:', q.vehicle_image_urls);
+        console.log('Type of vehicle_image_urls:', typeof q.vehicle_image_urls);
+        
         if (q.vehicle_image_urls) {
-          if (typeof q.vehicle_image_urls === 'string') {
+          if (Array.isArray(q.vehicle_image_urls)) {
+            // Already an array (from PostgreSQL TEXT[] type)
+            vehicleImageUrls = q.vehicle_image_urls;
+            console.log('vehicle_image_urls is array:', vehicleImageUrls);
+          } else if (typeof q.vehicle_image_urls === 'string') {
+            // JSON string (legacy format)
             try {
               vehicleImageUrls = JSON.parse(q.vehicle_image_urls);
+              console.log('Parsed vehicle_image_urls from JSON:', vehicleImageUrls);
             } catch (err) {
               console.error('Error parsing vehicle_image_urls:', err);
               vehicleImageUrls = undefined;
             }
-          } else if (Array.isArray(q.vehicle_image_urls)) {
-            vehicleImageUrls = q.vehicle_image_urls;
           }
+        } else {
+          console.log('No vehicle_image_urls in response');
         }
         
         const parsedQuotation = {
           ...q,
+          service_details: serviceDetails,
           vehicle_image_urls: vehicleImageUrls,
           base_price: parseFloat(q.base_price),
           accommodation_upgrade: parseFloat(q.accommodation_upgrade || 0),
@@ -576,6 +598,12 @@ export default function QuotationView() {
               <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4 border-b-2 border-emerald-600 pb-2">
                 🚗 Vehicle Details
               </h2>
+              
+              {/* Debug info */}
+              {console.log('Rendering vehicle details...')}
+              {console.log('quotation.vehicle_image_urls:', quotation.vehicle_image_urls)}
+              {console.log('Is array?', Array.isArray(quotation.vehicle_image_urls))}
+              {console.log('Length:', quotation.vehicle_image_urls?.length)}
               
               {/* Vehicle Images - Custom or Default */}
               {quotation.vehicle_image_urls && quotation.vehicle_image_urls.length > 0 ? (

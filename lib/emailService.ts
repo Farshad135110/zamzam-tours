@@ -353,6 +353,40 @@ export function createQuotationEmailHTML(quotation: any): string {
             </td>
           </tr>
 
+          <!-- Vehicle Images (if available) -->
+          ${quotation.vehicle_image_urls && quotation.vehicle_image_urls.length > 0 ? `
+          <tr>
+            <td style="padding: 20px 40px;">
+              <h3 style="margin: 0 0 15px 0; color: #111827; font-size: 16px; border-bottom: 2px solid #10b981; padding-bottom: 10px;">🚗 Vehicle Images</h3>
+              <table width="100%" cellpadding="5" cellspacing="5" style="text-align: center;">
+                <tr>
+                  ${(() => {
+                    // Handle both array and JSON string formats
+                    let imageUrls: string[];
+                    if (Array.isArray(quotation.vehicle_image_urls)) {
+                      imageUrls = quotation.vehicle_image_urls;
+                    } else if (typeof quotation.vehicle_image_urls === 'string') {
+                      try {
+                        imageUrls = JSON.parse(quotation.vehicle_image_urls);
+                      } catch (e) {
+                        imageUrls = [];
+                      }
+                    } else {
+                      imageUrls = [];
+                    }
+                    
+                    return imageUrls.map((url: string) => `
+                      <td style="padding: 10px;">
+                        <img src="${url}" alt="Vehicle image" style="max-width: 200px; max-height: 150px; border-radius: 8px; border: 1px solid #e5e7eb;" />
+                      </td>
+                    `).join('');
+                  })()}
+                </tr>
+              </table>
+            </td>
+          </tr>
+          ` : ''}
+
           <!-- Pricing -->
           <tr>
             <td style="padding: 20px 40px;">

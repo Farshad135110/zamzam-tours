@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef } from 'react';
 import Head from 'next/head';
 import AdminSidebar from '../../components/AdminSidebar';
+import CloudinaryUpload from '../../components/CloudinaryUpload';
 
 interface Quotation {
   quotation_id: number;
@@ -38,6 +39,33 @@ export default function QuotationsAdmin() {
   const [vehicleImageUrls, setVehicleImageUrls] = useState<string[]>([]);
   const [isUploadingImages, setIsUploadingImages] = useState(false);
   const vehicleImageInputRef = useRef<HTMLInputElement>(null);
+  
+  // New tour creation modal
+  const [showCreateTourModal, setShowCreateTourModal] = useState(false);
+  const [tourSaveType, setTourSaveType] = useState<'package' | 'one-time'>('package');
+  const [newTourData, setNewTourData] = useState({
+    tourName: '',
+    description: '',
+    price: '',
+    days: 1,
+    image: '',
+    highlights: '',
+    includings: ''
+  });
+  const [dayItineraries, setDayItineraries] = useState<{
+    day: number;
+    title: string;
+    description: string;
+    activities: string;
+    image?: string;
+  }[]>([{
+    day: 1,
+    title: '',
+    description: '',
+    activities: '',
+    image: ''
+  }]);
+  const [isCreatingTour, setIsCreatingTour] = useState(false);
 
   // Available services and data
   const [serviceType, setServiceType] = useState<'tour' | 'vehicle' | 'hotel' | 'airport-transfer' | 'all-island-transfer'>('tour');
@@ -424,8 +452,62 @@ export default function QuotationsAdmin() {
   const handleCreateQuotation = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      // Use the vehicleImageUrls that were uploaded in the onChange handler
-      const finalVehicleImageUrls = vehicleImageUrls && vehicleImageUrls.length > 0 ? vehicleImageUrls : null;
+      let finalVehicleImageUrls: string[] | null = null;
+      
+      // Upload vehicle images if selected (for vehicle service type only)
+      if (formData.serviceType === 'vehicle' && vehicleImageInputRef.current?.files && vehicleImageInputRef.current.files.length > 0) {
+        console.log('📤 Starting vehicle image uploads...');
+        alert(`Starting upload of ${vehicleImageInputRef.current.files.length} vehicle images...`);
+        setIsUploadingImages(true);
+        const files = vehicleImageInputRef.current.files;
+        const uploadedUrls: string[] = [];
+        
+        for (let i = 0; i < files.length; i++) {
+          const file = files[i];
+          console.log(`Uploading vehicle image ${i + 1}/${files.length}: ${file.name}`);
+          
+          // Create FormData for file upload
+          const formDataObj = new FormData();
+          formDataObj.append('file', file);
+          formDataObj.append('folder', 'zamzam_tours/quotations');
+          
+          try {
+            // Upload to our API endpoint which uses server-side Cloudinary credentials
+            const res = await fetch('/api/cloudinary/upload', {
+              method: 'POST',
+              body: formDataObj
+            });
+            
+            if (res.ok) {
+              const data = await res.json();
+              if (data.url) {
+                uploadedUrls.push(data.url);
+                console.log(`✅ Image ${i + 1} uploaded: ${data.url}`);
+              }
+            } else {
+              const errorData = await res.json();
+              console.error('Upload error:', errorData);
+              alert(`Upload error: ${errorData.error}\n\nDetails: ${errorData.details || ''}`);
+              setIsUploadingImages(false);
+              return;
+            }
+          } catch (error) {
+            console.error(`Error uploading image ${i + 1}:`, error);
+            alert(`Failed to upload image ${file.name}. Please try again.`);
+            setIsUploadingImages(false);
+            return;
+          }
+        }
+        
+        if (uploadedUrls.length > 0) {
+          finalVehicleImageUrls = uploadedUrls;
+          console.log('✅ All vehicle images uploaded:', finalVehicleImageUrls);
+          alert(`✅ Images uploaded successfully`);
+        }
+        setIsUploadingImages(false);
+      } else {
+        console.log('No vehicle images to upload. Service type:', formData.serviceType, 'Files:', vehicleImageInputRef.current?.files?.length);
+      }
       
       // Auto-generate tourName for transfers if not set
       let finalFormData = { ...formData };
@@ -503,6 +585,100 @@ export default function QuotationsAdmin() {
       console.error('Error creating quotation:', error);
       alert('Failed to create quotation');
       setIsUploadingImages(false);
+    }
+  };
+
+  const handleDaysChange = (days: number) => {
+    setNewTourData({ ...newTourData, days });
+    
+    // Adjust itinerary array based on days
+    const currentLength = dayItineraries.length;
+    if (days > currentLength) {
+      // Add new days
+      const newDays = Array.from({ length: days - currentLength }, (_, i) => ({
+        day: currentLength + i + 1,
+        title: '',
+        description: '',
+        activities: '',
+        image: ''
+      }));
+      setDayItineraries([...dayItineraries, ...newDays]);
+    } else if (days < currentLength) {
+      // Remove extra days
+      setDayItineraries(dayItineraries.slice(0, days));
+    }
+  };
+
+  const updateDayItinerary = (dayIndex: number, field: string, value: string) => {
+    const updated = [...dayItineraries];
+    updated[dayIndex] = { ...updated[dayIndex], [field]: value };
+    setDayItineraries(updated);
+  };
+
+  const handleCreateNewTour = async () => {
+    if (!newTourData.tourName) {
+      alert('Tour name is required');
+      return;
+    }
+
+    setIsCreatingTour(true);
+    try {
+      const res = await fetch('/api/tours/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          tourName: newTourData.tourName,
+          description: newTourData.description,
+          price: newTourData.price ? parseFloat(newTourData.price) : null,
+          days: newTourData.days,
+          nights: newTourData.days > 0 ? newTourData.days - 1 : 0,
+          image: newTourData.image,
+          highlights: newTourData.highlights,
+          includings: newTourData.includings,
+          itinerary: dayItineraries,
+          saveType: tourSaveType,
+          quotationId: formData.serviceType === 'tour' ? formData.serviceId : null,
+          createdBy: 'admin'
+        })
+      });
+
+      const data = await res.json();
+      
+      if (data.success) {
+        alert(`✅ Tour ${tourSaveType === 'package' ? 'package' : 'saved'} successfully!`);
+        
+        // If saved as package, refresh tours list and select it
+        if (tourSaveType === 'package') {
+          await loadServiceData();
+          handleServiceSelect(data.package.packageId);
+        }
+        
+        // Reset form and close modal
+        setNewTourData({
+          tourName: '',
+          description: '',
+          price: '',
+          days: 1,
+          image: '',
+          highlights: '',
+          includings: ''
+        });
+        setDayItineraries([{
+          day: 1,
+          title: '',
+          description: '',
+          activities: '',
+          image: ''
+        }]);
+        setShowCreateTourModal(false);
+      } else {
+        alert('Error creating tour: ' + (data.error || 'Unknown error'));
+      }
+    } catch (error) {
+      console.error('Error creating tour:', error);
+      alert('Failed to create tour');
+    } finally {
+      setIsCreatingTour(false);
     }
   };
 
@@ -835,18 +1011,27 @@ export default function QuotationsAdmin() {
                       </h3>
                       
                       {formData.serviceType === 'tour' && (
-                        <select
-                          value={formData.serviceId}
-                          onChange={(e) => handleServiceSelect(e.target.value)}
-                          className="w-full border rounded px-3 py-2"
-                        >
-                          <option value="">-- Select a Tour Package --</option>
-                          {tours.map(tour => (
-                            <option key={tour.package_id} value={tour.package_id}>
-                              {tour.package_name} - {tour.days} Days ({tour.nights} Nights)
-                            </option>
-                          ))}
-                        </select>
+                        <div className="space-y-3">
+                          <select
+                            value={formData.serviceId}
+                            onChange={(e) => handleServiceSelect(e.target.value)}
+                            className="w-full border rounded px-3 py-2"
+                          >
+                            <option value="">-- Select a Tour Package --</option>
+                            {tours.map(tour => (
+                              <option key={tour.package_id} value={tour.package_id}>
+                                {tour.package_name} - {tour.days} Days ({tour.nights} Nights)
+                              </option>
+                            ))}
+                          </select>
+                          <button
+                            type="button"
+                            onClick={() => setShowCreateTourModal(true)}
+                            className="w-full px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 font-medium transition"
+                          >
+                            ➕ Create New Tour Package
+                          </button>
+                        </div>
                       )}
 
                       {formData.serviceType === 'vehicle' && (
@@ -1120,7 +1305,18 @@ export default function QuotationsAdmin() {
                     <label className="block text-sm font-medium mb-1">Driver Option</label>
                     <select
                       value={formData.withDriver ? 'with-driver' : 'self-drive'}
-                      onChange={(e) => setFormData({...formData, withDriver: e.target.value === 'with-driver'})}
+                      onChange={(e) => {
+                        const withDriver = e.target.value === 'with-driver';
+                        setFormData({...formData, withDriver});
+                        
+                        // Update currentServiceDetails with new rental_type
+                        if ((window as any).currentServiceDetails) {
+                          (window as any).currentServiceDetails = {
+                            ...(window as any).currentServiceDetails,
+                            rental_type: withDriver ? 'with-driver' : 'self-drive'
+                          };
+                        }
+                      }}
                       className="w-full border rounded px-3 py-2"
                     >
                       <option value="with-driver">With Driver</option>
@@ -1130,46 +1326,34 @@ export default function QuotationsAdmin() {
 
                   <div className="bg-purple-50 border-l-4 border-purple-500 p-4 rounded">
                     <label className="block text-sm font-medium mb-2">🚗 Vehicle Images (Optional)</label>
-                    <p className="text-xs text-gray-600 mb-3">Upload custom images of the actual vehicle to be sent (e.g., different color/variants). If not provided, the default package images will be shown.</p>
+                    <p className="text-xs text-gray-600 mb-3">Select custom images of the actual vehicle to be sent (e.g., different color/variants). Images will be uploaded when you submit the form. If not provided, the default package images will be shown.</p>
                     <div className="space-y-2">
                       <input
                         ref={vehicleImageInputRef}
                         type="file"
                         accept="image/*"
                         multiple
-                        onChange={async (e) => {
+                        onChange={(e) => {
+                          // Just show preview of selected files
                           const files = e.target.files;
                           console.log('Files selected:', files?.length);
-                          if (files) {
-                            setIsUploadingImages(true);
-                            const newUrls: string[] = [];
+                          if (files && files.length > 0) {
+                            // Create preview URLs using FileReader
+                            const previewUrls: string[] = [];
                             for (let i = 0; i < files.length; i++) {
-                              const file = files[i];
-                              console.log(`Uploading file ${i + 1}/${files.length}: ${file.name}`);
-                              const formDataObj = new FormData();
-                              formDataObj.append('file', file);
-                              formDataObj.append('upload_preset', 'zamzam_tours');
-                              try {
-                                const res = await fetch('https://api.cloudinary.com/v1_1/dhqhxma30/image/upload', {
-                                  method: 'POST',
-                                  body: formDataObj
-                                });
-                                const data = await res.json();
-                                console.log(`Upload response for ${file.name}:`, data.secure_url ? '✅' : '❌');
-                                if (data.secure_url) {
-                                  newUrls.push(data.secure_url);
+                              const reader = new FileReader();
+                              reader.onload = (event) => {
+                                if (event.target?.result) {
+                                  previewUrls.push(event.target.result as string);
+                                  if (previewUrls.length === files.length) {
+                                    // All files have been read
+                                    setVehicleImageUrls(previewUrls);
+                                    console.log('Preview URLs set:', previewUrls);
+                                  }
                                 }
-                              } catch (error) {
-                                console.error('Upload error:', error);
-                              }
+                              };
+                              reader.readAsDataURL(files[i]);
                             }
-                            console.log('Setting vehicleImageUrls, old:', vehicleImageUrls, 'new:', newUrls);
-                            setVehicleImageUrls((prev) => {
-                              const updated = [...prev, ...newUrls];
-                              console.log('Updated vehicleImageUrls:', updated);
-                              return updated;
-                            });
-                            setIsUploadingImages(false);
                           }
                         }}
                         className="w-full border rounded px-3 py-2"
@@ -1446,6 +1630,224 @@ export default function QuotationsAdmin() {
           }}
           onSubmit={handleSubmitInvoice}
         />
+      )}
+
+      {/* Create Tour Modal */}
+      {showCreateTourModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 overflow-y-auto">
+          <div className="bg-white rounded-lg max-w-4xl w-full p-6 my-8 max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-gray-900">Create New Tour Package</h2>
+              <button
+                onClick={() => setShowCreateTourModal(false)}
+                className="text-gray-400 hover:text-gray-600 text-3xl font-bold"
+                type="button"
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={(e) => { e.preventDefault(); handleCreateNewTour(); }} className="space-y-5">
+              {/* Save Type Selection */}
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <p className="text-sm font-semibold text-blue-900 mb-3">How would you like to save this tour?</p>
+                <div className="flex gap-4">
+                  <label className="flex items-center cursor-pointer">
+                    <input
+                      type="radio"
+                      value="package"
+                      checked={tourSaveType === 'package'}
+                      onChange={(e) => setTourSaveType(e.target.value as 'package')}
+                      className="mr-2"
+                    />
+                    <span className="text-sm">
+                      <strong>Save as Tour Package</strong>
+                      <p className="text-xs text-gray-600">Can be reused for other quotations</p>
+                    </span>
+                  </label>
+                  <label className="flex items-center cursor-pointer">
+                    <input
+                      type="radio"
+                      value="one-time"
+                      checked={tourSaveType === 'one-time'}
+                      onChange={(e) => setTourSaveType(e.target.value as 'one-time')}
+                      className="mr-2"
+                    />
+                    <span className="text-sm">
+                      <strong>Save as One-Time Tour</strong>
+                      <p className="text-xs text-gray-600">Only for this quotation</p>
+                    </span>
+                  </label>
+                </div>
+              </div>
+
+              {/* Basic Tour Info */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Package Name *</label>
+                <input
+                  type="text"
+                  required
+                  value={newTourData.tourName}
+                  onChange={(e) => setNewTourData({ ...newTourData, tourName: e.target.value })}
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="e.g., 5-Day Cultural Triangle Tour"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Description *</label>
+                <textarea
+                  required
+                  rows={4}
+                  value={newTourData.description}
+                  onChange={(e) => setNewTourData({ ...newTourData, description: e.target.value })}
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-vertical"
+                  placeholder="Describe the tour package..."
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Price (USD) *</label>
+                  <input
+                    type="number"
+                    required
+                    min="0"
+                    step="0.01"
+                    value={newTourData.price}
+                    onChange={(e) => setNewTourData({ ...newTourData, price: e.target.value })}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="1500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Number of Days *</label>
+                  <input
+                    type="number"
+                    required
+                    min="1"
+                    max="30"
+                    value={newTourData.days}
+                    onChange={(e) => handleDaysChange(parseInt(e.target.value) || 1)}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="5"
+                  />
+                </div>
+              </div>
+
+              <CloudinaryUpload
+                currentImageUrl={newTourData.image}
+                onUploadSuccess={(url) => setNewTourData({ ...newTourData, image: Array.isArray(url) ? url[0] : url })}
+                folder="zamzam-tours/packages"
+                label="Package Main Image"
+              />
+
+              {/* Day-by-Day Itinerary */}
+              <div className="border-t pt-4">
+                <label className="block text-sm font-semibold text-gray-900 mb-3">Day-by-Day Itinerary</label>
+                <div className="max-h-[400px] overflow-y-auto border border-gray-200 rounded-lg p-4 space-y-4">
+                  {dayItineraries.map((dayData, index) => (
+                    <div key={index} className={`pb-4 ${index < dayItineraries.length - 1 ? 'border-b border-gray-200' : ''}`}>
+                      <div className="flex items-center gap-2 mb-3 bg-emerald-50 px-3 py-2 rounded-lg border border-emerald-200">
+                        <span className="font-semibold text-emerald-900 text-sm">Day {dayData.day}</span>
+                      </div>
+                      
+                      <div className="space-y-3">
+                        <div>
+                          <label className="block text-xs font-medium text-gray-700 mb-1">Day Title *</label>
+                          <input
+                            type="text"
+                            required
+                            placeholder="e.g., Arrival in Colombo"
+                            value={dayData.title}
+                            onChange={(e) => updateDayItinerary(index, 'title', e.target.value)}
+                            className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-medium text-gray-700 mb-1">Description *</label>
+                          <textarea
+                            required
+                            rows={2}
+                            placeholder="Brief overview of the day"
+                            value={dayData.description}
+                            onChange={(e) => updateDayItinerary(index, 'description', e.target.value)}
+                            className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 resize-vertical"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-medium text-gray-700 mb-1">Activities (one per line) *</label>
+                          <textarea
+                            required
+                            rows={3}
+                            placeholder="Visit temple&#10;City tour&#10;Beach relaxation"
+                            value={dayData.activities}
+                            onChange={(e) => updateDayItinerary(index, 'activities', e.target.value)}
+                            className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 resize-vertical"
+                          />
+                        </div>
+
+                        <CloudinaryUpload
+                          currentImageUrl={dayData.image || ''}
+                          onUploadSuccess={(url) => updateDayItinerary(index, 'image', Array.isArray(url) ? url[0] : url)}
+                          folder="zamzam-tours/itinerary"
+                          label={`Day ${dayData.day} Image (Optional)`}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Highlights (places visited - one per line) *</label>
+                <textarea
+                  required
+                  value={newTourData.highlights}
+                  onChange={(e) => setNewTourData({ ...newTourData, highlights: e.target.value })}
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-vertical"
+                  rows={4}
+                  placeholder="Sigiriya Rock Fortress&#10;Temple of the Tooth&#10;Tea Plantations"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Inclusions (one per line) *</label>
+                <textarea
+                  required
+                  value={newTourData.includings}
+                  onChange={(e) => setNewTourData({ ...newTourData, includings: e.target.value })}
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-vertical"
+                  rows={4}
+                  placeholder="Private A/C Vehicle&#10;Accommodation&#10;Breakfast & Dinner&#10;English speaking guide"
+                />
+              </div>
+
+              <div className="flex gap-3 justify-end pt-4 border-t">
+                <button
+                  type="button"
+                  onClick={() => setShowCreateTourModal(false)}
+                  className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-700 font-medium transition"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isCreatingTour || !newTourData.tourName}
+                  className={`px-6 py-2 rounded-lg text-white font-semibold transition ${
+                    isCreatingTour || !newTourData.tourName
+                      ? 'bg-gray-400 cursor-not-allowed'
+                      : 'bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 shadow-lg'
+                  }`}
+                >
+                  {isCreatingTour ? 'Creating...' : `✅ Create ${tourSaveType === 'package' ? 'Package' : 'Tour'}`}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
       )}
       </div>
       </div>

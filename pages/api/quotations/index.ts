@@ -448,10 +448,11 @@ async function createQuotation(req: NextApiRequest, res: NextApiResponse) {
       serviceType || 'tour',
       serviceId || packageId || null,
       serviceDetails ? JSON.stringify(serviceDetails) : null,
-      vehicleImageUrls && vehicleImageUrls.length > 0 ? JSON.stringify(vehicleImageUrls) : null
+      vehicleImageUrls && vehicleImageUrls.length > 0 ? vehicleImageUrls : null
     ];
 
     console.log('Insert values:', values);
+    console.log('vehicleImageUrls being saved:', vehicleImageUrls);
 
     const result = await pool.query(insertQuery, values);
     const quotation = result.rows[0];
