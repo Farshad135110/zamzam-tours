@@ -1,6 +1,7 @@
 // API endpoint for creating new tour packages or one-time tours
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { Pool } from 'pg';
+import { logServerAction, logServerError } from '../../../src/lib/logger';
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -40,8 +41,20 @@ async function createTour(req: NextApiRequest, res: NextApiResponse) {
     createdBy
   } = req.body;
 
+  logServerAction('TOUR_API', 'POST /api/tours/create', {
+    tourName,
+    saveType,
+    quotationId,
+    days,
+    hasItinerary: !!itinerary
+  });
+
   // Validation
   if (!tourName || !saveType) {
+    logServerError('TOUR_API', 'Validation failed in tour creation', 'Missing required fields', {
+      hasName: !!tourName,
+      hasSaveType: !!saveType
+    });
     return res.status(400).json({
       error: 'Missing required fields: tourName, saveType'
     });
@@ -49,6 +62,8 @@ async function createTour(req: NextApiRequest, res: NextApiResponse) {
 
   try {
     if (saveType === 'package') {
+      logServerAction('TOUR_API', 'Creating package tour', { tourName });
+      
       // Save as a reusable tour package
       // Generate package_id
       const idResult = await pool.query(
@@ -86,6 +101,12 @@ async function createTour(req: NextApiRequest, res: NextApiResponse) {
 
       const result = await pool.query(query, values);
 
+      logServerAction('TOUR_API', 'Package tour created successfully', {
+        packageId: result.rows[0].package_id,
+        tourName: result.rows[0].package_name,
+        price: result.rows[0].price
+      });
+
       return res.status(201).json({
         success: true,
         message: 'Tour package created successfully',
@@ -99,10 +120,20 @@ async function createTour(req: NextApiRequest, res: NextApiResponse) {
     } else if (saveType === 'one-time') {
       // Save as a one-time tour linked to quotation
       if (!quotationId) {
+        logServerError('TOUR_API', 'Validation failed for one-time tour', 'quotationId is required', {
+          saveType,
+          tourName
+        });
         return res.status(400).json({
           error: 'quotationId is required for one-time tours'
         });
       }
+
+      logServerAction('TOUR_API', 'Creating one-time tour', {
+        tourName,
+        quotationId,
+        days
+      });
 
       // Generate tour_id
       const idResult = await pool.query(
@@ -146,6 +177,12 @@ async function createTour(req: NextApiRequest, res: NextApiResponse) {
 
       const result = await pool.query(query, values);
 
+      logServerAction('TOUR_API', 'One-time tour created successfully', {
+        tourId: result.rows[0].tour_id,
+        tourName: result.rows[0].tour_name,
+        quotationId: result.rows[0].quotation_id
+      });
+
       return res.status(201).json({
         success: true,
         message: 'One-time tour created successfully',
@@ -157,13 +194,21 @@ async function createTour(req: NextApiRequest, res: NextApiResponse) {
       });
 
     } else {
+      logServerError('TOUR_API', 'Invalid saveType provided', `Invalid saveType: ${saveType}`, {
+        tourName,
+        quotationId
+      });
       return res.status(400).json({
         error: 'Invalid saveType. Must be "package" or "one-time"'
       });
     }
 
   } catch (error) {
-    console.error('Error creating tour:', error);
+    logServerError('TOUR_API', 'Error creating tour', error instanceof Error ? error : new Error(String(error)), {
+      tourName,
+      saveType,
+      quotationId
+    });
     return res.status(500).json({
       error: 'Failed to create tour',
       details: error instanceof Error ? error.message : 'Unknown error'

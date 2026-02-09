@@ -2,6 +2,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { Pool } from 'pg';
 import { authMiddleware, AuthRequest } from '../../../src/lib/auth';
+import { logServerAction, logServerError } from '../../../src/lib/logger';
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -55,7 +56,11 @@ async function getQuotations(req: AuthRequest, res: NextApiResponse) {
         viewed_at,
         accepted_at,
         created_at,
-        source
+        source,
+        package_id,
+        service_type,
+        service_id,
+        service_details
       FROM quotations
       WHERE 1=1
     `;
@@ -143,7 +148,11 @@ async function getQuotations(req: AuthRequest, res: NextApiResponse) {
 
 // POST /api/quotations - Create new quotation
 async function createQuotation(req: NextApiRequest, res: NextApiResponse) {
-  console.log('Creating quotation with data:', req.body);
+  logServerAction('QUOTATION_API', 'POST /api/quotations', {
+    customerEmail: req.body.customerEmail,
+    serviceType: req.body.serviceType,
+    source: req.body.source
+  });
   
   const {
     serviceType,
@@ -171,26 +180,53 @@ async function createQuotation(req: NextApiRequest, res: NextApiResponse) {
     includedServices
   } = req.body;
 
-  // Validation - basic required fields
-  if (!customerName || !customerEmail) {
-    return res.status(400).json({ 
-      error: 'Missing required fields: customerName, customerEmail',
-      details: { customerName, customerEmail }
-    });
+  // Comprehensive validation
+  const errors: string[] = [];
+  
+  // Required fields
+  if (!customerName?.trim()) errors.push('Customer name is required');
+  if (!customerEmail?.trim()) errors.push('Customer email is required');
+  if (serviceType === 'tour' && !tourName?.trim()) errors.push('Tour name is required');
+  if (!startDate) errors.push('Start date is required');
+  if (!endDate) errors.push('End date is required');
+  
+  // Email validation
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (customerEmail && !emailRegex.test(customerEmail.trim())) {
+    errors.push('Invalid email format');
   }
-
-  // Service-specific validation
-  if (serviceType === 'tour' && !tourName) {
-    return res.status(400).json({ 
-      error: 'Missing required field: tourName (required for tours)',
-      details: { tourName }
-    });
+  
+  // Date validation
+  if (startDate && endDate) {
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    
+    if (isNaN(start.getTime())) errors.push('Invalid start date');
+    if (isNaN(end.getTime())) errors.push('Invalid end date');
+    
+    if (start.getTime() && end.getTime() && end < start) {
+      errors.push('End date must be after or equal to start date');
+    }
   }
-
-  if (!startDate || !endDate) {
+  
+  // Numeric validation
+  if (numAdults < 1) errors.push('At least 1 adult is required');
+  if (numChildren < 0) errors.push('Number of children cannot be negative');
+  if (numInfants < 0) errors.push('Number of infants cannot be negative');
+  if (durationDays < 1) errors.push('Duration must be at least 1 day');
+  if (basePrice && parseFloat(basePrice) < 0) errors.push('Price cannot be negative');
+  if (depositPercentage < 0 || depositPercentage > 100) {
+    errors.push('Deposit percentage must be between 0 and 100');
+  }
+  
+  if (errors.length > 0) {
+    logServerError('QUOTATION_API', 'Validation failed', errors.join('; '), {
+      customerEmail: customerEmail,
+      serviceType: serviceType
+    });
     return res.status(400).json({ 
-      error: 'Missing required fields: startDate, endDate',
-      details: { startDate, endDate }
+      error: 'Validation failed',
+      details: errors
     });
   }
 
@@ -251,14 +287,21 @@ async function createQuotation(req: NextApiRequest, res: NextApiResponse) {
       });
     }
 
-    console.log('Calculated pricing:', pricing);
+    logServerAction('QUOTATION_API', 'Pricing calculated', {
+      basePrice: pricing.basePrice,
+      total: pricing.total,
+      serviceType: serviceType,
+      numAdults: numAdults,
+      numChildren: numChildren
+    });
 
     // Generate quotation number
     const quotationNumberResult = await pool.query('SELECT generate_quotation_number() as number');
     const quotationNumber = quotationNumberResult.rows[0].number;
 
-    // Set valid until date (until tour/rental start date)
-    const validUntil = new Date(startDate);
+    // Set valid until date (14 days from creation)
+    const validUntil = new Date();
+    validUntil.setDate(validUntil.getDate() + 14); // Valid for 14 days
 
     // Calculate deposit and balance using the depositPercentage from request
     const depositAmount = pricing.total * (depositPercentage / 100);
@@ -363,7 +406,10 @@ async function createQuotation(req: NextApiRequest, res: NextApiResponse) {
       }
     }
 
-    console.log('Final included services:', finalIncludedServices);
+    logServerAction('QUOTATION_API', 'Included services fetched', {
+      serviceCount: finalIncludedServices.length,
+      serviceType: serviceType
+    });
 
     // Insert quotation
     const insertQuery = `
@@ -451,11 +497,28 @@ async function createQuotation(req: NextApiRequest, res: NextApiResponse) {
       vehicleImageUrls && vehicleImageUrls.length > 0 ? vehicleImageUrls : null
     ];
 
-    console.log('Insert values:', values);
-    console.log('vehicleImageUrls being saved:', vehicleImageUrls);
+    logServerAction('QUOTATION_API', 'Inserting quotation to DB', {
+      quotationNumber: quotationNumber,
+      customerEmail: customerEmail,
+      hasVehicleImages: !!vehicleImageUrls && vehicleImageUrls.length > 0,
+      imageCount: vehicleImageUrls?.length || 0
+    });
 
     const result = await pool.query(insertQuery, values);
+    
+    if (!result.rows || result.rows.length === 0) {
+      throw new Error('Failed to insert quotation - no data returned');
+    }
+    
     const quotation = result.rows[0];
+
+    logServerAction('QUOTATION_API', 'Quotation created successfully', {
+      quotationNumber: quotation.quotation_number,
+      quotationId: quotation.quotation_id,
+      customerEmail: quotation.customer_email,
+      totalAmount: quotation.total_amount,
+      depositAmount: quotation.deposit_amount
+    });
 
     return res.status(201).json({
       success: true,
@@ -474,11 +537,38 @@ async function createQuotation(req: NextApiRequest, res: NextApiResponse) {
     });
 
   } catch (error) {
-    console.error('Error creating quotation:', error);
-    console.error('Error details:', error instanceof Error ? error.message : error);
+    logServerError('QUOTATION_API', 'Error creating quotation', error instanceof Error ? error : new Error(String(error)));
+    
+    // Handle specific database errors
+    if (error instanceof Error) {
+      // Duplicate quotation number
+      if (error.message.includes('duplicate key') && error.message.includes('quotation_number')) {
+        return res.status(409).json({ 
+          error: 'Quotation number already exists. Please try again.',
+          details: 'Database conflict'
+        });
+      }
+      
+      // Foreign key constraint
+      if (error.message.includes('foreign key constraint')) {
+        return res.status(400).json({ 
+          error: 'Invalid package or service reference',
+          details: error.message
+        });
+      }
+      
+      // Not null constraint
+      if (error.message.includes('null value') && error.message.includes('violates not-null')) {
+        return res.status(400).json({ 
+          error: 'Missing required database field',
+          details: error.message
+        });
+      }
+    }
+    
     return res.status(500).json({ 
       error: 'Failed to create quotation',
-      details: error instanceof Error ? error.message : 'Unknown error'
+      details: error instanceof Error ? error.message : 'Unknown database error'
     });
   }
 }

@@ -44,7 +44,7 @@ export class PackageController {
     return await updatePackage(id, data);
   }
 
-  static async delete(id: string): Promise<void> {
+  static async delete(id: string, options?: { deleteQuotations?: boolean }): Promise<void> {
     if (!id) {
       throw new Error('Package ID is required');
     }
@@ -54,6 +54,6 @@ export class PackageController {
       throw new Error('Package not found');
     }
 
-    await deletePackage(id);
+    await deletePackage(id, options);
   }
 }

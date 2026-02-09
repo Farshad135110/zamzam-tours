@@ -97,6 +97,27 @@ export default function AdminPackages() {
     pkg.description.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const getAuthHeaders = (includeJson: boolean = false): Record<string, string> => {
+    const headers: Record<string, string> = {};
+    if (includeJson) {
+      headers['Content-Type'] = 'application/json';
+    }
+
+    try {
+      const userStr = localStorage.getItem('user');
+      if (userStr) {
+        const user = JSON.parse(userStr);
+        if (user?.token) {
+          headers['Authorization'] = `Bearer ${user.token}`;
+        }
+      }
+    } catch (error) {
+      console.error('Failed to read auth token:', error);
+    }
+
+    return headers;
+  };
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
@@ -116,7 +137,8 @@ export default function AdminPackages() {
         // Update existing package
         const res = await fetch(`/api/packages/${editingPackage.package_id}`, {
           method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
+          headers: getAuthHeaders(true),
+          credentials: 'include',
           body: JSON.stringify(submitData)
         });
         if (!res.ok) throw new Error('Failed to update package');
@@ -126,7 +148,8 @@ export default function AdminPackages() {
         // Add new package
         const res = await fetch('/api/packages', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: getAuthHeaders(true),
+          credentials: 'include',
           body: JSON.stringify(submitData)
         });
         if (!res.ok) throw new Error('Failed to create package');
@@ -193,12 +216,42 @@ export default function AdminPackages() {
     if (!confirm('Are you sure you want to delete this package?')) return;
     
     try {
-      const res = await fetch(`/api/packages/${packageId}`, { method: 'DELETE' });
-      if (!res.ok) throw new Error('Failed to delete package');
+      const res = await fetch(`/api/packages/${packageId}`, {
+        method: 'DELETE',
+        headers: getAuthHeaders(),
+        credentials: 'include'
+      });
+      if (!res.ok) {
+        const errorBody = await res.json().catch(() => ({}));
+        const message = errorBody?.error || `Failed to delete package (status ${res.status})`;
+        const code = errorBody?.code;
+
+        if (res.status === 409 && code === 'HAS_QUOTATIONS') {
+          const confirmDelete = confirm(
+            'This package has linked quotations. Delete the package and all linked quotations?'
+          );
+          if (!confirmDelete) return;
+
+          const forceRes = await fetch(`/api/packages/${packageId}?force=true`, {
+            method: 'DELETE',
+            headers: getAuthHeaders(),
+            credentials: 'include'
+          });
+          if (!forceRes.ok) {
+            const forceBody = await forceRes.json().catch(() => ({}));
+            const forceMessage = forceBody?.error || `Failed to delete package (status ${forceRes.status})`;
+            throw new Error(forceMessage);
+          }
+          setPackages(packages.filter(pkg => pkg.package_id !== packageId));
+          return;
+        }
+
+        throw new Error(message);
+      }
       setPackages(packages.filter(pkg => pkg.package_id !== packageId));
     } catch (err) {
       console.error('Error deleting package:', err);
-      alert('Failed to delete package');
+      alert(err instanceof Error ? err.message : 'Failed to delete package');
     }
   };
 

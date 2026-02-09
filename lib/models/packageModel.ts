@@ -1,3 +1,4 @@
+import { Prisma } from '@prisma/client';
 import { prisma } from '../../src/lib/prisma';
 
 export interface PackageRecord {
@@ -75,26 +76,122 @@ export async function createPackage(payload: Omit<PackageRecord, 'package_id'>):
 }
 
 export async function updatePackage(id: string, payload: Partial<PackageRecord>): Promise<PackageRecord> {
-  // Use raw SQL to update with new columns
-  const result = await prisma.$queryRaw<any[]>`
-    UPDATE package 
-    SET package_name = COALESCE(${payload.package_name}, package_name),
-        description = COALESCE(${payload.description}, description),
-        price = ${payload.price !== undefined ? payload.price : null},
-        image = COALESCE(${payload.image}, image),
-        highlights = COALESCE(${payload.highlights}, highlights),
-        includings = COALESCE(${payload.includings}, includings),
-        days = ${payload.days !== undefined ? payload.days : null},
-        itinerary = ${payload.itinerary !== undefined ? payload.itinerary : null}
-    WHERE package_id = ${id}
-    RETURNING *
-  `;
+  console.log('updatePackage called with:', { id, payload });
   
-  return dbToRecord(result[0]);
+  try {
+    // Build update fields dynamically to avoid null issues with COALESCE
+    const updates: string[] = [];
+    const values: any[] = [];
+    let paramIndex = 1;
+
+    if (payload.package_name !== undefined) {
+      updates.push(`package_name = $${paramIndex++}`);
+      values.push(payload.package_name);
+    }
+    if (payload.description !== undefined) {
+      updates.push(`description = $${paramIndex++}`);
+      values.push(payload.description);
+    }
+    if (payload.price !== undefined) {
+      updates.push(`price = $${paramIndex++}`);
+      values.push(payload.price);
+    }
+    if (payload.image !== undefined) {
+      updates.push(`image = $${paramIndex++}`);
+      values.push(payload.image);
+    }
+    if (payload.highlights !== undefined) {
+      updates.push(`highlights = $${paramIndex++}`);
+      values.push(payload.highlights);
+    }
+    if (payload.includings !== undefined) {
+      updates.push(`includings = $${paramIndex++}`);
+      values.push(payload.includings);
+    }
+    if (payload.days !== undefined) {
+      updates.push(`days = $${paramIndex++}`);
+      values.push(payload.days);
+    }
+    if (payload.itinerary !== undefined) {
+      updates.push(`itinerary = $${paramIndex++}`);
+      values.push(payload.itinerary);
+    }
+
+    if (updates.length === 0) {
+      throw new Error('No fields to update');
+    }
+
+    values.push(id); // Add ID as the last parameter
+    const query = `
+      UPDATE package 
+      SET ${updates.join(', ')}
+      WHERE package_id = $${paramIndex}
+      RETURNING *
+    `;
+
+    console.log('SQL query:', query);
+    console.log('SQL values:', values);
+
+    const result = await prisma.$queryRawUnsafe<any[]>(query, ...values);
+    
+    console.log('SQL query result:', result);
+    
+    if (!result || result.length === 0) {
+      throw new Error(`Package with ID ${id} not found or update failed`);
+    }
+    
+    return dbToRecord(result[0]);
+  } catch (error: any) {
+    console.error('Error in updatePackage:', error);
+    throw error;
+  }
 }
 
-export async function deletePackage(id: string): Promise<void> {
-  await prisma.renamedpackage.delete({
-    where: { package_id: id }
-  });
+async function getLinkedQuotationCount(id: string): Promise<number> {
+  const result = await prisma.$queryRaw<any[]>`
+    SELECT COUNT(*)::int AS count FROM quotations WHERE package_id = ${id}
+  `;
+  return Number(result?.[0]?.count || 0);
+}
+
+export async function deletePackage(
+  id: string,
+  options?: { deleteQuotations?: boolean }
+): Promise<void> {
+  const deleteQuotations = options?.deleteQuotations ?? false;
+  const linkedQuotations = await getLinkedQuotationCount(id);
+
+  if (linkedQuotations > 0 && !deleteQuotations) {
+    throw new Error('Package has linked quotations');
+  }
+
+  if (linkedQuotations > 0 && deleteQuotations) {
+    try {
+      await prisma.$executeRaw`
+        DELETE FROM quotations WHERE package_id = ${id}
+      `;
+    } catch (error: any) {
+      const message = String(error?.message || '');
+      if (message.includes('invoices')) {
+        throw new Error('Quotations have invoices and cannot be deleted');
+      }
+      throw new Error('Failed to delete linked quotations');
+    }
+  }
+
+  try {
+    await prisma.renamedpackage.delete({
+      where: { package_id: id }
+    });
+  } catch (error: any) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code === 'P2025') {
+        throw new Error('Package not found');
+      }
+      if (error.code === 'P2003') {
+        throw new Error('Package has linked records and cannot be deleted');
+      }
+    }
+    throw error;
+  }
 }

@@ -77,8 +77,50 @@ async function getQuotation(id: string, req: NextApiRequest, res: NextApiRespons
 // PUT /api/quotations/[id] - Update quotation
 async function updateQuotation(id: string, req: NextApiRequest, res: NextApiResponse) {
   const updates = req.body;
-
   try {
+    // Validation
+    if (!id) {
+      return res.status(400).json({ error: 'Quotation ID is required' });
+    }
+    
+    // Validate email if provided
+    if (updates.customer_email) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(updates.customer_email.trim())) {
+        return res.status(400).json({ 
+          error: 'Invalid email format',
+          field: 'customer_email'
+        });
+      }
+    }
+    
+    // Validate dates if provided
+    if (updates.start_date && updates.end_date) {
+      const start = new Date(updates.start_date);
+      const end = new Date(updates.end_date);
+      
+      if (isNaN(start.getTime())) {
+        return res.status(400).json({ error: 'Invalid start date format' });
+      }
+      if (isNaN(end.getTime())) {
+        return res.status(400).json({ error: 'Invalid end date format' });
+      }
+      if (end < start) {
+        return res.status(400).json({ error: 'End date must be after start date' });
+      }
+    }
+    
+    // Validate numeric fields
+    if (updates.num_adults !== undefined && updates.num_adults < 1) {
+      return res.status(400).json({ error: 'At least 1 adult is required' });
+    }
+    if (updates.num_children !== undefined && updates.num_children < 0) {
+      return res.status(400).json({ error: 'Number of children cannot be negative' });
+    }
+    if (updates.total_amount !== undefined && updates.total_amount < 0) {
+      return res.status(400).json({ error: 'Total amount cannot be negative' });
+    }
+
     // Build dynamic update query
     const allowedFields = [
       'customer_name', 'customer_email', 'customer_phone', 'customer_country',
@@ -179,12 +221,43 @@ async function updateQuotation(id: string, req: NextApiRequest, res: NextApiResp
     });
   } catch (error) {
     console.error('Error updating quotation:', error);
-    return res.status(500).json({ error: 'Failed to update quotation' });
+    return res.status(500).json({ 
+      error: 'Failed to update quotation',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    });
   }
 }
 
 // DELETE /api/quotations/[id] - Delete quotation
 async function deleteQuotation(id: string, res: NextApiResponse) {
+
+  try {
+    if (!id) {
+      return res.status(400).json({ error: 'Quotation ID is required' });
+    }
+    
+    // Check if quotation exists and get its status
+    const isNumeric = /^\d+$/.test(id);
+    const checkQuery = isNumeric
+      ? 'SELECT quotation_id, quotation_number, status FROM quotations WHERE quotation_id = $1'
+      : 'SELECT quotation_id, quotation_number, status FROM quotations WHERE quotation_number = $1';
+    
+    const checkResult = await pool.query(checkQuery, [isNumeric ? parseInt(id) : id]);
+    
+    if (checkResult.rows.length === 0) {
+      return res.status(404).json({ error: 'Quotation not found' });
+    }
+    
+    const quotation = checkResult.rows[0];
+    
+    // Prevent deletion of accepted or converted quotations
+    if (quotation.status === 'accepted' || quotation.status === 'converted') {
+      return res.status(400).json({ 
+        error: `Cannot delete ${quotation.status} quotation`,
+        status: quotation.status
+      });
+    }
+
   try {
     // Support both numeric ID and quotation number
     const isNumeric = /^\d+$/.test(id);
@@ -206,7 +279,10 @@ async function deleteQuotation(id: string, res: NextApiResponse) {
     });
   } catch (error) {
     console.error('Error deleting quotation:', error);
-    return res.status(500).json({ error: 'Failed to delete quotation' });
+    return res.status(500).json({ 
+      error: 'Failed to delete quotation',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    });
   }
 }
 
