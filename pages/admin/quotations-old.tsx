@@ -5,6 +5,27 @@ import AdminSidebar from '../../components/AdminSidebar';
 import CloudinaryUpload from '../../components/CloudinaryUpload';
 import { logger } from '../../src/lib/logger';
 
+// Helper function to migrate old itinerary format to new multi-image format
+function migrateItineraryToMultiImages(itinerary: any[]): any[] {
+  if (!itinerary || !Array.isArray(itinerary)) return [];
+  
+  return itinerary.map(day => {
+    // If old format with single 'image' field, convert to 'images' array
+    if (day.image && !day.images) {
+      return {
+        ...day,
+        images: day.image ? [day.image] : [],
+        image: undefined
+      };
+    }
+    // If already has 'images' array, ensure it exists
+    if (!day.images) {
+      return { ...day, images: [] };
+    }
+    return day;
+  });
+}
+
 interface Quotation {
   quotation_id: number;
   quotation_number: string;
@@ -71,13 +92,13 @@ export default function QuotationsAdmin() {
     title: string;
     description: string;
     activities: string;
-    image?: string;
+    images: string[];
   }[]>([{
     day: 1,
     title: '',
     description: '',
     activities: '',
-    image: ''
+    images: []
   }]);
   const [isCreatingTour, setIsCreatingTour] = useState(false);
 
@@ -183,7 +204,7 @@ export default function QuotationsAdmin() {
           description: service.description,
           highlights: service.highlights,
           includings: service.includings,
-          itinerary: service.itinerary ? JSON.parse(service.itinerary) : null,
+          itinerary: service.itinerary ? migrateItineraryToMultiImages(JSON.parse(service.itinerary)) : null,
           days: service.days,
           nights: service.nights,
           image: service.image,
@@ -985,7 +1006,7 @@ export default function QuotationsAdmin() {
         title: '',
         description: '',
         activities: '',
-        image: ''
+        images: []
       }));
       setDayItineraries([...dayItineraries, ...newDays]);
     } else if (days < currentLength) {
@@ -1253,8 +1274,8 @@ export default function QuotationsAdmin() {
         });
       } else {
         const itinerary = typeof data.itinerary === 'string' && data.itinerary.trim().startsWith('[')
-          ? JSON.parse(data.itinerary)
-          : data.itinerary || null;
+          ? migrateItineraryToMultiImages(JSON.parse(data.itinerary))
+          : migrateItineraryToMultiImages(data.itinerary || []);
 
         tourData = {
           tour_id: data.package_id || data.packageId || packageId,
@@ -2227,8 +2248,12 @@ export default function QuotationsAdmin() {
                       type="number"
                       min="0"
                       max="100"
+                      step="1"
                       value={formData.depositPercentage}
-                      onChange={(e) => setFormData({...formData, depositPercentage: parseInt(e.target.value)})}
+                      onChange={(e) => {
+                        const val = e.target.value === '' ? 0 : parseFloat(e.target.value);
+                        setFormData({...formData, depositPercentage: Math.min(100, Math.max(0, isNaN(val) ? 30 : Math.round(val)))});
+                      }}
                       className="w-full border rounded px-3 py-2"
                     />
                   </div>
@@ -2566,12 +2591,100 @@ export default function QuotationsAdmin() {
                           />
                         </div>
 
-                        <CloudinaryUpload
-                          currentImageUrl={dayData.image || ''}
-                          onUploadSuccess={(url) => updateDayItinerary(index, 'image', Array.isArray(url) ? url[0] : url)}
-                          folder="zamzam-tours/itinerary"
-                          label={`Day ${dayData.day} Image (Optional)`}
-                        />
+                        {/* Multiple Images Gallery */}
+                        <div className="border-t pt-3 mt-3">
+                          <div className="flex justify-between items-center mb-2">
+                            <label className="block text-xs font-semibold text-gray-700">
+                              📷 Day {dayData.day} Images (Multiple)
+                            </label>
+                            {dayData.images && dayData.images.length > 0 && (
+                              <span className="text-xs bg-emerald-100 text-emerald-800 px-2 py-1 rounded">
+                                {dayData.images.length} image{dayData.images.length > 1 ? 's' : ''}
+                              </span>
+                            )}
+                          </div>
+
+                          {/* Bulk Upload Button */}
+                          <div className="mb-3">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const input = document.createElement('input');
+                                input.type = 'file';
+                                input.setAttribute('multiple', 'multiple');
+                                input.accept = 'image/*';
+                                input.onchange = async (e) => {
+                                  const files = (e.target as HTMLInputElement).files;
+                                  if (files && files.length > 0) {
+                                    const uploadedUrls: string[] = [];
+                                    
+                                    for (let file of Array.from(files)) {
+                                      const formData = new FormData();
+                                      formData.append('file', file);
+                                      formData.append('folder', 'zamzam-tours/itineraries/day-' + dayData.day);
+                                      
+                                      try {
+                                        const res = await fetch('/api/cloudinary/upload', {
+                                          method: 'POST',
+                                          body: formData
+                                        });
+                                        
+                                        const data = await res.json();
+                                        if (data.url) {
+                                          uploadedUrls.push(data.url);
+                                        }
+                                      } catch (err) {
+                                        console.error('Error uploading image:', err);
+                                      }
+                                    }
+
+                                    if (uploadedUrls.length > 0) {
+                                      const updated = [...dayItineraries];
+                                      updated[index] = {
+                                        ...updated[index],
+                                        images: [...(updated[index].images || []), ...uploadedUrls]
+                                      };
+                                      setDayItineraries(updated);
+                                    }
+                                  }
+                                };
+                                input.click();
+                              }}
+                              className="w-full px-3 py-2 border-2 border-dashed border-emerald-300 rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100 text-sm font-medium transition"
+                            >
+                              ⬆️ Upload Multiple Photos for Day {dayData.day}
+                            </button>
+                          </div>
+
+                          {/* Image Gallery Preview */}
+                          {dayData.images && dayData.images.length > 0 && (
+                            <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+                              {dayData.images.map((imgUrl, imgIdx) => (
+                                <div key={imgIdx} className="relative group">
+                                  <img 
+                                    src={imgUrl} 
+                                    alt={`Day ${dayData.day} - Image ${imgIdx + 1}`}
+                                    className="w-full h-20 object-cover rounded-lg border border-gray-200"
+                                  />
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      const updated = [...dayItineraries];
+                                      updated[index] = {
+                                        ...updated[index],
+                                        images: updated[index].images.filter((_, i) => i !== imgIdx)
+                                      };
+                                      setDayItineraries(updated);
+                                    }}
+                                    className="absolute top-1 right-1 bg-red-500 text-white px-1.5 py-0.5 rounded text-xs hover:bg-red-600 opacity-0 group-hover:opacity-100 transition"
+                                  >
+                                    ✕
+                                  </button>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
                   ))}
@@ -2650,7 +2763,7 @@ function EditTourModal({ tour, onClose, onSave }: { tour: any; onClose: () => vo
   const [editData, setEditData] = useState<any>(tour);
   const [dayItineraries, setDayItineraries] = useState<any[]>(() => {
     if (tour.itinerary && Array.isArray(tour.itinerary)) {
-      return tour.itinerary;
+      return migrateItineraryToMultiImages(tour.itinerary);
     }
     // Initialize with days from tour
     const days = tour.days || 1;
@@ -2659,7 +2772,7 @@ function EditTourModal({ tour, onClose, onSave }: { tour: any; onClose: () => vo
       title: '',
       description: '',
       activities: '',
-      image: ''
+      images: []
     }));
   });
 
@@ -2673,7 +2786,7 @@ function EditTourModal({ tour, onClose, onSave }: { tour: any; onClose: () => vo
         title: '',
         description: '',
         activities: '',
-        image: ''
+        images: []
       }));
       setDayItineraries([...dayItineraries, ...newItems]);
     } else if (newDays < currentLength) {
@@ -2822,15 +2935,97 @@ function EditTourModal({ tour, onClose, onSave }: { tour: any; onClose: () => vo
                         placeholder="List of activities for this day..."
                       />
                     </div>
-                    <div className="col-span-2">
-                      <label className="block text-xs font-medium text-gray-700 mb-1">Day Image URL</label>
-                      <input
-                        type="text"
-                        value={day.image || ''}
-                        onChange={(e) => updateDayItinerary(index, 'image', e.target.value)}
-                        className="w-full border border-gray-300 rounded px-2 py-1.5 text-sm focus:ring-2 focus:ring-emerald-500"
-                        placeholder="Image URL for this day"
-                      />
+                    {/* Multiple Images Section */}
+                    <div className="col-span-2 border-t pt-3 mt-2">
+                      <div className="flex justify-between items-center mb-2">
+                        <label className="block text-xs font-semibold text-gray-700">
+                          📷 Day {day.day} Images
+                        </label>
+                        {day.images && day.images.length > 0 && (
+                          <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
+                            {day.images.length} image{day.images.length > 1 ? 's' : ''}
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Bulk Upload Button */}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const input = document.createElement('input');
+                          input.type = 'file';
+                          input.setAttribute('multiple', 'multiple');
+                          input.accept = 'image/*';
+                          input.onchange = async (e) => {
+                            const files = (e.target as HTMLInputElement).files;
+                            if (files && files.length > 0) {
+                              const uploadedUrls: string[] = [];
+                              
+                              for (let file of Array.from(files)) {
+                                const formData = new FormData();
+                                formData.append('file', file);
+                                formData.append('folder', 'zamzam-tours/itineraries/day-' + day.day);
+                                
+                                try {
+                                  const res = await fetch('/api/cloudinary/upload', {
+                                    method: 'POST',
+                                    body: formData
+                                  });
+                                  
+                                  const data = await res.json();
+                                  if (data.url) {
+                                    uploadedUrls.push(data.url);
+                                  }
+                                } catch (err) {
+                                  console.error('Error uploading image:', err);
+                                }
+                              }
+
+                              if (uploadedUrls.length > 0) {
+                                const updated = [...dayItineraries];
+                                updated[index] = {
+                                  ...updated[index],
+                                  images: [...(updated[index].images || []), ...uploadedUrls]
+                                };
+                                setDayItineraries(updated);
+                              }
+                            }
+                          };
+                          input.click();
+                        }}
+                        className="w-full mb-2 px-3 py-2 border-2 border-dashed border-blue-300 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 text-xs font-medium transition"
+                      >
+                        ⬆️ Upload Multiple Photos for Day {day.day}
+                      </button>
+
+                      {/* Image Gallery */}
+                      {day.images && day.images.length > 0 && (
+                        <div className="grid grid-cols-4 gap-2">
+                          {day.images.map((imgUrl, imgIdx) => (
+                            <div key={imgIdx} className="relative group">
+                              <img 
+                                src={imgUrl} 
+                                alt={`Day ${day.day} - ${imgIdx + 1}`}
+                                className="w-full h-16 object-cover rounded border border-gray-200"
+                              />
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const updated = [...dayItineraries];
+                                  updated[index] = {
+                                    ...updated[index],
+                                    images: updated[index].images.filter((_, i) => i !== imgIdx)
+                                  };
+                                  setDayItineraries(updated);
+                                }}
+                                className="absolute top-0.5 right-0.5 bg-red-500 text-white px-1 py-0.5 rounded text-xs hover:bg-red-600 opacity-0 group-hover:opacity-100 transition"
+                              >
+                                ✕
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -3019,12 +3214,13 @@ function InvoiceModal({ quotation, onClose, onSubmit }: { quotation: any; onClos
 
   const [depositPercentage, setDepositPercentage] = useState(() => {
     const percentage = quotation.deposit_percentage;
-    return percentage && !isNaN(parseFloat(percentage)) ? parseFloat(percentage) : 30;
+    const parsed = parseFloat(percentage);
+    return !isNaN(parsed) ? Math.round(Math.min(100, Math.max(0, parsed))) : 30;
   });
 
   const totalAmount = parseFloat(quotation.total_amount || 0);
-  const depositAmount = (totalAmount * depositPercentage) / 100;
-  const remainingAmount = totalAmount - depositAmount;
+  const depositAmount = Math.round((totalAmount * depositPercentage / 100) * 100) / 100;
+  const remainingAmount = Math.round((totalAmount - depositAmount) * 100) / 100;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -3099,7 +3295,7 @@ function InvoiceModal({ quotation, onClose, onSubmit }: { quotation: any; onClos
                     onChange={(e) => {
                       const val = e.target.value;
                       const num = val === '' ? 0 : parseFloat(val);
-                      setDepositPercentage(Math.min(100, Math.max(0, isNaN(num) ? 0 : num)));
+                      setDepositPercentage(Math.round(Math.min(100, Math.max(0, isNaN(num) ? 0 : num))));
                     }}
                     className="w-16 border border-gray-300 rounded px-2 py-1 text-xs text-center"
                   />

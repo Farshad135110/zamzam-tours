@@ -180,6 +180,11 @@ async function createQuotation(req: NextApiRequest, res: NextApiResponse) {
     includedServices
   } = req.body;
 
+  // Normalize deposit percentage to integer between 0-100
+  const normalizedDepositPercentage = Math.round(
+    Math.min(100, Math.max(0, parseFloat(depositPercentage) || 30))
+  );
+
   // Comprehensive validation
   const errors: string[] = [];
   
@@ -215,7 +220,7 @@ async function createQuotation(req: NextApiRequest, res: NextApiResponse) {
   if (numInfants < 0) errors.push('Number of infants cannot be negative');
   if (durationDays < 1) errors.push('Duration must be at least 1 day');
   if (basePrice && parseFloat(basePrice) < 0) errors.push('Price cannot be negative');
-  if (depositPercentage < 0 || depositPercentage > 100) {
+  if (normalizedDepositPercentage < 0 || normalizedDepositPercentage > 100) {
     errors.push('Deposit percentage must be between 0 and 100');
   }
   
@@ -303,9 +308,9 @@ async function createQuotation(req: NextApiRequest, res: NextApiResponse) {
     const validUntil = new Date();
     validUntil.setDate(validUntil.getDate() + 14); // Valid for 14 days
 
-    // Calculate deposit and balance using the depositPercentage from request
-    const depositAmount = pricing.total * (depositPercentage / 100);
-    const balanceAmount = pricing.total - depositAmount;
+    // Calculate deposit and balance using the normalized depositPercentage from request
+    const depositAmount = Math.round((pricing.total * normalizedDepositPercentage / 100) * 100) / 100;
+    const balanceAmount = Math.round((pricing.total - depositAmount) * 100) / 100;
 
     // Set payment due dates
     const depositDueDate = new Date(startDate);
@@ -479,8 +484,8 @@ async function createQuotation(req: NextApiRequest, res: NextApiResponse) {
       pricing.discountPercentage,
       pricing.subtotal,
       pricing.total,
-      'USD',
-      depositPercentage,
+      req.body.currency || 'USD',
+      normalizedDepositPercentage,
       depositAmount,
       balanceAmount,
       depositDueDate,

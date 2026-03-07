@@ -1005,17 +1005,50 @@ export default function Tours() {
                             const itineraryData = JSON.parse(selectedTour.itinerary);
                             return itineraryData.map((day: any, index: number) => (
                               <div key={index} className="itinerary-day-card">
-                                {day.image && (
+                                {/* Display images: support both old format (day.image) and new format (day.images array) */}
+                                {(day.images && day.images.length > 0) || day.image ? (
                                   <div className="day-image-wrapper">
-                                    <Image 
-                                      src={day.image} 
-                                      alt={day.title}
-                                      width={800}
-                                      height={400}
-                                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                                    />
+                                    {/* New format: multiple images gallery */}
+                                    {day.images && day.images.length > 0 && (
+                                      <div style={{ 
+                                        display: 'grid',
+                                        gridTemplateColumns: day.images.length === 1 ? '1fr' : day.images.length === 2 ? '1fr 1fr' : 'repeat(3, 1fr)',
+                                        gap: '0.5rem',
+                                        width: '100%',
+                                        height: '100%'
+                                      }}>
+                                        {day.images.map((imgUrl: string, imgIndex: number) => (
+                                          <div key={imgIndex} style={{ 
+                                            position: 'relative',
+                                            aspectRatio: '1',
+                                            overflow: 'hidden',
+                                            borderRadius: '8px'
+                                          }}>
+                                            <Image 
+                                              src={imgUrl} 
+                                              alt={`${day.title} - Image ${imgIndex + 1}`}
+                                              width={400}
+                                              height={400}
+                                              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                            />
+                                          </div>
+                                        ))}
+                                      </div>
+                                    )}
+                                    {/* Old format: single image (backward compatibility) */}
+                                    {(!day.images || day.images.length === 0) && day.image && (
+                                      <div style={{ width: '100%', height: '100%', position: 'relative' }}>
+                                        <Image 
+                                          src={day.image} 
+                                          alt={day.title}
+                                          width={800}
+                                          height={400}
+                                          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                        />
+                                      </div>
+                                    )}
                                   </div>
-                                )}
+                                ) : null}
                                 <div className="day-header-card">
                                   <div className="day-number-circle">Day {day.day || index + 1}</div>
                                   <h3>{day.title}</h3>

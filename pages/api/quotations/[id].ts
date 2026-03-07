@@ -214,6 +214,46 @@ async function updateQuotation(id: string, req: NextApiRequest, res: NextApiResp
       }
     }
 
+    // SYNC: If this quotation has a linked one-time tour, update it with new values
+    const serviceId = updatedQuotation.service_id;
+    if (serviceId && serviceId.startsWith('OT')) {
+      // Check if any of the sync-related fields were updated
+      const syncableFields = ['tour_name', 'duration_days', 'base_price'];
+      const fieldsToSync = Object.keys(updates).filter(key => syncableFields.includes(key));
+
+      if (fieldsToSync.length > 0) {
+        try {
+          const syncQuery = `
+            UPDATE one_time_tours
+            SET
+              tour_name = COALESCE($1, tour_name),
+              days = COALESCE($2, days),
+              nights = COALESCE($3, nights),
+              price = COALESCE($4, price),
+              updated_at = NOW()
+            WHERE tour_id = $5
+          `;
+
+          const syncValues = [
+            updates.tour_name || null,
+            updates.duration_days || null,
+            updates.duration_days > 0 ? updates.duration_days - 1 : null,
+            updates.base_price || null,
+            serviceId
+          ];
+
+          await pool.query(syncQuery, syncValues);
+          console.log('✅ One-time tour synced successfully', {
+            tourId: serviceId,
+            syncedFields: fieldsToSync
+          });
+        } catch (syncError) {
+          console.warn('⚠️ Failed to sync one-time tour:', syncError);
+          // Don't fail the request if sync fails
+        }
+      }
+    }
+
     return res.status(200).json({
       success: true,
       quotation: updatedQuotation,
@@ -230,7 +270,6 @@ async function updateQuotation(id: string, req: NextApiRequest, res: NextApiResp
 
 // DELETE /api/quotations/[id] - Delete quotation
 async function deleteQuotation(id: string, res: NextApiResponse) {
-
   try {
     if (!id) {
       return res.status(400).json({ error: 'Quotation ID is required' });
@@ -258,15 +297,12 @@ async function deleteQuotation(id: string, res: NextApiResponse) {
       });
     }
 
-  try {
     // Support both numeric ID and quotation number
-    const isNumeric = /^\d+$/.test(id);
-    
-    const query = isNumeric
+    const deleteQuery = isNumeric
       ? `DELETE FROM quotations WHERE quotation_id = $1 RETURNING quotation_number`
       : `DELETE FROM quotations WHERE quotation_number = $1 RETURNING quotation_number`;
 
-    const result = await pool.query(query, [isNumeric ? parseInt(id) : id]);
+    const result = await pool.query(deleteQuery, [isNumeric ? parseInt(id) : id]);
 
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'Quotation not found' });

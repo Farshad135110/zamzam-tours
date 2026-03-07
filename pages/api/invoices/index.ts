@@ -121,9 +121,18 @@ async function createInvoice(req: NextApiRequest, res: NextApiResponse) {
 
     // Calculate amounts
     const totalAmount = parseFloat(quotation.total_amount || 0);
-    const finalDepositPercentage = depositPercentage !== undefined ? parseFloat(depositPercentage) : (quotation.deposit_percentage || 30);
-    const depositAmount = (totalAmount * finalDepositPercentage) / 100;
-    const remainingAmount = totalAmount - depositAmount;
+    
+    // Normalize deposit percentage to integer between 0-100
+    const rawDepositPercentage = depositPercentage !== undefined 
+      ? parseFloat(depositPercentage) 
+      : (quotation.deposit_percentage || 30);
+    const finalDepositPercentage = Math.round(
+      Math.min(100, Math.max(0, rawDepositPercentage))
+    );
+    
+    // Calculate amounts with proper rounding to 2 decimal places
+    const depositAmount = Math.round((totalAmount * finalDepositPercentage / 100) * 100) / 100;
+    const remainingAmount = Math.round((totalAmount - depositAmount) * 100) / 100;
     const paid = parseFloat(paidAmount);
 
     // Determine invoice status

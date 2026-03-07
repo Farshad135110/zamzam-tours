@@ -35,21 +35,36 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     const result = await pool.query(query);
 
-    const tours = result.rows.map(tour => ({
-      tour_id: tour.tour_id,
-      tour_name: tour.tour_name,
-      description: tour.description,
-      price: tour.price,
-      image: tour.image,
-      highlights: tour.highlights,
-      includings: tour.includings,
-      itinerary: tour.itinerary ? JSON.parse(tour.itinerary) : null,
-      days: tour.days,
-      nights: tour.nights,
-      quotation_id: tour.quotation_id,
-      created_by: tour.created_by,
-      created_at: tour.created_at
-    }));
+    const tours = result.rows.map(tour => {
+      let parsedItinerary = null;
+      if (tour.itinerary) {
+        try {
+          // Handle both string and already-parsed itinerary
+          parsedItinerary = typeof tour.itinerary === 'string' 
+            ? JSON.parse(tour.itinerary) 
+            : tour.itinerary;
+        } catch (e) {
+          console.warn('Failed to parse itinerary for tour:', tour.tour_id, e);
+          parsedItinerary = null;
+        }
+      }
+
+      return {
+        tour_id: tour.tour_id,
+        tour_name: tour.tour_name,
+        description: tour.description,
+        price: tour.price,
+        image: tour.image,
+        highlights: tour.highlights,
+        includings: tour.includings,
+        itinerary: parsedItinerary,
+        days: tour.days,
+        nights: tour.nights,
+        quotation_id: tour.quotation_id,
+        created_by: tour.created_by,
+        created_at: tour.created_at
+      };
+    });
 
     return res.status(200).json(tours);
   } catch (error) {

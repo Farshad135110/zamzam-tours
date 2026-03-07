@@ -129,7 +129,7 @@ export default function QuotationView() {
           num_children: parseInt(q.num_children || 0),
           num_infants: parseInt(q.num_infants || 0),
           duration_days: parseInt(q.duration_days),
-          deposit_percentage: parseInt(q.deposit_percentage || 30)
+          deposit_percentage: Math.round(parseFloat(q.deposit_percentage) || 30)
         };
         setQuotation(parsedQuotation);
         setError('');
